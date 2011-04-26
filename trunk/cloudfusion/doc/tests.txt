@@ -1,0 +1,8 @@
+The :mod:`store_test` Module
+----------------------------
+
+.. automodule:: cloudfusion.tests.store_test
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
