@@ -23,7 +23,7 @@ To generate this documentation call:
 		* afterwards there comes the directory name which is the starting point for documentation
 		* followed by a list of paths to exclude from documentation
 		
-	2. :program:`make` :option:`-f` *clusterbot/doc/Makefile html*
+	2. :program:`make` :option:`-f` *cloudfusion/doc/Makefile html*
 		* -f means to override existing files
 	
 

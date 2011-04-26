@@ -131,6 +131,82 @@
 
 </dd></dl>
 
+<dl class="class">
+<dt id="cloudfusion.store.dropbox.file_decorator.NonclosingFile">
+<em class="property">class </em><tt class="descclassname">cloudfusion.store.dropbox.file_decorator.</tt><tt class="descname">NonclosingFile</tt><big>(</big><em>file_object</em><big>)</big><a class="headerlink" href="#cloudfusion.store.dropbox.file_decorator.NonclosingFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref docutils literal"><span class="pre">object</span></tt></p>
+<dl class="method">
+<dt id="cloudfusion.store.dropbox.file_decorator.NonclosingFile.close">
+<tt class="descname">close</tt><big>(</big><big>)</big><a class="headerlink" href="#cloudfusion.store.dropbox.file_decorator.NonclosingFile.close" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cloudfusion.store.dropbox.file_decorator.NonclosingFile.fileno">
+<tt class="descname">fileno</tt><big>(</big><big>)</big><a class="headerlink" href="#cloudfusion.store.dropbox.file_decorator.NonclosingFile.fileno" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cloudfusion.store.dropbox.file_decorator.NonclosingFile.flush">
+<tt class="descname">flush</tt><big>(</big><big>)</big><a class="headerlink" href="#cloudfusion.store.dropbox.file_decorator.NonclosingFile.flush" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cloudfusion.store.dropbox.file_decorator.NonclosingFile.isatty">
+<tt class="descname">isatty</tt><big>(</big><big>)</big><a class="headerlink" href="#cloudfusion.store.dropbox.file_decorator.NonclosingFile.isatty" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cloudfusion.store.dropbox.file_decorator.NonclosingFile.next">
+<tt class="descname">next</tt><big>(</big><big>)</big><a class="headerlink" href="#cloudfusion.store.dropbox.file_decorator.NonclosingFile.next" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cloudfusion.store.dropbox.file_decorator.NonclosingFile.read">
+<tt class="descname">read</tt><big>(</big><em>size</em><big>)</big><a class="headerlink" href="#cloudfusion.store.dropbox.file_decorator.NonclosingFile.read" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cloudfusion.store.dropbox.file_decorator.NonclosingFile.readline">
+<tt class="descname">readline</tt><big>(</big><em>size</em><big>)</big><a class="headerlink" href="#cloudfusion.store.dropbox.file_decorator.NonclosingFile.readline" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cloudfusion.store.dropbox.file_decorator.NonclosingFile.readlines">
+<tt class="descname">readlines</tt><big>(</big><em>sizehint</em><big>)</big><a class="headerlink" href="#cloudfusion.store.dropbox.file_decorator.NonclosingFile.readlines" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cloudfusion.store.dropbox.file_decorator.NonclosingFile.seek">
+<tt class="descname">seek</tt><big>(</big><em>offset</em>, <em>whence</em><big>)</big><a class="headerlink" href="#cloudfusion.store.dropbox.file_decorator.NonclosingFile.seek" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cloudfusion.store.dropbox.file_decorator.NonclosingFile.tell">
+<tt class="descname">tell</tt><big>(</big><big>)</big><a class="headerlink" href="#cloudfusion.store.dropbox.file_decorator.NonclosingFile.tell" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cloudfusion.store.dropbox.file_decorator.NonclosingFile.truncate">
+<tt class="descname">truncate</tt><big>(</big><em>size</em><big>)</big><a class="headerlink" href="#cloudfusion.store.dropbox.file_decorator.NonclosingFile.truncate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cloudfusion.store.dropbox.file_decorator.NonclosingFile.write">
+<tt class="descname">write</tt><big>(</big><em>str</em><big>)</big><a class="headerlink" href="#cloudfusion.store.dropbox.file_decorator.NonclosingFile.write" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cloudfusion.store.dropbox.file_decorator.NonclosingFile.writelines">
+<tt class="descname">writelines</tt><big>(</big><em>sequence</em><big>)</big><a class="headerlink" href="#cloudfusion.store.dropbox.file_decorator.NonclosingFile.writelines" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cloudfusion.store.dropbox.file_decorator.NonclosingFile.xreadlines">
+<tt class="descname">xreadlines</tt><big>(</big><big>)</big><a class="headerlink" href="#cloudfusion.store.dropbox.file_decorator.NonclosingFile.xreadlines" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="module-cloudfusion.store.dropbox.dropbox_store">
 <h1>The <tt class="xref docutils literal"><span class="pre">dropbox_store</span></tt> Module<a class="headerlink" href="#module-cloudfusion.store.dropbox.dropbox_store" title="Permalink to this headline">¶</a></h1>
@@ -166,11 +242,6 @@
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="cloudfusion.store.dropbox.dropbox_store.DropboxStore.get_bytes">
-<tt class="descname">get_bytes</tt><big>(</big><em>path</em><big>)</big><a class="headerlink" href="#cloudfusion.store.dropbox.dropbox_store.DropboxStore.get_bytes" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
 <dt id="cloudfusion.store.dropbox.dropbox_store.DropboxStore.get_directory_listing">
 <tt class="descname">get_directory_listing</tt><big>(</big><em>directory</em><big>)</big><a class="headerlink" href="#cloudfusion.store.dropbox.dropbox_store.DropboxStore.get_directory_listing" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -178,11 +249,6 @@
 <dl class="method">
 <dt id="cloudfusion.store.dropbox.dropbox_store.DropboxStore.get_file">
 <tt class="descname">get_file</tt><big>(</big><em>path_to_file</em><big>)</big><a class="headerlink" href="#cloudfusion.store.dropbox.dropbox_store.DropboxStore.get_file" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="cloudfusion.store.dropbox.dropbox_store.DropboxStore.get_modified">
-<tt class="descname">get_modified</tt><big>(</big><em>path</em><big>)</big><a class="headerlink" href="#cloudfusion.store.dropbox.dropbox_store.DropboxStore.get_modified" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -201,18 +267,13 @@
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="cloudfusion.store.dropbox.dropbox_store.DropboxStore.is_dir">
-<tt class="descname">is_dir</tt><big>(</big><em>path</em><big>)</big><a class="headerlink" href="#cloudfusion.store.dropbox.dropbox_store.DropboxStore.is_dir" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
 <dt id="cloudfusion.store.dropbox.dropbox_store.DropboxStore.move">
 <tt class="descname">move</tt><big>(</big><em>path_to_src</em>, <em>path_to_dest</em><big>)</big><a class="headerlink" href="#cloudfusion.store.dropbox.dropbox_store.DropboxStore.move" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="cloudfusion.store.dropbox.dropbox_store.DropboxStore.store_file">
-<tt class="descname">store_file</tt><big>(</big><em>path_to_file</em>, <em>dest_dir='/'</em>, <em>remote_file_name=None</em><big>)</big><a class="headerlink" href="#cloudfusion.store.dropbox.dropbox_store.DropboxStore.store_file" title="Permalink to this definition">¶</a></dt>
+<dt id="cloudfusion.store.dropbox.dropbox_store.DropboxStore.store_fileobject">
+<tt class="descname">store_fileobject</tt><big>(</big><em>fileobject</em>, <em>path</em><big>)</big><a class="headerlink" href="#cloudfusion.store.dropbox.dropbox_store.DropboxStore.store_fileobject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>

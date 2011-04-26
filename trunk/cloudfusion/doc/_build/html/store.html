@@ -72,6 +72,11 @@
 <dd>Bases: <tt class="xref docutils literal"><span class="pre">exceptions.ValueError</span></tt></dd></dl>
 
 <dl class="exception">
+<dt id="cloudfusion.store.store.NoRemoteFileobjectNameGiven">
+<em class="property">exception </em><tt class="descclassname">cloudfusion.store.store.</tt><tt class="descname">NoRemoteFileobjectNameGiven</tt><big>(</big><em>msg</em><big>)</big><a class="headerlink" href="#cloudfusion.store.store.NoRemoteFileobjectNameGiven" title="Permalink to this definition">¶</a></dt>
+<dd>Bases: <a title="cloudfusion.store.store.StoreAccessError" class="reference internal" href="#cloudfusion.store.store.StoreAccessError"><tt class="xref docutils literal"><span class="pre">cloudfusion.store.store.StoreAccessError</span></tt></a></dd></dl>
+
+<dl class="exception">
 <dt id="cloudfusion.store.store.NoSuchFilesytemObjectError">
 <em class="property">exception </em><tt class="descclassname">cloudfusion.store.store.</tt><tt class="descname">NoSuchFilesytemObjectError</tt><big>(</big><em>path</em><big>)</big><a class="headerlink" href="#cloudfusion.store.store.NoSuchFilesytemObjectError" title="Permalink to this definition">¶</a></dt>
 <dd>Bases: <a title="cloudfusion.store.store.StoreAccessError" class="reference internal" href="#cloudfusion.store.store.StoreAccessError"><tt class="xref docutils literal"><span class="pre">cloudfusion.store.store.StoreAccessError</span></tt></a></dd></dl>
@@ -106,6 +111,11 @@
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="cloudfusion.store.store.Store.exists">
+<tt class="descname">exists</tt><big>(</big><em>path</em><big>)</big><a class="headerlink" href="#cloudfusion.store.store.Store.exists" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="cloudfusion.store.store.Store.get_bytes">
 <tt class="descname">get_bytes</tt><big>(</big><em>path</em><big>)</big><a class="headerlink" href="#cloudfusion.store.store.Store.get_bytes" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -127,7 +137,7 @@
 
 <dl class="method">
 <dt id="cloudfusion.store.store.Store.get_modified">
-<tt class="descname">get_modified</tt><big>(</big><big>)</big><a class="headerlink" href="#cloudfusion.store.store.Store.get_modified" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_modified</tt><big>(</big><em>path</em><big>)</big><a class="headerlink" href="#cloudfusion.store.store.Store.get_modified" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -147,7 +157,7 @@
 
 <dl class="method">
 <dt id="cloudfusion.store.store.Store.is_dir">
-<tt class="descname">is_dir</tt><big>(</big><big>)</big><a class="headerlink" href="#cloudfusion.store.store.Store.is_dir" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">is_dir</tt><big>(</big><em>path</em><big>)</big><a class="headerlink" href="#cloudfusion.store.store.Store.is_dir" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -157,7 +167,12 @@
 
 <dl class="method">
 <dt id="cloudfusion.store.store.Store.store_file">
-<tt class="descname">store_file</tt><big>(</big><em>path_to_file</em>, <em>dest_dir</em><big>)</big><a class="headerlink" href="#cloudfusion.store.store.Store.store_file" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">store_file</tt><big>(</big><em>path_to_file</em>, <em>dest_dir='/'</em>, <em>remote_file_name=None</em><big>)</big><a class="headerlink" href="#cloudfusion.store.store.Store.store_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="cloudfusion.store.store.Store.store_fileobject">
+<tt class="descname">store_fileobject</tt><big>(</big><em>fileobject</em>, <em>path</em><big>)</big><a class="headerlink" href="#cloudfusion.store.store.Store.store_fileobject" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
