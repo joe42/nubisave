@@ -55,18 +55,18 @@ class PyFuseBox(Operations):
             st['st_size'] = metadata['bytes']
         return st
     
-    def open(self, path, flags):
-        self.temp_file = tempfile.SpooledTemporaryFile()
-        self.nonclosing_temp_file = NonclosingFile(self.temp_file)
-        self.f.write( "open "+path+"\n")
-        try:
-            file = self.io_api.get_file(path)
-            for line in file:
-                self.nonclosing_temp_file.write(line)
-            return self.nonclosing_temp_file
-        except:
-            return 0
+    #def open(self, path, flags):
+        #self.temp_file = tempfile.SpooledTemporaryFile()
+        #self.nonclosing_temp_file = NonclosingFile(self.temp_file)
+        #self.f.write( "open "+path+"\n")
+        #file = self.io_api.get_file(path)
+        #for line in file:
+        #    self.nonclosing_temp_file.write(line)#blows - takes too long?
+        #return x
     
+    #getxattr = None
+    #listxattr = None
+
     """def rmdir(self, path):
         self.files.pop(path)
         self.files['/']['st_nlink'] -= 1"""
@@ -77,12 +77,11 @@ class PyFuseBox(Operations):
         self.files[new] = self.files.pop(old)"""
 
     def create(self, path, mode):
-        self.f.write( "create "+path+"\n")
+        self.f.write( "create %s with mode %s\n" % (path, str(mode)))
         self.temp_file = tempfile.SpooledTemporaryFile()
         # use non closing file as parameter for next function since store_fileobject will close the file handle 
-        self.nonclosing_temp_file = NonclosingFile(self.temp_file)
         self.io_api.store_fileobject(self.temp_file, path)
-        return self.nonclosing_temp_file
+        return 0
         """       self.files[path] = dict(st_mode=(S_IFREG | mode), st_nlink=1,
             st_size=0, st_ctime=time(), st_mtime=time(), st_atime=time())
         self.fd += 1
@@ -95,25 +94,28 @@ class PyFuseBox(Operations):
         self.files.pop(path)"""
 
     def read(self, path, size, offset, fh):
-        self.f.write( "read "+path+"\n")
+        self.f.write( "read %s bytes from %s at %s - fh %s\n" % (size, path, offset, fh))
         file = self.io_api.get_file(path)
         #file.seek(offset)
-        return file.read(size)
+        buf = file.read(size)
+        file.close()
+        return buf
 
     def write(self, path, buf, offset, fh):
-        self.f.write( "write "+path+"\n")
+        self.f.write( "write %s ... from %s at %s - fh: %s\n" % (path, buf[0:10], offset, fh))
         #fh.seek(offset)
         fh.write(buf)
         return len(buf)
     
-    def flush(self, path, fh):
-        self.f.write( "flush "+path+"\n")
+    """def flush(self, path, fh):
+        self.f.write( "flush %s - fh: %s\n" % (path, fh))
         self.io_api.store_fileobject(fh,path)
-        return fh
+        return 0
     
     def release(self, path, fh):
+        self.f.write( "release %s - fh: %s\n" % (path, fh))
         self.temp_file.close()
-        return 0
+        return 0"""
        
     def readdir(self, path, fh):
         self.f.write( "readdir "+path+"\n")
