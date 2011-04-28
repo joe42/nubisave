@@ -3,7 +3,7 @@ Created on 23.04.2011
 
 @author: joe
 '''
-class NamableFile(object):
+class NameableFile(object):
     def __init__(self, file_object, name):
         self.file_object = file_object
         if hasattr(self.file_object, 'closed'):            
@@ -44,6 +44,10 @@ class NamableFile(object):
         return self.file_object.write(str)
     def writelines(self, sequence):
         return self.file_object.writelines(sequence)
+    def __repr__(self):
+        return repr(self.file_object)
+    def __str__(self):
+        return str(self.file_object)
     
 class NonclosingFile(object):
     def __init__(self, file_object):
@@ -87,5 +91,9 @@ class NonclosingFile(object):
         return self.file_object.write(str)
     def writelines(self, sequence):
         return self.file_object.writelines(sequence)
+    def __repr__(self):
+        return repr(self.file_object)
+    def __str__(self):
+        return str(self.file_object)
 
 

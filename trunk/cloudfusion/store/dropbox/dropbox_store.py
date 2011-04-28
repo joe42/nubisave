@@ -11,7 +11,7 @@ from cloudfusion.store.store import *
 import logging
 import logging.config
 import os.path
-from cloudfusion.store.dropbox.file_decorator import NamableFile
+from cloudfusion.store.dropbox.file_decorator import NameableFile
 import tempfile
 
 logging.config.fileConfig('cloudfusion/config/logging.conf')
@@ -64,7 +64,7 @@ class DropboxStore(Store):
         logger.debug("storing file object to "+path)
         remote_file_name = os.path.basename(path)
         dest_dir = os.path.dirname(path);
-        namable_file = NamableFile( fileobject, remote_file_name )
+        namable_file = NameableFile( fileobject, remote_file_name )
         resp = db_client.put_file(root, dest_dir, namable_file) 
         if resp.status != 200:
             logger.warn("could not store file: " +dest_dir+remote_file_name+"\ndata: "+resp.data['error'])
