@@ -14,9 +14,48 @@
    id="svg7669"
    version="1.1"
    inkscape:version="0.48.1 "
-   sodipodi:docname="nubisave_arc3.svg">
+   sodipodi:docname="architecture3.svg">
   <defs
      id="defs7671">
+    <marker
+       inkscape:stockid="EmptyTriangleInL"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="EmptyTriangleInL"
+       style="overflow:visible">
+      <path
+         id="path4069"
+         d="M 5.77,0.0 L -2.88,5.0 L -2.88,-5.0 L 5.77,0.0 z "
+         style="fill-rule:evenodd;fill:#FFFFFF;stroke:#000000;stroke-width:1.0pt;marker-start:none"
+         transform="scale(-0.8) translate(-6,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="EmptyTriangleOutL"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="EmptyTriangleOutL"
+       style="overflow:visible">
+      <path
+         id="path4078"
+         d="M 5.77,0.0 L -2.88,5.0 L -2.88,-5.0 L 5.77,0.0 z "
+         style="fill-rule:evenodd;fill:#FFFFFF;stroke:#000000;stroke-width:1.0pt;marker-start:none"
+         transform="scale(0.8) translate(-6,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Lend"
+       style="overflow:visible;">
+      <path
+         id="path3920"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;marker-start:none;"
+         transform="scale(0.8) rotate(180) translate(12.5,0)" />
+    </marker>
     <filter
        color-interpolation-filters="sRGB"
        inkscape:collect="always"
@@ -43,9 +82,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.7"
-     inkscape:cx="-170.74047"
-     inkscape:cy="674.38229"
+     inkscape:zoom="1.979899"
+     inkscape:cx="218.57929"
+     inkscape:cy="756.28015"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -62,7 +101,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -73,28 +112,28 @@
     <text
        xml:space="preserve"
        style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="143.70953"
+       x="159.70953"
        y="69.535744"
        id="text3757"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan3759"
-         x="143.70953"
+         x="159.70953"
          y="69.535744">Architektur - Exemplarisch</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:15.07462502px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="17.558969"
+       x="34.286922"
        y="344.05014"
        id="text3896"
        sodipodi:linespacing="125%"
        transform="scale(0.95648281,1.0454971)"><tspan
          sodipodi:role="line"
          id="tspan3898"
-         x="17.558969"
+         x="34.286922"
          y="344.05014">Dropbox</tspan></text>
     <g
-       transform="matrix(0.5216474,0,0,0.51458211,-240.05497,274.82874)"
+       transform="matrix(0.5216474,0,0,0.51458211,-224.05497,274.82874)"
        id="g5451-6">
       <path
          transform="matrix(0.43265474,0,0,0.36651595,383.88338,66.02455)"
@@ -113,25 +152,25 @@
        id="rect7753"
        width="737.85718"
        height="436.54431"
-       x="3.5714285"
+       x="3.5714283"
        y="94.147896" />
     <rect
        style="fill:#0000ff;fill-opacity:0;fill-rule:evenodd;stroke:#000000;stroke-width:1.27485597px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        id="rect8263"
        width="104.16089"
        height="145.07927"
-       x="94.303879"
+       x="110.30388"
        y="262.05197" />
     <text
        xml:space="preserve"
        style="font-size:14.19127369px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Microsoft JhengHei;-inkscape-font-specification:Microsoft JhengHei"
-       x="107.94069"
+       x="123.94069"
        y="342.63358"
        id="text5569"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan5571"
-         x="107.94069"
+         x="123.94069"
          y="342.63358">CloudFusion</tspan></text>
     <path
        sodipodi:type="arc"
@@ -142,18 +181,18 @@
        sodipodi:rx="50"
        sodipodi:ry="21.785715"
        d="m 399.28571,457.00504 a 50,21.785715 0 1 1 -100,0 50,21.785715 0 1 1 100,0 z"
-       transform="matrix(0.22363972,0,0,0.25444378,16.175301,221.01547)" />
+       transform="matrix(0.22363972,0,0,0.25444378,32.175301,221.01547)" />
     <text
        xml:space="preserve"
        style="font-size:7.8052001px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Microsoft JhengHei;-inkscape-font-specification:Microsoft JhengHei"
-       x="84.254715"
+       x="100.25471"
        y="340.25424"
        id="text8476"
        sodipodi:linespacing="125%"
        inkscape:transform-center-y="-8.0636306"><tspan
          sodipodi:role="line"
          id="tspan8478"
-         x="84.254715"
+         x="100.25471"
          y="340.25424">HTTP</tspan></text>
     <path
        sodipodi:type="arc"
@@ -164,18 +203,18 @@
        sodipodi:rx="50"
        sodipodi:ry="21.785715"
        d="m 399.28571,457.00504 a 50,21.785715 0 1 1 -100,0 50,21.785715 0 1 1 100,0 z"
-       transform="matrix(1.0166433,0,0,0.37300283,-156.68414,192.00203)" />
+       transform="matrix(1.0166433,0,0,0.37300283,-140.68414,192.00203)" />
     <text
        xml:space="preserve"
        style="font-size:7.8052001px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Microsoft JhengHei;-inkscape-font-specification:Microsoft JhengHei"
-       x="169.8391"
+       x="185.8391"
        y="366.06808"
        id="text8476-5"
        sodipodi:linespacing="125%"
        inkscape:transform-center-y="-8.0636312"><tspan
          sodipodi:role="line"
          id="tspan8478-1"
-         x="169.8391"
+         x="185.8391"
          y="366.06808">/dropbox/data/</tspan></text>
     <path
        sodipodi:type="arc"
@@ -186,37 +225,37 @@
        sodipodi:rx="50"
        sodipodi:ry="21.785715"
        d="m 399.28571,457.00504 a 50,21.785715 0 1 1 -100,0 50,21.785715 0 1 1 100,0 z"
-       transform="matrix(1.0166433,0,0,0.37300283,-156.65463,223.7833)" />
+       transform="matrix(1.0166433,0,0,0.37300283,-140.65463,223.7833)" />
     <text
        xml:space="preserve"
        style="font-size:7.8052001px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Microsoft JhengHei;-inkscape-font-specification:Microsoft JhengHei"
-       x="158.38667"
+       x="174.38667"
        y="396.26187"
        id="text8476-5-9"
        sodipodi:linespacing="125%"
        inkscape:transform-center-y="-8.0636541"><tspan
          sodipodi:role="line"
          id="tspan8478-1-0"
-         x="158.38667"
+         x="174.38667"
          y="396.26187">/dropbox/.cf/account</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:15.30780888px;font-style:normal;font-weight:normal;line-height:81.00000024%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="21.477409"
+       x="38.583786"
        y="278.13"
        id="text3896-1"
        sodipodi:linespacing="81%"
        transform="scale(0.93532412,1.0691481)"><tspan
          sodipodi:role="line"
          id="tspan3898-8"
-         x="21.477409"
+         x="38.583786"
          y="278.13">Amazon</tspan><tspan
          sodipodi:role="line"
-         x="21.477409"
+         x="38.583786"
          y="290.52933"
          id="tspan3921">   S3</tspan></text>
     <g
-       transform="matrix(0.51799854,0,0,0.53436285,-236.56149,212.78275)"
+       transform="matrix(0.51799854,0,0,0.53436285,-220.56149,212.78275)"
        id="g5451">
       <path
          transform="matrix(0.43265474,0,0,0.36651595,383.88338,66.02455)"
@@ -232,7 +271,7 @@
     </g>
     <path
        style="fill:none;stroke:#000000;stroke-width:0.70956367px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 66.715251,309.16348 16.47202,28.12913 -6.58882,16.72543"
+       d="m 82.715251,309.16348 16.47202,28.12913 -6.58882,16.72543"
        id="path8731"
        inkscape:connector-curvature="0" />
     <path
@@ -244,18 +283,18 @@
        sodipodi:rx="50"
        sodipodi:ry="21.785715"
        d="m 399.28571,457.00504 a 50,21.785715 0 1 1 -100,0 50,21.785715 0 1 1 100,0 z"
-       transform="matrix(1.0166433,0,0,0.37300283,-156.77888,106.77358)" />
+       transform="matrix(1.0166433,0,0,0.37300283,-140.77888,106.77358)" />
     <text
        xml:space="preserve"
        style="font-size:7.8052001px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Microsoft JhengHei;-inkscape-font-specification:Microsoft JhengHei"
-       x="169.75337"
+       x="185.75337"
        y="280.7767"
        id="text8476-5-1"
        sodipodi:linespacing="125%"
        inkscape:transform-center-y="-8.0636319"><tspan
          sodipodi:role="line"
          id="tspan8478-1-8"
-         x="169.75337"
+         x="185.75337"
          y="280.7767">/amazons3/data/</tspan></text>
     <path
        sodipodi:type="arc"
@@ -266,22 +305,22 @@
        sodipodi:rx="50"
        sodipodi:ry="21.785715"
        d="m 399.28571,457.00504 a 50,21.785715 0 1 1 -100,0 50,21.785715 0 1 1 100,0 z"
-       transform="matrix(1.0166433,0,0,0.37300283,-156.74936,138.55486)" />
+       transform="matrix(1.0166433,0,0,0.37300283,-140.74936,138.55486)" />
     <text
        xml:space="preserve"
        style="font-size:7.8052001px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Microsoft JhengHei;-inkscape-font-specification:Microsoft JhengHei"
-       x="158.30095"
+       x="174.30095"
        y="310.97052"
        id="text8476-5-9-2"
        sodipodi:linespacing="125%"
        inkscape:transform-center-y="-8.0636243"><tspan
          sodipodi:role="line"
          id="tspan8478-1-0-1"
-         x="158.30095"
+         x="174.30095"
          y="310.97052">/amazons3/.cf/account</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:0.32135594px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 347.85928,304.0925 0.54222,54.41659"
+       d="m 363.85928,304.0925 0.54222,54.41659"
        id="path6821"
        inkscape:connector-curvature="0" />
     <rect
@@ -289,98 +328,98 @@
        id="rect6636"
        width="100.31018"
        height="18.435385"
-       x="297.70416"
+       x="313.70416"
        y="334.05978" />
     <text
        xml:space="preserve"
        style="font-size:15.18208027px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Microsoft JhengHei;-inkscape-font-specification:Microsoft JhengHei"
-       x="298.01767"
+       x="314.01767"
        y="348.48962"
        id="text5569-7"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan5571-2"
-         x="298.01767"
+         x="314.01767"
          y="348.48962"> Optimierung</tspan></text>
     <rect
        style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.37955201px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        id="rect6636-3"
        width="100.31018"
        height="18.435385"
-       x="297.70416"
+       x="313.70416"
        y="310.14795" />
     <text
        xml:space="preserve"
        style="font-size:15.18208027px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Microsoft JhengHei;-inkscape-font-specification:Microsoft JhengHei"
-       x="298.01767"
+       x="314.01767"
        y="324.57782"
        id="text5569-7-4"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan5571-2-8"
-         x="298.01767"
+         x="314.01767"
          y="324.57782">    Sicherheit</tspan></text>
     <rect
        style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.37955201px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        id="rect6636-3-8"
        width="100.31018"
        height="18.435385"
-       x="297.70416"
+       x="313.70416"
        y="285.93304" />
     <text
        xml:space="preserve"
        style="font-size:15.18208027px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Microsoft JhengHei;-inkscape-font-specification:Microsoft JhengHei"
-       x="298.01767"
+       x="314.01767"
        y="300.36292"
        id="text5569-7-4-3"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan5571-2-8-5"
-         x="298.01767"
+         x="314.01767"
          y="300.36292">   Dispersion</tspan></text>
     <rect
        style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.37955201px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        id="rect6636-0"
        width="100.31018"
        height="18.435385"
-       x="297.10776"
+       x="313.10776"
        y="358.05286" />
     <text
        xml:space="preserve"
        style="font-size:15.18208027px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Microsoft JhengHei;-inkscape-font-specification:Microsoft JhengHei"
-       x="297.4212"
+       x="313.4212"
        y="372.48273"
        id="text5569-7-45"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan5571-2-5"
-         x="297.4212"
+         x="313.4212"
          y="372.48273">  FUSE Modul</tspan></text>
     <rect
        style="fill:#0000ff;fill-opacity:0;fill-rule:evenodd;stroke:#000000;stroke-width:1.50646031px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        id="rect8263-9"
        width="145.44467"
        height="145.07927"
-       x="276.37122"
+       x="292.37122"
        y="261.96539" />
     <path
        style="fill:none;stroke:#000000;stroke-width:0.70956367px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 249.17448,276.9797 27.11547,58.539"
+       d="m 265.17448,276.9797 27.11547,58.539"
        id="path8871"
        inkscape:connector-curvature="0" />
     <path
        style="fill:none;stroke:#000000;stroke-width:0.70956367px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 249.17448,362.12733 27.11547,-27.36888"
+       d="m 265.17448,362.12733 27.11547,-27.36888"
        id="path8873"
        inkscape:connector-curvature="0" />
     <path
        style="fill:none;stroke:#000000;stroke-width:0.70956367px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 249.17448,308.91006 27.36889,26.35522"
+       d="m 265.17448,308.91006 27.36889,26.35522"
        id="path8875"
        inkscape:connector-curvature="0" />
     <path
        style="fill:none;stroke:#000000;stroke-width:0.70956367px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 249.4279,394.0577 26.35521,-59.55267"
+       d="m 265.4279,394.0577 26.35521,-59.55267"
        id="path8877"
        inkscape:connector-curvature="0" />
     <path
@@ -392,7 +431,7 @@
        sodipodi:rx="50"
        sodipodi:ry="21.785715"
        d="m 399.28571,457.00504 a 50,21.785715 0 1 1 -100,0 50,21.785715 0 1 1 100,0 z"
-       transform="matrix(1.0166433,0,0,0.37300283,66.547818,222.80621)" />
+       transform="matrix(1.0166433,0,0,0.37300283,82.547818,222.80621)" />
     <path
        sodipodi:type="arc"
        style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-opacity:1"
@@ -402,11 +441,11 @@
        sodipodi:rx="50"
        sodipodi:ry="21.785715"
        d="m 399.28571,457.00504 a 50,21.785715 0 1 1 -100,0 50,21.785715 0 1 1 100,0 z"
-       transform="matrix(1.0166433,0,0,0.37300283,66.755274,103.90471)" />
+       transform="matrix(1.0166433,0,0,0.37300283,82.755274,103.90471)" />
     <text
        xml:space="preserve"
        style="font-size:7.8052001px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Microsoft JhengHei;-inkscape-font-specification:Microsoft JhengHei"
-       x="402.95032"
+       x="418.95032"
        y="395.78189"
        id="text8476-5-1-6"
        sodipodi:linespacing="125%"
@@ -414,12 +453,12 @@
        inkscape:transform-center-x="3.1943037e-005"><tspan
          sodipodi:role="line"
          id="tspan8478-1-8-3"
-         x="402.95032"
+         x="418.95032"
          y="395.78189">/cloud/data/</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:7.8052001px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Microsoft JhengHei;-inkscape-font-specification:Microsoft JhengHei"
-       x="389.23981"
+       x="405.23981"
        y="276.37357"
        id="text8476-5-1-9"
        sodipodi:linespacing="125%"
@@ -427,31 +466,26 @@
        inkscape:transform-center-x="-3.8621527e-005"><tspan
          sodipodi:role="line"
          id="tspan8478-1-8-6"
-         x="389.23981"
+         x="405.23981"
          y="276.37357">/cloud/.cf/accounts</tspan></text>
     <rect
        style="fill:#0000ff;fill-opacity:0;fill-rule:evenodd;stroke:#000000;stroke-width:1.50646031px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        id="rect8263-9-0"
        width="145.44467"
        height="145.07927"
-       x="496.92053"
+       x="512.92053"
        y="261.96539" />
     <text
        xml:space="preserve"
        style="font-size:15.18208027px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Microsoft JhengHei;-inkscape-font-specification:Microsoft JhengHei"
-       x="501.22287"
+       x="549.2229"
        y="285.75104"
        id="text5569-7-4-3-2"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan5571-2-8-5-5"
-         x="501.22287"
-         y="285.75104"> System I/O 2 Web</tspan></text>
-    <path
-       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 472.85714,274.50504 23.92858,62.5 -24.64286,56.07143"
-       id="path9019"
-       inkscape:connector-curvature="0" />
+         x="549.2229"
+         y="285.75104"> WebDAV</tspan></text>
     <path
        sodipodi:type="arc"
        style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-opacity:1"
@@ -461,63 +495,139 @@
        sodipodi:rx="50"
        sodipodi:ry="21.785715"
        d="m 399.28571,457.00504 a 50,21.785715 0 1 1 -100,0 50,21.785715 0 1 1 100,0 z"
-       transform="matrix(1.0166433,0,0,0.37300283,217.04389,236.54087)" />
+       transform="matrix(1.0166433,0,0,0.37300283,233.04389,236.54087)" />
     <text
        xml:space="preserve"
        style="font-size:11px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="550.35712"
+       x="562.35712"
        y="410.57645"
        id="text9039"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan9041"
-         x="550.35712"
-         y="410.57645">Web API</tspan></text>
+         x="562.35712"
+         y="410.57645">REST API</tspan></text>
     <rect
        style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.37955201px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        id="rect6636-3-8-6"
        width="100.31018"
        height="18.435385"
-       x="394.84491"
+       x="410.84491"
        y="436.3588" />
     <text
        xml:space="preserve"
        style="font-size:15.18208027px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Microsoft JhengHei;-inkscape-font-specification:Microsoft JhengHei"
-       x="395.15842"
+       x="411.15842"
        y="450.78867"
        id="text5569-7-4-3-24"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan5571-2-8-5-52"
-         x="395.15842"
+         x="411.15842"
          y="450.78867">         KDE</tspan></text>
     <rect
        style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.37955201px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        id="rect6636-3-8-61"
        width="100.31018"
        height="18.435385"
-       x="522.84491"
-       y="436.35876" />
+       x="411.06061"
+       y="215.22678" />
     <text
        xml:space="preserve"
        style="font-size:15.18208027px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Microsoft JhengHei;-inkscape-font-specification:Microsoft JhengHei"
-       x="523.15845"
-       y="450.78864"
+       x="411.37415"
+       y="229.65665"
        id="text5569-7-4-3-7"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan5571-2-8-5-56"
-         x="523.15845"
-         y="450.78864">        SPACE</tspan></text>
+         x="411.37415"
+         y="229.65665">        SPACE</tspan></text>
     <path
-       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="M 444.64286,435.93361 445,400.21932"
+       style="fill:none;stroke:#000000;stroke-width:0.75670558px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 588.64286,435.93361 589,415.48349"
        id="path9080"
        inkscape:connector-curvature="0" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 575.71429,415.57647 0,21.42857"
+       style="fill:none;stroke:#000000;stroke-width:1.23719156px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 460.89954,233.84675 0,32.79949"
        id="path9082"
        inkscape:connector-curvature="0" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.37955201px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="rect6636-3-8-6-8"
+       width="100.31018"
+       height="18.435385"
+       x="539.22577"
+       y="436.54788" />
+    <text
+       xml:space="preserve"
+       style="font-size:15.18208027px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Microsoft JhengHei;-inkscape-font-specification:Microsoft JhengHei"
+       x="541.53931"
+       y="450.97775"
+       id="text5569-7-4-3-24-3"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan5571-2-8-5-52-0"
+         x="541.53931"
+         y="450.97775">       Client</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.00269878px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 461.12283,436.26583 0.35714,-35.90731"
+       id="path9080-4"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 488.75139,393.23765 24.24366,-65.65992"
+       id="path3140"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:none;stroke-miterlimit:4;stroke-dasharray:2, 1;stroke-dashoffset:0;marker-start:url(#EmptyTriangleInL)"
+       d="M 22.728432,358.89246 8.0812204,358.38738 9.5964492,227.57263 410.62701,225.55232"
+       id="path3142"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:2, 1;stroke-dashoffset:0;marker-end:none;marker-start:url(#EmptyTriangleInL)"
+       d="m 24.748737,299.29346 -16.1624404,0"
+       id="path3144"
+       inkscape:connector-curvature="0" />
+    <text
+       xml:space="preserve"
+       style="font-size:11px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="12.626907"
+       y="262.92798"
+       id="text4726"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4728"
+         x="12.626907"
+         y="262.92798">s3.wsml</tspan><tspan
+         sodipodi:role="line"
+         x="12.626907"
+         y="276.67798"
+         id="tspan4732">s3.usdl</tspan><tspan
+         sodipodi:role="line"
+         x="12.626907"
+         y="290.42798"
+         id="tspan4730" /></text>
+    <text
+       xml:space="preserve"
+       style="font-size:11px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="14.187279"
+       y="391.76117"
+       id="text4726-4"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4728-8"
+         x="14.187279"
+         y="391.76117">db.wsml</tspan><tspan
+         sodipodi:role="line"
+         x="14.187279"
+         y="405.51117"
+         id="tspan4732-7">db.usdl</tspan><tspan
+         sodipodi:role="line"
+         x="14.187279"
+         y="419.26117"
+         id="tspan4730-0" /></text>
   </g>
 </svg>

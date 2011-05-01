@@ -15,9 +15,22 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.1 "
-   sodipodi:docname="nubisave_arc.svg">
+   sodipodi:docname="architecture1.svg">
   <defs
      id="defs4">
+    <marker
+       inkscape:stockid="EmptyTriangleOutL"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="EmptyTriangleOutL"
+       style="overflow:visible">
+      <path
+         id="path4072"
+         d="M 5.77,0.0 L -2.88,5.0 L -2.88,-5.0 L 5.77,0.0 z "
+         style="fill-rule:evenodd;fill:#FFFFFF;stroke:#000000;stroke-width:1.0pt;marker-start:none"
+         transform="scale(0.8) translate(-6,0)" />
+    </marker>
     <linearGradient
        id="linearGradient5409"
        osb:paint="solid">
@@ -62,8 +75,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4"
-     inkscape:cx="288.54224"
-     inkscape:cy="690.31071"
+     inkscape:cx="151.75653"
+     inkscape:cy="762.36762"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -80,7 +93,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -238,7 +251,7 @@
          y="328.64789">  NubiSave</tspan></text>
     <g
        id="g5596"
-       transform="translate(-128,-27.857143)">
+       transform="matrix(0.58430105,0,0,1,-37.324423,-27.857143)">
       <rect
          y="443.79074"
          x="261.42856"
@@ -246,17 +259,6 @@
          width="214.28572"
          id="rect5573"
          style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-      <text
-         sodipodi:linespacing="125%"
-         id="text5569-8"
-         y="478.38034"
-         x="261.54434"
-         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Microsoft JhengHei;-inkscape-font-specification:Microsoft JhengHei"
-         xml:space="preserve"><tspan
-           y="478.38034"
-           x="261.54434"
-           id="tspan5571-2"
-           sodipodi:role="line">     Space</tspan></text>
     </g>
     <path
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -271,15 +273,15 @@
     <text
        xml:space="preserve"
        style="font-size:20.54593658px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Microsoft JhengHei;-inkscape-font-specification:Microsoft JhengHei"
-       x="156.57196"
-       y="376.43997"
+       x="346.08472"
+       y="379.05679"
        id="text5569-0"
        sodipodi:linespacing="125%"
        transform="scale(0.91588259,1.091843)"><tspan
          sodipodi:role="line"
          id="tspan5571-5"
-         x="156.57196"
-         y="376.43997">  Web API</tspan></text>
+         x="346.08472"
+         y="379.05679">  REST API</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:0.51800000999999996;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:6.21600007999999970, 0.51800000999999996;stroke-dashoffset:1.60580002000000000"
        d="m 100.7589,225.97823 529.05363,1.33934"
@@ -301,7 +303,7 @@
          sodipodi:role="line"
          id="tspan5571-5-8"
          x="117.03378"
-         y="202.41843">Backend</tspan></text>
+         y="202.41843">  Backend</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:20.54593658px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Microsoft JhengHei;-inkscape-font-specification:Microsoft JhengHei"
@@ -315,7 +317,7 @@
          sodipodi:role="line"
          id="tspan5571-5-8-8"
          x="117.8137"
-         y="350.26807">Middleware</tspan></text>
+         y="350.26807">  Middleware</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:20.54593658px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Microsoft JhengHei;-inkscape-font-specification:Microsoft JhengHei"
@@ -329,15 +331,10 @@
          sodipodi:role="line"
          id="tspan5571-5-8-8-7"
          x="117.8137"
-         y="453.63196">Frontend</tspan></text>
-    <path
-       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="M 372.85714,378.07647 239.28571,415.93361"
-       id="path6712"
-       inkscape:connector-curvature="0" />
+         y="453.63196">  Frontend</tspan></text>
     <g
        id="g5596-8"
-       transform="translate(114.28572,-27.142844)">
+       transform="matrix(0.54775706,0,0,1,351.42415,-27.142844)">
       <rect
          y="443.79074"
          x="261.42856"
@@ -345,21 +342,10 @@
          width="214.28572"
          id="rect5573-9"
          style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-      <text
-         sodipodi:linespacing="125%"
-         id="text5569-8-3"
-         y="478.38034"
-         x="261.54434"
-         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Microsoft JhengHei;-inkscape-font-specification:Microsoft JhengHei"
-         xml:space="preserve"><tspan
-           y="478.38034"
-           x="261.54434"
-           id="tspan5571-2-4"
-           sodipodi:role="line">       KDE</tspan></text>
     </g>
     <path
-       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 370,378.07647 113.57143,37.85714"
+       style="fill:none;stroke:#000000;stroke-width:1.07050645px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 370.03525,378.11172 125.64378,39.21521"
        id="path6741"
        inkscape:connector-curvature="0" />
     <text
@@ -393,5 +379,72 @@
          id="tspan5571-5-9-9"
          x="492.40765"
          y="216.27161"> Anbieterspezifisch</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text5569-8-3"
+       y="458.20343"
+       x="445.50977"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Microsoft JhengHei;-inkscape-font-specification:Microsoft JhengHei"
+       xml:space="preserve"><tspan
+         y="458.20343"
+         x="445.50977"
+         id="tspan5571-2-4"
+         sodipodi:role="line">       KDE</tspan></text>
+    <g
+       id="g5596-8-6"
+       transform="matrix(0.54775706,0,0,1,170.91281,-27.142845)">
+      <rect
+         y="443.79074"
+         x="261.42856"
+         height="47.142857"
+         width="214.28572"
+         id="rect5573-9-5"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    </g>
+    <text
+       sodipodi:linespacing="125%"
+       id="text5569-8-3-8"
+       y="457.48917"
+       x="265.1413"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Microsoft JhengHei;-inkscape-font-specification:Microsoft JhengHei"
+       xml:space="preserve"><tspan
+         y="457.48917"
+         x="265.1413"
+         id="tspan5571-2-4-8"
+         sodipodi:role="line">     Client</tspan></text>
+    <text
+       sodipodi:linespacing="125%"
+       id="text5569-8"
+       y="449.91519"
+       x="111.762"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Microsoft JhengHei;-inkscape-font-specification:Microsoft JhengHei"
+       xml:space="preserve"><tspan
+         y="449.91519"
+         x="111.762"
+         id="tspan5571-2"
+         sodipodi:role="line"> Space</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 371.42857,378.07647 0,39.28571"
+       id="path3115"
+       inkscape:connector-curvature="0" />
+    <text
+       xml:space="preserve"
+       style="font-size:20.54593658px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Microsoft JhengHei;-inkscape-font-specification:Microsoft JhengHei"
+       x="134.98128"
+       y="376.94064"
+       id="text5569-0-4"
+       sodipodi:linespacing="125%"
+       transform="scale(0.91588259,1.091843)"><tspan
+         sodipodi:role="line"
+         id="tspan5571-5-6"
+         x="134.98128"
+         y="376.94064">WSML/USDL</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2, 1;stroke-dashoffset:0;marker-end:url(#EmptyTriangleOutL)"
+       d="m 115.42857,440.93361 -7.14286,0 1.42858,-250.71428"
+       id="path3138"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccc" />
   </g>
 </svg>

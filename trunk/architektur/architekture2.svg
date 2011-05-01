@@ -14,9 +14,22 @@
    id="svg5657"
    version="1.1"
    inkscape:version="0.48.1 "
-   sodipodi:docname="nubisave_arc2.svg">
+   sodipodi:docname="architecture2.svg">
   <defs
      id="defs5659">
+    <marker
+       inkscape:stockid="EmptyTriangleOutL"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="EmptyTriangleOutL"
+       style="overflow:visible">
+      <path
+         id="path4028"
+         d="M 5.77,0.0 L -2.88,5.0 L -2.88,-5.0 L 5.77,0.0 z "
+         style="fill-rule:evenodd;fill:#FFFFFF;stroke:#000000;stroke-width:1.0pt;marker-start:none"
+         transform="scale(0.8) translate(-6,0)" />
+    </marker>
     <filter
        color-interpolation-filters="sRGB"
        inkscape:collect="always"
@@ -36,7 +49,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="1.4"
      inkscape:cx="195.98789"
-     inkscape:cy="412.2866"
+     inkscape:cy="802.39923"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -53,7 +66,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -167,7 +180,7 @@
        id="text6525"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
-         id="tspan6527"></tspan></text>
+         id="tspan6527" /></text>
     <rect
        style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        id="rect6636-3-8-7"
@@ -188,7 +201,7 @@
          y="421.66605">FUSE Module</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:0.52600002;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:12.624, 12.624;stroke-dashoffset:1.63059995"
-       d="m 95.345888,754.37673 545.593942,1.33934"
+       d="m 95.345888,746.37673 545.593942,1.33934"
        id="path5716-6"
        inkscape:connector-curvature="0" />
     <path
@@ -200,18 +213,18 @@
        sodipodi:rx="50"
        sodipodi:ry="21.785715"
        d="m 399.28571,457.00504 a 50,21.785715 0 1 1 -100,0 50,21.785715 0 1 1 100,0 z"
-       transform="matrix(1.1424122,0,0,0.79078218,-28.548422,393.65496)" />
+       transform="matrix(1.1424122,0,0,0.79078218,-28.548422,385.65496)" />
     <text
        xml:space="preserve"
        style="font-size:20px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
        x="321.01556"
-       y="761.90356"
+       y="753.90356"
        id="text6419-0"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan6421-1"
          x="321.01556"
-         y="761.90356">System I/O</tspan></text>
+         y="753.90356">System I/O</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:0.84667158px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="M 368.57143,531.55081 370,674.92138"
@@ -317,7 +330,7 @@
          sodipodi:role="line"
          id="tspan5571-2-5-7"
          x="169.96875"
-         y="831.95172">   System I/O 2 Web</tspan></text>
+         y="831.95172">            WebDAV</tspan></text>
     <path
        sodipodi:type="arc"
        style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-opacity:1"
@@ -338,10 +351,10 @@
          sodipodi:role="line"
          id="tspan6421-1-6"
          x="320.72986"
-         y="892.07648"> Web API</tspan></text>
+         y="892.07648"> REST API</tspan></text>
     <g
        id="g5596"
-       transform="translate(-115.42857,496.07143)">
+       transform="translate(-185.42857,536.07143)">
       <rect
          y="443.79074"
          x="261.42856"
@@ -363,7 +376,7 @@
     </g>
     <g
        id="g5596-8"
-       transform="translate(126.85716,496.78573)">
+       transform="translate(190.85716,536.78573)">
       <rect
          y="443.79074"
          x="261.42856"
@@ -383,15 +396,69 @@
            id="tspan5571-2-4"
            sodipodi:role="line">       KDE</tspan></text>
     </g>
+    <g
+       id="g5596-5"
+       transform="translate(7.2857254,477.14287)">
+      <rect
+         y="443.79074"
+         x="261.42856"
+         height="47.142857"
+         width="214.28572"
+         id="rect5573-5"
+         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text5569-8-2"
+         y="478.38034"
+         x="261.54434"
+         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Microsoft JhengHei;-inkscape-font-specification:Microsoft JhengHei"
+         xml:space="preserve"><tspan
+           y="478.38034"
+           x="261.54434"
+           id="tspan5571-2-9-5"
+           sodipodi:role="line">     Client</tspan></text>
+    </g>
     <path
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="M 369.28571,903.07647 252.85714,940.21933"
-       id="path7031"
+       d="m 372.14286,901.6479 0,18.57143"
+       id="path3078"
        inkscape:connector-curvature="0" />
     <path
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 602.85714,965.93361 55,0.71429 0,-193.57143 L 370,772.36218 l 0,0"
-       id="path7037"
+       d="m 370,773.07647 285,0 1.42857,207.14286"
+       id="path3080"
        inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.98829484px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 370,773.07647 -279.06477,0 -1.395323,207.14286"
+       id="path3082"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 371.42857,764.50504 0,8.57143"
+       id="path3084"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:2, 1;stroke-dashoffset:0;marker-end:url(#EmptyTriangleOutL)"
+       d="m 75.714286,1007.3622 -7.857143,0 0,-755.00002 162.857147,0"
+       id="path3088"
+       inkscape:connector-curvature="0" />
+    <text
+       xml:space="preserve"
+       style="font-size:11px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="75"
+       y="277.36218"
+       id="text3090"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3092"
+         x="75"
+         y="277.36218"
+         style="font-size:20px">WSML</tspan><tspan
+         sodipodi:role="line"
+         x="75"
+         y="302.36218"
+         id="tspan3094"
+         style="font-size:20px">USDL</tspan></text>
   </g>
 </svg>
