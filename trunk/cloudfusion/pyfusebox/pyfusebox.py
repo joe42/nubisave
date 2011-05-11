@@ -80,8 +80,8 @@ class PyFuseBox(Operations):
 
     """def statfs(self, path):
         return dict(f_bsize=512, f_blocks=4096, f_bavail=2048) """
-    """def rename(self, old, new):
-        self.files[new] = self.files.pop(old)"""
+    def rename(self, old, new):
+        self.io_api.move(old, new)
 
     def create(self, path, mode):
         self.f.write( "create %s with mode %s\n" % (path, str(mode)))
