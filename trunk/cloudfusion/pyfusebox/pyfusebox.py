@@ -38,6 +38,9 @@ class PyFuseBox(Operations):
             metadata = self.io_api._get_metadata(path)
         except: 
             raise FuseOSError(ENOENT)
+        st['st_atime']= metadata['modified']
+        st['st_mtime']= metadata['modified']
+        st['st_ctime']= metadata['modified']
         if metadata['is_dir']:
             self.f.write( " isDir\n")
             st['st_mode'] = 0777 | stat.S_IFDIR
