@@ -57,7 +57,7 @@ class PyFuseBox(Operations):
         self.temp_file = tempfile.SpooledTemporaryFile()
         if self.io_api.exists(path):
             file = self.io_api.get_file(path)
-            self.temp_file.write(file.read())
+            self.temp_file.write(file)
             self.temp_file.seek(0)
         self.io_api.store_fileobject(self.temp_file,path)
         return 0
@@ -117,13 +117,13 @@ class PyFuseBox(Operations):
         self.f.write( "read %s bytes from %s at %s - fh %s\n" % (size, path, offset, fh))
         file = self.io_api.get_file(path)
         #file.seek(offset)
-        return  file.read(size)
+        return  file[offset: offset+size]
 
     def write(self, path, buf, offset, fh):
         self.f.write( "write %s ... from %s at %s - fh: %s\n" % (path, buf[0:10], offset, fh))
         self.temp_file = tempfile.SpooledTemporaryFile()
         file = self.io_api.get_file(path)
-        self.temp_file.write(file.read())
+        self.temp_file.write(file)
         self.temp_file.seek(offset)
         self.temp_file.write(buf)
         self.temp_file.seek(0)

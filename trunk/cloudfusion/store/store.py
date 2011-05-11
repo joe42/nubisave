@@ -69,7 +69,8 @@ class Store(object):
         raise NotImplementedError()
         
     def move(self, path_to_src, path_to_dest):
-        raise NotImplementedError()
+        self.duplicate(path_to_src, path_to_dest)
+        self.delete(path_to_src)
  
     def get_modified(self, path):
         resp = self._get_metadata(path)

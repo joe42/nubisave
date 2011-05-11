@@ -58,7 +58,7 @@ class DropboxStore(Store):
         resp = db_client.get_file(root, path_to_file)
         if resp.status != 200:
             logger.warn("could not get file: " +path_to_file+"\ndata: "+resp.data['error'])
-        return resp
+        return resp.read()
     
     def store_fileobject(self, fileobject, path):
         logger.debug("storing file object to "+path)
@@ -88,10 +88,11 @@ class DropboxStore(Store):
     def create_directory(self, directory):
         logger.debug("creating directory " +directory)
         self._raise_error_if_invalid_path(directory)
+        if directory == "/":
+            return
         resp = db_client.file_create_folder(root, directory)
         if resp.status != 200:
             logger.warn("could not create directory: " +directory+"\ndata: "+resp.data['error'])
-        return resp.status
         #assert_all_in(resp.data.keys(), [u'thumb_exists', u'bytes', u'modified', u'path', u'is_dir', u'size', u'root', u'icon'])
         
     def duplicate(self, path_to_src, path_to_dest):
