@@ -1,5 +1,6 @@
 import os
 from cloudfusion.store.dropbox.dropbox_store import DropboxStore
+from cloudfusion.store.sugarsync.sugarsync_store import SugarsyncStore
 from functools import partial
 from nose.tools import *
 from nose.tools import eq_ as eq
@@ -19,23 +20,24 @@ REMOTE_DUPLICATE_TESTFILE_ORIGIN = REMOTE_TESTDIR+"/"+REMOTE_TESTFILE_NAME
 REMOTE_DUPLICATE_TESTFILE_COPY = REMOTE_TESTDIR+"/"+"copy of "+REMOTE_TESTFILE_NAME 
 REMOTE_MOVE_TESTDIR_ORIGIN = REMOTE_TESTDIR+"/"+"moving directory"
 REMOTE_MOVE_TESTDIR_RENAMED = REMOTE_TESTDIR+"/"+"moving directory renamed"
-REMOTE_MOVE_TESTFILE_RENAMED = REMOTE_TESTDIR+"/"+"moving file renamed"
+REMOTE_MOVE_TESTFILE_RENAMED = "moving file renamed"
 REMOTE_NON_EXISTANT_FILE = REMOTE_TESTDIR+"/"+"i_am_a_file_which_does_not_exist"
 REMOTE_NON_EXISTANT_DIR = REMOTE_TESTDIR+"/"+"i_am_a_folder_which_does_not_exist"
 REMOTE_DELETED_FILE = REMOTE_TESTDIR+"/"+"i_am_a_file_which_is_deleted"
 REMOTE_DELETED_DIR = REMOTE_TESTDIR+"/"+"i_am_a_folder_which_is_deleted"
 
 io_apis = []
+io_apis.append( SugarsyncStore("quirksquarks@web.de","Nubisave123") )
 io_apis.append( DropboxStore() )
 
 def setUp():
     for io_api in io_apis:
         io_api.create_directory(REMOTE_TESTDIR)
-    
+        
 def tearDown():
     for io_api in io_apis:
         io_api.delete(REMOTE_TESTDIR)
-        
+ 
 def test_io_apis():
     for io_api in io_apis:
         test = partial(_test_fail_on_is_dir, io_api)
@@ -58,9 +60,6 @@ def test_io_apis():
         yield (test, )
         test = partial(_test_duplicate, io_api)
         test.description = io_api.get_name()+":"+" "+"copying (duplicating) file and directory"
-        yield (test, )
-        test = partial(_test_get_free_space, io_api)
-        test.description = io_api.get_name()+":"+" "+"get available space"
         yield (test, )
         test = partial(_test_move_directory, io_api)
         test.description = io_api.get_name()+":"+" "+"moving directory"
@@ -104,14 +103,13 @@ def _test_get_file(io_api):
     io_api.store_file(LOCAL_TESTFILE_PATH, REMOTE_TESTDIR, REMOTE_TESTFILE_NAME)
     resp = io_api.get_file(REMOTE_TESTDIR+"/"+REMOTE_TESTFILE_NAME)
     _delete_file(io_api, REMOTE_TESTFILE_NAME, REMOTE_TESTDIR)
-    assert len(resp.read()) == 4, "length of file from remote side should be 4 bytes, since in testfile I stored the word 'test'"
-    resp.close()
+    assert len(resp) == 4, "length of file from remote side should be 4 bytes, since in testfile I stored the word 'test'"
     
 def _test_fail_on_is_dir(io_api): 
     assert_raises(NoSuchFilesytemObjectError, io_api.is_dir, REMOTE_NON_EXISTANT_FILE)
     assert_raises(NoSuchFilesytemObjectError, io_api.is_dir, REMOTE_NON_EXISTANT_DIR)
     io_api.store_file(LOCAL_TESTFILE_PATH, REMOTE_TESTDIR)
-    io_api.delete(REMOTE_TESTDIR+"/"+LOCAL_TESTFILE_PATH)
+    io_api.delete(REMOTE_TESTDIR+"/"+LOCAL_TESTFILE_NAME)
     io_api.create_directory(REMOTE_DELETED_DIR)
     io_api.delete(REMOTE_DELETED_DIR)
     assert_raises(NoSuchFilesytemObjectError, io_api.is_dir, REMOTE_DELETED_FILE)
@@ -121,7 +119,7 @@ def _test_fail_on_get_bytes(io_api):
     assert_raises(NoSuchFilesytemObjectError, io_api.get_bytes, REMOTE_NON_EXISTANT_FILE)
     assert_raises(NoSuchFilesytemObjectError, io_api.get_bytes, REMOTE_NON_EXISTANT_DIR)
     io_api.store_file(LOCAL_TESTFILE_PATH, REMOTE_TESTDIR)
-    io_api.delete(REMOTE_TESTDIR+"/"+LOCAL_TESTFILE_PATH)
+    io_api.delete(REMOTE_TESTDIR+"/"+LOCAL_TESTFILE_NAME)
     io_api.create_directory(REMOTE_DELETED_DIR)
     io_api.delete(REMOTE_DELETED_DIR)
     assert_raises(NoSuchFilesytemObjectError, io_api.get_bytes, REMOTE_DELETED_FILE)
@@ -141,7 +139,7 @@ def _test_get_bytes(io_api):
     io_api.store_file(LOCAL_TESTFILE_PATH, REMOTE_TESTDIR) 
     res = io_api.get_bytes(REMOTE_TESTDIR+"/"+LOCAL_TESTFILE_NAME)
     io_api.delete(REMOTE_TESTDIR+"/"+LOCAL_TESTFILE_NAME)
-    assert res == 4
+    assert res == 4, "stored file should be 4 bytes big, but has a size of %s bytes" % res
 
 def _test_is_dir(io_api):
     assert io_api.is_dir(REMOTE_TESTDIR) == True
@@ -218,8 +216,10 @@ def _test_create_delete_directory(io_api):
 
 def _dir_exists(io_api, path):
     exists = io_api.exists(path)
+    if not exists:
+        return False
     is_dir = io_api.is_dir(path)
-    return exists and is_dir
+    return is_dir
 
 def _create_directories(io_api, root_dir="/"):
     if root_dir[-1] != "/":
@@ -279,7 +279,7 @@ def _delete_file(io_api, file, root_dir="/"):
     
 def _test_duplicate(io_api):
     io_api.create_directory(REMOTE_DUPLICATE_TESTDIR_ORIGIN)
-    io_api.store_file(LOCAL_TESTFILE_PATH, REMOTE_TESTDIR) 
+    io_api.store_file(LOCAL_TESTFILE_PATH, REMOTE_TESTDIR, REMOTE_TESTFILE_NAME) 
     io_api.duplicate(REMOTE_DUPLICATE_TESTDIR_ORIGIN, REMOTE_DUPLICATE_TESTDIR_COPY)
     io_api.duplicate(REMOTE_DUPLICATE_TESTFILE_ORIGIN, REMOTE_DUPLICATE_TESTFILE_COPY)
     io_api.delete(REMOTE_DUPLICATE_TESTDIR_ORIGIN)
