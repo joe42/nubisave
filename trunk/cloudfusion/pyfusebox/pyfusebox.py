@@ -74,6 +74,9 @@ class PyFuseBox(Operations):
     
     def rmdir(self, path):
         self.io_api.delete(path)
+        
+    def mkdir(self, path, mode):
+        self.io_api.create_directory(path)
 
     """def statfs(self, path):
         return dict(f_bsize=512, f_blocks=4096, f_bavail=2048) """
