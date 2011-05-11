@@ -32,14 +32,8 @@ class PyFuseBox(Operations):
 
         #io_api.store_file(file, root_dir)
     def getattr(self, path, fh=None):
-        self.f.write( "getattr "+path)
+        self.f.write( "getattr "+path+"\n")
         st = zstat()
-        if path == "/":
-            self.f.write( " isDir\n")
-            st['st_mode']= 0777 | stat.S_IFDIR
-            st['st_nlink']=2
-            st['st_size'] = 1
-            return st
         try:
             metadata = self.io_api._get_metadata(path)
         except: 
@@ -80,8 +74,21 @@ class PyFuseBox(Operations):
         self.f.write( "mkdir %s with mode: %s\n" % (path, str(mode)))
         self.io_api.create_directory(path)
 
-    """def statfs(self, path):
-        return dict(f_bsize=512, f_blocks=4096, f_bavail=2048) """
+    def statfs(self, path):
+        """ This implementation should be looked at by a linux guru, since I have little experience concerning filesystems. """
+        ret = {}
+        ret['f_bsize'] = 4096 #Preferred file system block size.
+        ret['f_bavail'] = int( self.io_api.get_free_space() / ret['f_bsize'] ) #Free blocks available to non-super user.
+        ret['f_bfree'] = int( self.io_api.get_free_space() / ret['f_bsize'] ) #Total number of free blocks.
+        ret['f_blocks'] = int( self.io_api.get_overall_space() / ret['f_bsize'] ) #Total number of blocks in the filesystem.
+        ret['f_favail'] = 810280 #Free nodes available to non-super user -- not sure about this
+        ret['f_ffree'] = ret['f_favail'] #Total number of free file nodes.
+        ret['f_files'] = 810280 #Total number of file nodes -- not sure about this
+        ret['f_flag'] = 4096 #Flags. System dependent: see statvfs() man page.
+        ret['f_frsize'] = 4096 #Fundamental file system block size.
+        ret['f_namemax'] = 255 #Maximum file name length.
+        return ret
+    
     def rename(self, old, new):
         self.f.write( "rename %s to %s\n" % (old, new))
         self.io_api.move(old, new)
