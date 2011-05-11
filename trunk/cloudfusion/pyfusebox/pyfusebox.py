@@ -71,9 +71,9 @@ class PyFuseBox(Operations):
         self.temp_file = tempfile.SpooledTemporaryFile()
         self.io_api.store_fileobject(self.temp_file,path)
         return 0
-    """def rmdir(self, path):
-        self.files.pop(path)
-        self.files['/']['st_nlink'] -= 1"""
+    
+    def rmdir(self, path):
+        self.io_api.delete(path)
 
     """def statfs(self, path):
         return dict(f_bsize=512, f_blocks=4096, f_bavail=2048) """
