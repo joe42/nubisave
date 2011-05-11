@@ -93,8 +93,8 @@ class PyFuseBox(Operations):
         self.data[path] = self.data[path][:length]
         self.files[path]['st_size'] = length"""
     
-    """def unlink(self, path):
-        self.files.pop(path)"""
+    def unlink(self, path):
+        self.io_api.delete(path)
 
     def read(self, path, size, offset, fh):
         self.f.write( "read %s bytes from %s at %s - fh %s\n" % (size, path, offset, fh))
