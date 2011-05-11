@@ -73,14 +73,17 @@ class PyFuseBox(Operations):
         return 0
     
     def rmdir(self, path):
+        self.f.write( "rmdir %s\n" % (path))
         self.io_api.delete(path)
         
     def mkdir(self, path, mode):
+        self.f.write( "mkdir %s with mode: %s\n" % (path, str(mode)))
         self.io_api.create_directory(path)
 
     """def statfs(self, path):
         return dict(f_bsize=512, f_blocks=4096, f_bavail=2048) """
     def rename(self, old, new):
+        self.f.write( "rename %s to %s\n" % (old, new))
         self.io_api.move(old, new)
 
     def create(self, path, mode):
@@ -97,6 +100,7 @@ class PyFuseBox(Operations):
         self.files[path]['st_size'] = length"""
     
     def unlink(self, path):
+        self.f.write( "unlink %s\n" % path)
         self.io_api.delete(path)
 
     def read(self, path, size, offset, fh):
