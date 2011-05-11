@@ -165,6 +165,13 @@ class DropboxStore(Store):
     def _get_metadata(self, path):
         logger.debug("getting metadata for "+path)
         self._raise_error_if_invalid_path(path)
+        if path == "/": # workaraund for root metadata
+            ret = {}
+            ret["bytes"] = 0
+            ret["modified"] = time.time()
+            ret["path"] = "/"
+            ret["is_dir"] = True
+            return ret;
         resp = db_client.metadata(root, path, list=False)
         object_is_deleted = 'is_deleted' in resp.data and resp.data['is_deleted']
         if resp.status == 404 or object_is_deleted:
@@ -186,7 +193,7 @@ class DropboxStore(Store):
         try:
             ret["modified"] = time.mktime( time.strptime(data["modified"], "%a, %d %b %Y %H:%M:%S +0000") ) - self.time_difference
         except Exception as x:
-            logger.warn("Time conversion error: %s" % str(x))
+            logger.warn("Time conversion error: %s" % str(data["modified"]))
             raise DateParseError("Error parsing modified attribute: %s" % str(x));
         ret["path"] = data["path"]
         ret["is_dir"] = data["is_dir"]
