@@ -1,0 +1,22 @@
+nach http://wiki.ubuntuusers.de/apache/webdav
+
+Apache muss installiert werden:
+
+sudo apt-get install apache2
+
+WebDAV-Module in Apache anschalten:
+
+sudo a2enmod dav
+sudo a2enmod dav_fs
+
+WebDAV vhost in apache
+
+sudo nano /etc/apache2/sites-available/default
+
+eintragen, damit webdav unter "localhost/webdav" zu erreichen ist:
+
+Alias /webdav "/home/demo/nubisave/"
+<Directory "/home/demo/nubisave/">
+ DAV on
+ Options +Indexes
+</Directory>
