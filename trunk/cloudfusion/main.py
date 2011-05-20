@@ -7,6 +7,7 @@ from cloudfusion.pyfusebox.pyfusebox import PyFuseBox
 from cloudfusion.fuse import FUSE
 from cloudfusion.store.dropbox.dropbox_store import DropboxStore
 from cloudfusion.store.sugarsync.sugarsync_store import SugarsyncStore
+from cloudfusion.store.caching_store import CachingStore
 import os, sys, stat,  time
 from dropbox import auth
 import getpass
@@ -40,19 +41,21 @@ def get_store(service, password=None):
     return store
 
 def check_arguments(args):
-    if not len(args) in [2,4]:
-        print 'usage: %s mountpoint  [service] [service password]' % args[0]
+    if not len(args) in [2,5]:
+        print 'usage: %s mountpoint  [service] [service password] [cache]' % args[0]
         exit(1)
 
 def main():
     check_arguments(sys.argv)
     service = "dropbox"
     password  = None
-    if len(sys.argv) in [3,4]:
+    if len(sys.argv) in [3,5]:
         service = sys.argv[2]
-    if len(sys.argv) == 4:
+    if len(sys.argv) in [4,5]:
         password= sys.argv[3]
     store = get_store(service, password)
+    if "cache" in sys.argv:
+        store = CachingStore( store )
     fuse_operations = PyFuseBox(sys.argv[1], store)
     FUSE(fuse_operations, sys.argv[1], foreground=False, nothreads=True)
     
