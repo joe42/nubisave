@@ -54,7 +54,7 @@ def main():
         password= sys.argv[3]
     store = get_store(service, password)
     fuse_operations = PyFuseBox(sys.argv[1], store)
-    FUSE(fuse_operations, sys.argv[1], foreground=True, nothreads=True)
+    FUSE(fuse_operations, sys.argv[1], foreground=False, nothreads=True)
     
 if __name__ == '__main__':
     main()
