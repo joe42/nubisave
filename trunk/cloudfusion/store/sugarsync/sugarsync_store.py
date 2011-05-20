@@ -10,7 +10,6 @@ from cloudfusion.store.store import *
 import logging
 import logging.config
 import os.path
-from cloudfusion.store.sugarsync.sugarsync_rest import *
 from cloudfusion.store.sugarsync.client import SugarsyncClient
 from cloudfusion.util.xmlparser import DictXMLParser
 from cloudfusion.util.string import *
