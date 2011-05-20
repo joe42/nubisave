@@ -5,8 +5,11 @@ from functools import partial
 from nose.tools import *
 from nose.tools import eq_ as eq
 from cloudfusion.store.store import *
+from cloudfusion.store.caching_store import CachingStore
 import os.path, time
 import tempfile
+from dropbox import auth
+from ConfigParser import SafeConfigParser
 
 LOCAL_TESTFILE_PATH = "cloudfusion/tests/testfile"
 REMOTE_TESTDIR = "/testdir"
@@ -26,11 +29,24 @@ REMOTE_NON_EXISTANT_DIR = REMOTE_TESTDIR+"/"+"i_am_a_folder_which_does_not_exist
 REMOTE_DELETED_FILE = REMOTE_TESTDIR+"/"+"i_am_a_file_which_is_deleted"
 REMOTE_DELETED_DIR = REMOTE_TESTDIR+"/"+"i_am_a_folder_which_is_deleted"
 
+def get_dropbox_config():
+    return auth.Authenticator.load_config("cloudfusion/config/dropbox_testing.ini")
+
+def get_sugarsync_config():
+    config = SafeConfigParser()
+    config_file = open("cloudfusion/config/sugarsync_testing.ini", "r")
+    config.readfp(config_file)
+    return dict(config.items('auth'))
+
 io_apis = []
-io_apis.append( SugarsyncStore("quirksquarks@web.de","Nubisave123") )
-io_apis.append( DropboxStore() )
 
 def setUp():
+    dropbox_config = get_dropbox_config()
+    sugarsync_config = get_sugarsync_config()
+    io_apis.append( CachingStore( SugarsyncStore(sugarsync_config) ) )
+    io_apis.append( CachingStore( DropboxStore(dropbox_config) ) )
+    io_apis.append( SugarsyncStore(sugarsync_config) )
+    io_apis.append( DropboxStore(dropbox_config) )
     for io_api in io_apis:
         io_api.create_directory(REMOTE_TESTDIR)
         
@@ -40,6 +56,9 @@ def tearDown():
  
 def test_io_apis():
     for io_api in io_apis:
+#        test = partial(_test_with_root_filepath, io_api)
+#        test.description = io_api.get_name()+":"+" "+"fail on determining if file system object is a file or a directory"
+#        yield (test, ) 
         test = partial(_test_fail_on_is_dir, io_api)
         test.description = io_api.get_name()+":"+" "+"fail on determining if file system object is a file or a directory"
         yield (test, ) 
@@ -98,12 +117,27 @@ def test_io_apis():
 def _assert_all_in(in_list, all_list):
     assert all(item in in_list for item in all_list), "expected all items in %s to be found in %s" % (all_list, in_list)
     
+#def _test_with_root_filepath(io_api):
+#    listing = io_api.get_directory_listing("/")
+#    cached_listing1 = io_api.get_directory_listing("/")
+#    cached_listing2 = io_api.get_directory_listing("/")
+#    root = REMOTE_TESTDIR+"/"
+#    _assert_all_in(listing, [root+'Test1',root+"tesT2",root+"testdub",root+"testcasesensitivity",root+LOCAL_TESTFILE_NAME]) 
+#    _assert_all_in(cached_listing1, [root+'Test1',root+"tesT2",root+"testdub",root+"testcasesensitivity",root+LOCAL_TESTFILE_NAME]) 
+#    _assert_all_in(cached_listing2, [root+'Test1',root+"tesT2",root+"testdub",root+"testcasesensitivity",root+LOCAL_TESTFILE_NAME]) 
+#    io_api.store_file(LOCAL_TESTFILE_PATH, REMOTE_TESTDIR, REMOTE_TESTFILE_NAME)
+#    resp = io_api.get_file(REMOTE_TESTDIR+"/"+REMOTE_TESTFILE_NAME)
+#    _delete_file(io_api, REMOTE_TESTFILE_NAME, REMOTE_TESTDIR)
+#    assert len(resp) == 4, "length of file from remote side should be 4 bytes, since in testfile I stored the word 'test'"
+    
     
 def _test_get_file(io_api):
     io_api.store_file(LOCAL_TESTFILE_PATH, REMOTE_TESTDIR, REMOTE_TESTFILE_NAME)
-    resp = io_api.get_file(REMOTE_TESTDIR+"/"+REMOTE_TESTFILE_NAME)
+    first_resp = io_api.get_file(REMOTE_TESTDIR+"/"+REMOTE_TESTFILE_NAME)
+    second_resp = io_api.get_file(REMOTE_TESTDIR+"/"+REMOTE_TESTFILE_NAME)
     _delete_file(io_api, REMOTE_TESTFILE_NAME, REMOTE_TESTDIR)
-    assert len(resp) == 4, "length of file from remote side should be 4 bytes, since in testfile I stored the word 'test'"
+    assert first_resp == second_resp, "first response should be same as second response, but %s != %s" % (first_resp, second_resp)
+    assert len(first_resp) == 4, "length of file from remote side should be 4 bytes, since in testfile I stored the word 'test' but is %s bytes" % len(first_resp)
     
 def _test_fail_on_is_dir(io_api): 
     assert_raises(NoSuchFilesytemObjectError, io_api.is_dir, REMOTE_NON_EXISTANT_FILE)

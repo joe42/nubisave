@@ -17,14 +17,6 @@ import tempfile
 logging.config.fileConfig('cloudfusion/config/logging.conf')
 logger = logging.getLogger('dropbox')
 
-config = auth.Authenticator.load_config("cloudfusion/config/testing.ini")
-dba = auth.Authenticator(config)
-access_token = dba.obtain_trusted_access_token(config['testing_user'], config['testing_password'])
-db_client = client.DropboxClient(config['server'], config['content_server'], config['port'], dba, access_token)
-root = config['root']
-
-CALLBACK_URL = 'http://printer.example.com/request_token_ready'
-RESOURCE_URL = 'http://' + config['server'] + '/0/oauth/echo'
 
 class ServerError(StoreAccessError):
     def __init__(self, msg):
@@ -42,8 +34,12 @@ class DropboxError(object):
 
 
 class DropboxStore(Store):
-    def __init__(self):
+    def __init__(self, config):
         self.dir_listing_cache = {}
+        dba = auth.Authenticator(config)
+        access_token = dba.obtain_trusted_access_token(config['user'], config['password'])
+        self.client = client.DropboxClient(config['server'], config['content_server'], config['port'], dba, access_token)
+        self.root = config['root']
         self.time_difference = self._get_time_difference()
         logger.debug("api initialized")
         super(DropboxStore, self).__init__() 
@@ -55,7 +51,7 @@ class DropboxStore(Store):
     def get_file(self, path_to_file): 
         logger.debug("getting file: " +path_to_file)
         self._raise_error_if_invalid_path(path_to_file)
-        resp = db_client.get_file(root, path_to_file)
+        resp = self.client.get_file(self.root, path_to_file)
         if resp.status != 200:
             logger.warn("could not get file: " +path_to_file+"\ndata: "+resp.data['error'])
         return resp.read()
@@ -65,21 +61,21 @@ class DropboxStore(Store):
         remote_file_name = os.path.basename(path)
         dest_dir = os.path.dirname(path);
         namable_file = NameableFile( fileobject, remote_file_name )
-        resp = db_client.put_file(root, dest_dir, namable_file) 
+        resp = self.client.put_file(self.root, dest_dir, namable_file) 
         if resp.status != 200:
             logger.warn("could not store file: " +dest_dir+remote_file_name+"\ndata: "+resp.data['error'])
     
     def delete(self, path):
         logger.debug("deleting " +path)
         self._raise_error_if_invalid_path(path)
-        resp = db_client.file_delete(root, path)
+        resp = self.client.file_delete(self.root, path)
         if resp.status != 200:
             logger.warn("could not delete " +path+"\ndata: "+resp.data['error'])
             #assert_all_in(resp.data.keys(), [u'is_deleted', u'thumb_exists', u'bytes', u'modified',u'path', u'is_dir', u'size', u'root', u'mime_type', u'icon'])
         
     def account_info(self):
         logger.debug("retrieving account info")
-        resp =  db_client.account_info()
+        resp =  self.client.account_info()
         if resp.status != 200:
             logger.warn("could not retrieve account data"+"\ndata: "+resp.data['error'])
             #assert_all_in(resp.data.keys(), [u'country', u'display_name', u'uid', u'quota_info'])
@@ -90,7 +86,7 @@ class DropboxStore(Store):
         self._raise_error_if_invalid_path(directory)
         if directory == "/":
             return
-        resp = db_client.file_create_folder(root, directory)
+        resp = self.client.file_create_folder(self.root, directory)
         if resp.status != 200:
             logger.warn("could not create directory: " +directory+"\ndata: "+resp.data['error'])
         #assert_all_in(resp.data.keys(), [u'thumb_exists', u'bytes', u'modified', u'path', u'is_dir', u'size', u'root', u'icon'])
@@ -99,7 +95,7 @@ class DropboxStore(Store):
         logger.debug("duplicating " +path_to_src+" to "+path_to_dest)
         self._raise_error_if_invalid_path(path_to_src)
         self._raise_error_if_invalid_path(path_to_dest)
-        resp = db_client.file_copy(root, path_to_src, path_to_dest)
+        resp = self.client.file_copy(self.root, path_to_src, path_to_dest)
         if resp.status != 200:
             logger.warn("could not duplicate " +path_to_src+" to "+path_to_dest+"\ndata: "+resp.data['error'])
         #ssert_all_in(resp.data.keys(), [u'thumb_exists', u'bytes', u'modified',u'path', u'is_dir', u'size', u'root', u'mime_type', u'icon'])
@@ -108,20 +104,20 @@ class DropboxStore(Store):
         logger.debug("moving " +path_to_src+" to "+path_to_dest)
         self._raise_error_if_invalid_path(path_to_src)
         self._raise_error_if_invalid_path(path_to_dest)
-        resp = db_client.file_move(root, path_to_src, path_to_dest)
+        resp = self.client.file_move(self.root, path_to_src, path_to_dest)
         if resp.status != 200:
             logger.warn("could not move " +path_to_src+" to "+path_to_dest+"\ndata: "+resp.data['error'])
     
     def get_overall_space(self):
         logger.debug("retrieving all space")
-        resp =  db_client.account_info()
+        resp =  self.client.account_info()
         if resp.status != 200:
             logger.warn("could not retrieve all space"+"\ndata: "+resp.data['error'])
         return resp.data[u'quota_info']["quota"]
 
     def get_used_space(self):
         logger.debug("retrieving used space")
-        resp =  db_client.account_info()
+        resp =  self.client.account_info()
         if resp.status != 200:
             logger.warn("could not retrieve used space"+"\ndata: "+resp.data['error'])
         return resp.data[u'quota_info']["shared"] + resp.data[u'quota_info']["normal"]
@@ -132,7 +128,7 @@ class DropboxStore(Store):
         hash = None
         if directory in self.dir_listing_cache:
             hash = self.dir_listing_cache[directory]['hash']
-        resp = db_client.metadata(root, directory, hash=hash, list=True)
+        resp = self.client.metadata(self.root, directory, hash=hash, list=True)
         if resp.status != 200: 
             if resp.status == 304: 
                 logger.debug("retrieving listing from cache " +directory)
@@ -173,7 +169,7 @@ class DropboxStore(Store):
             ret["path"] = "/"
             ret["is_dir"] = True
             return ret;
-        resp = db_client.metadata(root, path, list=False)
+        resp = self.client.metadata(self.root, path, list=False)
         object_is_deleted = 'is_deleted' in resp.data and resp.data['is_deleted']
         if resp.status == 404 or object_is_deleted:
             msg = None
@@ -204,7 +200,8 @@ class DropboxStore(Store):
         pass;
     
     def _get_time_difference(self):
-        resp =  db_client.account_info()
+        logger.debug("getting time difference")
+        resp =  self.client.account_info()
         return time.mktime( time.strptime(resp.headers['date'], "%a, %d %b %Y %H:%M:%S GMT") ) - time.time()
     
         

@@ -11,32 +11,39 @@ from cloudfusion.util.string import *
 #make thread safe by adding connection creation to every method call
 
 class SugarsyncClient(object):
-    def __init__(self, username, password):
-        self.conn = httplib.HTTPSConnection("api.sugarsync.com")
-        response = self.create_token(username, password)
+    def __init__(self, config):
+        self.host = config["host"]
+        self.server_url = config["server_url"]
+        self.access_key_id = config["access_key_id"]
+        self.private_access_key = config["private_access_key"] 
+        self.username = config["user"]
+        self.password = config["password"] 
+        response = self.create_token()
         self.token = response.getheader("location")
         partial_tree = {"authorization": {"user": ""}}
         DictXMLParser().populate_dict_with_XML_leaf_textnodes(response.data, partial_tree)
-        self.uid= regSearchString('https://api.sugarsync.com/user/(.*)', partial_tree['authorization']['user'])
-        
+        self.uid= regSearchString(self.server_url+'user/(.*)', partial_tree['authorization']['user'])
     
-    def create_token(self, username, password):
-        params = '<?xml version="1.0" encoding="UTF-8" ?><authRequest>    <username>%s</username>    <password>%s</password>    <accessKeyId>MTIzNzYzNjEzMDQ0MTE2ODQ2MDk</accessKeyId>    <privateAccessKey>NDM0NDRkZmU4OTExNDZiYjk5OTlmYWVlY2I4M2EzZjM</privateAccessKey></authRequest>' % (username, password)
-        headers = {"Host": "api.sugarsync.com"}#send application/xml; charset=UTF-8
-        self.conn.request("POST", "/authorization", params, headers)
-        response = HTTPResponse(self. conn.getresponse() )
+    def create_token(self):
+        params = '<?xml version="1.0" encoding="UTF-8" ?><authRequest>    <username>%s</username>    <password>%s</password>    <accessKeyId>%s</accessKeyId>    <privateAccessKey>%s</privateAccessKey></authRequest>' % (self.username, self.password, self.access_key_id, self.private_access_key)
+        headers = {"Host": self.host}#send application/xml; charset=UTF-8
+        conn = httplib.HTTPSConnection(self.host)
+        conn.request("POST", "/authorization", params, headers)
+        response = HTTPResponse( conn.getresponse() )
         return response
     
     def user_info(self):
-        headers = {"Host": "api.sugarsync.com", "Authorization: ": self.token}
-        self.conn.request("GET", "/user", None, headers)
-        response = HTTPResponse( self.conn.getresponse() )
+        headers = {"Host": self.host, "Authorization: ": self.token}
+        conn = httplib.HTTPSConnection(self.host)
+        conn.request("GET", "/user", None, headers)
+        response = HTTPResponse( conn.getresponse() )
         return response
     
     def get_file_metadata(self, path_to_file):
-        headers = {"Host": "api.sugarsync.com", "Authorization: ": self.token}
-        self.conn.request("GET", "/file/:sc:%s:%s" % (self.uid, path_to_file), None, headers)
-        response = HTTPResponse( self.conn.getresponse() )
+        headers = {"Host": self.host, "Authorization: ": self.token}
+        conn = httplib.HTTPSConnection(self.host)
+        conn.request("GET", "/file/:sc:%s:%s" % (self.uid, path_to_file), None, headers)
+        response = HTTPResponse( conn.getresponse() )
         return response
         """
        <?xml version="1.0" encoding="UTF-8"?>
@@ -53,16 +60,18 @@ class SugarsyncClient(object):
 
        """  
     def get_dir_listing(self, path):
-        headers = {"Host": "api.sugarsync.com", "Authorization: ": self.token}
-        self.conn.request("GET", "/folder/:sc:%s:%s/contents" % (self.uid, path), None, headers)
-        response = HTTPResponse( self.conn.getresponse() )
+        headers = {"Host": self.host, "Authorization: ": self.token}
+        conn = httplib.HTTPSConnection(self.host)
+        conn.request("GET", "/folder/:sc:%s:%s/contents" % (self.uid, path), None, headers)
+        response = HTTPResponse( conn.getresponse() )
         return response
     
     
     def get_folder_metadata(self, path):
-        headers = {"Host": "api.sugarsync.com", "Authorization: ": self.token}
-        self.conn.request("GET", "/folder/:sc:%s:%s" % (self.uid, path), None, headers)
-        response = HTTPResponse( self.conn.getresponse() )
+        headers = {"Host": self.host, "Authorization: ": self.token}
+        conn = httplib.HTTPSConnection(self.host)
+        conn.request("GET", "/folder/:sc:%s:%s" % (self.uid, path), None, headers)
+        response = HTTPResponse( conn.getresponse() )
         return response
         """
 <?xml version="1.0" encoding="UTF-8"?>
@@ -80,53 +89,59 @@ class SugarsyncClient(object):
        """
     
     def get_file(self, path_to_file):
-        headers = {"Host": "api.sugarsync.com", "Authorization: ": self.token}
+        headers = {"Host": self.host, "Authorization: ": self.token}
         #metadata = self.get_metadata(path_to_file)
         #partial_tree = {"file": {"displayName": "", "size": "", "lastModified": "", "timeCreated": "", "mediaType": "", "presentOnServer": "", "parent": "", "fileData": ""}}
         #DictXMLParser().populate_dict_with_XML_leaf_textnodes(metadata.data, partial_tree)
-        self.conn.request("GET", "/file/:sc:%s:%s/data" % (self.uid, path_to_file), None, headers)
-        response = HTTPResponse( self.conn.getresponse() )
+        conn = httplib.HTTPSConnection(self.host)
+        conn.request("GET", "/file/:sc:%s:%s/data" % (self.uid, path_to_file), None, headers)
+        response = HTTPResponse( conn.getresponse() )
         return response
     
     def put_file(self, fileobject, path_to_file):
-        headers = {"Host": "api.sugarsync.com", "Authorization: ": self.token}
+        headers = {"Host": self.host, "Authorization: ": self.token}
         print self.token
-        self.conn.request("PUT", "/file/:sc:%s:%s/data" % (self.uid, path_to_file), fileobject.read(), headers)
-        response = HTTPResponse( self.conn.getresponse() )
+        conn = httplib.HTTPSConnection(self.host)
+        conn.request("PUT", "/file/:sc:%s:%s/data" % (self.uid, path_to_file), fileobject.read(), headers)
+        response = HTTPResponse( conn.getresponse() )
         return response
     
     def create_file(self, directory, name, mime='text/x-cloudfusion'):
-        headers = {"Host": "api.sugarsync.com", "Authorization: ": self.token}
+        headers = {"Host": self.host, "Authorization: ": self.token}
         params = '<?xml version="1.0" encoding="UTF-8"?><file><displayName>%s</displayName><mediaType>%s</mediaType></file>' % (name, mime)
-        self.conn.request("POST", "/folder/:sc:%s:%s" % (self.uid, directory), params, headers)
-        response = HTTPResponse( self.conn.getresponse() )
+        conn = httplib.HTTPSConnection(self.host)
+        conn.request("POST", "/folder/:sc:%s:%s" % (self.uid, directory), params, headers)
+        response = HTTPResponse( conn.getresponse() )
         return response
         
-    
     def delete_file(self, path):
-        headers = {"Host": "api.sugarsync.com", "Authorization: ": self.token}
-        self.conn.request("DELETE", "/file/:sc:%s:%s" % (self.uid, path), None, headers)
-        response = HTTPResponse( self.conn.getresponse() )
+        headers = {"Host": self.host, "Authorization: ": self.token}
+        conn = httplib.HTTPSConnection(self.host)
+        conn.request("DELETE", "/file/:sc:%s:%s" % (self.uid, path), None, headers)
+        response = HTTPResponse( conn.getresponse() )
         return response
     
     def delete_folder(self, path):
-        headers = {"Host": "api.sugarsync.com", "Authorization: ": self.token}
-        self.conn.request("DELETE", "/folder/:sc:%s:%s" % (self.uid, path), None, headers)
-        response = HTTPResponse( self.conn.getresponse() )
+        headers = {"Host": self.host, "Authorization: ": self.token}
+        conn = httplib.HTTPSConnection(self.host)
+        conn.request("DELETE", "/folder/:sc:%s:%s" % (self.uid, path), None, headers)
+        response = HTTPResponse( conn.getresponse() )
         return response
     
     def create_folder(self, directory, name):
-        headers = {"Host": "api.sugarsync.com", "Authorization: ": self.token}
+        headers = {"Host": self.host, "Authorization: ": self.token}
         params = '<?xml version="1.0" encoding="UTF-8"?><folder><displayName>%s</displayName></folder>' % name
-        self.conn.request("POST", "/folder/:sc:%s:%s" % (self.uid, directory), params, headers)
-        response = HTTPResponse( self.conn.getresponse() )
+        conn = httplib.HTTPSConnection(self.host)
+        conn.request("POST", "/folder/:sc:%s:%s" % (self.uid, directory), params, headers)
+        response = HTTPResponse( conn.getresponse() )
         return response
     
     def duplicate_file(self, path_to_src, path_to_dest, name):
-        headers = {"Host": "api.sugarsync.com", "Authorization: ": self.token}
-        params = '<?xml version="1.0" encoding="UTF-8"?><fileCopy source="http://api.sugarsync.com/file/:sc:%s:%s">   <displayName>%s</displayName></fileCopy>' % (self.uid, path_to_src, name)
-        self.conn.request("POST", "/folder/:sc:%s:%s" % (self.uid, path_to_dest), params, headers)
-        response = HTTPResponse( self.conn.getresponse() )
+        headers = {"Host": self.host, "Authorization: ": self.token}
+        params = '<?xml version="1.0" encoding="UTF-8"?><fileCopy source="%sfile/:sc:%s:%s">   <displayName>%s</displayName></fileCopy>' % (self.server_url, self.uid, path_to_src, name)
+        conn = httplib.HTTPSConnection(self.host)
+        conn.request("POST", "/folder/:sc:%s:%s" % (self.uid, path_to_dest), params, headers)
+        response = HTTPResponse( conn.getresponse() )
         return response
     
         

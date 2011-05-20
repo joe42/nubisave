@@ -78,6 +78,16 @@ split delete method into delete_file and delete_folder
 Mi
 10 fixed bug in _test_duplicate, _test_duplicate works, _test_fail_on_get_bytes works
 28 fixed bug in _test_move_directory, fixed bug in duplicate - all tests work! great :D
+Do
+Need reconnect and for error handling with automatic reconnect
+120
+60
+... integrated SugarSync service with tests and main module
+One Week of Nothingness
+Do
+30 added cache
+add get_modified()
+add unicode support
 
 Regex for decorator generation from existing interface 
 def ([^)]*)(self,? ?)([^)]*)\):\R        raise NotImplementedError\(\)  
