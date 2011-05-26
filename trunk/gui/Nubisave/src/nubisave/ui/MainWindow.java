@@ -169,7 +169,6 @@ public class MainWindow extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void searchBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBtnActionPerformed
-        System.out.println("Search: " + Properties.getProperty("matchmakerURI"));
         Searcher searcher = new Searcher();
         System.out.println("Response: " + searcher.find());
     }//GEN-LAST:event_searchBtnActionPerformed

@@ -13,6 +13,7 @@ import java.io.FileReader;
  * @author demo
  */
 import java.io.IOException;
+import javax.xml.ws.BindingProvider;
 public class Searcher {
 
     /*
@@ -45,6 +46,12 @@ public class Searcher {
     private static String achieveGoalText(java.lang.String wsml) {
         nubisave.client.ClientAccessService service = new nubisave.client.ClientAccessService();
         nubisave.client.ClientAccess port = service.getClientAccess();
+        
+        String endpoint = Properties.getProperty("matchmakerURI");
+        BindingProvider binding = (BindingProvider) port;
+        binding.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpoint);
+        
+        System.out.println("Search: " + endpoint);
 
         return port.achieveGoalText(wsml);
     }
