@@ -1,0 +1,805 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://client" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="http://client" xmlns:intf="http://client" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--WSDL created by Apache Axis version: 1.4
+Built on Apr 22, 2006 (06:55:48 PDT)-->
+ <wsdl:types>
+  <schema elementFormDefault="qualified" targetNamespace="http://client" xmlns="http://www.w3.org/2001/XMLSchema">
+   <element name="getWebServices">
+    <complexType>
+     <sequence>
+      <element name="domainID" type="xsd:int"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="getWebServicesResponse">
+    <complexType>
+     <sequence>
+      <element maxOccurs="unbounded" name="getWebServicesReturn" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="achieveGoalText">
+    <complexType>
+     <sequence>
+      <element name="wsml" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="achieveGoalTextResponse">
+    <complexType>
+     <sequence>
+      <element name="achieveGoalTextReturn" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="achieveGoalTextDyn">
+    <complexType>
+     <sequence>
+      <element name="wsml" type="xsd:string"/>
+      <element name="dynsearch" type="xsd:boolean"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="achieveGoalTextDynResponse">
+    <complexType>
+     <sequence>
+      <element name="achieveGoalTextDynReturn" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="achieveGoalIDDyn">
+    <complexType>
+     <sequence>
+      <element name="goalID" type="xsd:int"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="achieveGoalIDDynResponse">
+    <complexType>
+     <sequence>
+      <element name="achieveGoalIDDynReturn" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="achieveGoalURL">
+    <complexType>
+     <sequence>
+      <element name="url" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="achieveGoalURLResponse">
+    <complexType>
+     <sequence>
+      <element name="achieveGoalURLReturn" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="achieveGoalTextString">
+    <complexType>
+     <sequence>
+      <element name="wsml" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="achieveGoalTextStringResponse">
+    <complexType>
+     <sequence>
+      <element name="achieveGoalTextStringReturn" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="achieveGoalURLString">
+    <complexType>
+     <sequence>
+      <element name="url" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="achieveGoalURLStringResponse">
+    <complexType>
+     <sequence>
+      <element name="achieveGoalURLStringReturn" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="getWebServicesByDomainIRI">
+    <complexType>
+     <sequence>
+      <element name="iri" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="getWebServicesByDomainIRIResponse">
+    <complexType>
+     <sequence>
+      <element maxOccurs="unbounded" name="getWebServicesByDomainIRIReturn" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="getAllWebServices">
+    <complexType/>
+   </element>
+   <element name="getAllWebServicesResponse">
+    <complexType>
+     <sequence>
+      <element name="getAllWebServicesReturn" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="getWebServicesFiltered">
+    <complexType>
+     <sequence>
+      <element maxOccurs="unbounded" name="requiredDocs" type="xsd:string"/>
+      <element name="username" type="xsd:string"/>
+      <element name="domainIRI" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="getWebServicesFilteredResponse">
+    <complexType>
+     <sequence>
+      <element name="getWebServicesFilteredReturn" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="getAllDomains">
+    <complexType/>
+   </element>
+   <element name="getAllDomainsResponse">
+    <complexType>
+     <sequence>
+      <element name="getAllDomainsReturn" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="getDomainDetails">
+    <complexType>
+     <sequence>
+      <element name="domainID" type="xsd:int"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="getDomainDetailsResponse">
+    <complexType>
+     <sequence>
+      <element name="getDomainDetailsReturn" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="getReputationParametersByDomainIRI">
+    <complexType>
+     <sequence>
+      <element name="iri" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="getReputationParametersByDomainIRIResponse">
+    <complexType>
+     <sequence>
+      <element name="getReputationParametersByDomainIRIReturn" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="getReputationParameters">
+    <complexType>
+     <sequence>
+      <element name="iri" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="getReputationParametersResponse">
+    <complexType>
+     <sequence>
+      <element name="getReputationParametersReturn" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="getInterfaceDocs">
+    <complexType>
+     <sequence>
+      <element name="iri" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+   <element name="getInterfaceDocsResponse">
+    <complexType>
+     <sequence>
+      <element maxOccurs="unbounded" name="getInterfaceDocsReturn" type="xsd:string"/>
+     </sequence>
+    </complexType>
+   </element>
+  </schema>
+ </wsdl:types>
+
+   <wsdl:message name="achieveGoalTextStringRequest">
+
+      <wsdl:part element="impl:achieveGoalTextString" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="achieveGoalIDDynRequest">
+
+      <wsdl:part element="impl:achieveGoalIDDyn" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getInterfaceDocsRequest">
+
+      <wsdl:part element="impl:getInterfaceDocs" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getWebServicesFilteredResponse">
+
+      <wsdl:part element="impl:getWebServicesFilteredResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDomainDetailsResponse">
+
+      <wsdl:part element="impl:getDomainDetailsResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="achieveGoalTextDynRequest">
+
+      <wsdl:part element="impl:achieveGoalTextDyn" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="achieveGoalTextStringResponse">
+
+      <wsdl:part element="impl:achieveGoalTextStringResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getReputationParametersResponse">
+
+      <wsdl:part element="impl:getReputationParametersResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getWebServicesByDomainIRIRequest">
+
+      <wsdl:part element="impl:getWebServicesByDomainIRI" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getAllDomainsResponse">
+
+      <wsdl:part element="impl:getAllDomainsResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getReputationParametersByDomainIRIRequest">
+
+      <wsdl:part element="impl:getReputationParametersByDomainIRI" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="achieveGoalURLStringRequest">
+
+      <wsdl:part element="impl:achieveGoalURLString" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getAllDomainsRequest">
+
+      <wsdl:part element="impl:getAllDomains" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getWebServicesFilteredRequest">
+
+      <wsdl:part element="impl:getWebServicesFiltered" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getWebServicesResponse">
+
+      <wsdl:part element="impl:getWebServicesResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getAllWebServicesRequest">
+
+      <wsdl:part element="impl:getAllWebServices" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getAllWebServicesResponse">
+
+      <wsdl:part element="impl:getAllWebServicesResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getDomainDetailsRequest">
+
+      <wsdl:part element="impl:getDomainDetails" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getReputationParametersByDomainIRIResponse">
+
+      <wsdl:part element="impl:getReputationParametersByDomainIRIResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="achieveGoalURLRequest">
+
+      <wsdl:part element="impl:achieveGoalURL" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="achieveGoalURLStringResponse">
+
+      <wsdl:part element="impl:achieveGoalURLStringResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="achieveGoalIDDynResponse">
+
+      <wsdl:part element="impl:achieveGoalIDDynResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getInterfaceDocsResponse">
+
+      <wsdl:part element="impl:getInterfaceDocsResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="achieveGoalTextResponse">
+
+      <wsdl:part element="impl:achieveGoalTextResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getWebServicesRequest">
+
+      <wsdl:part element="impl:getWebServices" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getReputationParametersRequest">
+
+      <wsdl:part element="impl:getReputationParameters" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="achieveGoalURLResponse">
+
+      <wsdl:part element="impl:achieveGoalURLResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="achieveGoalTextRequest">
+
+      <wsdl:part element="impl:achieveGoalText" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="achieveGoalTextDynResponse">
+
+      <wsdl:part element="impl:achieveGoalTextDynResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getWebServicesByDomainIRIResponse">
+
+      <wsdl:part element="impl:getWebServicesByDomainIRIResponse" name="parameters"/>
+
+   </wsdl:message>
+
+   <wsdl:portType name="ClientAccess">
+
+      <wsdl:operation name="getWebServices">
+
+         <wsdl:input message="impl:getWebServicesRequest" name="getWebServicesRequest"/>
+
+         <wsdl:output message="impl:getWebServicesResponse" name="getWebServicesResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="achieveGoalText">
+
+         <wsdl:input message="impl:achieveGoalTextRequest" name="achieveGoalTextRequest"/>
+
+         <wsdl:output message="impl:achieveGoalTextResponse" name="achieveGoalTextResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="achieveGoalTextDyn">
+
+         <wsdl:input message="impl:achieveGoalTextDynRequest" name="achieveGoalTextDynRequest"/>
+
+         <wsdl:output message="impl:achieveGoalTextDynResponse" name="achieveGoalTextDynResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="achieveGoalIDDyn">
+
+         <wsdl:input message="impl:achieveGoalIDDynRequest" name="achieveGoalIDDynRequest"/>
+
+         <wsdl:output message="impl:achieveGoalIDDynResponse" name="achieveGoalIDDynResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="achieveGoalURL">
+
+         <wsdl:input message="impl:achieveGoalURLRequest" name="achieveGoalURLRequest"/>
+
+         <wsdl:output message="impl:achieveGoalURLResponse" name="achieveGoalURLResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="achieveGoalTextString">
+
+         <wsdl:input message="impl:achieveGoalTextStringRequest" name="achieveGoalTextStringRequest"/>
+
+         <wsdl:output message="impl:achieveGoalTextStringResponse" name="achieveGoalTextStringResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="achieveGoalURLString">
+
+         <wsdl:input message="impl:achieveGoalURLStringRequest" name="achieveGoalURLStringRequest"/>
+
+         <wsdl:output message="impl:achieveGoalURLStringResponse" name="achieveGoalURLStringResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getWebServicesByDomainIRI">
+
+         <wsdl:input message="impl:getWebServicesByDomainIRIRequest" name="getWebServicesByDomainIRIRequest"/>
+
+         <wsdl:output message="impl:getWebServicesByDomainIRIResponse" name="getWebServicesByDomainIRIResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getAllWebServices">
+
+         <wsdl:input message="impl:getAllWebServicesRequest" name="getAllWebServicesRequest"/>
+
+         <wsdl:output message="impl:getAllWebServicesResponse" name="getAllWebServicesResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getWebServicesFiltered">
+
+         <wsdl:input message="impl:getWebServicesFilteredRequest" name="getWebServicesFilteredRequest"/>
+
+         <wsdl:output message="impl:getWebServicesFilteredResponse" name="getWebServicesFilteredResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getAllDomains">
+
+         <wsdl:input message="impl:getAllDomainsRequest" name="getAllDomainsRequest"/>
+
+         <wsdl:output message="impl:getAllDomainsResponse" name="getAllDomainsResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getDomainDetails">
+
+         <wsdl:input message="impl:getDomainDetailsRequest" name="getDomainDetailsRequest"/>
+
+         <wsdl:output message="impl:getDomainDetailsResponse" name="getDomainDetailsResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getReputationParametersByDomainIRI">
+
+         <wsdl:input message="impl:getReputationParametersByDomainIRIRequest" name="getReputationParametersByDomainIRIRequest"/>
+
+         <wsdl:output message="impl:getReputationParametersByDomainIRIResponse" name="getReputationParametersByDomainIRIResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getReputationParameters">
+
+         <wsdl:input message="impl:getReputationParametersRequest" name="getReputationParametersRequest"/>
+
+         <wsdl:output message="impl:getReputationParametersResponse" name="getReputationParametersResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getInterfaceDocs">
+
+         <wsdl:input message="impl:getInterfaceDocsRequest" name="getInterfaceDocsRequest"/>
+
+         <wsdl:output message="impl:getInterfaceDocsResponse" name="getInterfaceDocsResponse"/>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="ClientAccessSoapBinding" type="impl:ClientAccess">
+
+      <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="getWebServices">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getWebServicesRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getWebServicesResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="achieveGoalText">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="achieveGoalTextRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="achieveGoalTextResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="achieveGoalTextDyn">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="achieveGoalTextDynRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="achieveGoalTextDynResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="achieveGoalIDDyn">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="achieveGoalIDDynRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="achieveGoalIDDynResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="achieveGoalURL">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="achieveGoalURLRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="achieveGoalURLResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="achieveGoalTextString">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="achieveGoalTextStringRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="achieveGoalTextStringResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="achieveGoalURLString">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="achieveGoalURLStringRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="achieveGoalURLStringResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getWebServicesByDomainIRI">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getWebServicesByDomainIRIRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getWebServicesByDomainIRIResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getAllWebServices">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getAllWebServicesRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getAllWebServicesResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getWebServicesFiltered">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getWebServicesFilteredRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getWebServicesFilteredResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getAllDomains">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getAllDomainsRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getAllDomainsResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getDomainDetails">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getDomainDetailsRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getDomainDetailsResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getReputationParametersByDomainIRI">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getReputationParametersByDomainIRIRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getReputationParametersByDomainIRIResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getReputationParameters">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getReputationParametersRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getReputationParametersResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getInterfaceDocs">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getInterfaceDocsRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getInterfaceDocsResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="ClientAccessService">
+
+      <wsdl:port binding="impl:ClientAccessSoapBinding" name="ClientAccess">
+
+         <wsdlsoap:address location="http://localhost:8080/Matchmaker/services/ClientAccess"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>
