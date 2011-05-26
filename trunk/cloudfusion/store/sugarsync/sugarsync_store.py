@@ -37,19 +37,20 @@ class SugarsyncStore(Store):
     
     
     def _translate_path(self, path):
-        logger.debug("translating path: "+path+" cache: "+str(self.path_cache))
+        logger.debug("translating path: "+path) #+" cache: "+str(self.path_cache)
+        path = to_unicode( path, "utf8")
         if path in self.path_cache:
             return self.path_cache[path]
         if path == "/":
             return self.root
         else:
-            parent_dir = os.path.dirname(path)
+            parent_dir = to_unicode( os.path.dirname(path), "utf8")
             self.path_cache[parent_dir] = self._translate_path(parent_dir)
             collection = self._parse_collection(self.path_cache[parent_dir])
             for item in collection:
                 if parent_dir[-1] != "/":
                     parent_dir += "/"
-                self.path_cache[ parent_dir+item["name"] ] = item["reference"]
+                self.path_cache[ parent_dir+to_unicode( item["name"], "utf8") ] = item["reference"]
             if not path in self.path_cache:
                 logger.warn("could not translate path: " +path)
                 raise NoSuchFilesytemObjectError(path)
@@ -259,10 +260,16 @@ class SugarsyncStore(Store):
             DictXMLParser().populate_dict_with_XML_leaf_textnodes(resp.data, partial_tree)
             ret["bytes"] = int(partial_tree['file']['size'])
             
-            try:#"Sat, 21 Aug 2010 22:31:20 +0000"#2011-05-10T06:18:33.000-07:00
-                ret["modified"] = time.mktime( time.strptime( partial_tree['file']['lastModified'], "%Y-%m-%dT%H:%M:%S.000-07:00") ) - self.time_difference
+            try:#"Sat, 21 Aug 2010 22:31:20 +0000"#2011-05-10T06:18:33.000-07:00     Time conversion error: 2011-05-20T05:15:44.000-07:00
+                lastModified = partial_tree['file']['lastModified']
+                logger.warn("No time conversion error: %s difference: %s" %  ( str(partial_tree['file']['lastModified']), self._get_time_difference() ) )
+                modified = time.mktime( time.strptime( lastModified[0:-6], "%Y-%m-%dT%H:%M:%S.000") )
+                time_offset = time.strptime( lastModified[-5:], "%H:%M") 
+                time_delta = 60*60*time_offset.tm_hour + 60*time_offset.tm_min 
+                modified += time_delta
+                ret["modified"] = modified - self.time_difference
             except Exception as x:
-                logger.warn("Time conversion error: %s" % str(partial_tree['file']['lastModified']))
+                logger.warn("Time conversion error: %s reason: %s" % ( str(partial_tree['file']['lastModified']), str(x)) )
                 raise DateParseError("Error parsing modified attribute: %s" % str(x));
 
             ret["created"] = partial_tree['file']['timeCreated']

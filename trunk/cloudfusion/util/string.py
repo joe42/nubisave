@@ -1,5 +1,10 @@
 import re
 
+def to_unicode(text, format):
+    if isinstance(text, unicode):
+        return text
+    return unicode(text, format)
+
 def regSearchInt(needle, haystack, grp=1):
     match = re.search(needle,haystack)
     if not match:
