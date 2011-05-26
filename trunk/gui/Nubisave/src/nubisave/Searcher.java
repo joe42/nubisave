@@ -22,7 +22,7 @@ public class Searcher {
         String wsmlString = null;
 
         try {
-            BufferedReader in = new BufferedReader(new FileReader("test.wsml"));
+            BufferedReader in = new BufferedReader(new FileReader("goal.wsml"));
             String line;
             while ((line = in.readLine()) != null) {
                 if (wsmlString != null) {

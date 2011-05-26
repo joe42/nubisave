@@ -11,23 +11,20 @@
 package nubisave.ui;
 
 import nubisave.Properties;
+import nubisave.Searcher;
 
 /**
  *
  * @author demo
  */
 public class MainWindow extends javax.swing.JFrame {
-    
-    private Properties properties;
 
     /** Creates new form MainWindow */
     public MainWindow() {
-        properties = Properties.getInstance();
-        
         initComponents();
-        
-        matchmakerURIField.setText(properties.getMatchmakerURI());
-        mntpntField.setText(properties.getMntPoint());
+
+        matchmakerURIField.setText(Properties.getProperty("matchmakerURI"));
+        mntpntField.setText(Properties.getProperty("mntPoint"));
     }
 
     /** This method is called from within the constructor to
@@ -172,19 +169,20 @@ public class MainWindow extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void searchBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBtnActionPerformed
-        System.out.println("Search: " + properties.getMatchmakerURI());
+        System.out.println("Search: " + Properties.getProperty("matchmakerURI"));
+        Searcher searcher = new Searcher();
+        System.out.println("Response: " + searcher.find());
     }//GEN-LAST:event_searchBtnActionPerformed
-    
+
     private void mntpntFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mntpntFieldActionPerformed
-        properties.setMntPoint(mntpntField.getText());
+        Properties.setProperty("mntPoint", mntpntField.getText());
     }//GEN-LAST:event_mntpntFieldActionPerformed
-    
+
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        
     }//GEN-LAST:event_jButton2ActionPerformed
-    
+
     private void matchmakerURIFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_matchmakerURIFieldActionPerformed
-        properties.setMatchmakerURI(matchmakerURIField.getText());
+        Properties.setProperty("matchmakerURI", matchmakerURIField.getText());
     }//GEN-LAST:event_matchmakerURIFieldActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton2;

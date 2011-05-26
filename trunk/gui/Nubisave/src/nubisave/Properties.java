@@ -4,44 +4,75 @@
  */
 package nubisave;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author demo
  */
 public class Properties {
 
-    private String mntPoint;
-    private String matchmakerURI;
+    private static java.util.Properties properties;
 
-    public String getMntPoint() {
-        return mntPoint;
+    private static String file = "nubi.properties";
+    
+    public Properties() {
+    }
+
+    private static boolean loadProperties() {
+        properties = new java.util.Properties();
+        FileInputStream fis = null;
+
+        try {
+            fis = new FileInputStream(file);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Properties.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+
+        try {
+            properties.load(fis);
+        } catch (IOException ex) {
+            Logger.getLogger(Properties.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+
+        return true;
     }
     
-    public void setMntPoint(String mntPoint) {
-        this.mntPoint = mntPoint;
-    }
-
-    public String getMatchmakerURI() {
-        return matchmakerURI;
+    private static boolean writeProperties() {
+        FileOutputStream fos = null;
+        
+        try {
+            fos = new FileOutputStream(file);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Properties.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+        
+        try {
+            properties.store(fos, null);
+        } catch (IOException ex) {
+            Logger.getLogger(Properties.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+        
+        return true;
     }
     
-    public void setMatchmakerURI(String matchmakerURI) {
-        this.matchmakerURI = matchmakerURI;
+    public static String getProperty(String key) {
+        if (properties==null) loadProperties();
+        if (properties==null) return null;
+        return properties.getProperty(key);
     }
     
-    private Properties() {
-
-        // default properties
-        mntPoint = "/home/demo/nubisave";
-        matchmakerURI = "http://localhost:8080/Matchmaker/services/ClientAccess";
-    }
-
-    public static Properties getInstance() {
-        return PropertiesHolder.INSTANCE;
-    }
-
-    private static class PropertiesHolder {
-
-        private static final Properties INSTANCE = new Properties();
+    public static void setProperty(String key, String value) {
+        properties.setProperty(key, value);
+        writeProperties();
     }
 }
