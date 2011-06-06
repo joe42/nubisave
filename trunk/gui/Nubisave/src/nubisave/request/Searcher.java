@@ -38,9 +38,9 @@ public class Searcher {
         return wsmlString;
     }
 
-    public String find() {
-        String wsml = loadWSML();
-        return achieveGoalText(wsml);
+    public String find(String goalWSML) {
+        //goalWSML = loadWSML();
+        return achieveGoalText(goalWSML);
     }
 
     private static String achieveGoalText(java.lang.String wsml) {

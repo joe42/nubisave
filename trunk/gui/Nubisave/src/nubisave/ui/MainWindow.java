@@ -12,6 +12,8 @@ package nubisave.ui;
 
 import nubisave.Properties;
 import nubisave.Searcher;
+import nubisave.Searcher;
+import nubisave.request.GoalGenerator;
 
 /**
  *
@@ -339,8 +341,10 @@ public class MainWindow extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void searchBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBtnActionPerformed
+        GoalGenerator gen = new GoalGenerator();
+        String goalWSML = gen.generateGoalWSML(null);
         Searcher searcher = new Searcher();
-        System.out.println("Response: " + searcher.find());
+        System.out.println("Response: " + searcher.find(goalWSML));
     }//GEN-LAST:event_searchBtnActionPerformed
 
     private void mntpntFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mntpntFieldActionPerformed
