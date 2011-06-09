@@ -58,8 +58,10 @@ namespace NubiSave
 		public ArrayList<CloudFilePart> FileParts;
 		CloudFilePart current_read_filepart;
 		CloudFilePart current_write_filepart;
-
+		
 		uint64 new_size;
+
+		Core core = Core.get_instance ();
 
 		construct
 		{
@@ -110,10 +112,14 @@ namespace NubiSave
 				Parts = create_cloudparts ();
 			} else {
 				string uuid = Uuid.generate_random ();
+				CloudStorage target = core.get_next_target (null);
+				if (target == null)
+					return;
+				
 				var filepart = new CloudFilePart (Name, uuid);
 				
-				//TODO stradegy to choose the target storage
-				filepart.Storages = "storage01";
+				//TODO strategy to choose the target storage
+				filepart.Storages = target.Name;
 				filepart.Offset = 0;
 				
 				FileParts.add (filepart);
@@ -249,9 +255,13 @@ namespace NubiSave
 				
 				if (current_write_filepart == null) {
 					string uuid = Uuid.generate_random ();
+					CloudStorage target = core.get_next_target (this);
+					if (target == null)
+						return -EIO;
+					
 					current_write_filepart = new CloudFilePart (Name, uuid);
 					//TODO RAIC here? choose the proper target storages for this part
-					current_write_filepart.Storages = "storage01";
+					current_write_filepart.Storages = target.Name;
 					current_write_filepart.Offset = offset;
 					FileParts.add (current_write_filepart);
 					Parts = cloudparts_to_string ();

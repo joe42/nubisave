@@ -26,14 +26,21 @@ namespace NubiSave
 		public ArrayList<CloudFilePart> fileparts = new ArrayList<CloudFilePart> ();
 		public ArrayList<CloudStorage> storages = new ArrayList<CloudStorage> ();
 
+		int last_storage = 0;
+
 		private static Core instance = null;
 		public static Core get_instance ()
 		{
-			if (instance == null)
-				return new Core ();
 			return instance;
 		}
 		
+		public static void create_instance ()
+		{
+			if (instance == null) {
+				instance = new Core ();
+			}
+		}
+
 		private Core ()
 		{
 			// Check folders
@@ -45,10 +52,23 @@ namespace NubiSave
 			Paths.ensure_directory_exists (Paths.UserCacheFolder.get_child ("storages"));
 			
 			// Load existing storage and file information
+			// do storages first !!!
 			load_storage_information ();
 			load_file_information ();
 			
 			debug_output ();
+		}
+
+		// simple round robbin storage chooser
+		//TODO RAIC here? choose the proper target storages for this part
+		public CloudStorage? get_next_target (CloudFile? file)
+		{
+			if (storages.size == 0)
+				return null;
+			
+			int next_storage = (last_storage + 1) % storages.size;
+			last_storage = next_storage;
+			return storages.get (next_storage);
 		}
 
 		void load_storage_information ()

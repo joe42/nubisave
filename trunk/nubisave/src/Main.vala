@@ -298,7 +298,9 @@ namespace NubiSave
 		Logger.debug<Core> ("Initialize folders");
 		Paths.initialize ("nubisave");
 		
+		Core.create_instance ();
 		core = Core.get_instance ();
+		
 		mountpath = Paths.UserMountFolder.get_path ();
 		handles = new HashMap<uint32, CloudFile> ();
  		
