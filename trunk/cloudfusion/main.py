@@ -42,7 +42,6 @@ def get_store(service, password=None):
 
 def check_arguments(args):
     if not len(args) in [2,3,4,5]:
-        print len(args)
         print 'usage: %s mountpoint  [service] [service password] [cache]' % args[0]
         exit(1)
 

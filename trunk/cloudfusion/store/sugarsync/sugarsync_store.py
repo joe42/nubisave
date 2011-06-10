@@ -18,26 +18,26 @@ import httplib
 import xml.dom.minidom as dom
         
 logging.config.fileConfig('cloudfusion/config/logging.conf')
-logger = logging.getLogger('sugarsync')
 
  
 class SugarsyncStore(Store):
     def __init__(self, config):
         #self.dir_listing_cache = {}
+        self.logger = logging.getLogger('sugarsync')
         self.path_cache = {}
         self.root = config["root"]
         self.client = SugarsyncClient(config)
         self.time_difference = self._get_time_difference()
-        logger.debug("sugarsync store initialized")
+        self.logger.debug("sugarsync store initialized")
         super(SugarsyncStore, self).__init__() 
         
     def get_name(self):
-        logger.debug("getting name")
+        self.logger.debug("getting name")
         return "Sugarsync"
     
     
     def _translate_path(self, path):
-        logger.debug("translating path: "+path) #+" cache: "+str(self.path_cache)
+        self.logger.debug("translating path: "+path) #+" cache: "+str(self.path_cache)
         path = to_unicode( path, "utf8")
         if path in self.path_cache:
             return self.path_cache[path]
@@ -52,7 +52,7 @@ class SugarsyncStore(Store):
                     parent_dir += "/"
                 self.path_cache[ parent_dir+to_unicode( item["name"], "utf8") ] = item["reference"]
             if not path in self.path_cache:
-                logger.warn("could not translate path: " +path)
+                self.logger.warn("could not translate path: " +path)
                 raise NoSuchFilesytemObjectError(path)
             return self.path_cache[path]
             
@@ -62,7 +62,7 @@ class SugarsyncStore(Store):
         ret = []
         resp = self.client.get_dir_listing(translated_path)
         if resp.status <200 or resp.status >300:
-            logger.warn("could not get direcory listing: " +translated_path+"\nstatus: %s reason: %s" % (resp.status, resp.reason))
+            self.logger.warn("could not get direcory listing: " +translated_path+"\nstatus: %s reason: %s" % (resp.status, resp.reason))
             raise NoSuchFilesytemObjectError(translated_path)
         xml_tree = dom.parseString(resp.data)
         for collection in xml_tree.documentElement.getElementsByTagName("collection"): 
@@ -88,7 +88,7 @@ class SugarsyncStore(Store):
     
     
     def account_info(self):
-        logger.debug("retrieving account info")
+        self.logger.debug("retrieving account info")
         info = self.client.user_info()
         partial_tree = {"user": {"quota": {"limit": "limit", "usage": "usage"}}}
         DictXMLParser().populate_dict_with_XML_leaf_textnodes(info.data, partial_tree)
@@ -99,52 +99,52 @@ class SugarsyncStore(Store):
         return "Sugarsync overall space: %s, used space: %s" % (ret['overall_space'], ret['used_space']) 
     
     def get_overall_space(self):
-        logger.debug("retrieving all space")
+        self.logger.debug("retrieving all space")
         info = self.client.user_info()
         partial_tree = {"user": {"quota": {"limit": "limit", "usage": "usage"}}}
         DictXMLParser().populate_dict_with_XML_leaf_textnodes(info.data, partial_tree)
         #print response.status, response.reason, response.getheaders()
         if info.status <200 or info.status >300:
-            logger.warn("could not retrieve overall space"+"\nstatus: %s reason: %s" % (info.status, info.reason))
+            self.logger.warn("could not retrieve overall space"+"\nstatus: %s reason: %s" % (info.status, info.reason))
         return int(partial_tree['user']['quota']['limit'])
     
     def get_used_space(self):
-        logger.debug("retrieving used space")
+        self.logger.debug("retrieving used space")
         info = self.client.user_info()
         partial_tree = {"user": {"quota": {"limit": "limit", "usage": "usage"}}}
         DictXMLParser().populate_dict_with_XML_leaf_textnodes(info.data, partial_tree)
         #print response.status, response.reason, response.getheaders()
         if info.status <200 or info.status >300:
-            logger.warn("could not retrieve used space"+"\nstatus: %s reason: %s" % (info.status, info.reason))
+            self.logger.warn("could not retrieve used space"+"\nstatus: %s reason: %s" % (info.status, info.reason))
         return int(partial_tree['user']['quota']['usage'])
     
     def get_file(self, path_to_file): 
-        logger.debug("getting file: " +path_to_file)
+        self.logger.debug("getting file: " +path_to_file)
         self._raise_error_if_invalid_path(path_to_file)
         file = self.client.get_file( self._translate_path(path_to_file) )
         if file.status <200 or file.status >300:
-            logger.warn("could not get file: %s\nstatus: %s reason: %s" % (path_to_file, file.status, file.reason))
+            self.logger.warn("could not get file: %s\nstatus: %s reason: %s" % (path_to_file, file.status, file.reason))
         return file.data 
     
     def store_fileobject(self, fileobject, path_to_file):
-        logger.debug("storing file object to "+path_to_file)
+        self.logger.debug("storing file object to "+path_to_file)
         if not self.exists(path_to_file):
             self._create_file(path_to_file)
         resp = self.client.put_file( fileobject, self._translate_path(path_to_file) ) 
         if resp.status <200 or resp.status >300:
-            logger.warn("could not store file to " +path_to_file+"\nstatus: %s reason: %s" % (resp.status, resp.reason))
+            self.logger.warn("could not store file to " +path_to_file+"\nstatus: %s reason: %s" % (resp.status, resp.reason))
             
     def _create_file(self, path, mime='text/x-cloudfusion'):
-        logger.debug("creating file object "+path)
+        self.logger.debug("creating file object "+path)
         name = os.path.basename(path)
         directory = os.path.dirname(path)
         translated_dir = self._translate_path(directory)
         resp = self.client.create_file(translated_dir, name)
         if resp.status <200 or resp.status >300:
-            logger.warn("could not create file " +path+"\nstatus: %s reason: %s" % (resp.status, resp.reason))
+            self.logger.warn("could not create file " +path+"\nstatus: %s reason: %s" % (resp.status, resp.reason))
     
     def delete(self, path):
-        logger.debug("deleting " +path)
+        self.logger.debug("deleting " +path)
         if path == "/":
             return
         if path[-1] == "/":
@@ -154,11 +154,11 @@ class SugarsyncStore(Store):
         if resp.status <200 or resp.status >300:
             resp = self.client.delete_folder( self._translate_path(path) )
         if resp.status <200 or resp.status >300:
-            logger.warn("could not delete " +path+"\nstatus: %s reason: %s" % (resp.status, resp.reason))
+            self.logger.warn("could not delete " +path+"\nstatus: %s reason: %s" % (resp.status, resp.reason))
         del self.path_cache[path]
     
     def create_directory(self, path):
-        logger.debug("creating directory " +path)
+        self.logger.debug("creating directory " +path)
         self._raise_error_if_invalid_path(path)
         if path == "/":
             return
@@ -170,10 +170,10 @@ class SugarsyncStore(Store):
         directory = os.path.dirname(path)
         resp = self.client.create_folder( self._translate_path(directory), name ) 
         if resp.status <200 or resp.status >300:
-            logger.warn("could not create directory: " +path+"\nstatus: %s reason: %s" % (resp.status, resp.reason))
+            self.logger.warn("could not create directory: " +path+"\nstatus: %s reason: %s" % (resp.status, resp.reason))
 
     def get_directory_listing(self, directory):
-        logger.debug("getting directory listing for "+directory)
+        self.logger.debug("getting directory listing for "+directory)
         ret = []
         translated_dir = self._translate_path(directory)
         collection = self._parse_collection(translated_dir)
@@ -181,11 +181,11 @@ class SugarsyncStore(Store):
             directory += "/"
         for item in collection:
             ret.append( directory+item['name'] )
-        logger.warn(str(ret))
+        #self.logger.warn(str(ret))
         return ret 
     
     def duplicate(self, path_to_src, path_to_dest): #src might be a directory
-        logger.debug("duplicating " +path_to_src+" to "+path_to_dest)
+        self.logger.debug("duplicating " +path_to_src+" to "+path_to_dest)
         self._raise_error_if_invalid_path(path_to_src)
         self._raise_error_if_invalid_path(path_to_dest)
         if path_to_src[-1] == "/":
@@ -195,7 +195,7 @@ class SugarsyncStore(Store):
         dest_name = os.path.basename(path_to_dest)
         dest_dir  = os.path.dirname(path_to_dest)
         if path_to_dest.startswith(path_to_src) and dest_name == os.path.basename(path_to_src):
-            logger.warning("cannot copy folder to itself")
+            self.logger.warning("cannot copy folder to itself")
             return #DBG raise error
         translated_dest_dir = self._translate_path( dest_dir )
         translated_src = self._translate_path(path_to_src)
@@ -210,20 +210,19 @@ class SugarsyncStore(Store):
                 else:
                     resp = self.client.duplicate_file(item['reference'], translated_dest_dir, dest_name)
                     if resp.status != 200:
-                        logger.warn("could not duplicate " +path_to_src+" to "+path_to_dest+"\nstatus: %s reason: %s" % (resp.status, resp.reason))
+                        self.logger.warn("could not duplicate " +path_to_src+" to "+path_to_dest+"\nstatus: %s reason: %s" % (resp.status, resp.reason))
         else:
             #if dest exists raise error
             if self.exists(path_to_dest):
-                logger.warn("could not duplicate " +path_to_src+" to "+path_to_dest+"\nfile already exists")
+                self.logger.warn("could not duplicate " +path_to_src+" to "+path_to_dest+"\nfile already exists")
                 return
             resp = self.client.duplicate_file(translated_src, translated_dest_dir, dest_name)
             if resp.status != 200:
-                logger.warn("could not duplicate " +path_to_src+" to "+path_to_dest+"\nstatus: %s reason: %s" % (resp.status, resp.reason))
+                self.logger.warn("could not duplicate " +path_to_src+" to "+path_to_dest+"\nstatus: %s reason: %s" % (resp.status, resp.reason))
 
     def _get_metadata(self, path):
-        logger.debug("getting metadata 1 for "+path)
+        self.logger.debug("getting metadata for "+path)
         self._raise_error_if_invalid_path(path)
-        logger.debug("getting metadata 2 for "+path)
         if path == "/": # workaraund for root metadata necessary for sugarsync?
             ret = {}
             ret["bytes"] = 0
@@ -234,26 +233,22 @@ class SugarsyncStore(Store):
         if path[-1] == "/":
             path = path[0:-1]
         is_file = True
-        logger.debug("getting metadata 3 for "+path)
         p=None; resp=None;
         try:
             p =  self._translate_path(path)
         except Exception as e:
-            logger.debug("getting metadata 4 for  "+path+" failed with: "+str(e))
+            self.logger.debug("getting metadata for  "+path+" failed with: "+str(e))
             
         try:
             resp = self.client.get_file_metadata( p )
         except Exception as e:
-            logger.debug("getting metadata 5 for "+path+" failed with: "+str(e))
+            self.logger.debug("getting metadata 5 for "+path+" failed with: "+str(e))
         if resp.status <200 or resp.status >300:
             is_file = False
             resp = self.client.get_folder_metadata( self._translate_path(path) )
         if resp.status <200 or resp.status >300:
-            logger.warn("could not get metadata: " +path+"\nstatus: %s reason: %s" % (resp.status, resp.reason))
+            self.logger.warn("could not get metadata: " +path+"\nstatus: %s reason: %s" % (resp.status, resp.reason))
             raise NoSuchFilesytemObjectError(path)
-        print ""
-        print path
-        print resp.data
         ret = {}
         if is_file:
             partial_tree = {"file": {"size": "", "lastModified": "", "timeCreated": ""}}
@@ -262,14 +257,13 @@ class SugarsyncStore(Store):
             
             try:#"Sat, 21 Aug 2010 22:31:20 +0000"#2011-05-10T06:18:33.000-07:00     Time conversion error: 2011-05-20T05:15:44.000-07:00
                 lastModified = partial_tree['file']['lastModified']
-                logger.warn("No time conversion error: %s difference: %s" %  ( str(partial_tree['file']['lastModified']), self._get_time_difference() ) )
                 modified = time.mktime( time.strptime( lastModified[0:-6], "%Y-%m-%dT%H:%M:%S.000") )
                 time_offset = time.strptime( lastModified[-5:], "%H:%M") 
                 time_delta = 60*60*time_offset.tm_hour + 60*time_offset.tm_min 
                 modified += time_delta
                 ret["modified"] = modified - self.time_difference
             except Exception as x:
-                logger.warn("Time conversion error: %s reason: %s" % ( str(partial_tree['file']['lastModified']), str(x)) )
+                self.logger.warn("Time conversion error: %s reason: %s" % ( str(partial_tree['file']['lastModified']), str(x)) )
                 raise DateParseError("Error parsing modified attribute: %s" % str(x));
 
             ret["created"] = partial_tree['file']['timeCreated']

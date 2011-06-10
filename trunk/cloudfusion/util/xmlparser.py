@@ -103,9 +103,9 @@ class DictXMLParser(object):
         """
             
         for enclosing_tag, enclosed_tag in dict_tree.iteritems():
-            print enclosing_tag, enclosed_tag
-            print           dom_tree.getElementsByTagName(enclosing_tag)
-            print           dom_tree.getElementsByTagName(enclosing_tag[1:-1])
+            #print enclosing_tag, enclosed_tag
+            #print           dom_tree.getElementsByTagName(enclosing_tag)
+            #print           dom_tree.getElementsByTagName(enclosing_tag[1:-1])
             if enclosing_tag.startswith("["): # handle as collection
                 elem_collection = []
                 for collection_elem in self.get_elements_by_tag_name( dom_tree, enclosing_tag[1:-1] ):

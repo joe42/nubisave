@@ -96,3 +96,6 @@ class Store(object):
     def is_dir(self, path):
         resp = self._get_metadata(path)
         return resp['is_dir']
+    
+    def flush(self):
+        pass

@@ -3,7 +3,7 @@ Created on 04.05.2011
 
 @author: joe
 '''
-import httplib
+import httplib2
 import os.path
 from cloudfusion.util.xmlparser import DictXMLParser
 from cloudfusion.util.string import *
@@ -27,24 +27,24 @@ class SugarsyncClient(object):
     def create_token(self):
         params = '<?xml version="1.0" encoding="UTF-8" ?><authRequest>    <username>%s</username>    <password>%s</password>    <accessKeyId>%s</accessKeyId>    <privateAccessKey>%s</privateAccessKey></authRequest>' % (self.username, self.password, self.access_key_id, self.private_access_key)
         headers = {"Host": self.host}#send application/xml; charset=UTF-8
-        conn = httplib.HTTPSConnection(self.host)
-        conn.request("POST", "/authorization", params, headers)
-        response = HTTPResponse( conn.getresponse() )
-        return response
+        conn = httplib2.Http()
+        response, content = conn.request("https://"+self.host+ "/authorization","POST",params,headers)
+        ret = HTTPResponse( response, content )
+        return ret
     
     def user_info(self):
         headers = {"Host": self.host, "Authorization: ": self.token}
-        conn = httplib.HTTPSConnection(self.host)
-        conn.request("GET", "/user", None, headers)
-        response = HTTPResponse( conn.getresponse() )
-        return response
+        conn = httplib2.Http()
+        response, content = conn.request("https://"+self.host+ "/user","GET",None,headers)
+        ret = HTTPResponse( response, content )
+        return ret
     
     def get_file_metadata(self, path_to_file):
         headers = {"Host": self.host, "Authorization: ": self.token}
-        conn = httplib.HTTPSConnection(self.host)
-        conn.request("GET", "/file/:sc:%s:%s" % (self.uid, path_to_file), None, headers)
-        response = HTTPResponse( conn.getresponse() )
-        return response
+        conn = httplib2.Http()
+        response, content = conn.request("https://"+self.host+ "/file/:sc:%s:%s" % (self.uid, path_to_file),"GET",None,headers)
+        ret = HTTPResponse( response, content )
+        return ret
         """
        <?xml version="1.0" encoding="UTF-8"?>
 <file>
@@ -61,18 +61,18 @@ class SugarsyncClient(object):
        """  
     def get_dir_listing(self, path):
         headers = {"Host": self.host, "Authorization: ": self.token}
-        conn = httplib.HTTPSConnection(self.host)
-        conn.request("GET", "/folder/:sc:%s:%s/contents" % (self.uid, path), None, headers)
-        response = HTTPResponse( conn.getresponse() )
-        return response
+        conn = httplib2.Http()
+        response, content = conn.request("https://"+self.host+ "/folder/:sc:%s:%s/contents" % (self.uid, path),"GET",None,headers)
+        ret = HTTPResponse( response, content )
+        return ret
     
     
     def get_folder_metadata(self, path):
         headers = {"Host": self.host, "Authorization: ": self.token}
-        conn = httplib.HTTPSConnection(self.host)
-        conn.request("GET", "/folder/:sc:%s:%s" % (self.uid, path), None, headers)
-        response = HTTPResponse( conn.getresponse() )
-        return response
+        conn = httplib2.Http()
+        response, content = conn.request("https://"+self.host+ "/folder/:sc:%s:%s" % (self.uid, path),"GET",None,headers)
+        ret = HTTPResponse( response, content )
+        return ret
         """
 <?xml version="1.0" encoding="UTF-8"?>
 <folder>
@@ -93,68 +93,69 @@ class SugarsyncClient(object):
         #metadata = self.get_metadata(path_to_file)
         #partial_tree = {"file": {"displayName": "", "size": "", "lastModified": "", "timeCreated": "", "mediaType": "", "presentOnServer": "", "parent": "", "fileData": ""}}
         #DictXMLParser().populate_dict_with_XML_leaf_textnodes(metadata.data, partial_tree)
-        conn = httplib.HTTPSConnection(self.host)
-        conn.request("GET", "/file/:sc:%s:%s/data" % (self.uid, path_to_file), None, headers)
-        response = HTTPResponse( conn.getresponse() )
-        return response
+        conn = httplib2.Http()
+        response, content = conn.request("https://"+self.host+ "/file/:sc:%s:%s/data" % (self.uid, path_to_file),"GET",None,headers)
+        ret = HTTPResponse( response, content )
+        return ret
     
     def put_file(self, fileobject, path_to_file):
         headers = {"Host": self.host, "Authorization: ": self.token}
-        print self.token
-        conn = httplib.HTTPSConnection(self.host)
-        conn.request("PUT", "/file/:sc:%s:%s/data" % (self.uid, path_to_file), fileobject.read(), headers)
-        response = HTTPResponse( conn.getresponse() )
-        return response
+        conn = httplib2.Http()
+        response, content = conn.request("https://"+self.host+ "/file/:sc:%s:%s/data" % (self.uid, path_to_file),"PUT",fileobject.read(),headers)
+        ret = HTTPResponse( response, content )
+        return ret
     
     def create_file(self, directory, name, mime='text/x-cloudfusion'):
         headers = {"Host": self.host, "Authorization: ": self.token}
         params = '<?xml version="1.0" encoding="UTF-8"?><file><displayName>%s</displayName><mediaType>%s</mediaType></file>' % (name, mime)
-        conn = httplib.HTTPSConnection(self.host)
-        conn.request("POST", "/folder/:sc:%s:%s" % (self.uid, directory), params, headers)
-        response = HTTPResponse( conn.getresponse() )
-        return response
+        conn = httplib2.Http()
+        response, content = conn.request("https://"+self.host+ "/folder/:sc:%s:%s" % (self.uid, directory),"POST",params,headers)
+        ret = HTTPResponse( response, content )
+        return ret
         
     def delete_file(self, path):
         headers = {"Host": self.host, "Authorization: ": self.token}
-        conn = httplib.HTTPSConnection(self.host)
-        conn.request("DELETE", "/file/:sc:%s:%s" % (self.uid, path), None, headers)
-        response = HTTPResponse( conn.getresponse() )
-        return response
+        conn = httplib2.Http()
+        response, content = conn.request("https://"+self.host+ "/file/:sc:%s:%s" % (self.uid, path),"DELETE",None,headers)
+        ret = HTTPResponse( response, content )
+        return ret
     
     def delete_folder(self, path):
         headers = {"Host": self.host, "Authorization: ": self.token}
-        conn = httplib.HTTPSConnection(self.host)
-        conn.request("DELETE", "/folder/:sc:%s:%s" % (self.uid, path), None, headers)
-        response = HTTPResponse( conn.getresponse() )
-        return response
+        conn = httplib2.Http()
+        response, content = conn.request("https://"+self.host+ "/folder/:sc:%s:%s" % (self.uid, path),"DELETE",None,headers)
+        ret = HTTPResponse( response, content )
+        return ret
     
     def create_folder(self, directory, name):
         headers = {"Host": self.host, "Authorization: ": self.token}
         params = '<?xml version="1.0" encoding="UTF-8"?><folder><displayName>%s</displayName></folder>' % name
-        conn = httplib.HTTPSConnection(self.host)
-        conn.request("POST", "/folder/:sc:%s:%s" % (self.uid, directory), params, headers)
-        response = HTTPResponse( conn.getresponse() )
-        return response
+        conn = httplib2.Http()
+        response, content = conn.request("https://"+self.host+ "/folder/:sc:%s:%s" % (self.uid, directory),"POST",params,headers)
+        ret = HTTPResponse( response, content )
+        return ret
     
     def duplicate_file(self, path_to_src, path_to_dest, name):
         headers = {"Host": self.host, "Authorization: ": self.token}
         params = '<?xml version="1.0" encoding="UTF-8"?><fileCopy source="%sfile/:sc:%s:%s">   <displayName>%s</displayName></fileCopy>' % (self.server_url, self.uid, path_to_src, name)
-        conn = httplib.HTTPSConnection(self.host)
-        conn.request("POST", "/folder/:sc:%s:%s" % (self.uid, path_to_dest), params, headers)
-        response = HTTPResponse( conn.getresponse() )
-        return response
+        conn = httplib2.Http()
+        response, content = conn.request("https://"+self.host+ "/folder/:sc:%s:%s" % (self.uid, path_to_dest),"POST",params,headers)
+        ret = HTTPResponse( response, content )
+        return ret
     
         
     
 class HTTPResponse(object):
-    def __init__(self, connection_response):
-        self.connection_response = connection_response
-        self.data = connection_response.read()
-        self.status = connection_response.status
-        self.reason = connection_response.reason
+    def __init__(self, response, data):
+        self.response = response
+        self.data = data
+        self.status = response.status
+        self.reason = response.reason
     
     def getheaders(self):
-        return self.connection_response.getheaders()
+        return self.response
    
     def getheader(self, name, default=None):
-        return self.connection_response.getheader(name, default)
+        if not name in self.response:
+            return default
+        return self.response[name]

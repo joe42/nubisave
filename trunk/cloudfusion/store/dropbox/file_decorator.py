@@ -3,6 +3,8 @@ Created on 23.04.2011
 
 @author: joe
 '''
+import os
+
 class NameableFile(object):
     def __init__(self, file_object, name):
         self.file_object = file_object
@@ -26,16 +28,16 @@ class NameableFile(object):
         return self.file_object.isatty()
     def next(self):
         return self.file_object.next()
-    def read(self, size):
+    def read(self, size=None):
         return self.file_object.read(size)
-    def readline(self, size):
+    def readline(self, size=None):
         return self.file_object.readline(size)
-    def readlines(self, sizehint):
+    def readlines(self, sizehint=None):
         return self.file_object.readlines(sizehint)
     def xreadlines(self):
         return self.file_object.xreadlines()
-    def seek(self, offset, whence):
-        return self.file_object.seek(offset, whence)
+    def seek(self, offset, whence=os.SEEK_SET):
+        self.file_object.seek(offset, whence)
     def tell(self):
         return self.file_object.tell()
     def truncate(self, size):
@@ -73,16 +75,16 @@ class NonclosingFile(object):
         return self.file_object.isatty()
     def next(self):
         return self.file_object.next()
-    def read(self, size):
+    def read(self, size=None):
         return self.file_object.read(size)
-    def readline(self, size):
+    def readline(self, size=None):
         return self.file_object.readline(size)
-    def readlines(self, sizehint):
+    def readlines(self, sizehint=None):
         return self.file_object.readlines(sizehint)
     def xreadlines(self):
         return self.file_object.xreadlines()
-    def seek(self, offset, whence):
-        return self.file_object.seek(offset, whence)
+    def seek(self, offset, whence=os.SEEK_SET):
+        self.file_object.seek(offset, whence)
     def tell(self):
         return self.file_object.tell()
     def truncate(self, size):
@@ -95,5 +97,43 @@ class NonclosingFile(object):
         return repr(self.file_object)
     def __str__(self):
         return str(self.file_object)
+    
+        
+class DataFileWrapper(file):
+    def __init__(self, data):
+        self.data = data
+        self.len = len(self.data)
+        self.offset = 0
+    def read(self, size=None):
+        if size==None:
+            size = self.len -1
+        old_offset = self.offset
+        self.offset += size
+        if self.offset > self.len-1:
+            self.offset = self.len-1
+        return self.data[old_offset:self.offset+1]
+    def readline(self, size=None):
+        old_offset = self.offset
+        eol = self.data.find("\n", old_offset)
+        if eol == -1:
+            eol = self.len-1
+        if size != None and eol+1 > old_offset+size:
+            eol = old_offset+size-1
+        self.offset = eol
+        return self.data[old_offset:self.offset+1]
+    def readlines(self, sizehint=None):
+        ret = []
+        line = self.readline()
+        while line != "":
+            ret.append(line)
+            line = self.readline()
+        return ret
+    def seek(self, offset, whence=os.SEEK_SET):
+        if whence == os.SEEK_CUR:
+            self.offset += offset
+        elif whence == os.SEEK_END:
+            self.offset = len(self.data)-1-offset
+        else:
+            self.offset = offset
 
 

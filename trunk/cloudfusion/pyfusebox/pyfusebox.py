@@ -25,7 +25,7 @@ def zstat():
 class PyFuseBox(Operations):
     def __init__(self, path, store):
         self.root = path
-        self.temp_file = None
+        self.temp_file = {}
         self.store = store
         self.f = open('fuselog', 'w')
 
@@ -52,20 +52,24 @@ class PyFuseBox(Operations):
         return st
     
     def open(self, path, flags):
-        self.f.write( "open "+path+"\n")
-        self.temp_file = tempfile.SpooledTemporaryFile()
+        """self.f.write( "open "+path+"\n")
+        temp_file = tempfile.SpooledTemporaryFile()
+        #self.temp_file = tempfile.SpooledTemporaryFile()
         if self.store.exists(path):
             file = self.store.get_file(path)
             self.temp_file.write(file)
             self.temp_file.seek(0)
-        self.store.store_fileobject(self.temp_file,path)
+        else:
+            self.store.store_fileobject(self.temp_file,path)
+        #self.store.store_fileobject(self.temp_file,path)
+        self.store.store_fileobject(temp_file,path)"""
         return 0
     
     def truncate(self, path, length, fh=None):
         self.f.write( "truncate %s to %s\n" % (path, length))
         self.store.delete(path)
-        self.temp_file = tempfile.SpooledTemporaryFile()
-        self.store.store_fileobject(self.temp_file,path)
+        temp_file = tempfile.SpooledTemporaryFile()
+        self.store.store_fileobject(temp_file, path)
         return 0
     
     def rmdir(self, path):
@@ -97,8 +101,12 @@ class PyFuseBox(Operations):
 
     def create(self, path, mode):
         self.f.write( "create %s with mode %s\n" % (path, str(mode)))
-        self.temp_file = tempfile.SpooledTemporaryFile()
-        self.store.store_fileobject(self.temp_file, path)
+        temp_file = tempfile.SpooledTemporaryFile()
+        self.store.store_fileobject(temp_file, path)
+        try:
+            self.store.flush()
+        except:
+            pass;
         return 0
         """       self.files[path] = dict(st_mode=(S_IFREG | mode), st_nlink=1,
             st_size=0, st_ctime=time(), st_mtime=time(), st_atime=time())
@@ -120,22 +128,29 @@ class PyFuseBox(Operations):
 
     def write(self, path, buf, offset, fh):
         self.f.write( "write %s ... from %s at %s - fh: %s\n" % (path, buf[0:10], offset, fh))
-        self.temp_file = tempfile.SpooledTemporaryFile()
+        self.temp_file[path] = tempfile.SpooledTemporaryFile()
         file = self.store.get_file(path)
-        self.temp_file.write(file)
-        self.temp_file.seek(offset)
-        self.temp_file.write(buf)
-        self.temp_file.seek(0)
-        self.store.store_fileobject(self.temp_file,path)
+        self.temp_file[path].write(file)
+        self.temp_file[path].seek(offset)
+        self.temp_file[path].write(buf)
+        self.temp_file[path].seek(0)
+        #self.store.store_fileobject(self.temp_file[path],path)
         return len(buf)
     
     def flush(self, path, fh):
         self.f.write( "flush %s - fh: %s\n" % (path, fh))
-        #self.store.store_fileobject(fh,path)
+        if path in self.temp_file: #after writes
+            self.store.store_fileobject(self.temp_file[path], path)
+            try:
+                self.store.flush()
+            except:
+                pass;
         return 0
     
     def release(self, path, fh):
         self.f.write( "release %s - fh: %s\n" % (path, fh))
+        if path in self.temp_file: #after writes
+            del self.temp_file[path]
         #self.temp_file.close()
         return 0 #UnicodeEncodeError: 'ascii' codec can't encode character u'\xed' in position 20: ordinal not in range(128)    
        
