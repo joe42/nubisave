@@ -68,4 +68,7 @@ class Cache(object):
         return self.cache[key]['dirty']
     
     def delete(self, key):
-        del self.cache[key]
+        try:
+            del self.cache[key]
+        except KeyError:
+            pass

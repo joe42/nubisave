@@ -107,6 +107,7 @@ def test_delete():
     test_obj.write("some_key", 42)
     test_obj.write(42, "some_key")
     test_obj.delete("some_key")
+    test_obj.delete("non_existant_key")
     test_obj.delete(42)
     assert_raises( KeyError, test_obj.get_value, (42) )
     assert_raises( KeyError, test_obj.get_value, ("some_key") )

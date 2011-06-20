@@ -70,6 +70,10 @@ class PyFuseBox(Operations):
         self.store.delete(path)
         temp_file = tempfile.SpooledTemporaryFile()
         self.store.store_fileobject(temp_file, path)
+        try:
+            self.store.flush()
+        except:
+            pass;
         return 0
     
     def rmdir(self, path):
@@ -127,7 +131,7 @@ class PyFuseBox(Operations):
         return  file[offset: offset+size]
 
     def write(self, path, buf, offset, fh):
-        self.f.write( "write %s ... from %s at %s - fh: %s\n" % (path, buf[0:10], offset, fh))
+        self.f.write( "write %s ... starting with %s at %s - fh: %s\n" % (path, buf[0:10], offset, fh))
         self.temp_file[path] = tempfile.SpooledTemporaryFile()
         file = self.store.get_file(path)
         self.temp_file[path].write(file)

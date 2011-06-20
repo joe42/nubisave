@@ -102,6 +102,10 @@ Regex for decorator generation from existing interface
 def ([^)]*)(self,? ?)([^)]*)\):\R        raise NotImplementedError\(\)  
 def \1\2\3):\R        self.store.\1\3)
 
+One week of nothingness
+
+Mo 11301230 fixed bug with truncate 
+
 make decorators a file subclass -> not possible because the name would be non writable again
 implement error handling
 implement chaching
