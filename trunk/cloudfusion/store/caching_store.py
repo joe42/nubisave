@@ -70,9 +70,8 @@ class CachingStore(Store):
         :param fileobject: The file object with the method read() returning data as a string 
         :param path: The location where the file object's data should be stored, including the filename
         """
-        if not self.cache.exists(path):
-            self.cache.write(path, fileobject.read())
-            self.logger.debug("cached %s" % path)
+        self.logger.debug("cached storing %s" % path)
+        self.cache.write(path, fileobject.read())
         if self.cache.is_expired(path):
             self.cache.update(path)
             actual_modified_date = self._get_actual_modified_date(path)
@@ -153,4 +152,4 @@ class CachingStore(Store):
                     file = DataFileWrapper(self.cache.get_value(path))
                     self.store.store_fileobject(file, path)
                     self.cache.update(path)
-                    self.logger.debug("flushing %s" % path)
+                    self.logger.debug("flushing %s with content starting with %s" % (path, self.cache.get_value(path)[0:10]))

@@ -91,20 +91,23 @@ add unicode support
 Mo
 1200
 Fr
-1000-1130 CachingStore
+90 CachingStore
 Sa
-21562213 Cache tests
+15 Cache tests
 Mo
-12301400 cache tests and implementation
+90 cache tests and implementation
 Fr
-0820-1015 debugging why touch does not work with cache
+115 debugging why touch does not work with cache
 Regex for decorator generation from existing interface 
 def ([^)]*)(self,? ?)([^)]*)\):\R        raise NotImplementedError\(\)  
 def \1\2\3):\R        self.store.\1\3)
 
 One week of nothingness
 
-Mo 11301230 fixed bug with truncate 
+Mo:
+60 fixed bug with truncate
+45
+10 fixed bug with cached writing 
 
 make decorators a file subclass -> not possible because the name would be non writable again
 implement error handling
