@@ -55,9 +55,8 @@ namespace NubiSave
 		[Description(nick = "chunksize", blurb = "The maximum size of a FilePart.")]
 		public uint64 ChunkSize { get; set; default = 1024*1024; }
 		
-		public ArrayList<CloudFilePart> FileParts;
-		CloudFilePart current_read_filepart;
-		CloudFilePart current_write_filepart;
+		public ArrayList<CloudFilePart> fileparts;
+		HashMap<uint32, CloudFilePart> handlers;
 		
 		uint64 new_size;
 
@@ -65,7 +64,8 @@ namespace NubiSave
 
 		construct
 		{
-			FileParts = new ArrayList<CloudFilePart> ();
+			fileparts = new ArrayList<CloudFilePart> ();
+			handlers = new HashMap<uint32, CloudFilePart> ();
 		}
 		
 		public CloudFile (string name)
@@ -75,7 +75,7 @@ namespace NubiSave
 			
 			foreach (string uuid in Parts.split (";"))
 				if (uuid.length > 0)
-					FileParts.add (new CloudFilePart (Name, uuid));
+					fileparts.add (new CloudFilePart (Name, uuid));
 		}
 
 		public CloudFile.from_file (File file)
@@ -122,17 +122,20 @@ namespace NubiSave
 				filepart.Storages = target.Name;
 				filepart.Offset = 0;
 				
-				FileParts.add (filepart);
+				fileparts.add (filepart);
 				Parts = cloudparts_to_string ();
 			}
 		}
 
-		public int open ()
+		public int open (uint32 fh)
 		{
-			if (current_read_filepart != null || current_write_filepart != null)
-				return -EIO;
+			var filepart = handlers.get (fh);
+			if (filepart != null) {
+				Logger.error<CloudFile> ("Already Opened (do nothing): %s (%u)".printf (Name, fh));
+				return 0;
+			}
 
-			Logger.error<CloudFile> ("Open: %s".printf (Name));
+			Logger.error<CloudFile> ("Open: %s (%u)".printf (Name, fh));
 			
 			// Dispersion pattern definition:
 			//	byte pattern: 8 bits with its target dispersion part
@@ -141,48 +144,49 @@ namespace NubiSave
 			
 			//TODO Dispersion here? open fileparts which needs to be processed parallel
 			
-			var current_filepart = FileParts.first ();
-			current_filepart.open ();
+			filepart = fileparts.first ();
+			filepart.open (fh);
+			handlers.set (fh, filepart);
 
-			current_read_filepart = current_write_filepart = current_filepart;
 			new_size = Size;
 			
 			return 0;
 		}
 
-		public int read (char* buffer, size_t size, off_t offset)
+		public int read (uint32 fh, char* buffer, size_t size, off_t offset)
 		{
-			if (current_read_filepart == null)
+			var filepart = handlers.get (fh);
+			if (filepart == null)
 				return -EIO;
-			
-			Logger.error<CloudFile> ("Read: %s %i at %i".printf (Name, (int)size, (int)offset));
+
+			Logger.error<CloudFile> ("Read: %s (%u) %i bytes at %i".printf (Name, fh, (int)size, (int)offset));
 			
 			int ret = 0;
 			size_t read_size = 0;
 			char* read_buffer = buffer;
 			
 			// check if current filepart is the right one and if not search for the proper one
-			if (!(offset >= current_read_filepart.Offset 
-				&& offset < current_read_filepart.Offset + current_read_filepart.Size)) {
+			if (!(offset >= filepart.Offset 
+				&& offset < filepart.Offset + filepart.Size)) {
 				
-				if (current_read_filepart != current_write_filepart)
-					current_read_filepart.close ();
+				filepart.close (fh);
+				handlers.unset (fh, null);
 				
-				current_read_filepart = null;
-				foreach (var filepart in FileParts)
-					if (offset >= filepart.Offset && offset < filepart.Offset + filepart.Size)
-						current_read_filepart = filepart;
+				filepart = null;
+				foreach (var fp in fileparts)
+					if (offset >= fp.Offset && offset < fp.Offset + fp.Size)
+						filepart = fp;
 				
-				if (current_read_filepart == null)
+				if (filepart == null)
 					return -EIO;
 				
-				if (current_read_filepart != current_write_filepart)
-					ret = current_read_filepart.open ();
+				ret = filepart.open (fh);
+				handlers.set (fh, filepart);
 			}
 			
 			do {
 				if (ret >= 0)
-					ret = current_read_filepart.read (read_buffer, size - read_size, offset + read_size);
+					ret = filepart.read (fh, read_buffer, size - read_size, offset + read_size);
 				
 				if (ret >= 0) {
 					read_size += ret;
@@ -196,38 +200,41 @@ namespace NubiSave
 				if (size - read_size < 4096)
 					break;
 				
-				if (current_read_filepart != current_write_filepart)
-					current_read_filepart.close ();
+				filepart.close (fh);
+				handlers.unset (fh, null);
 				
-				var tmp_filepart = current_read_filepart;
-				current_read_filepart = null;
+				if (ret < 0)
+					break;
 				
 				// find next part
-				foreach (var filepart in FileParts)
-					if (tmp_filepart.Offset + tmp_filepart.Size == filepart.Offset)
-						current_read_filepart = filepart;
+				uint64 next_offset = filepart.Offset + filepart.Size;
+				filepart = null;
+				foreach (var fp in fileparts)
+					if (fp.Offset == next_offset)
+						filepart = fp;
 				
-				if (current_read_filepart == null)
+				if (filepart == null)
 					return -EIO;
 				
-				if (current_read_filepart != current_write_filepart)
-					ret = current_read_filepart.open ();
+				ret = filepart.open (fh);
+				handlers.set (fh, filepart);
 
 			} while (ret >= 0 && read_size < size);
 			
-			if (ret >= 0)
-				Logger.error<CloudFile> ("Read: %s %i OK".printf (Name, (int)read_size));
-			else
+			if (ret < 0) {
+				Logger.error<CloudFile> ("Failed Read: %s (%u) %i".printf (Name, fh, (int)read_size));
 				return -EIO;
+			}
 			
 			return (int)read_size;
 		}
 
-		public int write (char* buffer, size_t size, off_t offset)
+		public int write (uint32 fh, char* buffer, size_t size, off_t offset)
 		{
-			if (current_write_filepart == null)
+			var filepart = handlers.get (fh);
+			if (filepart == null)
 				return -EIO;
-			
+
 			// Only sequential writing!
 			if (Size > offset || new_size > offset)
 				return -EIO;
@@ -240,42 +247,44 @@ namespace NubiSave
 			// use another target? -> fix filepart settings
 
 			// Check if filepart is "full"
-			if (ChunkSize >= current_write_filepart.current_size () + size) {
-				ret = current_write_filepart.write (buffer, size, offset);
+			if (ChunkSize >= filepart.current_size () + size) {
+				ret = filepart.write (fh, buffer, size, offset);
 				
 			} else {
-				if (current_read_filepart != current_write_filepart)
-					current_write_filepart.close ();
+				filepart.close (fh);
+				handlers.unset (fh, null);
 				
-				current_write_filepart = null;
+				filepart = null;
+				foreach (var fp in fileparts)
+					if (offset >= fp.Offset && offset < fp.Offset + fp.Size)
+						filepart = fp;
 				
-				foreach (var filepart in FileParts)
-					if (offset >= filepart.Offset && offset < filepart.Offset + filepart.Size)
-						current_write_filepart = filepart;
-				
-				if (current_write_filepart == null) {
+				if (filepart == null) {
 					string uuid = Uuid.generate_random ();
 					CloudStorage target = core.get_next_target (this);
 					if (target == null)
 						return -EIO;
 					
-					current_write_filepart = new CloudFilePart (Name, uuid);
+					filepart = new CloudFilePart (Name, uuid);
 					//TODO RAIC here? choose the proper target storages for this part
-					current_write_filepart.Storages = target.Name;
-					current_write_filepart.Offset = offset;
-					FileParts.add (current_write_filepart);
+					filepart.Storages = target.Name;
+					filepart.Offset = offset;
+					fileparts.add (filepart);
 					Parts = cloudparts_to_string ();
 				}
 				
-				if (current_read_filepart != current_write_filepart)
-					ret = current_write_filepart.open ();
+				ret = filepart.open (fh);
+				handlers.set (fh, filepart);
 				
-				if (ret >= 0)
-					ret = current_write_filepart.write (buffer, size, offset);
+				if (ret >= 0) {
+					ret = filepart.write (fh, buffer, size, offset);
+				}
 			}
 				
-			if (ret < 0)
+			if (ret < 0) {
+				Logger.error<CloudFile> ("Failed Write: %s (%u) %i".printf (Name, fh, (int)size));
 				return ret;
+			}
 			
 			if ((new_size == 0 || new_size > Size)
 				&& new_size < offset + size)
@@ -284,40 +293,45 @@ namespace NubiSave
 			return (int) size;
 		}
 		
-		public int close ()
+		public int close (uint32 fh)
 		{
-			if (current_read_filepart == null && current_write_filepart == null)
+			var filepart = handlers.get (fh);
+			if (filepart == null)
 				return -EIO;
 
-			if (current_read_filepart == current_write_filepart) {
-				if (current_read_filepart != null)
-					current_read_filepart.close ();
-			} else {
-				if (current_read_filepart != null)
-					current_read_filepart.close ();
-				if (current_write_filepart != null)
-					current_write_filepart.close ();
-			}
-			
-			Logger.error<CloudFile> ("Close: %s".printf (Name));
+			Logger.error<CloudFile> ("Close: %s (%u)".printf (Name, fh));
 
-			current_read_filepart = current_write_filepart = null;
+			filepart.close (fh);
+			handlers.unset (fh, null);
+
 			if (new_size > Size)
 				Size = new_size;
-			
+
 			//save ();
 			
 			return 0;
 		}
 		
+		void close_all ()
+		{
+			Logger.error<CloudFile> ("Close All: %s".printf (Name));
+
+			foreach (var fh in handlers.keys)
+				close (fh);
+			
+			if (handlers.size > 0)
+				Logger.error<CloudFile> ("Inconsitent Close All: %s".printf (Name));
+			handlers.clear ();
+		}
+		
 		public override void delete ()
 		{
-			close ();
+			close_all ();
 			
-			foreach (var filepart in FileParts)
+			foreach (var filepart in fileparts)
 				filepart.delete ();
 				
-			FileParts.clear ();
+			fileparts.clear ();
 			
 			base.delete ();
 		}
@@ -326,7 +340,7 @@ namespace NubiSave
 		{
 			string parts = "";
 			
-			foreach (var filepart in FileParts)
+			foreach (var filepart in fileparts)
 				parts += filepart.Uuid + ";";
 			
 			return parts;
@@ -351,7 +365,7 @@ namespace NubiSave
 					parts += uuid;
 				}
 				
-				FileParts.add (filepart);
+				fileparts.add (filepart);
 			}
 			
 			return parts;

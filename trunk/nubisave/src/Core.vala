@@ -105,7 +105,7 @@ namespace NubiSave
 				while ((fileinfo = enumerator.next_file ()) != null) {
 					var file = new CloudFile (fileinfo.get_name ());
 					files.add (file);
-					fileparts.add_all (file.FileParts);
+					fileparts.add_all (file.fileparts);
 				}
 				
 			} catch (Error e) {

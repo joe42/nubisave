@@ -96,7 +96,7 @@ namespace NubiSave
 			// Search in Files
 			foreach (var f in core.files)
 				if (path == f.Name) {
-					stbuf->st_mode = S_IFREG | 0444;
+					stbuf->st_mode = S_IFREG | 0666;
 					stbuf->st_size = (size_t) f.Size;
 					stbuf->st_ctime = stbuf->st_mtime = stbuf->st_atime = (time_t) f.CTime;
 					return 0;
@@ -202,7 +202,7 @@ namespace NubiSave
 		// Only files can be deleted
 		foreach (var f in core.files)
 			if (path == f.Name) {
-				core.fileparts.remove_all (f.FileParts);
+				core.fileparts.remove_all (f.fileparts);
 				core.files.remove (f);
 				f.delete ();
 				return 0;
@@ -236,8 +236,8 @@ namespace NubiSave
 				}
 			}
 		}
-			
-		file.open ();
+		
+		file.open ((uint32)fi.fh);
 		
 		return 0;
 	}
@@ -250,7 +250,7 @@ namespace NubiSave
 		if (file == null)
 			return -EIO;
 		
-		int ret = file.read (buf, size, offset);
+		int ret = file.read ((uint32)fi.fh, buf, size, offset);
 
 		if (ret >= 0)
 			return ret;
@@ -265,7 +265,7 @@ namespace NubiSave
 		if (file == null)
 			return -EIO;
 		
-		int ret = file.write (buf, size, offset);
+		int ret = file.write ((uint32)fi.fh, buf, size, offset);
 
 		if (ret >= 0)
 			return ret;
@@ -280,7 +280,7 @@ namespace NubiSave
 		if (!handles.unset ((uint32)fi.fh, out file) || file == null)
 			return -EIO;
 			
-		file.close ();
+		file.close ((uint32)fi.fh);
 		
 		return 0;
 	}
