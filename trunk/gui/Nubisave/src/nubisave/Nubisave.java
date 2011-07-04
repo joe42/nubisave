@@ -15,6 +15,8 @@ import javax.swing.UnsupportedLookAndFeelException;
  */
 public class Nubisave {
 
+    public static final Services services = new Services();
+    
     private void initalize() {
         // look like a native app
         try {
@@ -37,7 +39,7 @@ public class Nubisave {
 
         Nubisave nubi = new Nubisave();
         nubi.initalize();
-
+        
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             @Override
