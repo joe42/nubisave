@@ -1,27 +1,30 @@
+
 wsmlVariant _"http://www.wsmo.org/wsml/wsml-syntax/wsml-flight"
 
 namespace { _"http://localhost:8080/Matchmaker/ontologies/CloudQoS.wsml#",
-			qos _"http://localhost:8080/Matchmaker/ontologies/QoSBase.wsml#",
-            dc _"http://purl.org/dc/elements/1.1#",
+	    qos _"http://localhost:8080/Matchmaker/ontologies/QoSBase.wsml#",
+	    dc _"http://purl.org/dc/elements/1.1#",
             wsml _"http://www.wsmo.org/wsml/wsml-syntax#" }
 
-ontology CloudQos
- importsOntology { _"http://localhost:8080/Matchmaker/ontologies/QoSBase.wsml#"	 }
 
-nonFunctionalProperties
-  qosdefinition hasValue "Cloud QoS"
-endNonFunctionalProperties
+ontology CloudQoS
+ importsOntology { _"http://localhost:8080/Matchmaker/ontologies/QoSBase.wsml#"}
 
+ nonFunctionalProperties
+  qosdefinition hasValue "Cloud Storage"
+ endNonFunctionalProperties
+
+	
+//QoS parameters
 
 // Availbility
-concept Availability subConceptOf {qos#Dependability, qos#HigherBetter}
+concept Availability subConceptOf {qos#Quality, qos#HigherBetter}
 	qos#unit impliesType qos#PercentageUnit
-	
+
 instance AvailabilityRange memberOf qos#QualityRange
 	qos#item hasValue Availability
 	qos#min hasValue 0
-	qos#max hasValue 1
-
+        qos#max hasValue 100
 
 // MaxDownTime
 concept MaxDownTime subConceptOf {qos#Quality, qos#LowerBetter}
@@ -41,23 +44,23 @@ instance ResponseTimeRange memberOf qos#QualityRange
     qos#min hasValue 0  
 
 // PricePerMonth
-concept PricePerMonth subConceptOf {qos#Environment, qos#LowerBetter}
+concept PricePerMonth subConceptOf {qos#Quality, qos#LowerBetter}
     qos#unit impliesType qos#CurrencyUnit
 
-instance PriceRange memberOf qos#QualityRange
-    qos#item hasValue HostingPrice
+instance PricePerMonthRange memberOf qos#QualityRange
+    qos#item hasValue PricePerMonth
     qos#min hasValue 0 
 
 // PricePerData
-concept PricePerData subConceptOf {qos#Environment, qos#HigherBetter}
+concept PricePerData subConceptOf {qos#Quality, qos#LowerBetter}
     qos#unit impliesType qos#CurrencyUnit
 
-instance PriceRange memberOf qos#QualityRange
-    qos#item hasValue HostingPrice
+instance PricePerDataRange memberOf qos#QualityRange
+    qos#item hasValue PricePerData
     qos#min hasValue 0 
 	
 //NetworkBandwith
-concept NetworkBandwidth subConceptOf {qos#Environment, qos#HigherBetter}
+concept NetworkBandwidth subConceptOf {qos#Quality, qos#HigherBetter}
 	qos#unit impliesType qos#NetworkSpeedUnit
 
 instance NetworkBandwidthRange memberOf qos#QualityRange
@@ -66,4 +69,5 @@ instance NetworkBandwidthRange memberOf qos#QualityRange
 		
 	
 	
-concept CloudQoS
+concept CloudStorage
+
