@@ -17,6 +17,8 @@
 
 using GLib;
 using Gee;
+using NubiSave.IDA;
+using Posix;
 
 namespace NubiSave
 {
@@ -43,6 +45,10 @@ namespace NubiSave
 
 		private Core ()
 		{
+			//Initialize IDA stuff
+			InitField.init ();
+			//test_ida ();
+
 			// Check folders
 			// Configuration
 			Paths.ensure_directory_exists (Paths.UserConfigFolder.get_child ("files"));
@@ -57,6 +63,25 @@ namespace NubiSave
 			load_file_information ();
 			
 			debug_output ();
+		}
+
+		public void apply_config (uint8[] data)
+		{
+			try {
+				KeyFile file = new KeyFile ();
+				file.load_from_data ((string) data, data.length, 0);
+
+				var group_name = "CloudStorage";
+				if (!file.has_group (group_name))
+					return;
+					
+				var keys = file.get_keys (group_name);
+				foreach (var key in keys)	
+					Logger.debug<Core> (key + " = " + file.get_value (group_name, key));
+				
+			} catch (KeyFileError e) {
+			
+			}			
 		}
 
 		// simple round robbin storage chooser
@@ -124,6 +149,86 @@ namespace NubiSave
 				print ("%s\n", file.to_string ());
 			foreach (var filepart in fileparts)
 				print ("%s\n", filepart.to_string ());
+		}
+		
+		public void test_config ()
+		{
+			wipe ();
+			
+			try {
+				//TODO add real credentials for testing
+				var storage = new CloudStorage ("storage01");
+				storage.Name = "storage01";
+				storage.Module = "dropbox";
+				storage.Username = "";
+				storage.Password = "";
+				Paths.ensure_directory_exists (Paths.UserCacheFolder.get_child ("storages").get_child (storage.Name));
+				storages.add (storage);
+
+				storage = new CloudStorage ("storage02");
+				storage.Name = "storage02";
+				storage.Module = "sugarsync";
+				storage.Username = "";
+				storage.Password = "";
+				Paths.ensure_directory_exists (Paths.UserCacheFolder.get_child ("storages").get_child (storage.Name));
+				storages.add (storage);
+
+				storage = new CloudStorage ("storage03");
+				storage.Name = "storage03";
+				storage.Module = "";
+				storage.Username = "";
+				storage.Password = "";
+				Paths.ensure_directory_exists (Paths.UserCacheFolder.get_child ("storages").get_child (storage.Name));
+				storages.add (storage);
+
+				Logger.debug<Core> ("Sample storage configuration was created...");
+				
+			} catch (Error e) {
+				Logger.error<Core> (e.message);
+			}
+		}
+
+		public void wipe ()
+		{
+			foreach (var f in files)
+				f.delete ();
+			files.clear ();
+
+			foreach (var fp in fileparts)
+				fp.delete ();
+			fileparts.clear ();
+
+			foreach (var s in storages)
+				s.delete ();
+			storages.clear ();
+			
+			Logger.debug<Core> ("All data has been wiped!");
+		}
+		
+		void test_ida ()
+		{
+			try {
+				Logger.debug<Core> ("IDA Test");
+
+				var ida = new CauchyInformationDispersalCodec (6, 5, 256);
+				
+				var input = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
+
+				Logger.debug<Core> (input);
+
+				Logger.debug<Core> (input.length.to_string () + " > " + ida.getDispersedSize (input.length).to_string ());
+							
+				var data = new ByteArray ();
+				data.append (input.data);
+	
+				var encode = ida.getEncoder ().process (data);
+				Logger.debug<Core> (encode.size.to_string ());
+				var decode = ida.getDecoder ().process (encode);
+				Logger.debug<Core> ((string)decode.data);
+				
+			} catch (IDAError e) {
+				Logger.error<Core> ("%s".printf (e.message));
+			}
 		}
 	}
 }

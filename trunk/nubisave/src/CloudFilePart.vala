@@ -40,6 +40,9 @@ namespace NubiSave
 		[Description(nick = "filesize", blurb = "The size of the filepart.")]
 		public uint64 Size { get; set; default = 0; }
 		
+		[Description(nick = "idaslicenumber", blurb = "Number of this slice for IDA.")]
+		public uint64 IDASliceNumber { get; set; default = 0; }
+		
 		HashMap<uint32, FileIOStream> streams;
 		uint64 new_size = 0;
 		
@@ -107,9 +110,12 @@ namespace NubiSave
 			int ret = 0;
 			
 			try {
-				if (stream.can_seek () && stream.tell () != offset - Offset) {
-					Logger.error<CloudFilePart> ("Read: %s at %i seek to %i".printf (Uuid, (int)stream.tell (), (int)offset - (int)Offset));
-					stream.seek (offset - (int64)Offset, SeekType.SET, null);
+				if (stream.has_pending ())
+					Logger.error<CloudFilePart> ("Read trouble ahead: %s at %i seek to %i".printf (Uuid, (int)stream.tell (), (int)offset));
+			
+				if (stream.can_seek () && stream.tell () != offset) {
+					Logger.error<CloudFilePart> ("Read: %s at %i seek to %i".printf (Uuid, (int)stream.tell (), (int)offset));
+					stream.seek (offset, SeekType. SET, null);
 				}
 			} catch (Error e) {
 				Logger.error<CloudFilePart> ("Read Seek Error: %s".printf (e.message));
@@ -117,19 +123,19 @@ namespace NubiSave
 			}
 			
 			try {
-				Logger.error<CloudFilePart> ("Read: %s %i bytes at %i".printf (Uuid, (int)size, (int)offset - (int)Offset));
+				Logger.error<CloudFilePart> ("Read: %s %i bytes at %i".printf (Uuid, (int)size, (int)offset));
 			
-				//TODO move this to CloudStorage
 				//TODO choose better source storage
 				var b = new uint8[size];
 				ret = (int)stream.input_stream.read (b);
 				Memory.copy (buffer, b, size);
-			
+				
 				if (ret < 0)
 					Logger.error<CloudFilePart> ("Failed Read: %s (%u)".printf (Uuid, fh));
 			
-			} catch (Error e) {
+			} catch (IOError e) {
 				Logger.error<CloudFilePart> ("Read Error: %s".printf (e.message));
+				close (fh);
 				return -EIO;
 			}
 			
@@ -148,17 +154,19 @@ namespace NubiSave
 			//	return -EIO;
 			
 			try {
-				Logger.error<CloudFilePart> ("Write: %s %i bytes at %i".printf (Uuid, (int)size, (int)offset - (int)Offset));
-				if (stream.can_seek ()) {
-					if (stream.tell () != offset - Offset)
-						stream.seek (offset - (int64)Offset, SeekType.SET, null);
+				Logger.error<CloudFilePart> ("Write: %s %i bytes at %i".printf (Uuid, (int)size, (int)offset));
+				//hmm, only sequential writing
+				if (stream.can_seek () && stream.tell () != offset) {
+					stream.seek (offset, SeekType.SET, null);
 				}
 				//TODO move this to CloudStorage
 				var b = new uint8[size];
 				Memory.copy (b, buffer, size);
 				stream.output_stream.write (b);
+
 			} catch (Error e) {
 				Logger.error<CloudFilePart> ("Write Error: %s (%u) %s".printf (Name, fh, e.message));
+				close (fh);
 				return -EIO;
 			}
 			
@@ -175,8 +183,6 @@ namespace NubiSave
 			if (stream == null)
 				return -EIO;
 			
-			Logger.error<CloudFilePart> ("Close: %s (%u)".printf (Uuid, fh));
-			
 			try {
 				stream.output_stream.flush ();
 				stream.close ();
@@ -188,8 +194,10 @@ namespace NubiSave
 			if (Size != new_size)
 				Size = new_size;
 			
+			Logger.error<CloudFilePart> ("Close: %s (%u) with %u".printf (Uuid, fh, (uint)Size));
+			
 			streams.unset (fh, null);
-
+			
 			return ret;
 		}
 
@@ -197,7 +205,7 @@ namespace NubiSave
 		{
 			foreach (var fh in streams.keys)
 				close (fh);
-			
+
 			if (streams.size > 0)
 				Logger.error<CloudFile> ("Inconsitent Close All: %s".printf (Name));
 			streams.clear ();

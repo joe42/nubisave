@@ -17,6 +17,7 @@
 
 using Gee;
 using Posix;
+using NubiSave.IDA;
 
 namespace NubiSave
 {
@@ -53,19 +54,36 @@ namespace NubiSave
 		public uint64 Size { get; set; default = 0; }
 		
 		[Description(nick = "chunksize", blurb = "The maximum size of a FilePart.")]
-		public uint64 ChunkSize { get; set; default = 1024*1024; }
+		public uint64 ChunkSize { get; set; default = 4*1024*1024; }
 		
+		[Description(nick = "idaslices", blurb = "Number of slices to produce.")]
+		public uint64 IDASlices { get; set; default = 3; }
+
+		[Description(nick = "idatheshold", blurb = "Number of slices needed for recovery.")]
+		public uint64 IDAThreshold { get; set; default = 2; }
+
+		[Description(nick = "idachunksize", blurb = "The size of data that the IDA will process at a time.")]
+		public uint64 IDAChunksize { get; set; default = 4096; }
+		
+		//ordered list of all registered fileparts for this file
 		public ArrayList<CloudFilePart> fileparts;
-		HashMap<uint32, CloudFilePart> handlers;
 		
+		//TODO use MultiMap
+		//opened and currently accessible fileparts
+		HashMap<uint32, ArrayList<CloudFilePart>> handlers;
+	
 		uint64 new_size;
 
 		Core core = Core.get_instance ();
 
+		InformationDispersalCodec? ida = null;
+		InformationDispersalEncoder? idaencoder = null;
+		InformationDispersalDecoder? idadecoder = null;
+
 		construct
 		{
 			fileparts = new ArrayList<CloudFilePart> ();
-			handlers = new HashMap<uint32, CloudFilePart> ();
+			handlers = new HashMap<uint32, ArrayList<CloudFilePart>> ();
 		}
 		
 		public CloudFile (string name)
@@ -96,15 +114,17 @@ namespace NubiSave
 			Parts = create_cloudparts ();
 		}
 		
-		public CloudFile.from_stream (string name, uint64 chunksize = 1024*1024, uint64 size = 0)
+		public CloudFile.from_stream (string name, uint64 chunksize = 4*1024*1024, uint64 size = 0)
 		{
 			base ();
 			
 			load (name);
 
 			Name = name;
+			
 			if (Size != size)
 				Size = size;
+			
 			if (ChunkSize != chunksize)
 				ChunkSize = chunksize;
 			
@@ -129,24 +149,34 @@ namespace NubiSave
 
 		public int open (uint32 fh)
 		{
-			var filepart = handlers.get (fh);
-			if (filepart != null) {
+			var filepartlist = handlers.get (fh);
+			if (filepartlist != null) {
 				Logger.error<CloudFile> ("Already Opened (do nothing): %s (%u)".printf (Name, fh));
 				return 0;
 			}
 
 			Logger.error<CloudFile> ("Open: %s (%u)".printf (Name, fh));
 			
-			// Dispersion pattern definition:
-			//	byte pattern: 8 bits with its target dispersion part
-			//	i.e. 2 files : 12121212 , 11221122, 11122212
-			//	i.e. 4 files : 12341234 , 11223344, 13142324
+			filepartlist = new ArrayList<CloudFilePart> ();
 			
 			//TODO Dispersion here? open fileparts which needs to be processed parallel
-			
-			filepart = fileparts.first ();
+			if (ida == null) {
+				try {
+					//TODO at least 3 Storages
+					ida = new CauchyInformationDispersalCodec ((int)IDASlices, (int)IDAThreshold, (int)IDAChunksize);
+					idaencoder = ida.getEncoder ();
+					idadecoder = ida.getDecoder ();
+				} catch (IDAError e) {
+					Logger.error<CloudFile> ("%s (%u) %s".printf (Name, fh, e.message));
+				}
+			}
+
+			//TODO the first #IDASlices fileparts with distinct #IDASliceNumber fields
+			var filepart = fileparts[0];
+			filepartlist.add (filepart);
+
 			filepart.open (fh);
-			handlers.set (fh, filepart);
+			handlers.set (fh, filepartlist);
 
 			new_size = Size;
 			
@@ -155,8 +185,8 @@ namespace NubiSave
 
 		public int read (uint32 fh, char* buffer, size_t size, off_t offset)
 		{
-			var filepart = handlers.get (fh);
-			if (filepart == null)
+			var filepartlist = handlers.get (fh);
+			if (filepartlist == null || filepartlist.size <= 0)
 				return -EIO;
 
 			Logger.error<CloudFile> ("Read: %s (%u) %i bytes at %i".printf (Name, fh, (int)size, (int)offset));
@@ -165,28 +195,35 @@ namespace NubiSave
 			size_t read_size = 0;
 			char* read_buffer = buffer;
 			
+			//TODO open new/close old #NumSlices fileparts which distinct #IDASliceNumber fields
 			// check if current filepart is the right one and if not search for the proper one
-			if (!(offset >= filepart.Offset 
-				&& offset < filepart.Offset + filepart.Size)) {
+			var filepart = filepartlist[0];
+			if (!(offset >= filepart.Offset	&& offset < filepart.Offset + filepart.Size)) {
 				
-				filepart.close (fh);
+				foreach (var fp in filepartlist)
+					fp.close (fh);
 				handlers.unset (fh, null);
 				
-				filepart = null;
-				foreach (var fp in fileparts)
-					if (offset >= fp.Offset && offset < fp.Offset + fp.Size)
-						filepart = fp;
+				filepartlist = new ArrayList<CloudFilePart> ();
 				
-				if (filepart == null)
+				//TODO search for all matching fileparts (max #NumSlices)
+				foreach (var fp in fileparts)
+					if (ret >= 0 && offset >= fp.Offset && offset < fp.Offset + fp.Size) {
+						ret = fp.open (fh);
+						filepartlist.add (fp);
+					}
+
+				if (filepartlist.size == 0 || ret < 0)
 					return -EIO;
 				
-				ret = filepart.open (fh);
-				handlers.set (fh, filepart);
+				handlers.set (fh, filepartlist);
 			}
 			
 			do {
+				//TODO read from all fileparts calculate "real" offset with IDAParameters
+				filepart = filepartlist.first ();
 				if (ret >= 0)
-					ret = filepart.read (fh, read_buffer, size - read_size, offset + read_size);
+					ret = filepart.read (fh, read_buffer, size - read_size, offset - (off_t)filepart.Offset + read_size);
 				
 				if (ret >= 0) {
 					read_size += ret;
@@ -200,24 +237,26 @@ namespace NubiSave
 				if (size - read_size < 4096)
 					break;
 				
-				filepart.close (fh);
+				foreach (var fp in filepartlist)
+					fp.close (fh);
 				handlers.unset (fh, null);
 				
 				if (ret < 0)
 					break;
 				
+				filepartlist = new ArrayList<CloudFilePart> ();
+				
 				// find next part
 				uint64 next_offset = filepart.Offset + filepart.Size;
 				filepart = null;
 				foreach (var fp in fileparts)
-					if (fp.Offset == next_offset)
-						filepart = fp;
-				
-				if (filepart == null)
+					if (ret >=0 && fp.Offset == next_offset) {
+						ret = fp.open (fh);
+						filepartlist.add (fp);
+					}
+				if (filepartlist.size == 0 || ret < 0)
 					return -EIO;
-				
-				ret = filepart.open (fh);
-				handlers.set (fh, filepart);
+				handlers.set (fh, filepartlist);
 
 			} while (ret >= 0 && read_size < size);
 			
@@ -231,8 +270,8 @@ namespace NubiSave
 
 		public int write (uint32 fh, char* buffer, size_t size, off_t offset)
 		{
-			var filepart = handlers.get (fh);
-			if (filepart == null)
+			var filepartlist = handlers.get (fh);
+			if (filepartlist == null || filepartlist.size <= 0)
 				return -EIO;
 
 			// Only sequential writing!
@@ -242,52 +281,78 @@ namespace NubiSave
 			int ret = 0;
 			
 			//TODO Encryption, Dispersion here?
+			//var input = new ByteArray.sized ((uint)size);
+			//memcpy ((uint8*)(buffer), (uint8*)(&input.data), size);
+			//var outputs = idaencoder.process (input);
 			
 			//TODO Handle Error
 			// use another target? -> fix filepart settings
+			// use one of spare slices #NumSlices-#Threshold 
 
-			// Check if filepart is "full"
-			if (ChunkSize >= filepart.current_size () + size) {
-				ret = filepart.write (fh, buffer, size, offset);
-				
+			//TODO open new/close old #NumSlices fileparts which distinct #IDASliceNumber fields
+			//     only open #Thresold
+			// If one is full close all IDASlices
+			
+			// Check if first filepart is "full"
+			if (ChunkSize >= filepartlist[0].current_size () + size) {
+				foreach (var fp in filepartlist)
+					if (ret >=0)
+						ret = fp.write (fh, buffer, size, offset - (off_t)fp.Offset);
+			
 			} else {
-				filepart.close (fh);
+				foreach (var fp in filepartlist)
+					fp.close (fh);
 				handlers.unset (fh, null);
 				
-				filepart = null;
-				foreach (var fp in fileparts)
-					if (offset >= fp.Offset && offset < fp.Offset + fp.Size)
-						filepart = fp;
+				filepartlist = new ArrayList<CloudFilePart> ();
 				
-				if (filepart == null) {
+				//hmm, only sequential writing, so there should not be any parts
+				foreach (var fp in fileparts)
+					if (ret >=0 && offset >= fp.Offset && offset < fp.Offset + fp.Size) {
+						ret = fp.open (fh);
+						filepartlist.add (fp);
+					}
+				
+				if (filepartlist.size == 0) {
 					string uuid = Uuid.generate_random ();
+
+					//TODO RAIC here? choose the proper target storages for this part
 					CloudStorage target = core.get_next_target (this);
 					if (target == null)
 						return -EIO;
 					
-					filepart = new CloudFilePart (Name, uuid);
-					//TODO RAIC here? choose the proper target storages for this part
+					//TODO create #IDASlices parts
+					var filepart = new CloudFilePart (Name, uuid);
 					filepart.Storages = target.Name;
 					filepart.Offset = offset;
 					fileparts.add (filepart);
 					Parts = cloudparts_to_string ();
+					
+					filepartlist.add (filepart);
+					
+					foreach (var fp in filepartlist)
+						if (ret >=0)
+							ret = fp.open (fh);
 				}
 				
-				ret = filepart.open (fh);
-				handlers.set (fh, filepart);
-				
-				if (ret >= 0) {
-					ret = filepart.write (fh, buffer, size, offset);
+				if (ret < 0) {
+					Logger.error<CloudFile> ("Failed Write (create next parts): %s (%u) %i".printf (Name, fh, (int)size));
+					return ret;
 				}
+				
+				handlers.set (fh, filepartlist);
+				
+				foreach (var fp in filepartlist)
+					if (ret >=0)
+						ret = fp.write (fh, buffer, size, offset - (off_t)fp.Offset);
 			}
-				
+			
 			if (ret < 0) {
 				Logger.error<CloudFile> ("Failed Write: %s (%u) %i".printf (Name, fh, (int)size));
 				return ret;
 			}
 			
-			if ((new_size == 0 || new_size > Size)
-				&& new_size < offset + size)
+			if ((new_size == 0 || new_size > Size) && new_size < offset + size)
 				new_size = offset + size;
 			
 			return (int) size;
@@ -295,18 +360,19 @@ namespace NubiSave
 		
 		public int close (uint32 fh)
 		{
-			var filepart = handlers.get (fh);
-			if (filepart == null)
+			var filepartlist = handlers.get (fh);
+			if (filepartlist == null || filepartlist.size <= 0)
 				return -EIO;
-
+			
 			Logger.error<CloudFile> ("Close: %s (%u)".printf (Name, fh));
-
-			filepart.close (fh);
+			
+			foreach (var fp in filepartlist)
+				fp.close (fh);
 			handlers.unset (fh, null);
-
+			
 			if (new_size > Size)
 				Size = new_size;
-
+			
 			//save ();
 			
 			return 0;
@@ -330,7 +396,6 @@ namespace NubiSave
 			
 			foreach (var filepart in fileparts)
 				filepart.delete ();
-				
 			fileparts.clear ();
 			
 			base.delete ();

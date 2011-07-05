@@ -37,6 +37,19 @@ nubisave_VALASOURCES = \
 	Paths.vala \
 	Preferences.vala \
 	Uuid.vala \
+	ida/CauchyDecode.vala \
+	ida/CauchyEncode.vala \
+	ida/CauchyIDAParameters.vala \
+	ida/CauchyInformationDispersalCodec.vala \
+	ida/CauchyInformationDispersalDecoder.vala \
+	ida/CauchyInformationDispersalEncoder.vala \
+	ida/FiniteStack.vala \
+	ida/InformationDispersalCodec.vala \
+	ida/InformationDispersalCodecBase.vala \
+	ida/InformationDispersalDecoder.vala \
+	ida/InformationDispersalEncoder.vala \
+	ida/InformationDispersalError.vala \
+	ida/InitField.vala \
 	$(NULL)
 
 nubisave_SOURCES = \

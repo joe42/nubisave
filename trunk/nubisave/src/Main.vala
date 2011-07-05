@@ -27,6 +27,7 @@ namespace NubiSave
 	private string mountpath;
 	
 	private HashMap<uint32, CloudFile> handles;
+	private HashMap<uint32, CloudFilePart> parthandles;
 	
 	public const string CONFIG_PATH = ".config";
 	public const string PARTS_PATH = ".parts";
@@ -82,7 +83,6 @@ namespace NubiSave
 					stbuf->st_ctime = stbuf->st_mtime = stbuf->st_atime = (time_t) f.CTime;
 					return 0;
 				}
-				
 		} else if (path.has_prefix (STORAGES_PATH)) {
 			// Search in Storages
 			foreach (var f in core.storages)
@@ -176,9 +176,11 @@ namespace NubiSave
 		if (S_ISREG (mode)) {
 			var file = new CloudFile.from_stream (path);
 			core.files.add (file);
-
-			fi.fh = GLib.Random.int_range (0, int32.MAX);		
-			Logger.debug<Object> ("open: fh = %I".printf (fi.fh));
+			
+			do {
+				fi.fh = GLib.Random.int_range (0, int32.MAX);
+			} while (handles.has_key ((uint32)fi.fh));
+			Logger.debug<Object> ("create: fh = %I".printf (fi.fh));
 
 			handles.set ((uint32)fi.fh, file);
 			
@@ -284,15 +286,35 @@ namespace NubiSave
 		
 		return 0;
 	}
-
+	
+	protected static bool DEBUG = true;
+	protected static bool WIPE = false;
+	protected static bool TEST = false;
+			
+	protected const OptionEntry[] options = {
+		{ "debug", 'd', 0, OptionArg.NONE, out DEBUG, "Enable debug logging", null },
+		{ "test", 't', 0, OptionArg.NONE, out TEST, "Create sample configuration includes a WIPE", null },
+		{ "wipe", 'w', 0, OptionArg.NONE, out WIPE, "Delete configuration files", null },
+		{ null }
+	};
+	
 	static int main (string [] args)
 	{
 		Logger.initialize ("nubisave");
-		Logger.DisplayLevel = LogLevel.DEBUG;
 		
-		foreach (var arg in args)
-			print ("%s\n", arg);
+		var context = new OptionContext ("");
+		context.set_summary ("NubiSave - Secure usage of Cloud-Storage-Providers\nDEVELOPMENT VERSION - HIGHLY UNSTABLE");
+		context.add_main_entries (options, null);
 		
+		try {
+			context.parse (ref args);
+		} catch { }
+		
+		if (DEBUG)
+			Logger.DisplayLevel = LogLevel.DEBUG;
+		else
+			Logger.DisplayLevel = LogLevel.INFO;
+			
 		Logger.debug<Object> ("Start up");
 
 		Logger.debug<Core> ("Initialize folders");
@@ -300,9 +322,20 @@ namespace NubiSave
 		
 		Core.create_instance ();
 		core = Core.get_instance ();
+
+		if (WIPE) {
+			core.wipe ();
+			return 0;
+		}
+
+		if (TEST) {
+			core.test_config ();
+			return 0;
+		}
 		
 		mountpath = Paths.UserMountFolder.get_path ();
 		handles = new HashMap<uint32, CloudFile> ();
+		parthandles = new HashMap<uint32, CloudFilePart> ();
  		
 		var ops = Operations ();
 		ops.readdir = readdir;

@@ -28,26 +28,26 @@ namespace NubiSave
 		[Description(nick = "name", blurb = "Unique name of this storage.")]
 		public string Name { get; set; default = ""; }
 		
-		[Description(nick = "mountpath", blurb = "The path to the folder of this storage.")]
-		public string MountPath { get; set; default = ""; }
+		[Description(nick = "module", blurb = "Cloudfusion module to use.")]
+		public string Module { get; set; default = ""; }
 		
-		//[Description(nick = "username", blurb = "Username.")]
-		//public string Username { get; set; default = ""; }
+		//[Description(nick = "mountpath", blurb = "The path to the folder of this storage.")]
+		//public string MountPath { get; set; default = ""; }
 		
-		//[Description(nick = "password", blurb = "Password.")]
-		//public string Password { get; set; default = ""; }
+		[Description(nick = "username", blurb = "Username.")]
+		public string Username { get; set; default = ""; }
 		
-		//[Description(nick = "url", blurb = "Url Location.")]
-		//public string Url { get; set; default = ""; }
+		[Description(nick = "password", blurb = "Password.")]
+		public string Password { get; set; default = ""; }
 		
 		//[Description(nick = "status", blurb = "Status of this storage")]
 		//public CLOUDSTORAGE_STATE Status { get; set; default = ""; }
 		
-		//[Description(nick = "size", blurb = "Size")]
-		//public uint64 Size { get; set; default = 0; }
+		[Description(nick = "size", blurb = "Capacity of this Storage.")]
+		public uint64 Size { get; set; default = 0; }
 
-		//[Description(nick = "freesize", blurb = "FreeSize")]
-		//public uint64 FreeSize { get; set; default = 0; }
+		[Description(nick = "freesize", blurb = "Free Capacity of this Storage.")]
+		public uint64 FreeSize { get; set; default = 0; }
 		
 		construct
 		{
