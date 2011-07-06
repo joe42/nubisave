@@ -1,0 +1,3 @@
+Ersetze nach
+
+/var/lib/tomcat6/webapps/Matchmaker/WEB-INF/classes/init
