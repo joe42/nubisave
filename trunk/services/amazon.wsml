@@ -4,7 +4,7 @@
 
 wsmlVariant _"http://www.wsmo.org/wsml/wsml-syntax/wsml-flight"
 
-namespace {_"http://localhost:8080/Matchmaker/ontologies/CloudQos/Amazon.wsml#",
+namespace {_"http://localhost:8080/Matchmaker/ontologies/CloudQos/amazon.wsml#",
 	qos _"http://localhost:8080/Matchmaker/ontologies/QoSBase.wsml#",
         cloud _"http://localhost:8080/Matchmaker/ontologies/CloudQoS.wsml#",
         context _"http://localhost:8080/Matchmaker/ontologies/ContextBase.wsml#",

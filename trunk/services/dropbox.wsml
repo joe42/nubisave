@@ -4,7 +4,7 @@
 
 wsmlVariant _"http://www.wsmo.org/wsml/wsml-syntax/wsml-flight"
 
-namespace {_"http://localhost:8080/Matchmaker/ontologies/CloudQos/Dropbox.wsml#",
+namespace {_"http://localhost:8080/Matchmaker/ontologies/CloudQos/dropbox.wsml#",
 	qos _"http://localhost:8080/Matchmaker/ontologies/QoSBase.wsml#",
         cloud _"http://localhost:8080/Matchmaker/ontologies/CloudQoS.wsml#",
         context _"http://localhost:8080/Matchmaker/ontologies/ContextBase.wsml#",
@@ -18,7 +18,7 @@ importsOntology { _"http://localhost:8080/Matchmaker/ontologies/CloudQoS.wsml#" 
 capability ServiceCapability
  postcondition definedBy ?serviceType memberOf cloud#CloudStorage .
 
-interface Dropbox
+interface DropboxInter
  importsOntology { Drop }
 
 ontology Drop

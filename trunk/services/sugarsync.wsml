@@ -4,7 +4,7 @@
 
 wsmlVariant _"http://www.wsmo.org/wsml/wsml-syntax/wsml-flight"
 
-namespace {_"http://localhost:8080/Matchmaker/ontologies/CloudQos/Sugarsync.wsml#",
+namespace {_"http://localhost:8080/Matchmaker/ontologies/CloudQos/sugarsync.wsml#",
 	qos _"http://localhost:8080/Matchmaker/ontologies/QoSBase.wsml#",
         cloud _"http://localhost:8080/Matchmaker/ontologies/CloudQoS.wsml#",
         context _"http://localhost:8080/Matchmaker/ontologies/ContextBase.wsml#",
@@ -18,22 +18,22 @@ importsOntology { _"http://localhost:8080/Matchmaker/ontologies/CloudQoS.wsml#" 
 capability ServiceCapability
  postcondition definedBy ?serviceType memberOf cloud#CloudStorage .
 
-interface Sugarsync
- importsOntology { Sugar }
+interface SugarsyncInter
+ importsOntology { S }
 
-ontology Sugar
+ontology S
  importsOntology { _"http://localhost:8080/Matchmaker/ontologies/CloudQoS.wsml#"}
 
 instance Availability memberOf { cloud#Availability , qos#ServiceSpec}
-  qos#value hasValue 92
+  qos#value hasValue 95
   qos#unit hasValue qos#Percentage
 
 instance MaxDownTime memberOf { cloud#MaxDownTime , qos#ServiceSpec}
-  qos#value hasValue 300
+  qos#value hasValue 50
   qos#unit hasValue qos#MilliSecond
 
 instance ResponseTime memberOf { cloud#ResponseTime , qos#ServiceSpec}
-  qos#value hasValue 30
+  qos#value hasValue 60
   qos#unit hasValue qos#MilliSecond
 
 instance PricePerMonth memberOf { cloud#PricePerMonth , qos#ServiceSpec}
@@ -45,6 +45,6 @@ instance PricePerData memberOf { cloud#PricePerData , qos#ServiceSpec}
   qos#unit hasValue qos#Euro
 
 instance NetworkBandwidth memberOf { cloud#NetworkBandwidth , qos#ServiceSpec}
-  qos#value hasValue 50
+  qos#value hasValue 30
   qos#unit hasValue qos#Mbps
 
