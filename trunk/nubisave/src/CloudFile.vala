@@ -170,14 +170,16 @@ namespace NubiSave
 					Logger.error<CloudFile> ("%s (%u) %s".printf (Name, fh, e.message));
 				}
 			}
-
+			
 			//TODO the first #IDASlices fileparts with distinct #IDASliceNumber fields
-			var filepart = fileparts[0];
-			filepartlist.add (filepart);
-
-			filepart.open (fh);
+			//Open all fileparts which have the Offset = 0
+			foreach (var fp in fileparts)
+				if (fp.Offset == 0) {
+					fp.open (fh);
+					filepartlist.add (fp));
+				}
 			handlers.set (fh, filepartlist);
-
+			
 			new_size = Size;
 			
 			return 0;
@@ -196,7 +198,8 @@ namespace NubiSave
 			char* read_buffer = buffer;
 			
 			//TODO open new/close old #NumSlices fileparts which distinct #IDASliceNumber fields
-			// check if current filepart is the right one and if not search for the proper one
+			//check if current filepart is the right one and if not search for the proper one
+			//use just the first part as representative for all open parts
 			var filepart = filepartlist[0];
 			if (!(offset >= filepart.Offset	&& offset < filepart.Offset + filepart.Size)) {
 				
