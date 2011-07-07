@@ -79,7 +79,7 @@ public class ServiceEditDialog extends javax.swing.JDialog {
 
         jLabel3.setFont(new java.awt.Font("Ubuntu", 0, 24)); // NOI18N
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("QoS Paramter");
+        jLabel3.setText("<QoS Paramter>");
         jLabel3.setPreferredSize(new java.awt.Dimension(97, 30));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());

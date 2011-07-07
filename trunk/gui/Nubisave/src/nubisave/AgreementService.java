@@ -12,6 +12,7 @@ public class AgreementService extends StorageService {
 
     public AgreementService(String name) {
         super(name);
+        super.setType(StorageType.AGREEMENT);
     }
     
     

@@ -4,7 +4,6 @@
  */
 package nubisave.ui;
 
-import java.util.List;
 import javax.swing.table.AbstractTableModel;
 import nubisave.*;
 
@@ -14,32 +13,20 @@ import nubisave.*;
  */
 public class NubiTableModel extends AbstractTableModel {
 
-    private List<MatchmakerService> mmServices;
-    private List<AgreementService> aServices;
-    private List<CustomMntPoint> cstmMntPnts;
-    
     private final String headers[] = {"Use", "Type", "Description", "Edit"};
-    
     private Class[] types = new Class[]{
         java.lang.Boolean.class, java.lang.String.class, java.lang.String.class, javax.swing.JButton.class
     };
-    
     private boolean[] canEdit = new boolean[]{
         true, false, false, true
     };
 
-    public NubiTableModel() {
-        mmServices = Nubisave.services.getMmServices();
-        aServices = Nubisave.services.getAServices();
-        cstmMntPnts = Nubisave.services.getCstmMntPnts();
-    }
-
     @Override
     public int getRowCount() {
         int rows = 0;
-        rows += mmServices.size();
-        rows += aServices.size();
-        rows += cstmMntPnts.size();
+        rows += Nubisave.services.getMmServices().size();
+        rows += Nubisave.services.getAServices().size();
+        rows += Nubisave.services.getCstmMntPnts().size();
         return rows;
     }
 
@@ -60,7 +47,7 @@ public class NubiTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return canEdit[columnIndex];
+        return Nubisave.services.get(rowIndex).isSupported() && canEdit[columnIndex];
     }
 
     @Override
@@ -69,47 +56,49 @@ public class NubiTableModel extends AbstractTableModel {
             return null;
         }
 
-        int mmServicesSize = mmServices.size();
-        int aServicesSize = aServices.size();
+        int mmServicesSize = Nubisave.services.getMmServices().size();
+        int aServicesSize = Nubisave.services.getAServices().size();
 
-        // Object is MatchmakerService
-        if (i < mmServicesSize) {
-            switch (j) {
-                case 0:
-                    return new Boolean(mmServices.get(i).isEnabled());
-                case 1:
-                    return "Service";
-                case 2:
-                    return mmServices.get(i).getName();
-                case 3:
-                    return "...";
-            }
-        } else if (i < mmServicesSize + aServicesSize - 1) { // Object is AgreementService
-            i -= mmServicesSize - 1;
-            switch (j) {
-                case 0:
-                    return new Boolean(aServices.get(i).isEnabled());
-                case 1:
-                    return "Agreement";
-                case 2:
-                    return aServices.get(i).getName();
-                case 3:
-                    return "...";
-            }
-        } else { // Object is CustomMntPoint
-            i -= mmServicesSize;
-            i -= aServicesSize;
-            switch (j) {
-                case 0:
-                    return new Boolean(cstmMntPnts.get(i).isEnabled());
-                case 1:
-                    return "Custom";
-                case 2:
-                    return cstmMntPnts.get(i).getName();
-                case 3:
-                    return "...";
-            }
+        StorageService service = Nubisave.services.get(i);
+
+        switch (j) {
+            case 0:
+                return service.isEnabled();
+            case 1:
+                switch (service.getType()) {
+                    case MATCHMAKER:
+                        return "Service";
+                    case AGREEMENT:
+                        return "Agreement";
+                    case CUSTOM:
+                        return "Custom";
+                }
+            case 2:
+                return service.getName();
+            case 3:
+                switch (service.getType()) {
+                    case MATCHMAKER:
+                        String label = "User/Passwd";
+                        MatchmakerService mmService = (MatchmakerService)service;
+                        if (mmService.getUser() != null) {
+                            if (mmService.getUser().length() > 0) {
+                                return label;
+                            }
+                        }
+                        return label + "*";
+                    case AGREEMENT:
+                    case CUSTOM:
+                        return "...";
+                }
         }
+
         return null;
+    }
+    
+    @Override
+    public void setValueAt(Object o,int row,int column) {
+        if (column == 0) {
+            Nubisave.services.get(row).setEnabled(((Boolean)o).booleanValue());
+        }
     }
 }

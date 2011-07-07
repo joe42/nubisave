@@ -23,8 +23,10 @@ public class MainWindow extends javax.swing.JFrame {
     public MainWindow() {
         tableModel = new NubiTableModel();
         initComponents();
+        providerTable.setDefaultRenderer(String.class,new ShowSupportedCellRenderer());
         providerTable.getColumn("Edit").setCellRenderer(new ButtonRenderer());
         providerTable.getColumn("Edit").setCellEditor(new ButtonEditor(new JCheckBox(),this)); 
+        
         //matchmakerURIField.setText(Properties.getProperty("matchmakerURI"));
         //mntpntField.setText(Properties.getProperty("mntPoint"));
     }

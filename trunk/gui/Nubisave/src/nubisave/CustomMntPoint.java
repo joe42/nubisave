@@ -16,6 +16,7 @@ public class CustomMntPoint extends StorageService {
 
     public CustomMntPoint(String name) {
         super(name);
+        super.setType(StorageType.CUSTOM);
     }
 
     public String getMntCmd() {

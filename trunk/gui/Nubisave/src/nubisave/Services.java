@@ -20,7 +20,7 @@ public class Services {
     public Services() {
         mmServices = new LinkedList<MatchmakerService>();
         aServices = new LinkedList<AgreementService>();
-        cstmMntPnts = new LinkedList<CustomMntPoint > ();
+        cstmMntPnts = new LinkedList<CustomMntPoint>();
     }
 
     public List<AgreementService> getAServices() {
@@ -33,5 +33,25 @@ public class Services {
 
     public List<MatchmakerService> getMmServices() {
         return mmServices;
+    }
+
+    public StorageService get(int i) {
+        if (i < 0) {
+            return null;
+        }
+        int size = aServices.size() + cstmMntPnts.size() + mmServices.size();
+        if (i >= size) {
+            return null;
+        }
+        if (i < mmServices.size()) {
+            return mmServices.get(i);
+        } else if (i < mmServices.size() + aServices.size() - 1) { // Object is AgreementService
+            i -= mmServices.size() - 1;
+            return aServices.get(i);
+        } else { // Object is CustomMntPoint
+            i -= mmServices.size();
+            i -= aServices.size();
+            return cstmMntPnts.get(i);
+        }
     }
 }

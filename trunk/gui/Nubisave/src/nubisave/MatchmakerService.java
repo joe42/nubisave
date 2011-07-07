@@ -24,6 +24,7 @@ public class MatchmakerService extends StorageService {
             
     public MatchmakerService(String name) {
         super(name);
+        super.setType(StorageType.MATCHMAKER);
     }
 
     public String getPass() {

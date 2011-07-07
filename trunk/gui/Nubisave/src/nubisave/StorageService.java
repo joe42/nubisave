@@ -13,10 +13,19 @@ public class StorageService {
     private boolean supported;
     
     private String name;
+    private StorageType type;
     
     public StorageService(String name) {
         this.name = name;
-        enabled = true;
+        enabled = false;
+        supported = false;
+        for (String s :Nubisave.supportedProvider) {
+            if (s.equalsIgnoreCase(name)) {
+                supported = true;
+                enabled = true;
+                break;
+            }
+        }
     }
 
     public boolean isEnabled() {
@@ -34,13 +43,17 @@ public class StorageService {
     public void setName(String name) {
         this.name = name;
     }
-
+    
     public boolean isSupported() {
         return supported;
     }
 
-    public void setSupported(boolean supported) {
-        this.supported = supported;
+    public void setType(StorageType type) {
+        this.type = type;
+    }
+
+    public StorageType getType() {
+        return type;
     }
     
     
