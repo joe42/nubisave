@@ -4,7 +4,7 @@
  */
 package nubisave.request;
 
-import java.util.HashMap;
+import nubisave.ui.AddServiceDialog;
 
 /**
  *
@@ -20,11 +20,13 @@ public class GoalGenerator {
         wsmogoal = new WSMOGoal();
     }
 
-    public String generateGoalWSML(HashMap<String, String> QoS) {
+    public String generateGoalWSML(AddServiceDialog dialog) {
         wsmogoal.addGoalOntologie("http://localhost:8080/Matchmaker/ontologies/Filehosting/FileQoSBase.wsml");
         /*
          * TODO: add QoS parameter from GUI
          */
+        
+        
         return wsmogoal.generateGoal();
     }
 

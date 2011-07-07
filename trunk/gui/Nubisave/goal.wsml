@@ -1,104 +1,80 @@
 wsmlVariant _"http://www.wsmo.org/wsml/wsml-syntax/wsml-rule"
 
-namespace { _"http://localhost:8080/Matchmaker/ontologies/goals/Goal4583888.wsml#",
+namespace { _"http://localhost:8080/Matchmaker/ontologies/goals/Goal2393782.wsml#",
 	dc _"http://purl.org/dc/elements/1.1#",
-	systemqosbase _"http://localhost:8080/Matchmaker/ontologies/SystemQoSBase.wsml#",
 	rank _"http://localhost:8080/Matchmaker/ontologies/Common/Ranking.wsml#",
-	fileqosbase _"http://localhost:8080/Matchmaker/ontologies/Filehosting/FileQoSBase.wsml#",
+	cloudqos _"http://localhost:8080/Matchmaker/ontologies/CloudQoS.wsml#",
 	qosbase _"http://localhost:8080/Matchmaker/ontologies/QoSBase.wsml#",
-	remoteqosbase _"http://localhost:8080/Matchmaker/ontologies/RemoteQoSBase.wsml#",
 	wsml _"http://www.wsmo.org/wsml/wsml-syntax#"}
 
-goal Goal4583888
-importsOntology { _"http://localhost:8080/Matchmaker/ontologies/Filehosting/FileQoSBase.wsml#" }
+goal Goal2393782
+importsOntology { _"http://localhost:8080/Matchmaker/ontologies/CloudQoS.wsml#" }
 
 capability GoalCapability
- postcondition definedBy ?serviceType memberOf fileqosbase#FileSharing .
+ postcondition definedBy ?serviceType memberOf cloudqos#CloudStorage .
 
 interface GoalInterface
 	importsOntology { GParam }
 
 ontology GParam
-importsOntology { _"http://localhost:8080/Matchmaker/ontologies/Filehosting/FileQoSBase.wsml#",
+importsOntology { _"http://localhost:8080/Matchmaker/ontologies/CloudQoS.wsml#",
 	_"http://localhost:8080/Matchmaker/ontologies/Common/Ranking.wsml#" }
 
-instance instAvailability memberOf { remoteqosbase#Availability, qosbase#GoalRequirement } 
+instance instAvailability memberOf { cloudqos#Availability, qosbase#GoalRequirement } 
  qosbase#value hasValue 0.0
  qosbase#unit hasValue qosbase#Percentage
 
-instance instUploadSpeed memberOf { fileqosbase#UploadSpeed, qosbase#GoalRequirement } 
+instance instPricePerMonth memberOf { cloudqos#PricePerMonth, qosbase#GoalRequirement } 
  qosbase#value hasValue 0.0
- qosbase#unit hasValue fileqosbase#KBps
+ qosbase#unit hasValue qosbase#CHF
 
-instance instCPULoadConfiguration memberOf rank#QoSConceptConfiguration 
- rank#hasQoSConceptIRI hasValue systemqosbase#CPULoad
- rank#hasMatchingThreshold hasValue 0.0
- rank#hasReputationScore hasValue 1.0
- rank#hasWeight hasValue 2.0
-
-instance instDownloadSpeedConfiguration memberOf rank#QoSConceptConfiguration 
- rank#hasQoSConceptIRI hasValue fileqosbase#DownloadSpeed
- rank#hasMatchingThreshold hasValue 0.0
- rank#hasReputationScore hasValue 1.0
- rank#hasWeight hasValue 2.0
-
-instance instDownloadSpeed memberOf { fileqosbase#DownloadSpeed, qosbase#GoalRequirement } 
- qosbase#value hasValue 0.0
- qosbase#unit hasValue fileqosbase#KBps
-
-instance instUploadSpeedConfiguration memberOf rank#QoSConceptConfiguration 
- rank#hasQoSConceptIRI hasValue fileqosbase#UploadSpeed
- rank#hasMatchingThreshold hasValue 0.0
- rank#hasReputationScore hasValue 1.0
- rank#hasWeight hasValue 2.0
-
-instance instNetworkBandwidth memberOf { fileqosbase#NetworkBandwidth, qosbase#GoalSpec } 
+instance instNetworkBandwidth memberOf { cloudqos#NetworkBandwidth, qosbase#GoalRequirement } 
  qosbase#value hasValue 0.0
  qosbase#unit hasValue qosbase#Mbps
 
-instance instSystemLoad memberOf { systemqosbase#SystemLoad, qosbase#GoalRequirement } 
- qosbase#value hasValue 0.0
- qosbase#unit hasValue qosbase#Percentage
-
-instance instMaxDownTime memberOf { remoteqosbase#MaxDownTime, qosbase#GoalRequirement } 
+instance instMaxDownTime memberOf { cloudqos#MaxDownTime, qosbase#GoalRequirement } 
  qosbase#value hasValue 0.0
  qosbase#unit hasValue qosbase#Second
 
-instance instHostingPrice memberOf { fileqosbase#HostingPrice, qosbase#GoalSpec } 
+instance instPricePerData memberOf { cloudqos#PricePerData, qosbase#GoalRequirement } 
  qosbase#value hasValue 0.0
  qosbase#unit hasValue qosbase#CHF
 
 instance instResponseTimeConfiguration memberOf rank#QoSConceptConfiguration 
- rank#hasQoSConceptIRI hasValue remoteqosbase#ResponseTime
+ rank#hasQoSConceptIRI hasValue cloudqos#ResponseTime
  rank#hasMatchingThreshold hasValue 0.0
  rank#hasReputationScore hasValue 1.0
  rank#hasWeight hasValue 2.0
 
-instance instExecutionTime memberOf { systemqosbase#ExecutionTime, qosbase#GoalRequirement } 
- qosbase#value hasValue 0.0
- qosbase#unit hasValue qosbase#Second
+instance instPricePerMonthConfiguration memberOf rank#QoSConceptConfiguration 
+ rank#hasQoSConceptIRI hasValue cloudqos#PricePerMonth
+ rank#hasMatchingThreshold hasValue 0.0
+ rank#hasReputationScore hasValue 1.0
+ rank#hasWeight hasValue 2.0
 
 instance instMaxDownTimeConfiguration memberOf rank#QoSConceptConfiguration 
- rank#hasQoSConceptIRI hasValue remoteqosbase#MaxDownTime
- rank#hasMatchingThreshold hasValue 0.0
- rank#hasReputationScore hasValue 1.0
- rank#hasWeight hasValue 2.0
-
-instance instExecutionTimeConfiguration memberOf rank#QoSConceptConfiguration 
- rank#hasQoSConceptIRI hasValue systemqosbase#ExecutionTime
+ rank#hasQoSConceptIRI hasValue cloudqos#MaxDownTime
  rank#hasMatchingThreshold hasValue 0.0
  rank#hasReputationScore hasValue 1.0
  rank#hasWeight hasValue 2.0
 
 instance instAvailabilityConfiguration memberOf rank#QoSConceptConfiguration 
- rank#hasQoSConceptIRI hasValue remoteqosbase#Availability
+ rank#hasQoSConceptIRI hasValue cloudqos#Availability
  rank#hasMatchingThreshold hasValue 0.0
  rank#hasReputationScore hasValue 1.0
  rank#hasWeight hasValue 2.0
 
-instance instCPULoad memberOf { systemqosbase#CPULoad, qosbase#GoalRequirement } 
- qosbase#value hasValue 0.0
- qosbase#unit hasValue qosbase#Percentage
+instance instPricePerDataConfiguration memberOf rank#QoSConceptConfiguration 
+ rank#hasQoSConceptIRI hasValue cloudqos#PricePerData
+ rank#hasMatchingThreshold hasValue 0.0
+ rank#hasReputationScore hasValue 1.0
+ rank#hasWeight hasValue 2.0
+
+instance instNetworkBandwidthConfiguration memberOf rank#QoSConceptConfiguration 
+ rank#hasQoSConceptIRI hasValue cloudqos#NetworkBandwidth
+ rank#hasMatchingThreshold hasValue 0.0
+ rank#hasReputationScore hasValue 1.0
+ rank#hasWeight hasValue 2.0
 
 instance ranking memberOf rank#QoSRankingScoreThreshold 
  rank#hasLowerRankThreshold hasValue 0.15
@@ -107,12 +83,6 @@ instance ranking memberOf rank#QoSRankingScoreThreshold
  rank#hasLowerPartialScore hasValue 0.0
  rank#hasHigherRankThreshold hasValue 0.15
 
-instance instResponseTime memberOf { remoteqosbase#ResponseTime, qosbase#GoalRequirement } 
+instance instResponseTime memberOf { cloudqos#ResponseTime, qosbase#GoalRequirement } 
  qosbase#value hasValue 0.0
  qosbase#unit hasValue qosbase#Second
-
-instance instSystemLoadConfiguration memberOf rank#QoSConceptConfiguration 
- rank#hasQoSConceptIRI hasValue systemqosbase#SystemLoad
- rank#hasMatchingThreshold hasValue 0.0
- rank#hasReputationScore hasValue 1.0
- rank#hasWeight hasValue 2.0

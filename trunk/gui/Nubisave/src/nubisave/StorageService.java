@@ -10,6 +10,8 @@ package nubisave;
  */
 public class StorageService {
     private boolean enabled;
+    private boolean supported;
+    
     private String name;
     
     public StorageService(String name) {
@@ -32,4 +34,14 @@ public class StorageService {
     public void setName(String name) {
         this.name = name;
     }
+
+    public boolean isSupported() {
+        return supported;
+    }
+
+    public void setSupported(boolean supported) {
+        this.supported = supported;
+    }
+    
+    
 }

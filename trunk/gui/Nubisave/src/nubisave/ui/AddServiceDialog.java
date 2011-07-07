@@ -10,7 +10,10 @@
  */
 package nubisave.ui;
 
+import java.util.List;
+import javax.swing.table.DefaultTableModel;
 import nubisave.*;
+import nubisave.request.Searcher;
 
 /**
  *
@@ -18,9 +21,13 @@ import nubisave.*;
  */
 public class AddServiceDialog extends javax.swing.JDialog {
 
+    private Searcher searcher;
+    private List<MatchmakerService> services;
+
     /** Creates new form AddServiceDialog */
     public AddServiceDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
+        searcher = new Searcher();
         initComponents();
     }
 
@@ -33,7 +40,6 @@ public class AddServiceDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jToggleButton1 = new javax.swing.JToggleButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         searchResultTable = new javax.swing.JTable();
         addBtn = new javax.swing.JToggleButton();
@@ -62,27 +68,32 @@ public class AddServiceDialog extends javax.swing.JDialog {
         jComboBox7 = new javax.swing.JComboBox();
         jComboBox8 = new javax.swing.JComboBox();
         jComboBox9 = new javax.swing.JComboBox();
+        searchBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jToggleButton1.setText("Search");
-
+        searchResultTable.setAutoCreateRowSorter(true);
         searchResultTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"Dropbox"},
-                {"Shugarsync"},
-                {"Dropbox2"}
+
             },
             new String [] {
-                "Name"
+                "Name", "P/D", "P/M", "A", "BW", "DT", "RT"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class
+                java.lang.String.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
             }
         });
         searchResultTable.setRowHeight(25);
@@ -120,17 +131,22 @@ public class AddServiceDialog extends javax.swing.JDialog {
 
         jCheckBox6.setText("Response Time");
 
-        jFormattedTextField1.setText("jFormattedTextField1");
+        jFormattedTextField1.setText("0.00");
 
-        jFormattedTextField2.setText("jFormattedTextField1");
+        jFormattedTextField2.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
+        jFormattedTextField2.setText("0.00");
 
-        jFormattedTextField3.setText("jFormattedTextField1");
+        jFormattedTextField3.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
+        jFormattedTextField3.setText("0.00");
 
-        jFormattedTextField4.setText("jFormattedTextField1");
+        jFormattedTextField4.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
+        jFormattedTextField4.setText("0.00");
 
-        jFormattedTextField5.setText("jFormattedTextField1");
+        jFormattedTextField5.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
+        jFormattedTextField5.setText("0.00");
 
-        jFormattedTextField6.setText("jFormattedTextField1");
+        jFormattedTextField6.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
+        jFormattedTextField6.setText("0.00");
 
         jLabel1.setText("Euro");
 
@@ -186,6 +202,13 @@ public class AddServiceDialog extends javax.swing.JDialog {
             }
         });
 
+        searchBtn.setText("Search");
+        searchBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -193,7 +216,6 @@ public class AddServiceDialog extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jToggleButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -205,12 +227,12 @@ public class AddServiceDialog extends javax.swing.JDialog {
                                             .addComponent(jCheckBox3))
                                         .addGap(18, 18, 18)
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jFormattedTextField3, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
-                                            .addComponent(jFormattedTextField6, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
-                                            .addComponent(jFormattedTextField5, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
-                                            .addComponent(jFormattedTextField4, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
-                                            .addComponent(jFormattedTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
-                                            .addComponent(jFormattedTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)))
+                                            .addComponent(jFormattedTextField3, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE)
+                                            .addComponent(jFormattedTextField6, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE)
+                                            .addComponent(jFormattedTextField5, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE)
+                                            .addComponent(jFormattedTextField4, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE)
+                                            .addComponent(jFormattedTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE)
+                                            .addComponent(jFormattedTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE)))
                                     .addComponent(jCheckBox6))
                                 .addGap(6, 6, 6))
                             .addComponent(jCheckBox1)
@@ -233,11 +255,12 @@ public class AddServiceDialog extends javax.swing.JDialog {
                                 .addComponent(jComboBox5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jComboBox6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 508, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(cancelBtn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(addBtn)))
+                        .addComponent(addBtn))
+                    .addComponent(searchBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 508, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -284,9 +307,9 @@ public class AddServiceDialog extends javax.swing.JDialog {
                     .addComponent(jComboBox6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jToggleButton1)
+                .addComponent(searchBtn)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(addBtn)
@@ -296,6 +319,32 @@ public class AddServiceDialog extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void showServices() {
+        DefaultTableModel tm = (DefaultTableModel) searchResultTable.getModel();
+        for (int i = tm.getRowCount() - 1; i >= 0; i--) {
+            tm.removeRow(i);
+        }
+        tm.fireTableDataChanged();
+
+        for (MatchmakerService s : services) {
+            Object[] row = {
+                s.getName(),
+                s.isSatPricePerData(),
+                s.isSatPricePerMonth(),
+                s.isSatAvailability(),
+                s.isSatNetworkBandwith(),
+                s.isSatMaxDownTime(),
+                s.isSatResponseTime()};
+            tm.addRow(row);
+        }
+        tm.fireTableDataChanged();
+    }
+
+    public void setServices(List<MatchmakerService> services) {
+        this.services = services;
+        showServices();
+    }
 
     private void addBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBtnActionPerformed
         for (int i : searchResultTable.getSelectedRows()) {
@@ -338,6 +387,9 @@ public class AddServiceDialog extends javax.swing.JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_jCheckBox2ActionPerformed
 
+    private void searchBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBtnActionPerformed
+        searcher.find(this);
+    }//GEN-LAST:event_searchBtnActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton addBtn;
     private javax.swing.JToggleButton cancelBtn;
@@ -366,7 +418,7 @@ public class AddServiceDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JToggleButton jToggleButton1;
+    private javax.swing.JButton searchBtn;
     private javax.swing.JTable searchResultTable;
     // End of variables declaration//GEN-END:variables
 }

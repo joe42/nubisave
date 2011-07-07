@@ -25,7 +25,6 @@
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jToggleButton1" alignment="0" pref="606" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
@@ -38,12 +37,12 @@
                                       </Group>
                                       <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="jFormattedTextField3" pref="220" max="32767" attributes="0"/>
-                                          <Component id="jFormattedTextField6" alignment="0" pref="220" max="32767" attributes="0"/>
-                                          <Component id="jFormattedTextField5" alignment="0" pref="220" max="32767" attributes="0"/>
-                                          <Component id="jFormattedTextField4" alignment="0" pref="220" max="32767" attributes="0"/>
-                                          <Component id="jFormattedTextField2" alignment="0" pref="220" max="32767" attributes="0"/>
-                                          <Component id="jFormattedTextField1" alignment="0" pref="220" max="32767" attributes="0"/>
+                                          <Component id="jFormattedTextField3" pref="122" max="32767" attributes="0"/>
+                                          <Component id="jFormattedTextField6" alignment="0" pref="122" max="32767" attributes="0"/>
+                                          <Component id="jFormattedTextField5" alignment="0" pref="122" max="32767" attributes="0"/>
+                                          <Component id="jFormattedTextField4" alignment="0" pref="122" max="32767" attributes="0"/>
+                                          <Component id="jFormattedTextField2" alignment="0" pref="122" max="32767" attributes="0"/>
+                                          <Component id="jFormattedTextField1" alignment="0" pref="122" max="32767" attributes="0"/>
                                       </Group>
                                   </Group>
                                   <Component id="jCheckBox6" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -77,12 +76,13 @@
                           <Component id="jComboBox6" alignment="1" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <Component id="jScrollPane1" alignment="0" pref="606" max="32767" attributes="0"/>
+                  <Component id="jScrollPane1" alignment="0" pref="508" max="32767" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="cancelBtn" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="addBtn" min="-2" max="-2" attributes="0"/>
                   </Group>
+                  <Component id="searchBtn" alignment="0" pref="508" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -141,10 +141,10 @@
                   <Component id="jComboBox6" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jComboBox3" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" max="-2" attributes="0"/>
-              <Component id="jToggleButton1" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" max="-2" attributes="0"/>
-              <Component id="jScrollPane1" pref="186" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="searchBtn" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="jScrollPane1" pref="149" max="32767" attributes="0"/>
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="addBtn" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -156,11 +156,6 @@
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="javax.swing.JToggleButton" name="jToggleButton1">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Search"/>
-      </Properties>
-    </Component>
     <Container class="javax.swing.JScrollPane" name="jScrollPane1">
       <AuxValues>
         <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
@@ -170,13 +165,16 @@
       <SubComponents>
         <Component class="javax.swing.JTable" name="searchResultTable">
           <Properties>
+            <Property name="autoCreateRowSorter" type="boolean" value="true"/>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-              <Table columnCount="1" rowCount="3">
-                <Column editable="true" title="Name" type="java.lang.String">
-                  <Data value="Dropbox"/>
-                  <Data value="Shugarsync"/>
-                  <Data value="Dropbox2"/>
-                </Column>
+              <Table columnCount="7" rowCount="0">
+                <Column editable="false" title="Name" type="java.lang.String"/>
+                <Column editable="false" title="P/D" type="java.lang.Boolean"/>
+                <Column editable="false" title="P/M" type="java.lang.Boolean"/>
+                <Column editable="false" title="A" type="java.lang.Boolean"/>
+                <Column editable="false" title="BW" type="java.lang.Boolean"/>
+                <Column editable="false" title="DT" type="java.lang.Boolean"/>
+                <Column editable="false" title="RT" type="java.lang.Boolean"/>
               </Table>
             </Property>
             <Property name="rowHeight" type="int" value="25"/>
@@ -238,32 +236,47 @@
     </Component>
     <Component class="javax.swing.JFormattedTextField" name="jFormattedTextField1">
       <Properties>
-        <Property name="text" type="java.lang.String" value="jFormattedTextField1"/>
+        <Property name="text" type="java.lang.String" value="0.00"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JFormattedTextField" name="jFormattedTextField2">
       <Properties>
-        <Property name="text" type="java.lang.String" value="jFormattedTextField1"/>
+        <Property name="formatterFactory" type="javax.swing.JFormattedTextField$AbstractFormatterFactory" editor="org.netbeans.modules.form.editors.AbstractFormatterFactoryEditor">
+          <Format format="#0.00" subtype="-1" type="0"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="0.00"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JFormattedTextField" name="jFormattedTextField3">
       <Properties>
-        <Property name="text" type="java.lang.String" value="jFormattedTextField1"/>
+        <Property name="formatterFactory" type="javax.swing.JFormattedTextField$AbstractFormatterFactory" editor="org.netbeans.modules.form.editors.AbstractFormatterFactoryEditor">
+          <Format format="#0.00" subtype="-1" type="0"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="0.00"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JFormattedTextField" name="jFormattedTextField4">
       <Properties>
-        <Property name="text" type="java.lang.String" value="jFormattedTextField1"/>
+        <Property name="formatterFactory" type="javax.swing.JFormattedTextField$AbstractFormatterFactory" editor="org.netbeans.modules.form.editors.AbstractFormatterFactoryEditor">
+          <Format format="#0.00" subtype="-1" type="0"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="0.00"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JFormattedTextField" name="jFormattedTextField5">
       <Properties>
-        <Property name="text" type="java.lang.String" value="jFormattedTextField1"/>
+        <Property name="formatterFactory" type="javax.swing.JFormattedTextField$AbstractFormatterFactory" editor="org.netbeans.modules.form.editors.AbstractFormatterFactoryEditor">
+          <Format format="#0.00" subtype="-1" type="0"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="0.00"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JFormattedTextField" name="jFormattedTextField6">
       <Properties>
-        <Property name="text" type="java.lang.String" value="jFormattedTextField1"/>
+        <Property name="formatterFactory" type="javax.swing.JFormattedTextField$AbstractFormatterFactory" editor="org.netbeans.modules.form.editors.AbstractFormatterFactoryEditor">
+          <Format format="#0.00" subtype="-1" type="0"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="0.00"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel1">
@@ -395,6 +408,14 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jComboBox9ActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="searchBtn">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Search"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="searchBtnActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>
