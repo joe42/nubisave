@@ -49,8 +49,11 @@ namespace NubiSave
 		[Description(nick = "freesize", blurb = "Free Capacity of this Storage.")]
 		public uint64 FreeSize { get; set; default = 0; }
 		
-		[Description(nick = "deleted", blurb = "Mark this storages as deleted for account removal.")]
+		[Description(nick = "deleted", blurb = "Mark this Storages as deleted for account removal.")]
 		public uint64 Deleted { get; set; default = 0; }
+		
+		[Description(nick = "priority", blurb = "Usage priority of this Storage.")]
+		public uint64 Priority { get; set; default = 0; }
 		
 		construct
 		{
