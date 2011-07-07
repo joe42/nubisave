@@ -11,6 +11,9 @@
 package nubisave.ui;
 
 import java.util.List;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
 import javax.swing.table.DefaultTableModel;
 import nubisave.*;
 import nubisave.request.Searcher;
@@ -44,30 +47,30 @@ public class AddServiceDialog extends javax.swing.JDialog {
         searchResultTable = new javax.swing.JTable();
         addBtn = new javax.swing.JToggleButton();
         cancelBtn = new javax.swing.JToggleButton();
-        jCheckBox1 = new javax.swing.JCheckBox();
-        jCheckBox2 = new javax.swing.JCheckBox();
-        jCheckBox3 = new javax.swing.JCheckBox();
-        jCheckBox4 = new javax.swing.JCheckBox();
-        jCheckBox5 = new javax.swing.JCheckBox();
-        jCheckBox6 = new javax.swing.JCheckBox();
-        jFormattedTextField1 = new javax.swing.JFormattedTextField();
-        jFormattedTextField2 = new javax.swing.JFormattedTextField();
-        jFormattedTextField3 = new javax.swing.JFormattedTextField();
-        jFormattedTextField4 = new javax.swing.JFormattedTextField();
-        jFormattedTextField5 = new javax.swing.JFormattedTextField();
-        jFormattedTextField6 = new javax.swing.JFormattedTextField();
+        pricePerDataCheckBox = new javax.swing.JCheckBox();
+        pricePerMonthCheckBox = new javax.swing.JCheckBox();
+        availabilityCheckBox = new javax.swing.JCheckBox();
+        bandwidthCheckBox = new javax.swing.JCheckBox();
+        maxDownTimeCheckBox = new javax.swing.JCheckBox();
+        responseTimeCheckBox = new javax.swing.JCheckBox();
+        pricePerDataTextField = new javax.swing.JFormattedTextField();
+        pricePerMonthTextField = new javax.swing.JFormattedTextField();
+        availabilityTextField = new javax.swing.JFormattedTextField();
+        bandwidthTextField = new javax.swing.JFormattedTextField();
+        maxDownTimeTextField = new javax.swing.JFormattedTextField();
+        responseTimeTextField = new javax.swing.JFormattedTextField();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox();
-        jComboBox2 = new javax.swing.JComboBox();
-        jComboBox3 = new javax.swing.JComboBox();
-        jComboBox4 = new javax.swing.JComboBox();
-        jComboBox5 = new javax.swing.JComboBox();
-        jComboBox6 = new javax.swing.JComboBox();
-        jComboBox7 = new javax.swing.JComboBox();
-        jComboBox8 = new javax.swing.JComboBox();
-        jComboBox9 = new javax.swing.JComboBox();
+        bandwidthUnitCB = new javax.swing.JComboBox();
+        maxDownTimeUnitCB = new javax.swing.JComboBox();
+        responseTimeUnitCB = new javax.swing.JComboBox();
+        bandwidthWeightCB = new javax.swing.JComboBox();
+        maxDownTimeWeightCB = new javax.swing.JComboBox();
+        responseTimeWeightCB = new javax.swing.JComboBox();
+        availabilityWeightCB = new javax.swing.JComboBox();
+        pricePerMonthWeightCB = new javax.swing.JComboBox();
+        pricePerDataWeightCB = new javax.swing.JComboBox();
         searchBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -114,39 +117,39 @@ public class AddServiceDialog extends javax.swing.JDialog {
             }
         });
 
-        jCheckBox1.setText("Price per Data");
+        pricePerDataCheckBox.setText("Price per Data");
 
-        jCheckBox2.setText("Price per Month");
-        jCheckBox2.addActionListener(new java.awt.event.ActionListener() {
+        pricePerMonthCheckBox.setText("Price per Month");
+        pricePerMonthCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox2ActionPerformed(evt);
+                pricePerMonthCheckBoxActionPerformed(evt);
             }
         });
 
-        jCheckBox3.setText("Availability");
+        availabilityCheckBox.setText("Availability");
 
-        jCheckBox4.setText("Bandwidth");
+        bandwidthCheckBox.setText("Bandwidth");
 
-        jCheckBox5.setText("max. Down Time");
+        maxDownTimeCheckBox.setText("max. Down Time");
 
-        jCheckBox6.setText("Response Time");
+        responseTimeCheckBox.setText("Response Time");
 
-        jFormattedTextField1.setText("0.00");
+        pricePerDataTextField.setText("0.00");
 
-        jFormattedTextField2.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
-        jFormattedTextField2.setText("0.00");
+        pricePerMonthTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
+        pricePerMonthTextField.setText("0.00");
 
-        jFormattedTextField3.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
-        jFormattedTextField3.setText("0.00");
+        availabilityTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
+        availabilityTextField.setText("0.00");
 
-        jFormattedTextField4.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
-        jFormattedTextField4.setText("0.00");
+        bandwidthTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
+        bandwidthTextField.setText("0.00");
 
-        jFormattedTextField5.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
-        jFormattedTextField5.setText("0.00");
+        maxDownTimeTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
+        maxDownTimeTextField.setText("0.00");
 
-        jFormattedTextField6.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
-        jFormattedTextField6.setText("0.00");
+        responseTimeTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
+        responseTimeTextField.setText("0.00");
 
         jLabel1.setText("Euro");
 
@@ -154,51 +157,51 @@ public class AddServiceDialog extends javax.swing.JDialog {
 
         jLabel3.setText("%");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Mbps", "Kbps" }));
+        bandwidthUnitCB.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Mbps", "Kbps" }));
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Minute", "Second", "Millisecond" }));
+        maxDownTimeUnitCB.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Minute", "Second", "MilliSecond" }));
 
-        jComboBox3.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Minute", "Second", "Millisecond" }));
+        responseTimeUnitCB.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Minute", "Second", "MilliSecond" }));
 
-        jComboBox4.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Low", "Medium", "High" }));
-        jComboBox4.addActionListener(new java.awt.event.ActionListener() {
+        bandwidthWeightCB.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Low", "Medium", "High" }));
+        bandwidthWeightCB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox4ActionPerformed(evt);
+                bandwidthWeightCBActionPerformed(evt);
             }
         });
 
-        jComboBox5.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Low", "Medium", "High" }));
-        jComboBox5.addActionListener(new java.awt.event.ActionListener() {
+        maxDownTimeWeightCB.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Low", "Medium", "High" }));
+        maxDownTimeWeightCB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox5ActionPerformed(evt);
+                maxDownTimeWeightCBActionPerformed(evt);
             }
         });
 
-        jComboBox6.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Low", "Medium", "High" }));
-        jComboBox6.addActionListener(new java.awt.event.ActionListener() {
+        responseTimeWeightCB.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Low", "Medium", "High" }));
+        responseTimeWeightCB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox6ActionPerformed(evt);
+                responseTimeWeightCBActionPerformed(evt);
             }
         });
 
-        jComboBox7.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Low", "Medium", "High" }));
-        jComboBox7.addActionListener(new java.awt.event.ActionListener() {
+        availabilityWeightCB.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Low", "Medium", "High" }));
+        availabilityWeightCB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox7ActionPerformed(evt);
+                availabilityWeightCBActionPerformed(evt);
             }
         });
 
-        jComboBox8.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Low", "Medium", "High" }));
-        jComboBox8.addActionListener(new java.awt.event.ActionListener() {
+        pricePerMonthWeightCB.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Low", "Medium", "High" }));
+        pricePerMonthWeightCB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox8ActionPerformed(evt);
+                pricePerMonthWeightCBActionPerformed(evt);
             }
         });
 
-        jComboBox9.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Low", "Medium", "High" }));
-        jComboBox9.addActionListener(new java.awt.event.ActionListener() {
+        pricePerDataWeightCB.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Low", "Medium", "High" }));
+        pricePerDataWeightCB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox9ActionPerformed(evt);
+                pricePerDataWeightCBActionPerformed(evt);
             }
         });
 
@@ -222,39 +225,39 @@ public class AddServiceDialog extends javax.swing.JDialog {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jCheckBox5)
-                                            .addComponent(jCheckBox4)
-                                            .addComponent(jCheckBox3))
+                                            .addComponent(maxDownTimeCheckBox)
+                                            .addComponent(bandwidthCheckBox)
+                                            .addComponent(availabilityCheckBox))
                                         .addGap(18, 18, 18)
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jFormattedTextField3, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE)
-                                            .addComponent(jFormattedTextField6, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE)
-                                            .addComponent(jFormattedTextField5, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE)
-                                            .addComponent(jFormattedTextField4, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE)
-                                            .addComponent(jFormattedTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE)
-                                            .addComponent(jFormattedTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE)))
-                                    .addComponent(jCheckBox6))
+                                            .addComponent(availabilityTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 121, Short.MAX_VALUE)
+                                            .addComponent(responseTimeTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 121, Short.MAX_VALUE)
+                                            .addComponent(maxDownTimeTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 121, Short.MAX_VALUE)
+                                            .addComponent(bandwidthTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 121, Short.MAX_VALUE)
+                                            .addComponent(pricePerMonthTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 121, Short.MAX_VALUE)
+                                            .addComponent(pricePerDataTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 121, Short.MAX_VALUE)))
+                                    .addComponent(responseTimeCheckBox))
                                 .addGap(6, 6, 6))
-                            .addComponent(jCheckBox1)
-                            .addComponent(jCheckBox2))
+                            .addComponent(pricePerDataCheckBox)
+                            .addComponent(pricePerMonthCheckBox))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
                             .addComponent(jLabel3)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(responseTimeUnitCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jComboBox1, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jComboBox2, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                    .addComponent(bandwidthUnitCB, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(maxDownTimeUnitCB, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                             .addComponent(jLabel1))
                         .addGap(11, 11, 11)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jComboBox9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jComboBox8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jComboBox7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jComboBox5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jComboBox6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(pricePerDataWeightCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(pricePerMonthWeightCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(availabilityWeightCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(maxDownTimeWeightCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(bandwidthWeightCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(responseTimeWeightCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 508, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(cancelBtn)
@@ -270,42 +273,42 @@ public class AddServiceDialog extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jCheckBox1)
-                            .addComponent(jComboBox9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(pricePerDataCheckBox)
+                            .addComponent(pricePerDataWeightCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel1)
-                            .addComponent(jFormattedTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(pricePerDataTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jCheckBox2)
-                                .addComponent(jFormattedTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(pricePerMonthCheckBox)
+                                .addComponent(pricePerMonthTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jLabel2)))
-                    .addComponent(jComboBox8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(pricePerMonthWeightCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jCheckBox3)
+                    .addComponent(availabilityCheckBox)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jComboBox7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(availabilityWeightCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel3)
-                        .addComponent(jFormattedTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(availabilityTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jCheckBox4)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jFormattedTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(bandwidthCheckBox)
+                    .addComponent(bandwidthUnitCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bandwidthWeightCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bandwidthTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jCheckBox5)
-                    .addComponent(jComboBox5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jFormattedTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(maxDownTimeCheckBox)
+                    .addComponent(maxDownTimeWeightCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(maxDownTimeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(maxDownTimeUnitCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jCheckBox6)
-                    .addComponent(jFormattedTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jComboBox6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(responseTimeCheckBox)
+                    .addComponent(responseTimeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(responseTimeWeightCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(responseTimeUnitCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(searchBtn)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -327,6 +330,10 @@ public class AddServiceDialog extends javax.swing.JDialog {
         }
         tm.fireTableDataChanged();
 
+        if (services == null) {
+            return;
+        }
+        
         for (MatchmakerService s : services) {
             Object[] row = {
                 s.getName(),
@@ -346,6 +353,91 @@ public class AddServiceDialog extends javax.swing.JDialog {
         showServices();
     }
 
+    public JCheckBox getAvailabilityCheckBox() {
+        return availabilityCheckBox;
+    }
+
+    public JFormattedTextField getAvailabilityTextField() {
+        return availabilityTextField;
+    }
+
+    public JComboBox getAvailabilityWeightCB() {
+        return availabilityWeightCB;
+    }
+
+    public JCheckBox getBandwidthCheckBox() {
+        return bandwidthCheckBox;
+    }
+
+    public JFormattedTextField getBandwidthTextField() {
+        return bandwidthTextField;
+    }
+
+    public JComboBox getBandwidthUnitCB() {
+        return bandwidthUnitCB;
+    }
+
+    public JComboBox getBandwidthWeightCB() {
+        return bandwidthWeightCB;
+    }
+
+    public JCheckBox getMaxDownTimeCheckBox() {
+        return maxDownTimeCheckBox;
+    }
+
+    public JFormattedTextField getMaxDownTimeTextField() {
+        return maxDownTimeTextField;
+    }
+
+    public JComboBox getMaxDownTimeUnitCB() {
+        return maxDownTimeUnitCB;
+    }
+
+    public JComboBox getMaxDownTimeWeightCB() {
+        return maxDownTimeWeightCB;
+    }
+
+    public JCheckBox getPricePerDataCheckBox() {
+        return pricePerDataCheckBox;
+    }
+
+    public JFormattedTextField getPricePerDataTextField() {
+        return pricePerDataTextField;
+    }
+
+    public JComboBox getPricePerDataWeightCB() {
+        return pricePerDataWeightCB;
+    }
+
+    public JCheckBox getPricePerMonthCheckBox() {
+        return pricePerMonthCheckBox;
+    }
+
+    public JFormattedTextField getPricePerMonthTextField() {
+        return pricePerMonthTextField;
+    }
+
+    public JComboBox getPricePerMonthWeightCB() {
+        return pricePerMonthWeightCB;
+    }
+
+    public JCheckBox getResponseTimeCheckBox() {
+        return responseTimeCheckBox;
+    }
+
+    public JFormattedTextField getResponseTimeTextField() {
+        return responseTimeTextField;
+    }
+
+    public JComboBox getResponseTimeUnitCB() {
+        return responseTimeUnitCB;
+    }
+
+    public JComboBox getResponseTimeWeightCB() {
+        return responseTimeWeightCB;
+    }
+
+    
     private void addBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBtnActionPerformed
         for (int i : searchResultTable.getSelectedRows()) {
             MatchmakerService newService = new MatchmakerService((String) searchResultTable.getModel().getValueAt(i, 0));
@@ -359,65 +451,65 @@ public class AddServiceDialog extends javax.swing.JDialog {
         dispose();
     }//GEN-LAST:event_cancelBtnActionPerformed
 
-    private void jComboBox4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox4ActionPerformed
+    private void bandwidthWeightCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bandwidthWeightCBActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBox4ActionPerformed
+    }//GEN-LAST:event_bandwidthWeightCBActionPerformed
 
-    private void jComboBox5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox5ActionPerformed
+    private void maxDownTimeWeightCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_maxDownTimeWeightCBActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBox5ActionPerformed
+    }//GEN-LAST:event_maxDownTimeWeightCBActionPerformed
 
-    private void jComboBox6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox6ActionPerformed
+    private void responseTimeWeightCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_responseTimeWeightCBActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBox6ActionPerformed
+    }//GEN-LAST:event_responseTimeWeightCBActionPerformed
 
-    private void jComboBox7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox7ActionPerformed
+    private void availabilityWeightCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_availabilityWeightCBActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBox7ActionPerformed
+    }//GEN-LAST:event_availabilityWeightCBActionPerformed
 
-    private void jComboBox8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox8ActionPerformed
+    private void pricePerMonthWeightCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pricePerMonthWeightCBActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBox8ActionPerformed
+    }//GEN-LAST:event_pricePerMonthWeightCBActionPerformed
 
-    private void jComboBox9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox9ActionPerformed
+    private void pricePerDataWeightCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pricePerDataWeightCBActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBox9ActionPerformed
+    }//GEN-LAST:event_pricePerDataWeightCBActionPerformed
 
-    private void jCheckBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox2ActionPerformed
+    private void pricePerMonthCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pricePerMonthCheckBoxActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBox2ActionPerformed
+    }//GEN-LAST:event_pricePerMonthCheckBoxActionPerformed
 
     private void searchBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBtnActionPerformed
         searcher.find(this);
     }//GEN-LAST:event_searchBtnActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton addBtn;
+    private javax.swing.JCheckBox availabilityCheckBox;
+    private javax.swing.JFormattedTextField availabilityTextField;
+    private javax.swing.JComboBox availabilityWeightCB;
+    private javax.swing.JCheckBox bandwidthCheckBox;
+    private javax.swing.JFormattedTextField bandwidthTextField;
+    private javax.swing.JComboBox bandwidthUnitCB;
+    private javax.swing.JComboBox bandwidthWeightCB;
     private javax.swing.JToggleButton cancelBtn;
-    private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JCheckBox jCheckBox2;
-    private javax.swing.JCheckBox jCheckBox3;
-    private javax.swing.JCheckBox jCheckBox4;
-    private javax.swing.JCheckBox jCheckBox5;
-    private javax.swing.JCheckBox jCheckBox6;
-    private javax.swing.JComboBox jComboBox1;
-    private javax.swing.JComboBox jComboBox2;
-    private javax.swing.JComboBox jComboBox3;
-    private javax.swing.JComboBox jComboBox4;
-    private javax.swing.JComboBox jComboBox5;
-    private javax.swing.JComboBox jComboBox6;
-    private javax.swing.JComboBox jComboBox7;
-    private javax.swing.JComboBox jComboBox8;
-    private javax.swing.JComboBox jComboBox9;
-    private javax.swing.JFormattedTextField jFormattedTextField1;
-    private javax.swing.JFormattedTextField jFormattedTextField2;
-    private javax.swing.JFormattedTextField jFormattedTextField3;
-    private javax.swing.JFormattedTextField jFormattedTextField4;
-    private javax.swing.JFormattedTextField jFormattedTextField5;
-    private javax.swing.JFormattedTextField jFormattedTextField6;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JCheckBox maxDownTimeCheckBox;
+    private javax.swing.JFormattedTextField maxDownTimeTextField;
+    private javax.swing.JComboBox maxDownTimeUnitCB;
+    private javax.swing.JComboBox maxDownTimeWeightCB;
+    private javax.swing.JCheckBox pricePerDataCheckBox;
+    private javax.swing.JFormattedTextField pricePerDataTextField;
+    private javax.swing.JComboBox pricePerDataWeightCB;
+    private javax.swing.JCheckBox pricePerMonthCheckBox;
+    private javax.swing.JFormattedTextField pricePerMonthTextField;
+    private javax.swing.JComboBox pricePerMonthWeightCB;
+    private javax.swing.JCheckBox responseTimeCheckBox;
+    private javax.swing.JFormattedTextField responseTimeTextField;
+    private javax.swing.JComboBox responseTimeUnitCB;
+    private javax.swing.JComboBox responseTimeWeightCB;
     private javax.swing.JButton searchBtn;
     private javax.swing.JTable searchResultTable;
     // End of variables declaration//GEN-END:variables

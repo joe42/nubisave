@@ -31,35 +31,35 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="jCheckBox5" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Component id="jCheckBox4" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Component id="jCheckBox3" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="maxDownTimeCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="bandwidthCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="availabilityCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                       <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="jFormattedTextField3" pref="122" max="32767" attributes="0"/>
-                                          <Component id="jFormattedTextField6" alignment="0" pref="122" max="32767" attributes="0"/>
-                                          <Component id="jFormattedTextField5" alignment="0" pref="122" max="32767" attributes="0"/>
-                                          <Component id="jFormattedTextField4" alignment="0" pref="122" max="32767" attributes="0"/>
-                                          <Component id="jFormattedTextField2" alignment="0" pref="122" max="32767" attributes="0"/>
-                                          <Component id="jFormattedTextField1" alignment="0" pref="122" max="32767" attributes="0"/>
+                                          <Component id="availabilityTextField" pref="121" max="32767" attributes="0"/>
+                                          <Component id="responseTimeTextField" alignment="0" pref="121" max="32767" attributes="0"/>
+                                          <Component id="maxDownTimeTextField" alignment="0" pref="121" max="32767" attributes="0"/>
+                                          <Component id="bandwidthTextField" alignment="0" pref="121" max="32767" attributes="0"/>
+                                          <Component id="pricePerMonthTextField" alignment="0" pref="121" max="32767" attributes="0"/>
+                                          <Component id="pricePerDataTextField" alignment="0" pref="121" max="32767" attributes="0"/>
                                       </Group>
                                   </Group>
-                                  <Component id="jCheckBox6" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="responseTimeCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="jCheckBox1" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jCheckBox2" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="pricePerDataCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="pricePerMonthCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                           <Group type="103" alignment="0" groupAlignment="1" attributes="0">
-                              <Component id="jComboBox3" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Component id="responseTimeUnitCB" alignment="1" min="-2" max="-2" attributes="0"/>
                               <Group type="103" alignment="1" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="jComboBox1" alignment="1" max="32767" attributes="1"/>
-                                  <Component id="jComboBox2" alignment="1" max="32767" attributes="1"/>
+                                  <Component id="bandwidthUnitCB" alignment="1" max="32767" attributes="1"/>
+                                  <Component id="maxDownTimeUnitCB" alignment="1" max="32767" attributes="1"/>
                               </Group>
                           </Group>
                           <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
@@ -67,13 +67,13 @@
                       <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jComboBox9" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="jComboBox8" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="jComboBox7" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="jComboBox5" min="-2" max="-2" attributes="0"/>
-                              <Component id="jComboBox4" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="pricePerDataWeightCB" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="pricePerMonthWeightCB" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="availabilityWeightCB" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="maxDownTimeWeightCB" min="-2" max="-2" attributes="0"/>
+                              <Component id="bandwidthWeightCB" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="jComboBox6" alignment="1" min="-2" max="-2" attributes="0"/>
+                          <Component id="responseTimeWeightCB" alignment="1" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <Component id="jScrollPane1" alignment="0" pref="508" max="32767" attributes="0"/>
@@ -95,51 +95,51 @@
               <Group type="103" groupAlignment="1" attributes="0">
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jCheckBox1" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jComboBox9" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="pricePerDataCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="pricePerDataWeightCB" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jFormattedTextField1" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="pricePerDataTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                              <Component id="jCheckBox2" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="jFormattedTextField2" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="pricePerMonthCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="pricePerMonthTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <Component id="jComboBox8" alignment="1" min="-2" max="-2" attributes="0"/>
+                  <Component id="pricePerMonthWeightCB" alignment="1" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="jCheckBox3" alignment="1" min="-2" max="-2" attributes="0"/>
+                  <Component id="availabilityCheckBox" alignment="1" min="-2" max="-2" attributes="0"/>
                   <Group type="103" alignment="1" groupAlignment="3" attributes="0">
-                      <Component id="jComboBox7" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="availabilityWeightCB" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jFormattedTextField3" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="availabilityTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jCheckBox4" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jComboBox1" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jComboBox4" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jFormattedTextField4" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="bandwidthCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="bandwidthUnitCB" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="bandwidthWeightCB" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="bandwidthTextField" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jCheckBox5" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jComboBox5" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jFormattedTextField5" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jComboBox2" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="maxDownTimeCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="maxDownTimeWeightCB" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="maxDownTimeTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="maxDownTimeUnitCB" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jCheckBox6" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jFormattedTextField6" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jComboBox6" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jComboBox3" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="responseTimeCheckBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="responseTimeTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="responseTimeWeightCB" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="responseTimeUnitCB" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="searchBtn" min="-2" max="-2" attributes="0"/>
@@ -201,53 +201,45 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cancelBtnActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JCheckBox" name="jCheckBox1">
+    <Component class="javax.swing.JCheckBox" name="pricePerDataCheckBox">
       <Properties>
         <Property name="text" type="java.lang.String" value="Price per Data"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JCheckBox" name="jCheckBox2">
+    <Component class="javax.swing.JCheckBox" name="pricePerMonthCheckBox">
       <Properties>
         <Property name="text" type="java.lang.String" value="Price per Month"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jCheckBox2ActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="pricePerMonthCheckBoxActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JCheckBox" name="jCheckBox3">
+    <Component class="javax.swing.JCheckBox" name="availabilityCheckBox">
       <Properties>
         <Property name="text" type="java.lang.String" value="Availability"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JCheckBox" name="jCheckBox4">
+    <Component class="javax.swing.JCheckBox" name="bandwidthCheckBox">
       <Properties>
         <Property name="text" type="java.lang.String" value="Bandwidth"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JCheckBox" name="jCheckBox5">
+    <Component class="javax.swing.JCheckBox" name="maxDownTimeCheckBox">
       <Properties>
         <Property name="text" type="java.lang.String" value="max. Down Time"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JCheckBox" name="jCheckBox6">
+    <Component class="javax.swing.JCheckBox" name="responseTimeCheckBox">
       <Properties>
         <Property name="text" type="java.lang.String" value="Response Time"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JFormattedTextField" name="jFormattedTextField1">
+    <Component class="javax.swing.JFormattedTextField" name="pricePerDataTextField">
       <Properties>
         <Property name="text" type="java.lang.String" value="0.00"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JFormattedTextField" name="jFormattedTextField2">
-      <Properties>
-        <Property name="formatterFactory" type="javax.swing.JFormattedTextField$AbstractFormatterFactory" editor="org.netbeans.modules.form.editors.AbstractFormatterFactoryEditor">
-          <Format format="#0.00" subtype="-1" type="0"/>
-        </Property>
-        <Property name="text" type="java.lang.String" value="0.00"/>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JFormattedTextField" name="jFormattedTextField3">
+    <Component class="javax.swing.JFormattedTextField" name="pricePerMonthTextField">
       <Properties>
         <Property name="formatterFactory" type="javax.swing.JFormattedTextField$AbstractFormatterFactory" editor="org.netbeans.modules.form.editors.AbstractFormatterFactoryEditor">
           <Format format="#0.00" subtype="-1" type="0"/>
@@ -255,7 +247,7 @@
         <Property name="text" type="java.lang.String" value="0.00"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JFormattedTextField" name="jFormattedTextField4">
+    <Component class="javax.swing.JFormattedTextField" name="availabilityTextField">
       <Properties>
         <Property name="formatterFactory" type="javax.swing.JFormattedTextField$AbstractFormatterFactory" editor="org.netbeans.modules.form.editors.AbstractFormatterFactoryEditor">
           <Format format="#0.00" subtype="-1" type="0"/>
@@ -263,7 +255,7 @@
         <Property name="text" type="java.lang.String" value="0.00"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JFormattedTextField" name="jFormattedTextField5">
+    <Component class="javax.swing.JFormattedTextField" name="bandwidthTextField">
       <Properties>
         <Property name="formatterFactory" type="javax.swing.JFormattedTextField$AbstractFormatterFactory" editor="org.netbeans.modules.form.editors.AbstractFormatterFactoryEditor">
           <Format format="#0.00" subtype="-1" type="0"/>
@@ -271,7 +263,15 @@
         <Property name="text" type="java.lang.String" value="0.00"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JFormattedTextField" name="jFormattedTextField6">
+    <Component class="javax.swing.JFormattedTextField" name="maxDownTimeTextField">
+      <Properties>
+        <Property name="formatterFactory" type="javax.swing.JFormattedTextField$AbstractFormatterFactory" editor="org.netbeans.modules.form.editors.AbstractFormatterFactoryEditor">
+          <Format format="#0.00" subtype="-1" type="0"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="0.00"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JFormattedTextField" name="responseTimeTextField">
       <Properties>
         <Property name="formatterFactory" type="javax.swing.JFormattedTextField$AbstractFormatterFactory" editor="org.netbeans.modules.form.editors.AbstractFormatterFactoryEditor">
           <Format format="#0.00" subtype="-1" type="0"/>
@@ -294,7 +294,7 @@
         <Property name="text" type="java.lang.String" value="%"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JComboBox" name="jComboBox1">
+    <Component class="javax.swing.JComboBox" name="bandwidthUnitCB">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
           <StringArray count="2">
@@ -304,29 +304,29 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="javax.swing.JComboBox" name="jComboBox2">
+    <Component class="javax.swing.JComboBox" name="maxDownTimeUnitCB">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
           <StringArray count="3">
             <StringItem index="0" value="Minute"/>
             <StringItem index="1" value="Second"/>
-            <StringItem index="2" value="Millisecond"/>
+            <StringItem index="2" value="MilliSecond"/>
           </StringArray>
         </Property>
       </Properties>
     </Component>
-    <Component class="javax.swing.JComboBox" name="jComboBox3">
+    <Component class="javax.swing.JComboBox" name="responseTimeUnitCB">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
           <StringArray count="3">
             <StringItem index="0" value="Minute"/>
             <StringItem index="1" value="Second"/>
-            <StringItem index="2" value="Millisecond"/>
+            <StringItem index="2" value="MilliSecond"/>
           </StringArray>
         </Property>
       </Properties>
     </Component>
-    <Component class="javax.swing.JComboBox" name="jComboBox4">
+    <Component class="javax.swing.JComboBox" name="bandwidthWeightCB">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
           <StringArray count="3">
@@ -337,10 +337,10 @@
         </Property>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jComboBox4ActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bandwidthWeightCBActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JComboBox" name="jComboBox5">
+    <Component class="javax.swing.JComboBox" name="maxDownTimeWeightCB">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
           <StringArray count="3">
@@ -351,10 +351,10 @@
         </Property>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jComboBox5ActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="maxDownTimeWeightCBActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JComboBox" name="jComboBox6">
+    <Component class="javax.swing.JComboBox" name="responseTimeWeightCB">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
           <StringArray count="3">
@@ -365,10 +365,10 @@
         </Property>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jComboBox6ActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="responseTimeWeightCBActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JComboBox" name="jComboBox7">
+    <Component class="javax.swing.JComboBox" name="availabilityWeightCB">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
           <StringArray count="3">
@@ -379,10 +379,10 @@
         </Property>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jComboBox7ActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="availabilityWeightCBActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JComboBox" name="jComboBox8">
+    <Component class="javax.swing.JComboBox" name="pricePerMonthWeightCB">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
           <StringArray count="3">
@@ -393,10 +393,10 @@
         </Property>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jComboBox8ActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="pricePerMonthWeightCBActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JComboBox" name="jComboBox9">
+    <Component class="javax.swing.JComboBox" name="pricePerDataWeightCB">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
           <StringArray count="3">
@@ -407,7 +407,7 @@
         </Property>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jComboBox9ActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="pricePerDataWeightCBActionPerformed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JButton" name="searchBtn">
