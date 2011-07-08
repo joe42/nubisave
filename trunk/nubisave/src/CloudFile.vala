@@ -176,7 +176,7 @@ namespace NubiSave
 			foreach (var fp in fileparts)
 				if (fp.Offset == 0) {
 					fp.open (fh);
-					filepartlist.add (fp));
+					filepartlist.add (fp);
 				}
 			handlers.set (fh, filepartlist);
 			
