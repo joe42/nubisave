@@ -41,6 +41,7 @@ public class Nubisave {
 
         Nubisave nubi = new Nubisave();
         nubi.initalize();
+        new CoreReader().readExistingServices();
         
         java.awt.EventQueue.invokeLater(new Runnable() {
 

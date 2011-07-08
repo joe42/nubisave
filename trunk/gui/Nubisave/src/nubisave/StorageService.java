@@ -4,6 +4,8 @@
  */
 package nubisave;
 
+import java.util.Random;
+
 /**
  *
  * @author demo
@@ -13,10 +15,12 @@ public class StorageService {
     private boolean supported;
     
     private String name;
+    private String uniqName;
     private StorageType type;
     
     public StorageService(String name) {
         this.name = name;
+        uniqName = name + new Random().nextInt(10000000);
         enabled = false;
         supported = false;
         for (String s :Nubisave.supportedProvider) {
@@ -54,6 +58,14 @@ public class StorageService {
 
     public StorageType getType() {
         return type;
+    }
+
+    public String getUniqName() {
+        return uniqName;
+    }
+
+    public void setUniqName(String uniqName) {
+        this.uniqName = uniqName;
     }
     
     
