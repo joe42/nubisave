@@ -65,9 +65,10 @@ public class ZipFilesystem implements Filesystem1 {
 
 	private static final int blockSize = 512;
 
+	//hard-coded for 3 storages
 	private static final int MAX_FILE_FRAGMENTS = 3;
-
 	private static final int MAX_FILE_FRAGMENTS_NEEDED = 3;
+
 	private List<String> fragmentStores = new ArrayList<String>();
 	private RecordManager  recman;
 	private HTree filemap;
@@ -75,26 +76,21 @@ public class ZipFilesystem implements Filesystem1 {
 	private HTree stores;
 	private Hashtable<String, File> tempFiles = new Hashtable<String, File>();
 
-	private ZipFile zipFile;
-	private long zipFileTime;
-	private ZipEntry rootEntry;
-	private Tree tree;
-	private FuseStatfs statfs;
-
-	private ZipFileDataReader zipFileDataReader;
-
 	public ZipFilesystem(File file) throws IOException {
-		fragmentStores.add("/home/joe/workspace/Splitter/st1");
-		fragmentStores.add("/home/joe/workspace/Splitter/st2");
-		fragmentStores.add("/home/joe/workspace/Splitter/st3");
+	}
+
+	public ZipFilesystem(String storage_path) throws IOException {
+		fragmentStores.add(storage_path + "/storage01");
+		fragmentStores.add(storage_path + "/storage02");
+		fragmentStores.add(storage_path + "/storage03");
 		
 		Properties props = new Properties();
-        recman = RecordManagerFactory.createRecordManager( "splitter", props );
-        // create or load 
-        filemap = loadPersistentMap(recman, "filemap");
-        dirmap = loadPersistentMap(recman, "dirmap");
-		
-        try {
+		recman = RecordManagerFactory.createRecordManager( "splitter", props );
+		// create or load 
+		filemap = loadPersistentMap(recman, "filemap");
+		dirmap = loadPersistentMap(recman, "dirmap");
+				
+		try {
 			dirmap.put("/", new FolderEntry());
 			recman.commit();
 		} catch (IOException e) {
@@ -102,48 +98,6 @@ public class ZipFilesystem implements Filesystem1 {
 		}
 		
 		log.info("dirmap size:"+((Entry)dirmap.get("/")).size);
-		zipFile = new ZipFile(file, ZipFile.OPEN_READ);
-		zipFileTime = file.lastModified();
-		rootEntry = new ZipEntry("") {
-			public boolean isDirectory() {
-				return true;
-			}
-		};
-		rootEntry.setTime(zipFileTime);
-		rootEntry.setSize(0);
-
-		zipFileDataReader = new ZipFileDataReader(zipFile);
-
-		tree = new Tree();
-		tree.addNode(rootEntry.getName(), rootEntry);
-
-		int files = 0;
-		int dirs = 0;
-		int blocks = 0;
-
-		for (Enumeration e = zipFile.entries(); e.hasMoreElements();) {
-			ZipEntry entry = (ZipEntry) e.nextElement();
-			tree.addNode(entry.getName(), entry);
-
-			if (entry.isDirectory())
-				dirs++;
-			else
-				files++;
-
-			blocks += (entry.getSize() + blockSize - 1) / blockSize;
-		}
-
-		statfs = new FuseStatfs();
-		statfs.blocks = blocks;
-		statfs.blockSize = blockSize;
-		statfs.blocksFree = 0;
-		statfs.files = files + dirs;
-		statfs.filesFree = 0;
-		statfs.namelen = 2048;
-
-		log.info("zip file structure extracted: " + files + " files, " + dirs
-				+ " directories, " + blocks + " blocks (" + blockSize
-				+ " byte/block).");
 	}
 	
 	private HTree loadPersistentMap(RecordManager recman, String mapName) throws IOException {
@@ -338,7 +292,7 @@ public class ZipFilesystem implements Filesystem1 {
 	}
 
 	public FuseStatfs statfs() throws FuseException {
-		return statfs;
+		return new FuseStatfs ();
 	}
 
 	public void symlink(String from, String to) throws FuseException {
@@ -574,16 +528,15 @@ public class ZipFilesystem implements Filesystem1 {
 
 	public static void main(String[] args) {
 		if (args.length < 1) {
-			System.out.println("Must specify ZIP file");
+			System.out.println("Must specify storages base path");
 			System.exit(-1);
 		}
 
 		String fuseArgs[] = new String[args.length - 1];
 		System.arraycopy(args, 0, fuseArgs, 0, fuseArgs.length);
-		File zipFile = new File(args[args.length - 1]);
 
 		try {
-			FuseMount.mount(fuseArgs, new ZipFilesystem(zipFile));
+			FuseMount.mount(fuseArgs, new ZipFilesystem(args[args.length - 1]));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
