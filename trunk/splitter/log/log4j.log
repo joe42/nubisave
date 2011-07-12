@@ -1,0 +1,177 @@
+[2011-07-10 21:23:58,482]TRACE     0[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalEncoder.initialize(CauchyInformationDispersalEncoder.java:89) - Slice count = 3, threshold = 3, Message size: 4104, Fragment size: 1369, Blowup = 1.000731, Ideal = 1.0
+[2011-07-10 21:23:58,486]TRACE     4[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.initialize(CauchyInformationDispersalDecoder.java:80) - Slice count = 3, threshold = 3, Message size: 4104, Fragment size: 1369, Blowup = 1.000731, Ideal = 1.0
+[2011-07-10 23:18:29,140]TRACE     0[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalEncoder.initialize(CauchyInformationDispersalEncoder.java:89) - Slice count = 3, threshold = 3, Message size: 4104, Fragment size: 1369, Blowup = 1.000731, Ideal = 1.0
+[2011-07-10 23:18:29,151]TRACE    11[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.initialize(CauchyInformationDispersalDecoder.java:80) - Slice count = 3, threshold = 3, Message size: 4104, Fragment size: 1369, Blowup = 1.000731, Ideal = 1.0
+[2011-07-10 23:23:04,754]TRACE     0[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalEncoder.initialize(CauchyInformationDispersalEncoder.java:89) - Slice count = 3, threshold = 3, Message size: 4104, Fragment size: 1369, Blowup = 1.000731, Ideal = 1.0
+[2011-07-10 23:23:04,760]TRACE     6[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.initialize(CauchyInformationDispersalDecoder.java:80) - Slice count = 3, threshold = 3, Message size: 4104, Fragment size: 1369, Blowup = 1.000731, Ideal = 1.0
+[2011-07-10 23:33:10,040]TRACE     0[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalEncoder.initialize(CauchyInformationDispersalEncoder.java:89) - Slice count = 3, threshold = 3, Message size: 4104, Fragment size: 1369, Blowup = 1.000731, Ideal = 1.0
+[2011-07-10 23:33:10,044]TRACE     4[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.initialize(CauchyInformationDispersalDecoder.java:80) - Slice count = 3, threshold = 3, Message size: 4104, Fragment size: 1369, Blowup = 1.000731, Ideal = 1.0
+[2011-07-10 23:34:35,984]TRACE     0[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalEncoder.initialize(CauchyInformationDispersalEncoder.java:89) - Slice count = 3, threshold = 3, Message size: 4104, Fragment size: 1369, Blowup = 1.000731, Ideal = 1.0
+[2011-07-10 23:34:35,988]TRACE     4[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.initialize(CauchyInformationDispersalDecoder.java:80) - Slice count = 3, threshold = 3, Message size: 4104, Fragment size: 1369, Blowup = 1.000731, Ideal = 1.0
+[2011-07-10 23:34:57,412]TRACE     0[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalEncoder.initialize(CauchyInformationDispersalEncoder.java:89) - Slice count = 3, threshold = 3, Message size: 4104, Fragment size: 1369, Blowup = 1.000731, Ideal = 1.0
+[2011-07-10 23:34:57,417]TRACE     5[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.initialize(CauchyInformationDispersalDecoder.java:80) - Slice count = 3, threshold = 3, Message size: 4104, Fragment size: 1369, Blowup = 1.000731, Ideal = 1.0
+[2011-07-10 23:45:08,651]TRACE     0[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalEncoder.initialize(CauchyInformationDispersalEncoder.java:89) - Slice count = 3, threshold = 3, Message size: 4104, Fragment size: 1369, Blowup = 1.000731, Ideal = 1.0
+[2011-07-10 23:45:08,656]TRACE     5[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.initialize(CauchyInformationDispersalDecoder.java:80) - Slice count = 3, threshold = 3, Message size: 4104, Fragment size: 1369, Blowup = 1.000731, Ideal = 1.0
+[2011-07-10 23:55:01,965]TRACE     0[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalEncoder.initialize(CauchyInformationDispersalEncoder.java:89) - Slice count = 3, threshold = 3, Message size: 4104, Fragment size: 1369, Blowup = 1.000731, Ideal = 1.0
+[2011-07-10 23:55:01,970]TRACE     5[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.initialize(CauchyInformationDispersalDecoder.java:80) - Slice count = 3, threshold = 3, Message size: 4104, Fragment size: 1369, Blowup = 1.000731, Ideal = 1.0
+[2011-07-11 00:02:58,566]TRACE     0[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalEncoder.initialize(CauchyInformationDispersalEncoder.java:89) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 00:02:58,579]TRACE    13[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.initialize(CauchyInformationDispersalDecoder.java:80) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 00:06:44,337]TRACE225771[main] - org.jigdfs.exception.BaseException.<init>(BaseException.java:29) - Exception: Expected 3 but got only 0 slices
+Expected 3 but got only 0 slices
+	at org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.process(CauchyInformationDispersalDecoder.java:150)
+	at fuse.zipfs.ZipFilesystem.read(ZipFilesystem.java:337)
+	at fuse.compat.Filesystem1ToFilesystem2Adapter.read(Filesystem1ToFilesystem2Adapter.java:118)
+	at fuse.compat.Filesystem2ToFilesystem3Adapter.read(Filesystem2ToFilesystem3Adapter.java:122)
+	at fuse.Filesystem3ToFuseFSAdapter.read(Filesystem3ToFuseFSAdapter.java:375)
+	at fuse.FuseMount.mount(Native Method)
+	at fuse.FuseMount.mount(FuseMount.java:66)
+	at fuse.FuseMount.mount(FuseMount.java:53)
+	at fuse.FuseMount.mount(FuseMount.java:40)
+	at fuse.zipfs.ZipFilesystem.main(ZipFilesystem.java:410)
+[2011-07-11 00:06:44,351]TRACE225785[main] - org.jigdfs.exception.BaseException.<init>(BaseException.java:29) - Exception: Expected 3 but got only 0 slices
+Expected 3 but got only 0 slices
+	at org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.process(CauchyInformationDispersalDecoder.java:150)
+	at fuse.zipfs.ZipFilesystem.read(ZipFilesystem.java:337)
+	at fuse.compat.Filesystem1ToFilesystem2Adapter.read(Filesystem1ToFilesystem2Adapter.java:118)
+	at fuse.compat.Filesystem2ToFilesystem3Adapter.read(Filesystem2ToFilesystem3Adapter.java:122)
+	at fuse.Filesystem3ToFuseFSAdapter.read(Filesystem3ToFuseFSAdapter.java:375)
+	at fuse.FuseMount.mount(Native Method)
+	at fuse.FuseMount.mount(FuseMount.java:66)
+	at fuse.FuseMount.mount(FuseMount.java:53)
+	at fuse.FuseMount.mount(FuseMount.java:40)
+	at fuse.zipfs.ZipFilesystem.main(ZipFilesystem.java:410)
+[2011-07-11 00:06:52,982]TRACE234416[main] - org.jigdfs.exception.BaseException.<init>(BaseException.java:29) - Exception: Expected 3 but got only 0 slices
+Expected 3 but got only 0 slices
+	at org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.process(CauchyInformationDispersalDecoder.java:150)
+	at fuse.zipfs.ZipFilesystem.read(ZipFilesystem.java:337)
+	at fuse.compat.Filesystem1ToFilesystem2Adapter.read(Filesystem1ToFilesystem2Adapter.java:118)
+	at fuse.compat.Filesystem2ToFilesystem3Adapter.read(Filesystem2ToFilesystem3Adapter.java:122)
+	at fuse.Filesystem3ToFuseFSAdapter.read(Filesystem3ToFuseFSAdapter.java:375)
+	at fuse.FuseMount.mount(Native Method)
+	at fuse.FuseMount.mount(FuseMount.java:66)
+	at fuse.FuseMount.mount(FuseMount.java:53)
+	at fuse.FuseMount.mount(FuseMount.java:40)
+	at fuse.zipfs.ZipFilesystem.main(ZipFilesystem.java:410)
+[2011-07-11 00:06:53,001]TRACE234435[main] - org.jigdfs.exception.BaseException.<init>(BaseException.java:29) - Exception: Expected 3 but got only 0 slices
+Expected 3 but got only 0 slices
+	at org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.process(CauchyInformationDispersalDecoder.java:150)
+	at fuse.zipfs.ZipFilesystem.read(ZipFilesystem.java:337)
+	at fuse.compat.Filesystem1ToFilesystem2Adapter.read(Filesystem1ToFilesystem2Adapter.java:118)
+	at fuse.compat.Filesystem2ToFilesystem3Adapter.read(Filesystem2ToFilesystem3Adapter.java:122)
+	at fuse.Filesystem3ToFuseFSAdapter.read(Filesystem3ToFuseFSAdapter.java:375)
+	at fuse.FuseMount.mount(Native Method)
+	at fuse.FuseMount.mount(FuseMount.java:66)
+	at fuse.FuseMount.mount(FuseMount.java:53)
+	at fuse.FuseMount.mount(FuseMount.java:40)
+	at fuse.zipfs.ZipFilesystem.main(ZipFilesystem.java:410)
+[2011-07-11 00:08:51,561]TRACE     0[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalEncoder.initialize(CauchyInformationDispersalEncoder.java:89) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 00:08:51,565]TRACE     4[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.initialize(CauchyInformationDispersalDecoder.java:80) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 00:11:18,747]TRACE     0[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalEncoder.initialize(CauchyInformationDispersalEncoder.java:89) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 00:11:18,751]TRACE     4[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.initialize(CauchyInformationDispersalDecoder.java:80) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 00:13:11,962]TRACE     0[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalEncoder.initialize(CauchyInformationDispersalEncoder.java:89) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 00:13:11,967]TRACE     5[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.initialize(CauchyInformationDispersalDecoder.java:80) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 01:04:59,461]TRACE     0[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalEncoder.initialize(CauchyInformationDispersalEncoder.java:89) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 01:04:59,469]TRACE     8[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.initialize(CauchyInformationDispersalDecoder.java:80) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 01:05:30,594]TRACE     0[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalEncoder.initialize(CauchyInformationDispersalEncoder.java:89) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 01:05:30,610]TRACE    16[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.initialize(CauchyInformationDispersalDecoder.java:80) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 10:36:14,590]TRACE     0[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalEncoder.initialize(CauchyInformationDispersalEncoder.java:89) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 10:36:14,613]TRACE    23[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.initialize(CauchyInformationDispersalDecoder.java:80) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 11:13:49,619]TRACE     0[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalEncoder.initialize(CauchyInformationDispersalEncoder.java:89) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 11:13:49,627]TRACE     8[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.initialize(CauchyInformationDispersalDecoder.java:80) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 11:16:44,654]TRACE     0[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalEncoder.initialize(CauchyInformationDispersalEncoder.java:89) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 11:16:44,658]TRACE     4[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.initialize(CauchyInformationDispersalDecoder.java:80) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 11:22:03,330]TRACE     0[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalEncoder.initialize(CauchyInformationDispersalEncoder.java:89) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 11:22:03,335]TRACE     5[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.initialize(CauchyInformationDispersalDecoder.java:80) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 11:22:03,336]TRACE     6[main] - org.jigdfs.exception.BaseException.<init>(BaseException.java:29) - Exception: Expected 3 but got only 0 slices
+Expected 3 but got only 0 slices
+	at org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.process(CauchyInformationDispersalDecoder.java:150)
+	at fuse.zipfs.ZipFilesystem.read(ZipFilesystem.java:388)
+	at fuse.compat.Filesystem1ToFilesystem2Adapter.read(Filesystem1ToFilesystem2Adapter.java:118)
+	at fuse.compat.Filesystem2ToFilesystem3Adapter.read(Filesystem2ToFilesystem3Adapter.java:122)
+	at fuse.Filesystem3ToFuseFSAdapter.read(Filesystem3ToFuseFSAdapter.java:375)
+	at fuse.FuseMount.mount(Native Method)
+	at fuse.FuseMount.mount(FuseMount.java:66)
+	at fuse.FuseMount.mount(FuseMount.java:53)
+	at fuse.FuseMount.mount(FuseMount.java:40)
+	at fuse.zipfs.ZipFilesystem.main(ZipFilesystem.java:462)
+[2011-07-11 11:23:39,987]TRACE     0[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalEncoder.initialize(CauchyInformationDispersalEncoder.java:89) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 11:23:39,992]TRACE     5[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.initialize(CauchyInformationDispersalDecoder.java:80) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 11:23:39,993]TRACE     6[main] - org.jigdfs.exception.BaseException.<init>(BaseException.java:29) - Exception: Expected 3 but got only 0 slices
+Expected 3 but got only 0 slices
+	at org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.process(CauchyInformationDispersalDecoder.java:150)
+	at fuse.zipfs.ZipFilesystem.read(ZipFilesystem.java:388)
+	at fuse.compat.Filesystem1ToFilesystem2Adapter.read(Filesystem1ToFilesystem2Adapter.java:118)
+	at fuse.compat.Filesystem2ToFilesystem3Adapter.read(Filesystem2ToFilesystem3Adapter.java:122)
+	at fuse.Filesystem3ToFuseFSAdapter.read(Filesystem3ToFuseFSAdapter.java:375)
+	at fuse.FuseMount.mount(Native Method)
+	at fuse.FuseMount.mount(FuseMount.java:66)
+	at fuse.FuseMount.mount(FuseMount.java:53)
+	at fuse.FuseMount.mount(FuseMount.java:40)
+	at fuse.zipfs.ZipFilesystem.main(ZipFilesystem.java:460)
+[2011-07-11 11:26:28,574]TRACE     0[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalEncoder.initialize(CauchyInformationDispersalEncoder.java:89) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 11:26:28,579]TRACE     5[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.initialize(CauchyInformationDispersalDecoder.java:80) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 11:29:04,955]TRACE     0[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalEncoder.initialize(CauchyInformationDispersalEncoder.java:89) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 11:29:04,961]TRACE     6[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.initialize(CauchyInformationDispersalDecoder.java:80) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 11:35:47,682]TRACE     0[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalEncoder.initialize(CauchyInformationDispersalEncoder.java:89) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 11:35:47,687]TRACE     5[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.initialize(CauchyInformationDispersalDecoder.java:80) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 11:49:41,460]TRACE     0[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalEncoder.initialize(CauchyInformationDispersalEncoder.java:89) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 11:49:41,471]TRACE    11[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.initialize(CauchyInformationDispersalDecoder.java:80) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 12:00:00,318]TRACE     0[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalEncoder.initialize(CauchyInformationDispersalEncoder.java:89) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 12:00:00,323]TRACE     5[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.initialize(CauchyInformationDispersalDecoder.java:80) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 12:02:33,816]TRACE     0[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalEncoder.initialize(CauchyInformationDispersalEncoder.java:89) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 12:02:33,820]TRACE     4[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.initialize(CauchyInformationDispersalDecoder.java:80) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 15:54:05,560]TRACE     0[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalEncoder.initialize(CauchyInformationDispersalEncoder.java:89) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 15:54:05,573]TRACE    13[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.initialize(CauchyInformationDispersalDecoder.java:80) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 15:58:48,091]TRACE     0[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalEncoder.initialize(CauchyInformationDispersalEncoder.java:89) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 15:58:48,101]TRACE    10[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.initialize(CauchyInformationDispersalDecoder.java:80) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 18:10:59,627]TRACE     0[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalEncoder.initialize(CauchyInformationDispersalEncoder.java:89) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 18:10:59,635]TRACE     8[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.initialize(CauchyInformationDispersalDecoder.java:80) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 18:25:13,561]TRACE     0[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalEncoder.initialize(CauchyInformationDispersalEncoder.java:89) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 18:25:13,566]TRACE     5[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.initialize(CauchyInformationDispersalDecoder.java:80) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 19:10:11,340]TRACE     0[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalEncoder.initialize(CauchyInformationDispersalEncoder.java:89) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 19:10:11,352]TRACE    12[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.initialize(CauchyInformationDispersalDecoder.java:80) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 19:10:11,355]TRACE    15[main] - org.jigdfs.exception.BaseException.<init>(BaseException.java:29) - Exception: Expected 3 but got only 0 slices
+Expected 3 but got only 0 slices
+	at org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.process(CauchyInformationDispersalDecoder.java:150)
+	at fuse.zipfs.ZipFilesystem.glueFilesTogether(ZipFilesystem.java:480)
+	at fuse.zipfs.ZipFilesystem.write(ZipFilesystem.java:348)
+	at fuse.compat.Filesystem1ToFilesystem2Adapter.write(Filesystem1ToFilesystem2Adapter.java:123)
+	at fuse.compat.Filesystem2ToFilesystem3Adapter.write(Filesystem2ToFilesystem3Adapter.java:205)
+	at fuse.Filesystem3ToFuseFSAdapter.write(Filesystem3ToFuseFSAdapter.java:393)
+	at fuse.FuseMount.mount(Native Method)
+	at fuse.FuseMount.mount(FuseMount.java:66)
+	at fuse.FuseMount.mount(FuseMount.java:53)
+	at fuse.FuseMount.mount(FuseMount.java:40)
+	at fuse.zipfs.ZipFilesystem.main(ZipFilesystem.java:539)
+[2011-07-11 19:13:00,609]TRACE     0[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalEncoder.initialize(CauchyInformationDispersalEncoder.java:89) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 19:13:00,615]TRACE     6[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.initialize(CauchyInformationDispersalDecoder.java:80) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 19:13:00,618]TRACE     9[main] - org.jigdfs.exception.BaseException.<init>(BaseException.java:29) - Exception: Expected 3 but got only 0 slices
+Expected 3 but got only 0 slices
+	at org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.process(CauchyInformationDispersalDecoder.java:150)
+	at fuse.zipfs.ZipFilesystem.glueFilesTogether(ZipFilesystem.java:483)
+	at fuse.zipfs.ZipFilesystem.write(ZipFilesystem.java:344)
+	at fuse.compat.Filesystem1ToFilesystem2Adapter.write(Filesystem1ToFilesystem2Adapter.java:123)
+	at fuse.compat.Filesystem2ToFilesystem3Adapter.write(Filesystem2ToFilesystem3Adapter.java:205)
+	at fuse.Filesystem3ToFuseFSAdapter.write(Filesystem3ToFuseFSAdapter.java:393)
+	at fuse.FuseMount.mount(Native Method)
+	at fuse.FuseMount.mount(FuseMount.java:66)
+	at fuse.FuseMount.mount(FuseMount.java:53)
+	at fuse.FuseMount.mount(FuseMount.java:40)
+	at fuse.zipfs.ZipFilesystem.main(ZipFilesystem.java:544)
+[2011-07-11 19:28:34,201]TRACE     1[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalEncoder.initialize(CauchyInformationDispersalEncoder.java:89) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 19:28:34,206]TRACE     6[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.initialize(CauchyInformationDispersalDecoder.java:80) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 19:28:34,211]TRACE    11[main] - org.jigdfs.exception.BaseException.<init>(BaseException.java:29) - Exception: Expected 3 but got only 0 slices
+Expected 3 but got only 0 slices
+	at org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.process(CauchyInformationDispersalDecoder.java:150)
+	at fuse.zipfs.ZipFilesystem.glueFilesTogether(ZipFilesystem.java:487)
+	at fuse.zipfs.ZipFilesystem.write(ZipFilesystem.java:348)
+	at fuse.compat.Filesystem1ToFilesystem2Adapter.write(Filesystem1ToFilesystem2Adapter.java:123)
+	at fuse.compat.Filesystem2ToFilesystem3Adapter.write(Filesystem2ToFilesystem3Adapter.java:205)
+	at fuse.Filesystem3ToFuseFSAdapter.write(Filesystem3ToFuseFSAdapter.java:393)
+	at fuse.FuseMount.mount(Native Method)
+	at fuse.FuseMount.mount(FuseMount.java:66)
+	at fuse.FuseMount.mount(FuseMount.java:53)
+	at fuse.FuseMount.mount(FuseMount.java:40)
+	at fuse.zipfs.ZipFilesystem.main(ZipFilesystem.java:548)
+[2011-07-11 19:33:12,220]TRACE     0[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalEncoder.initialize(CauchyInformationDispersalEncoder.java:89) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
+[2011-07-11 19:33:12,225]TRACE     5[main] - org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalDecoder.initialize(CauchyInformationDispersalDecoder.java:80) - Slice count = 3, threshold = 3, Message size: 24, Fragment size: 9, Blowup = 1.125, Ideal = 1.0
