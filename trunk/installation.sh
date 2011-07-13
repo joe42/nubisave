@@ -34,8 +34,7 @@ read antwort
 
 if [ $antwort == "j" ] 
   then
-
-done
+   bash ./start.sh
 fi
 
 
