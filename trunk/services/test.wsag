@@ -1,0 +1,16 @@
+<ws:Template ws:TemplateId="TestCloudStorage" xmlns:ws="http://schemas.ggf.org/graap/2007/03/ws-agreement">
+    <ws:Name>TestCloud</ws:Name>
+    <ws:Context>
+        <ws:ServiceProvider>AgreementInitiator</ws:ServiceProvider>
+        <ws:ExpirationTime>2011-10-31T12:59:39.762+01:00</ws:ExpirationTime>
+        <ws:TemplateId>TestCloudStorage</ws:TemplateId>
+        <ws:TemplateName>TestCloud</ws:TemplateName>
+        <per:Person xmlns:per="http://www.rn.inf.tu-dresden.de/example/person">
+            <per:Firstname>Tom</per:Firstname>
+            <per:Lastname>Müller</per:Lastname>
+            <per:Telephone>01234567</per:Telephone>
+        </per:Person>
+    </ws:Context>
+    <ws:Terms/>
+    <ws:CreationConstraints/>
+</ws:Template>
