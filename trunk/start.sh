@@ -21,5 +21,20 @@ else
 echo "Ohne Sample-Mounts weiter"
 fi
 
+echo "Starten des Core-Moduls"
 
+sudo umount /home/demo/nubisave 
+
+./splitter_mount.sh >> /dev/null 2>/dev/null& 
+
+echo "CloudStorage Anbieter konfigurieren?"
+read antwort
+if [ $antwort == "j" ] 
+  then
+   cd bin/
+   java -jar Nubisave.jar
+   cd ..
+fi
+
+echo "Nubisave erfolgreich gestartet"
 

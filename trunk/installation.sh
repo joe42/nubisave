@@ -26,10 +26,34 @@ for service in services/CloudServices/*.wsml ; do
 done
 
 ontologiepath=`find /var/lib 2>/dev/null | grep Matchmaker/ontologies | head -n 1 `cloud
+
+echo
+echo
 echo "Kopiere CloudQoS-Ontologie"
 sudo cp services/CloudQoS.wsml $ontologiepath
 
-echo -n "Möchten Sie Beispiel-Services mounten? j/n "
+echo
+echo
+echo "Installiere openJDK"
+
+apt-get install openjdk-6-jdk
+
+echo
+echo
+echo "Kompilieren des Core-Moduls"
+
+cd splitter/
+sudo make 
+cd ..
+
+mkdir -p $HOME/.config/nubisave
+mkdir -p $HOME/.config/nubisave/fileparts
+mkdir -p $HOME/.config/nubisave/files
+mkdir -p $HOME/.config/nubisave/storages
+
+echo
+echo
+echo -n "Möchten Sie Beispiel-Services mounten und Nubisave starten? [start.sh] j/n "
 read antwort 
 
 if [ $antwort == "j" ] 
