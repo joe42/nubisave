@@ -114,77 +114,77 @@ shouldntexist "0bytefile2"
 
 echo ""
 echo "Speedtest - write:"
-echo "#file total user sys" > times.dat
+echo "#size total user sys" > times.dat
 
 file="500kb.0"
 echo "create $file"
-/usr/bin/time -a -f "$file %e %U %S" -o times.dat cp samplefiles/$file "$mntpoint/"
+/usr/bin/time -a -f "`stat -c%s samplefiles/$file` %e %U %S" -o times.dat cp samplefiles/$file "$mntpoint/"
 shouldexist $file
 checksum $file
 
 file="500kb.1"
 echo "create $file"
-/usr/bin/time -a -f "$file %e %U %S" -o times.dat cp samplefiles/$file "$mntpoint/"
+/usr/bin/time -a -f "`stat -c%s samplefiles/$file` %e %U %S" -o times.dat cp samplefiles/$file "$mntpoint/"
 shouldexist $file
 checksum $file
 
 file="500kb.2"
 echo "create $file"
-/usr/bin/time -a -f "$file %e %U %S" -o times.dat cp samplefiles/$file "$mntpoint/"
+/usr/bin/time -a -f "`stat -c%s samplefiles/$file` %e %U %S" -o times.dat cp samplefiles/$file "$mntpoint/"
 shouldexist $file
 checksum $file
 
 file="1mb.0"
 echo "create $file"
-/usr/bin/time -a -f "$file %e %U %S" -o times.dat cp samplefiles/$file "$mntpoint/"
+/usr/bin/time -a -f "`stat -c%s samplefiles/$file` %e %U %S" -o times.dat cp samplefiles/$file "$mntpoint/"
 shouldexist $file
 checksum $file
 
 file="1mb.1"
 echo "create $file"
-/usr/bin/time -a -f "$file %e %U %S" -o times.dat cp samplefiles/$file "$mntpoint/"
+/usr/bin/time -a -f "`stat -c%s samplefiles/$file` %e %U %S" -o times.dat cp samplefiles/$file "$mntpoint/"
 shouldexist $file
 checksum $file
 
 file="1mb.2"
 echo "create $file"
-/usr/bin/time -a -f "$file %e %U %S" -o times.dat cp samplefiles/$file "$mntpoint/"
+/usr/bin/time -a -f "`stat -c%s samplefiles/$file` %e %U %S" -o times.dat cp samplefiles/$file "$mntpoint/"
 shouldexist $file
 checksum $file
 
 file="10mb.0"
 echo "create $file"
-/usr/bin/time -a -f "$file %e %U %S" -o times.dat cp samplefiles/$file "$mntpoint/"
+/usr/bin/time -a -f "`stat -c%s samplefiles/$file` %e %U %S" -o times.dat cp samplefiles/$file "$mntpoint/"
 shouldexist $file
 checksum $file
 
 file="10mb.1"
 echo "create $file"
-/usr/bin/time -a -f "$file %e %U %S" -o times.dat cp samplefiles/$file "$mntpoint/"
+/usr/bin/time -a -f "`stat -c%s samplefiles/$file` %e %U %S" -o times.dat cp samplefiles/$file "$mntpoint/"
 shouldexist $file
 checksum $file
 
 file="10mb.2"
 echo "create $file"
-/usr/bin/time -a -f "$file %e %U %S" -o times.dat cp samplefiles/$file "$mntpoint/"
+/usr/bin/time -a -f "`stat -c%s samplefiles/$file` %e %U %S" -o times.dat cp samplefiles/$file "$mntpoint/"
 shouldexist $file
 checksum $file
 
 file="50mb.0"
 echo "create $file"
-/usr/bin/time -a -f "$file %e %U %S" -o times.dat cp samplefiles/$file "$mntpoint/"
+/usr/bin/time -a -f "`stat -c%s samplefiles/$file` %e %U %S" -o times.dat cp samplefiles/$file "$mntpoint/"
 shouldexist $file
 checksum $file
 
 file="50mb.1"
 echo "create $file"
-/usr/bin/time -a -f "$file %e %U %S" -o times.dat cp samplefiles/$file "$mntpoint/"
+/usr/bin/time -a -f "`stat -c%s samplefiles/$file` %e %U %S" -o times.dat cp samplefiles/$file "$mntpoint/"
 shouldexist $file
 checksum $file
 
 file="50mb.2"
 echo "create $file"
-/usr/bin/time -a -f "$file %e %U %S" -o times.dat cp samplefiles/$file "$mntpoint/"
+/usr/bin/time -a -f "`stat -c%s samplefiles/$file` %e %U %S" -o times.dat cp samplefiles/$file "$mntpoint/"
 shouldexist $file
 checksum $file
 
