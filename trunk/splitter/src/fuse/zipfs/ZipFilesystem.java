@@ -5,7 +5,7 @@
  *
  *   This program can be distributed under the terms of the GNU LGPL.
  *   See the file COPYING.LIB
- * v.0.2 of splitter
+ *	v-0.3 of splitter with file > 4096 support
  */
 
 package fuse.zipfs;
@@ -166,7 +166,7 @@ public class ZipFilesystem implements Filesystem1 {
 	public void chown(String path, int uid, int gid) throws FuseException {
 		throw new FuseException("Read Only").initErrno(FuseException.EACCES);
 	}
-
+//mknod is not called because of unsupportet op exception here
 	public FuseStat getattr(String path) throws FuseException {
 		FuseStat stat = new FuseStat();
 		Entry entry = null;
@@ -201,6 +201,7 @@ public class ZipFilesystem implements Filesystem1 {
 		stat.mtime = entry.mtime;
 		stat.ctime = entry.ctime;
 		stat.blocks = (int) ((stat.size + 511L) / 512L);
+		System.out.println("gotattr");
 
 		return stat;
 	}
@@ -259,7 +260,6 @@ public class ZipFilesystem implements Filesystem1 {
 		for (FuseDirEnt dirEntryIter : dirEntries) {
 			ret[i++] = dirEntryIter;
 		}
-		System.out.println("DUDUDU");
 		return ret;
 	}
 
@@ -384,11 +384,15 @@ public class ZipFilesystem implements Filesystem1 {
 			throws FuseException {
 		try {
 			    if(tempFiles.get(path) == null){
+			    	System.out.println("glue? ");
 			    	tempFiles.put(path, glueFilesTogether(path));
+			    	System.out.println("glued! ");
 			    }
 			    File temp = tempFiles.get(path);
-			    FileChannel wChannel = new FileOutputStream(temp, false).getChannel();
-			    wChannel.write(buf, offset);
+			    FileChannel wChannel = new FileOutputStream(temp, true).getChannel();
+		    	System.out.println("write to buf? ");
+			    wChannel.write(buf);
+		    	System.out.println("written to buf! ");
 			} catch (IOException e) {
 				throw new FuseException("IO Exception")
 				.initErrno(FuseException.EIO);
@@ -483,13 +487,17 @@ public class ZipFilesystem implements Filesystem1 {
 		}
 		String hexString = null;
 		InputStream in = null;
+		System.out.println("glue 1");
 		int readBytes;
 		try {
 			ret = File.createTempFile(path+"longer", ".tmp");
 			ret.deleteOnExit();
 			int validSegment = 0;
 			List<String> fragmentNames = ((FileEntry) filemap.get(path)).fragment_names;
+
+			System.out.println("glue 2");
 			for (String fragment_name : fragmentNames) {
+				System.out.println("glue 2.5");
 				File file_fragment = new File(fragment_name);
 				if (file_fragment.exists() && file_fragment.isFile()) {
 
@@ -497,6 +505,7 @@ public class ZipFilesystem implements Filesystem1 {
 					byte[] segmentBuffer = new byte[(int) file_fragment
 							.length()];
 
+					System.out.println("glue 3");
 					readBytes = in.read(segmentBuffer);
 					log.info("read file segment: " + file_fragment.getName()
 							+ "; " + readBytes + " bytes!");
@@ -516,6 +525,8 @@ public class ZipFilesystem implements Filesystem1 {
 					 */
 					receivedFileSegments.add(segmentBuffer);
 					validSegment++;
+
+					System.out.println("glue 4");
 					if (validSegment >= MAX_FILE_FRAGMENTS_NEEDED) {
 						break;
 					}
@@ -532,7 +543,10 @@ public class ZipFilesystem implements Filesystem1 {
 			digestFunc.doFinal(digestByteArray, 0);
 		 
 			OutputStream out = new FileOutputStream(ret);
+
+			System.out.println("glue 5");
 			out.write(recoveredFile, 0, recoveredFile.length); 
+			System.out.println("glue 6");
 
 		} catch (Exception e) {
 			throw new FuseException("IO error", e).initErrno(FuseException.EIO);
