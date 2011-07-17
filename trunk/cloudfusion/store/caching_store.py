@@ -94,7 +94,8 @@ class CachingStore(Store):
             
     def delete(self, path):#delete from metadata 
         self.cache.delete(path)
-        self.store.delete(path)
+        if self.store.exists(path):  
+            self.store.delete(path)
           
     def account_info(self):
         return self.store.account_info()
@@ -112,6 +113,9 @@ class CachingStore(Store):
         return self.store.create_directory(directory)
         
     def duplicate(self, path_to_src, path_to_dest):
+        self.cache.write(path_to_dest, self.cache.get_value(path_to_src))
+        if self.store.exists(path_to_src):  
+            self.__flush(path_to_src) 
         return self.store.duplicate(path_to_src, path_to_dest)
         
     def move(self, path_to_src, path_to_dest):
@@ -139,17 +143,20 @@ class CachingStore(Store):
     def flush(self):
         self.logger.debug("flushing cache")
         for path in self.cache.get_keys():
-            self.logger.debug("flushing %s ?" % path)
-            self.cache.update(path)
-            if self.cache.is_dirty(path):
-                self.logger.debug("flushing %s ? -- it is dirty" % path)
-                actual_modified_date = self._get_actual_modified_date(path)
-                self.logger.debug("actual_modified_date: %s file: %s " % (actual_modified_date, path))
-                cached_modified_date = self.cache.get_modified(path)
-                self.logger.debug("cached_modified_date: %s file: %s " % (cached_modified_date, path))
-                if actual_modified_date < cached_modified_date:
-                    self.logger.debug("flushing %s !" % path)
-                    file = DataFileWrapper(self.cache.get_value(path))
-                    self.store.store_fileobject(file, path)
-                    self.cache.update(path)
-                    self.logger.debug("flushing %s with content starting with %s" % (path, self.cache.get_value(path)[0:10]))
+            self.__flush(path)
+            
+    def __flush(self, path):
+        self.logger.debug("flushing %s ?" % path)
+        self.cache.update(path)
+        if self.cache.is_dirty(path):
+            self.logger.debug("flushing %s ? -- it is dirty" % path)
+            actual_modified_date = self._get_actual_modified_date(path)
+            self.logger.debug("actual_modified_date: %s file: %s " % (actual_modified_date, path))
+            cached_modified_date = self.cache.get_modified(path)
+            self.logger.debug("cached_modified_date: %s file: %s " % (cached_modified_date, path))
+            if actual_modified_date < cached_modified_date:
+                self.logger.debug("flushing %s !" % path)
+                file = DataFileWrapper(self.cache.get_value(path))
+                self.store.store_fileobject(file, path)
+                self.cache.update(path)
+                self.logger.debug("flushing %s with content starting with %s" % (path, self.cache.get_value(path)[0:10]))
