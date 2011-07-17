@@ -49,6 +49,7 @@ class PyFuseBox(Operations):
             self.f.write( " isFile\n")
             st['st_mode'] = 0777 | stat.S_IFREG
             st['st_size'] = metadata['bytes']
+        st['st_blocks'] = (int) ((st['st_size'] + 4095L) / 4096L);
         return st
     
     def open(self, path, flags):
@@ -132,9 +133,10 @@ class PyFuseBox(Operations):
 
     def write(self, path, buf, offset, fh):
         self.f.write( "write %s ... starting with %s at %s - fh: %s\n" % (path, buf[0:10], offset, fh))
-        self.temp_file[path] = tempfile.SpooledTemporaryFile()
-        file = self.store.get_file(path)
-        self.temp_file[path].write(file)
+        if not path in self.temp_file:
+            self.temp_file[path] = tempfile.SpooledTemporaryFile()
+            file = self.store.get_file(path)
+            self.temp_file[path].write(file)
         self.temp_file[path].seek(offset)
         self.temp_file[path].write(buf)
         self.temp_file[path].seek(0)
