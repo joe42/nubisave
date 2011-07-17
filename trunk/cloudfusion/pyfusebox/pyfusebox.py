@@ -132,6 +132,7 @@ class PyFuseBox(Operations):
             self.read_temp_file[path] = tempfile.SpooledTemporaryFile()
             file = self.store.get_file(path)
             self.read_temp_file[path].write(file)
+        self.read_temp_file[path].seek(0)
         file =  self.read_temp_file[path].read()
         #file.seek(offset)
         return  file[offset: offset+size]
