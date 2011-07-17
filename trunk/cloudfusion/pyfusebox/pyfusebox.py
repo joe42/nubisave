@@ -26,6 +26,7 @@ class PyFuseBox(Operations):
     def __init__(self, path, store):
         self.root = path
         self.temp_file = {}
+        self.read_temp_file = {}
         self.store = store
         self.f = open('fuselog', 'w')
 
@@ -127,7 +128,11 @@ class PyFuseBox(Operations):
 
     def read(self, path, size, offset, fh):
         self.f.write( "read %s bytes from %s at %s - fh %s\n" % (size, path, offset, fh))
-        file = self.store.get_file(path)
+        if not path in self.read_temp_file:
+            self.read_temp_file[path] = tempfile.SpooledTemporaryFile()
+            file = self.store.get_file(path)
+            self.read_temp_file[path].write(file)
+        file =  self.read_temp_file[path].read()
         #file.seek(offset)
         return  file[offset: offset+size]
 
@@ -156,7 +161,12 @@ class PyFuseBox(Operations):
     def release(self, path, fh):
         self.f.write( "release %s - fh: %s\n" % (path, fh))
         if path in self.temp_file: #after writes
+            self.temp_file[path].close()
             del self.temp_file[path]
+        if path in self.read_temp_file:
+            self.read_temp_file[path].close()
+            del self.read_temp_file[path]
+             
         #self.temp_file.close()
         return 0 #UnicodeEncodeError: 'ascii' codec can't encode character u'\xed' in position 20: ordinal not in range(128)    
        
