@@ -586,7 +586,7 @@ public class CAPIGenerator
 
       return buff;
    }
-
+	boolean throw_away_next_array_method_with_object_return_value = false;
    private String mangle(String str)
    {
       char[] chars = str.toCharArray();
@@ -597,7 +597,13 @@ public class CAPIGenerator
          if ((i == 0 && !Character.isJavaIdentifierStart(c)) || (i > 0 && !Character.isJavaIdentifierPart(c)))
             chars[i] = '_';
       }
-
+	if(str.equals("array") && throw_away_next_array_method_with_object_return_value){
+		throw_away_next_array_method_with_object_return_value = false;
+		return new String(chars)+"_thrown_away";
+	}
+	if(str.equals("array")){
+		throw_away_next_array_method_with_object_return_value = true;
+	}
       return new String(chars);
    }
 
