@@ -71,11 +71,11 @@ public class Splitter implements Filesystem1 {
 
 	private FuseStatfs statfs;
 
-	private File readTempFile;
-
 	private String storages;
 
 	private int redundancy;
+
+	private FileChannel tempReadChannel;
 
 	public Splitter(String storages, int redundancy) throws IOException {
 		// .config###/
@@ -93,7 +93,6 @@ public class Splitter implements Filesystem1 {
 
 		try {
 			dirmap.put("/", new FolderEntry());
-			dirmap.put("/.config###", new FolderEntry());
 			recman.commit();
 		} catch (IOException e) {
 			throw new IOException("IO Exception on accessing metadata");
@@ -235,6 +234,7 @@ public class Splitter implements Filesystem1 {
 	}
 
 	public void mknod(String path, int mode, int rdev) throws FuseException {
+
 		try {
 			File temp = File.createTempFile(path + "longer", ".tmp");
 			temp.deleteOnExit();
@@ -598,12 +598,10 @@ public class Splitter implements Filesystem1 {
 	public void read(String path, ByteBuffer buf, long offset)
 			throws FuseException {
 		try {
-			if (readTempFile == null) {
-				readTempFile = glueFilesTogether(path);
+			if (tempReadChannel == null) {
+				tempReadChannel = new FileInputStream(glueFilesTogether(path)).getChannel();
 			}
-			FileChannel rChannel = new FileInputStream(readTempFile)
-					.getChannel();
-			rChannel.read(buf, offset);
+		tempReadChannel.read(buf, offset);
 		} catch (IOException e) {
 			throw new FuseException("IO Exception")
 					.initErrno(FuseException.EIO);
@@ -619,9 +617,12 @@ public class Splitter implements Filesystem1 {
 			tempFiles.get(path).delete();
 			tempFiles.remove(path);
 		}
-		if (readTempFile != null) {
-			readTempFile.delete();
-			readTempFile = null;
+		if (tempReadChannel != null) {
+			try {
+				tempReadChannel.close();
+			} catch (IOException e) {
+			}
+			tempReadChannel = null;
 		}
 	}
 
