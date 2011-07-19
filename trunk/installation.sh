@@ -1,7 +1,7 @@
 #!/bin/bash
 #Installations-Script-Nubisave
 
-sudo su
+
 echo "Möchten Sie Space installieren? j/N "
 
 read antwort
@@ -9,9 +9,9 @@ read antwort
 if [ $antwort == "j" ]
   then
 
-   echo 'deb http://serviceplatform.org/packages/ ./' >> /etc/apt/sources.list.d/space.list
-   apt-get update
-   apt-get install space
+ sudo  echo 'deb http://serviceplatform.org/packages/ ./' >> /etc/apt/sources.list.d/space.list
+ sudo  apt-get update
+ sudo  apt-get install space
 
   else
   echo "Ohne Space weiter - muss vorhanden sein"
