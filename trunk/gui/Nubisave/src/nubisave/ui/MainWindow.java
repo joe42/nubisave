@@ -13,8 +13,9 @@ package nubisave.ui;
 import java.awt.Desktop;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JCheckBox;
@@ -49,6 +50,21 @@ public class MainWindow extends javax.swing.JFrame {
         int redundancy = Integer.parseInt(redundancyStr);
         redundancySlider.setValue(redundancy);
         //matchmakerURIField.setText(Properties.getProperty("matchmakerURI"));
+        
+        if(!isMounted(new File(mntPoint))) {
+            String[] options = {"No","Mount"};
+            int n = JOptionPane.showOptionDialog(this,
+                    "Nubisave not mounted. Mount in '"+mntPoint+"'?",
+                    "Mount Nubisave?",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    options,
+                    options[1]);
+            if (n == 1) {
+                mount();
+            }
+        }
     }
 
     /** This method is called from within the constructor to
@@ -301,6 +317,61 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void mountBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mountBtnActionPerformed
+        mount();
+    }//GEN-LAST:event_mountBtnActionPerformed
+
+    private void redundancySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_redundancySliderStateChanged
+        Properties.setProperty("redundancy", redundancySlider.getValue()+"");
+    }//GEN-LAST:event_redundancySliderStateChanged
+    public NubiTableModel tableModel;
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton applyBtn;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton5;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JButton mntDirOpenBtn;
+    private javax.swing.JTextField mntDirTxtField;
+    private javax.swing.JButton mountBtn;
+    private javax.swing.JPanel optionPanel;
+    private javax.swing.JPanel providerPanel;
+    private javax.swing.JTable providerTable;
+    private javax.swing.JSlider redundancySlider;
+    // End of variables declaration//GEN-END:variables
+
+    private boolean isMounted(File mntPoint) {
+        if (mntPoint == null) {
+            return false;
+        }
+        
+        BufferedReader br;
+        try {
+            br = new BufferedReader(new FileReader("/etc/mtab"));
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+        String line;
+        try {
+            while ((line = br.readLine()) != null) {
+                System.out.println(line);
+                if (line.contains(mntPoint.getAbsolutePath())) {
+                    return true;
+                }
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+        return false;
+    }
+
+    private void mount() {
         String mntPointStr = Properties.getProperty("mntPoint");
         if (mntPointStr == null) {
             JOptionPane.showMessageDialog(this, "Error mntPoint: " + mntPointStr, "Mount Error", JOptionPane.ERROR_MESSAGE);
@@ -356,48 +427,17 @@ public class MainWindow extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Exception: " + ex.getMessage(), "Mount Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-
-       
         
-        boolean success = false;
-        if (mntPoint.exists()) {
-            File[] files = mntPoint.listFiles();
-            
-            for (File f : files) {
-                if (f.isDirectory() && f.getName().equals(".config###")) {
-                    success = true;
-                }
-            }
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        if (success) {
+        if (isMounted(mntPoint)) {
             JOptionPane.showMessageDialog(this, "Nubisave mounted successfull!", "Mount success", JOptionPane.INFORMATION_MESSAGE);
         } else {
-            JOptionPane.showMessageDialog(this, "Error in mount script!", "Mount Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error while mount!", "Mount Error", JOptionPane.ERROR_MESSAGE);
         }
-    }//GEN-LAST:event_mountBtnActionPerformed
-
-    private void redundancySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_redundancySliderStateChanged
-        Properties.setProperty("redundancy", redundancySlider.getValue()+"");
-    }//GEN-LAST:event_redundancySliderStateChanged
-    public NubiTableModel tableModel;
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton applyBtn;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JButton mntDirOpenBtn;
-    private javax.swing.JTextField mntDirTxtField;
-    private javax.swing.JButton mountBtn;
-    private javax.swing.JPanel optionPanel;
-    private javax.swing.JPanel providerPanel;
-    private javax.swing.JTable providerTable;
-    private javax.swing.JSlider redundancySlider;
-    // End of variables declaration//GEN-END:variables
+    }
 }
