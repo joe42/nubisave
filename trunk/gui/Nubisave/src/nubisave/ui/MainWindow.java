@@ -327,7 +327,7 @@ public class MainWindow extends javax.swing.JFrame {
         }
 
         //TODO: don't hardcode splitterDir
-        File splitter = new File("/home/demo/development/svn/trunk/splitter/splitter_mount.sh");
+        File splitter = new File("/home/demo/development/svn/splitter/splitter_mount.sh");
         if (!splitter.exists()) {
             JOptionPane.showMessageDialog(this, "Couldn't find Splitter module: " + splitter.getPath(), "Mount Error", JOptionPane.ERROR_MESSAGE);
             return;
@@ -346,26 +346,34 @@ public class MainWindow extends javax.swing.JFrame {
         }
 
         //                splitter_mount.sh ~/nubisave/ ~/.cache/nubisave/storages [redundant_files]
-        String mountCmd = splitter.getPath() + " " + mntPoint.getPath() + storagesDir.getPath() + " " + redundancyStr;
+        String mountCmd = splitter.getPath() + " " + mntPoint.getPath() + " " + storagesDir.getPath() + " " + redundancyStr;
         System.out.println("exec: " + mountCmd);
-        boolean error = false;
         try {
             Process p = Runtime.getRuntime().exec(mountCmd, null, splitter.getParentFile());
-            String line;
-            BufferedReader br = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-            while ((line = br.readLine()) != null) {
-                error = true;
-                System.err.println(line);
-            }
+            
         } catch (IOException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(this, "Exception: " + ex.getMessage(), "Mount Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        if (error) {
+       
+        
+        boolean success = false;
+        if (mntPoint.exists()) {
+            File[] files = mntPoint.listFiles();
+            
+            for (File f : files) {
+                if (f.isDirectory() && f.getName().equals(".config###")) {
+                    success = true;
+                }
+            }
+        }
+        
+        if (success) {
+            JOptionPane.showMessageDialog(this, "Nubisave mounted successfull!", "Mount success", JOptionPane.INFORMATION_MESSAGE);
+        } else {
             JOptionPane.showMessageDialog(this, "Error in mount script!", "Mount Error", JOptionPane.ERROR_MESSAGE);
-            return;
         }
     }//GEN-LAST:event_mountBtnActionPerformed
 

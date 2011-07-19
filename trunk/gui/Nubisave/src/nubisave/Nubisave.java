@@ -17,7 +17,7 @@ public class Nubisave {
 
     public static final Services services = new Services();
     
-    public static String[] supportedProvider = {"AmazonS3","Dropbox","Sugarsync"};
+    public static String[] supportedProvider = {"Dropbox","Sugarsync"};
     
     private void initalize() {
         // look like a native app
