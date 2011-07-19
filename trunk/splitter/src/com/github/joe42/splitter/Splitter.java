@@ -621,7 +621,7 @@ public class Splitter implements Filesystem1 {
 		System.arraycopy(args, 0, fuseArgs, 0, fuseArgs.length);
 		//System.out.println(fuseArgs[0]);
 		try {
-			FuseMount.mount(fuseArgs, new Splitter(fuseArgs[3], fuseArgs[4]);
+			FuseMount.mount(fuseArgs, new Splitter(fuseArgs[3], Integer.parseInt(fuseArgs[4])));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
