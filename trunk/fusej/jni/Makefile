@@ -1,4 +1,3 @@
-
 include ../build.conf
 include ../jvm_ldpath.def
 
@@ -14,7 +13,7 @@ LDPATH := ${LDPATH} -L${FUSE_HOME}/lib
 all: ${LIB_SO}
 
 ${LIB_SO}: ${SRCS} ${HDRS}
-	gcc -fPIC -shared -D_FILE_OFFSET_BITS=64 -o ${LIB_SO} ${INCLUDES} ${LDPATH} -ljvm -lfuse -lpthread ${SRCS}
+	gcc -fPIC -shared -D_FILE_OFFSET_BITS=64 ${SRCS} -o ${LIB_SO} ${INCLUDES} ${LDPATH} -ljvm -lfuse -lpthread
 
 clean:
 	rm -f ${LIB_SO}
