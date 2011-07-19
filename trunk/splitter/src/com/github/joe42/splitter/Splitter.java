@@ -434,7 +434,7 @@ public class Splitter implements Filesystem1 {
 		int nr_of_file_parts_successfully_stored = 0;
 		List<String> fragmentStores = getFragmentStores();
 		MAX_FILE_FRAGMENTS = fragmentStores.size();
-		MAX_FILE_FRAGMENTS_NEEDED = MAX_FILE_FRAGMENTS * redundancy;
+		MAX_FILE_FRAGMENTS_NEEDED = (int) Math.ceil(MAX_FILE_FRAGMENTS *redundancy /100f);
 		File temp = tempFiles.get(path);
 		FileEntry fileEntry = null;
 		try {
