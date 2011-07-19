@@ -434,12 +434,10 @@ public class Splitter implements Filesystem1 {
 		}
 		int nr_of_file_parts_successfully_stored = 0;
 		List<String> fragmentStores = getFragmentStores();
-		try{
-		log.info(fragmentStores.get(0)); 
-		log.info(fragmentStores.get(1)); 
-		log.info(fragmentStores.get(2)); 
-		log.info(fragmentStores.get(3));
-		}	catch(Exception e){}
+		for(String store: fragmentStores){
+			if (log.isDebugEnabled())
+			  log.info(store);
+		}
 		MAX_FILE_FRAGMENTS = fragmentStores.size();
 		MAX_FILE_FRAGMENTS_NEEDED = (int) Math.ceil(MAX_FILE_FRAGMENTS *redundancy /100f);
 		if(MAX_FILE_FRAGMENTS_NEEDED <1){
@@ -514,6 +512,9 @@ public class Splitter implements Filesystem1 {
 			throw new FuseException("IO error: " + e.toString(), e)
 					.initErrno(FuseException.EIO);
 		}
+
+		if (log.isDebugEnabled())
+		  log.info("nr_of_file_parts_successfully_stored: "+nr_of_file_parts_successfully_stored+" - MAX_FILE_FRAGMENTS_NEEDED "+MAX_FILE_FRAGMENTS_NEEDED);
 		if (nr_of_file_parts_successfully_stored < MAX_FILE_FRAGMENTS_NEEDED) {
 			throw new FuseException(
 					"IO error: Not enough file parts could be stored.")
