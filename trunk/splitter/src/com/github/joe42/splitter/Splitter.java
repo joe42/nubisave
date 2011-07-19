@@ -619,18 +619,18 @@ public class Splitter implements Filesystem1 {
 	// Java entry point
 
 	public static void main(String[] args) {
-		if (args.length < 2) {
+		if (args.length < 5) {
 			System.out
 					.println("Must specify mountpoint folder_with_storage_mountpoints redundancy_level_in_percent_from_0_to_100");
 			System.exit(-1);
 		}
 
-		String fuseArgs[] = new String[args.length - 2];
+		String fuseArgs[] = new String[args.length-2];
 		System.arraycopy(args, 0, fuseArgs, 0, fuseArgs.length);
 		// System.out.println(fuseArgs[0]);
 		try {
-			FuseMount.mount(fuseArgs, new Splitter(fuseArgs[3], Integer
-					.parseInt(fuseArgs[4])));
+			FuseMount.mount(fuseArgs, new Splitter(args[3], Integer
+					.parseInt(args[4])));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
