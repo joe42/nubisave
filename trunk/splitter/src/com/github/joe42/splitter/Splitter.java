@@ -415,13 +415,14 @@ public class Splitter implements Filesystem1 {
 
 	private List<String> getFragmentStores() {
 		List<String> ret = new ArrayList<String>();
-		String[] folders = new File(storages).list();
+		File f = new File(storages);
+		String[] folders = f.list();
 		ret.clear();
 		if (folders == null) {
 			System.out.println(storages + " is not a directory!");
 		} else {
 			for (int i = 0; i < folders.length; i++) {
-				ret.add(folders[i]);
+				ret.add(f.getAbsolutePath()+"/"+folders[i]);
 			}
 		}
 		return ret;
@@ -500,6 +501,7 @@ public class Splitter implements Filesystem1 {
 					out.flush();
 					out.close();
 				} catch (Exception e) {
+					
 					nr_of_file_parts_successfully_stored--;
 				}
 				nr_of_file_parts_successfully_stored++;
@@ -513,7 +515,7 @@ public class Splitter implements Filesystem1 {
 					.initErrno(FuseException.EIO);
 		}
 
-		if (log.isDebugEnabled())
+		//if (log.isDebugEnabled())
 		  log.info("nr_of_file_parts_successfully_stored: "+nr_of_file_parts_successfully_stored+" - MAX_FILE_FRAGMENTS_NEEDED "+MAX_FILE_FRAGMENTS_NEEDED);
 		if (nr_of_file_parts_successfully_stored < MAX_FILE_FRAGMENTS_NEEDED) {
 			throw new FuseException(
