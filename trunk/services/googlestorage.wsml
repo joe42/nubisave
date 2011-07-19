@@ -18,7 +18,7 @@ importsOntology { _"http://localhost:8080/Matchmaker/ontologies/CloudQoS.wsml#" 
 capability ServiceCapability
  postcondition definedBy ?serviceType memberOf cloud#CloudStorage .
 
-interface GoogleStorage
+interface GoogleStorageInterface
  importsOntology { Google }
 
 ontology Google

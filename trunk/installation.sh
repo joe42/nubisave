@@ -14,7 +14,7 @@ sudo bash "echo 'deb http://serviceplatform.org/packages/ ./' >> /etc/apt/source
  sudo  apt-get install space
 
   else
-  echo "Ohne Space weiter - muss vorhanden sein"
+  echo "Ohne Space weiter - Conqo + Contractwizard muss vorhanden sein"
 fi
 
 echo "Registrieren der Dienste" 
@@ -37,7 +37,7 @@ echo
 echo
 echo "Installiere openJDK"
 
-apt-get install openjdk-6-jdk
+sudo apt-get install openjdk-6-jdk
 
 echo
 echo
@@ -46,11 +46,6 @@ echo "Kompilieren des Core-Moduls"
 cd splitter/
 sudo make 
 cd ..
-
-mkdir -p $HOME/.config/nubisave
-mkdir -p $HOME/.config/nubisave/fileparts
-mkdir -p $HOME/.config/nubisave/files
-mkdir -p $HOME/.config/nubisave/storages
 
 echo
 echo
