@@ -65,7 +65,7 @@ public class Splitter implements Filesystem1 {
 	private RecordManager recman;
 	private HTree filemap;
 	private HTree dirmap;
-	private Hashtable<String, File> tempFiles = new Hashtable<String, File>();
+	private Hashtable<String, FileChannel> tempFiles = new Hashtable<String, FileChannel>();
 
 	private MultipleFileHandler multi_file_handler;
 
@@ -238,7 +238,7 @@ public class Splitter implements Filesystem1 {
 		try {
 			File temp = File.createTempFile(path + "longer", ".tmp");
 			temp.deleteOnExit();
-			tempFiles.put(path, temp);
+			tempFiles.put(path, new RandomAccessFile(temp, "rw").getChannel());
 			filemap.put(path, new FileEntry());
 			recman.commit();
 		} catch (IOException e) {
@@ -343,11 +343,9 @@ public class Splitter implements Filesystem1 {
 	public void truncate(String path, long size) throws FuseException {
 		try {
 			if (filemap.get(path) != null) {
-				File temp = glueFilesTogether(path);
-				tempFiles.put(path, temp);
+				tempFiles.put(path, glueFilesTogether(path));
 				try {
-					new RandomAccessFile(temp, "rw").getChannel()
-							.truncate(size);
+					tempFiles.get(path).truncate(size);
 				} catch (FileNotFoundException e) {
 					throw new FuseException("No Such Entry")
 							.initErrno(FuseException.ENOENT);
@@ -400,9 +398,7 @@ public class Splitter implements Filesystem1 {
 				tempFiles.put(path, glueFilesTogether(path));
 				System.out.println("glued! ");
 			}
-			File temp = tempFiles.get(path);
-			FileChannel wChannel = new RandomAccessFile(temp, "rw")
-					.getChannel();
+			FileChannel wChannel = tempFiles.get(path);
 			System.out.println("write to buf? " + offset);
 			wChannel.position(offset);
 			wChannel.write(buf);
@@ -444,7 +440,7 @@ public class Splitter implements Filesystem1 {
 		if(MAX_FILE_FRAGMENTS_NEEDED <1){
 			MAX_FILE_FRAGMENTS_NEEDED=1;
 		}
-		File temp = tempFiles.get(path);
+		FileChannel temp = tempFiles.get(path);
 		FileEntry fileEntry = null;
 		try {
 			fileEntry = (FileEntry) filemap.get(path);
@@ -476,9 +472,8 @@ public class Splitter implements Filesystem1 {
 					.initErrno(FuseException.EACCES);
 		}
 		try {
-			byte[] arr = new byte[(int) temp.length()];
-			FileInputStream fis = new FileInputStream(temp);
-			fis.read(arr);
+			byte[] arr = new byte[(int) temp.size()];
+			temp.read(ByteBuffer.wrap(arr));
 			digestFunc.update(arr, 0, arr.length);
 			digestFunc.doFinal(digestByteArray, 0);
 			List<byte[]> result = encoder.process(arr);
@@ -506,7 +501,7 @@ public class Splitter implements Filesystem1 {
 				}
 				nr_of_file_parts_successfully_stored++;
 			}
-			fileEntry.size = (int) temp.length();
+			fileEntry.size = (int) temp.size();
 
 			filemap.put(path, fileEntry);
 			recman.commit();
@@ -524,8 +519,8 @@ public class Splitter implements Filesystem1 {
 		}
 	}
 
-	private File glueFilesTogether(String path) throws FuseException {
-		File ret = null;
+	private FileChannel glueFilesTogether(String path) throws FuseException {
+		FileChannel ret = null;
 		List<byte[]> receivedFileSegments = new ArrayList<byte[]>();
 		Digest digestFunc = new SHA256Digest();
 		byte[] digestByteArray = new byte[digestFunc.getDigestSize()];
@@ -543,8 +538,9 @@ public class Splitter implements Filesystem1 {
 		System.out.println("glue 1");
 		int readBytes;
 		try {
-			ret = File.createTempFile(path + "longer", ".tmp");
-			ret.deleteOnExit();
+			File tmp = File.createTempFile(path + "longer", ".tmp");
+			tmp.deleteOnExit();
+			ret = new RandomAccessFile(tmp, "rw").getChannel(); 
 			int validSegment = 0;
 			List<String> fragmentNames = ((FileEntry) filemap.get(path)).fragment_names;
 
@@ -583,10 +579,8 @@ public class Splitter implements Filesystem1 {
 
 			digestFunc.doFinal(digestByteArray, 0);
 
-			OutputStream out = new FileOutputStream(ret);
-
 			System.out.println("glue 4");
-			out.write(recoveredFile, 0, recoveredFile.length);
+			ret.write(ByteBuffer.wrap(recoveredFile));
 			System.out.println("glue 5");
 
 		} catch (Exception e) {
@@ -599,7 +593,7 @@ public class Splitter implements Filesystem1 {
 			throws FuseException {
 		try {
 			if (tempReadChannel == null) {
-				tempReadChannel = new FileInputStream(glueFilesTogether(path)).getChannel();
+				tempReadChannel = glueFilesTogether(path);
 			}
 		tempReadChannel.read(buf, offset);
 		} catch (IOException e) {
@@ -614,7 +608,10 @@ public class Splitter implements Filesystem1 {
 	public void release(String path, int flags) throws FuseException {
 		if (tempFiles.get(path) != null) {
 			splitFile(path);
-			tempFiles.get(path).delete();
+			try {
+				tempFiles.get(path).close();
+			} catch (IOException e) {
+			}
 			tempFiles.remove(path);
 		}
 		if (tempReadChannel != null) {
