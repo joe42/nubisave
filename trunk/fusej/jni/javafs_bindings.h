@@ -41,14 +41,14 @@ typedef struct _jclass_fuse_FuseGetattr
    struct
    {
       jmethodID set__JIIIIIJJIII;
-      jmethodID clone;
       jmethodID toString;
-      jmethodID hashCode;
-      jmethodID getClass;
+      jmethodID clone;
       jmethodID wait__J;
       jmethodID wait__JI;
       jmethodID wait;
       jmethodID equals__Ljava_lang_Object_;
+      jmethodID hashCode;
+      jmethodID getClass;
       jmethodID notify;
       jmethodID notifyAll;
 
@@ -90,14 +90,14 @@ typedef struct _jclass_fuse_FuseFSDirEnt
    // cached instance method IDs
    struct
    {
-      jmethodID clone;
       jmethodID toString;
-      jmethodID hashCode;
-      jmethodID getClass;
+      jmethodID clone;
       jmethodID wait__J;
       jmethodID wait__JI;
       jmethodID wait;
       jmethodID equals__Ljava_lang_Object_;
+      jmethodID hashCode;
+      jmethodID getClass;
       jmethodID notify;
       jmethodID notifyAll;
 
@@ -130,41 +130,41 @@ typedef struct _jclass_fuse_FuseFSDirFiller
    // cached instance method IDs
    struct
    {
-      jmethodID setCharset__Ljava_nio_charset_Charset_;
       jmethodID add__Ljava_lang_String_JI;
       jmethodID toString;
+      jmethodID setCharset__Ljava_nio_charset_Charset_;
       jmethodID add__Ljava_lang_Object_;
       jmethodID add__ILjava_lang_Object_;
-      jmethodID indexOf__Ljava_lang_Object_;
+      jmethodID get__I;
       jmethodID clone;
+      jmethodID indexOf__Ljava_lang_Object_;
       jmethodID clear;
-      jmethodID contains__Ljava_lang_Object_;
+      jmethodID size;
+      jmethodID isEmpty;
       jmethodID lastIndexOf__Ljava_lang_Object_;
+      jmethodID contains__Ljava_lang_Object_;
       jmethodID addAll__Ljava_util_Collection_;
       jmethodID addAll__ILjava_util_Collection_;
-      jmethodID get__I;
-      jmethodID size;
       jmethodID toArray;
       jmethodID toArray___Ljava_lang_Object_;
+      jmethodID iterator;
       jmethodID remove__I;
       jmethodID remove__Ljava_lang_Object_;
-      jmethodID isEmpty;
       jmethodID set__ILjava_lang_Object_;
       jmethodID ensureCapacity__I;
       jmethodID trimToSize;
-      jmethodID hashCode;
-      jmethodID equals__Ljava_lang_Object_;
-      jmethodID iterator;
-      jmethodID subList__II;
-      jmethodID listIterator;
-      jmethodID listIterator__I;
-      jmethodID containsAll__Ljava_util_Collection_;
       jmethodID removeAll__Ljava_util_Collection_;
       jmethodID retainAll__Ljava_util_Collection_;
-      jmethodID getClass;
+      jmethodID subList__II;
+      jmethodID listIterator__I;
+      jmethodID listIterator;
+      jmethodID equals__Ljava_lang_Object_;
+      jmethodID hashCode;
+      jmethodID containsAll__Ljava_util_Collection_;
       jmethodID wait__J;
       jmethodID wait__JI;
       jmethodID wait;
+      jmethodID getClass;
       jmethodID notify;
       jmethodID notifyAll;
 
@@ -211,14 +211,14 @@ typedef struct _jclass_fuse_FuseStatfs
    struct
    {
       jmethodID set__IIIIIII;
-      jmethodID clone;
       jmethodID toString;
-      jmethodID hashCode;
-      jmethodID getClass;
+      jmethodID clone;
       jmethodID wait__J;
       jmethodID wait__JI;
       jmethodID wait;
       jmethodID equals__Ljava_lang_Object_;
+      jmethodID hashCode;
+      jmethodID getClass;
       jmethodID notify;
       jmethodID notifyAll;
 
@@ -259,14 +259,14 @@ typedef struct _jclass_fuse_FuseSize
    struct
    {
       jmethodID setSize__I;
-      jmethodID clone;
       jmethodID toString;
-      jmethodID hashCode;
-      jmethodID getClass;
+      jmethodID clone;
       jmethodID wait__J;
       jmethodID wait__JI;
       jmethodID wait;
       jmethodID equals__Ljava_lang_Object_;
+      jmethodID hashCode;
+      jmethodID getClass;
       jmethodID notify;
       jmethodID notifyAll;
 
@@ -313,14 +313,14 @@ typedef struct _jclass_fuse_FuseOpen
       jmethodID setDirectIO__Z;
       jmethodID isKeepCache;
       jmethodID setKeepCache__Z;
-      jmethodID clone;
       jmethodID toString;
-      jmethodID hashCode;
-      jmethodID getClass;
+      jmethodID clone;
       jmethodID wait__J;
       jmethodID wait__JI;
       jmethodID wait;
       jmethodID equals__Ljava_lang_Object_;
+      jmethodID hashCode;
+      jmethodID getClass;
       jmethodID notify;
       jmethodID notifyAll;
 
@@ -362,14 +362,14 @@ typedef struct _jclass_fuse_FuseContext
    // cached instance method IDs
    struct
    {
-      jmethodID clone;
       jmethodID toString;
-      jmethodID hashCode;
-      jmethodID getClass;
+      jmethodID clone;
       jmethodID wait__J;
       jmethodID wait__JI;
       jmethodID wait;
       jmethodID equals__Ljava_lang_Object_;
+      jmethodID hashCode;
+      jmethodID getClass;
       jmethodID notify;
       jmethodID notifyAll;
 
@@ -395,15 +395,24 @@ typedef struct _jclass_fuse_FuseFS
    // cached instance method IDs
    struct
    {
-      jmethodID chown__Ljava_nio_ByteBuffer_II;
-      jmethodID chmod__Ljava_nio_ByteBuffer_I;
-      jmethodID symlink__Ljava_nio_ByteBuffer_Ljava_nio_ByteBuffer_;
+      jmethodID write__Ljava_nio_ByteBuffer_Ljava_lang_Object_ZLjava_nio_ByteBuffer_J;
+      jmethodID flush__Ljava_nio_ByteBuffer_Ljava_lang_Object_;
+      jmethodID read__Ljava_nio_ByteBuffer_Ljava_lang_Object_Ljava_nio_ByteBuffer_J;
+      jmethodID open__Ljava_nio_ByteBuffer_ILfuse_FuseOpenSetter_;
+      jmethodID mkdir__Ljava_nio_ByteBuffer_I;
+      jmethodID rename__Ljava_nio_ByteBuffer_Ljava_nio_ByteBuffer_;
+      jmethodID release__Ljava_nio_ByteBuffer_Ljava_lang_Object_I;
       jmethodID getattr__Ljava_nio_ByteBuffer_Lfuse_FuseGetattrSetter_;
       jmethodID readlink__Ljava_nio_ByteBuffer_Ljava_nio_ByteBuffer_;
       jmethodID getdir__Ljava_nio_ByteBuffer_Lfuse_FuseFSDirFiller_;
       jmethodID mknod__Ljava_nio_ByteBuffer_II;
       jmethodID unlink__Ljava_nio_ByteBuffer_;
       jmethodID rmdir__Ljava_nio_ByteBuffer_;
+      jmethodID symlink__Ljava_nio_ByteBuffer_Ljava_nio_ByteBuffer_;
+      jmethodID link__Ljava_nio_ByteBuffer_Ljava_nio_ByteBuffer_;
+      jmethodID chmod__Ljava_nio_ByteBuffer_I;
+      jmethodID chown__Ljava_nio_ByteBuffer_II;
+      jmethodID truncate__Ljava_nio_ByteBuffer_J;
       jmethodID utime__Ljava_nio_ByteBuffer_II;
       jmethodID statfs__Lfuse_FuseStatfsSetter_;
       jmethodID fsync__Ljava_nio_ByteBuffer_Ljava_lang_Object_Z;
@@ -413,15 +422,6 @@ typedef struct _jclass_fuse_FuseFS
       jmethodID listxattrsize__Ljava_nio_ByteBuffer_Lfuse_FuseSizeSetter_;
       jmethodID listxattr__Ljava_nio_ByteBuffer_Ljava_nio_ByteBuffer_;
       jmethodID removexattr__Ljava_nio_ByteBuffer_Ljava_nio_ByteBuffer_;
-      jmethodID write__Ljava_nio_ByteBuffer_Ljava_lang_Object_ZLjava_nio_ByteBuffer_J;
-      jmethodID flush__Ljava_nio_ByteBuffer_Ljava_lang_Object_;
-      jmethodID read__Ljava_nio_ByteBuffer_Ljava_lang_Object_Ljava_nio_ByteBuffer_J;
-      jmethodID open__Ljava_nio_ByteBuffer_ILfuse_FuseOpenSetter_;
-      jmethodID mkdir__Ljava_nio_ByteBuffer_I;
-      jmethodID rename__Ljava_nio_ByteBuffer_Ljava_nio_ByteBuffer_;
-      jmethodID release__Ljava_nio_ByteBuffer_Ljava_lang_Object_I;
-      jmethodID truncate__Ljava_nio_ByteBuffer_J;
-      jmethodID link__Ljava_nio_ByteBuffer_Ljava_nio_ByteBuffer_;
 
    } method;
 
@@ -455,33 +455,10 @@ typedef struct _jclass_java_nio_ByteBuffer
    // cached instance method IDs
    struct
    {
-      jmethodID hashCode;
-      jmethodID compareTo__Ljava_nio_ByteBuffer_;
-      jmethodID compareTo__Ljava_lang_Object_;
-      jmethodID getShort;
-      jmethodID getShort__I;
-      jmethodID getChar;
-      jmethodID getChar__I;
-      jmethodID getInt;
-      jmethodID getInt__I;
-      jmethodID getLong;
-      jmethodID getLong__I;
-      jmethodID getFloat;
-      jmethodID getFloat__I;
-      jmethodID getDouble;
-      jmethodID getDouble__I;
-      jmethodID putShort__S;
-      jmethodID putShort__IS;
-      jmethodID putChar__C;
-      jmethodID putChar__IC;
-      jmethodID putInt__I;
-      jmethodID putInt__II;
-      jmethodID putLong__J;
-      jmethodID putLong__IJ;
-      jmethodID putFloat__F;
-      jmethodID putFloat__IF;
-      jmethodID putDouble__D;
-      jmethodID putDouble__ID;
+      jmethodID get;
+      jmethodID get__I;
+      jmethodID get___BII;
+      jmethodID get___B;
       jmethodID put__B;
       jmethodID put__IB;
       jmethodID put__Ljava_nio_ByteBuffer_;
@@ -489,43 +466,67 @@ typedef struct _jclass_java_nio_ByteBuffer
       jmethodID put___B;
       jmethodID equals__Ljava_lang_Object_;
       jmethodID toString;
-      jmethodID get;
-      jmethodID get__I;
-      jmethodID get___BII;
-      jmethodID get___B;
-      jmethodID array;
-      jmethodID arrayOffset;
-      jmethodID hasArray;
+      jmethodID hashCode;
+      jmethodID compareTo__Ljava_nio_ByteBuffer_;
+      jmethodID compareTo__Ljava_lang_Object_;
+      jmethodID getShort;
+      jmethodID getShort__I;
+      jmethodID putShort__S;
+      jmethodID putShort__IS;
+      jmethodID getChar;
+      jmethodID getChar__I;
+      jmethodID putChar__C;
+      jmethodID putChar__IC;
+      jmethodID getInt;
+      jmethodID getInt__I;
+      jmethodID putInt__I;
+      jmethodID putInt__II;
+      jmethodID getLong;
+      jmethodID getLong__I;
+      jmethodID putLong__J;
+      jmethodID putLong__IJ;
+      jmethodID getFloat;
+      jmethodID getFloat__I;
+      jmethodID putFloat__F;
+      jmethodID putFloat__IF;
+      jmethodID getDouble;
+      jmethodID getDouble__I;
+      jmethodID putDouble__D;
+      jmethodID putDouble__ID;
       jmethodID isDirect;
-      jmethodID asCharBuffer;
-      jmethodID asDoubleBuffer;
-      jmethodID asFloatBuffer;
-      jmethodID asIntBuffer;
-      jmethodID asLongBuffer;
-      jmethodID asReadOnlyBuffer;
-      jmethodID asShortBuffer;
-      jmethodID compact;
+      jmethodID hasArray;
+      jmethodID array;
+      jmethodID array_thrown_away;
+      jmethodID arrayOffset;
+      jmethodID slice;
       jmethodID duplicate;
+      jmethodID asReadOnlyBuffer;
+      jmethodID compact;
       jmethodID order;
       jmethodID order__Ljava_nio_ByteOrder_;
-      jmethodID slice;
+      jmethodID asCharBuffer;
+      jmethodID asShortBuffer;
+      jmethodID asIntBuffer;
+      jmethodID asLongBuffer;
+      jmethodID asFloatBuffer;
+      jmethodID asDoubleBuffer;
       jmethodID limit;
       jmethodID limit__I;
       jmethodID clear;
+      jmethodID remaining;
       jmethodID position;
       jmethodID position__I;
-      jmethodID remaining;
       jmethodID capacity;
-      jmethodID flip;
-      jmethodID hasRemaining;
-      jmethodID isReadOnly;
       jmethodID mark;
       jmethodID reset;
+      jmethodID flip;
       jmethodID rewind;
-      jmethodID getClass;
+      jmethodID hasRemaining;
+      jmethodID isReadOnly;
       jmethodID wait__J;
       jmethodID wait__JI;
       jmethodID wait;
+      jmethodID getClass;
       jmethodID notify;
       jmethodID notifyAll;
 
