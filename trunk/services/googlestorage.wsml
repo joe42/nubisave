@@ -11,7 +11,7 @@ namespace {_"http://localhost:8080/Matchmaker/ontologies/CloudQos/googlestorage.
 	dc _"http://purl.org/dc/elements/1.1#",
 	wsml _"http://www.wsmo.org/wsml/wsml-syntax#" }
 
-webService GoogleStorage
+webService GoogleStorageService
 importsOntology { _"http://localhost:8080/Matchmaker/ontologies/CloudQoS.wsml#" }
 
 /* Define Service Class */
