@@ -53,6 +53,7 @@ import org.apache.commons.logging.Log;
 //Parallel read: done
 //Fixed: write appended data; or wrote nonsence.
 //<1238
+//overwrite existing files
 
 public class Splitter implements Filesystem1 {
 	private static final Log log = LogFactory.getLog(Splitter.class);
@@ -83,7 +84,7 @@ public class Splitter implements Filesystem1 {
 		// "redundancy level in percent 0-100"
 		this.storages = storages;
 		this.redundancy = redundancy;
-		multi_file_handler = new SerialMultipleFileHandler();
+		multi_file_handler = new ConcurrentMultipleFileHandler();
 
 		Properties props = new Properties();
 		recman = RecordManagerFactory.createRecordManager("splitter", props);
@@ -400,8 +401,8 @@ public class Splitter implements Filesystem1 {
 			}
 			FileChannel wChannel = tempFiles.get(path);
 			System.out.println("write to buf? " + offset);
-			wChannel.position(offset);
-			wChannel.write(buf);
+			//wChannel.position(offset);
+			wChannel.write(buf,offset);
 			System.out.println("written to buf! " + wChannel.position());
 		} catch (IOException e) {
 			throw new FuseException("IO Exception")
@@ -539,7 +540,7 @@ public class Splitter implements Filesystem1 {
 		int readBytes;
 		try {
 			File tmp = File.createTempFile(path + "longer", ".tmp");
-			tmp.deleteOnExit();
+			//tmp.deleteOnExit();
 			ret = new RandomAccessFile(tmp, "rw").getChannel(); 
 			int validSegment = 0;
 			List<String> fragmentNames = ((FileEntry) filemap.get(path)).fragment_names;
