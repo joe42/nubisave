@@ -9,7 +9,7 @@ read antwort
 if [ $antwort == "j" ]
   then
 
- sudo  echo 'deb http://serviceplatform.org/packages/ ./' >> /etc/apt/sources.list.d/space.list
+echo 'deb http://serviceplatform.org/packages/ ./' >> sudo /etc/apt/sources.list.d/space.list
  sudo  apt-get update
  sudo  apt-get install space
 
