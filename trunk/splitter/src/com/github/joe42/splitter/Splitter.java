@@ -430,11 +430,14 @@ public class Splitter implements Filesystem1 {
 		if (tempFiles.get(path) == null) {
 			throw new FuseException("IO Exception - nothing to split")
 					.initErrno(FuseException.EIO);
-		}// TODO: use same filenames if file exists already
+		}
 		int nr_of_file_parts_successfully_stored = 0;
 		List<String> fragmentStores = getFragmentStores();
 		MAX_FILE_FRAGMENTS = fragmentStores.size();
 		MAX_FILE_FRAGMENTS_NEEDED = (int) Math.ceil(MAX_FILE_FRAGMENTS *redundancy /100f);
+		if(MAX_FILE_FRAGMENTS_NEEDED <1){
+			MAX_FILE_FRAGMENTS_NEEDED=1;
+		}
 		File temp = tempFiles.get(path);
 		FileEntry fileEntry = null;
 		try {
@@ -498,9 +501,6 @@ public class Splitter implements Filesystem1 {
 			}
 			fileEntry.size = (int) temp.length();
 
-			System.out
-					.println("HAMAKABULAAAAAAAHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH!!!!!!!! "
-							+ fileEntry.size);
 			filemap.put(path, fileEntry);
 			recman.commit();
 		} catch (Exception e) {
