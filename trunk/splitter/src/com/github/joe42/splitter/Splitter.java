@@ -245,6 +245,7 @@ public class Splitter implements Filesystem1 {
 			throw new FuseException("IO Exception on accessing metadata")
 					.initErrno(FuseException.EIO);
 		}
+		splitFile(path); //kann man nicht rausnehmen
 	}
 
 	public void open(String path, int flags) throws FuseException {
