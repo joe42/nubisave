@@ -22,6 +22,7 @@ public class CoreWriter {
     public CoreWriter() {
         String home = System.getProperty("user.home");
         confDir = new File(home + "/.config/nubisave/storages");
+        confDir.mkdirs();
     }
 
     public boolean writeToCoreModule(Services services) {
@@ -54,7 +55,7 @@ public class CoreWriter {
         String user = ((MatchmakerService) s).getUser();
         props.setProperty("Username", (user != null) ? user : "");
         String pass = ((MatchmakerService) s).getPass();
-        props.setProperty("Password", (pass != null) ? pass : "");
+        props.setProperty("Password", (pass != null) ? pass : ""); // TODO: encrypt password
         props.setProperty("Size", "0");
         props.setProperty("FreeSize", "0");
         props.setProperty("Deleted", (s.isEnabled())?"0":"1");

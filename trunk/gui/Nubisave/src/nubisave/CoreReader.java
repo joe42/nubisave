@@ -26,6 +26,7 @@ public class CoreReader {
     public CoreReader() {
         String home = System.getProperty("user.home");
         confDir = new File(home + "/.config/nubisave/storages");
+        confDir.mkdirs();
     }
     
     public void readExistingServices() {
