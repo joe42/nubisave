@@ -1,26 +1,15 @@
 #!/bin/bash
 
-mkdir samplefiles
-
+mkdir -p samplefiles
+rm samplefiles/*
 cd samplefiles
 
 echo "create samplefiles"
 
-dd if=/dev/urandom of=500kb.0 bs=1K count=500
-dd if=/dev/urandom of=500kb.1 bs=1K count=500
-dd if=/dev/urandom of=500kb.2 bs=1K count=500
-
-dd if=/dev/urandom of=1mb.0 bs=1M count=1
-dd if=/dev/urandom of=1mb.1 bs=1M count=1
-dd if=/dev/urandom of=1mb.2 bs=1M count=1
-
-dd if=/dev/urandom of=10mb.0 bs=1M count=10
-dd if=/dev/urandom of=10mb.1 bs=1M count=10
-dd if=/dev/urandom of=10mb.2 bs=1M count=10
-
-dd if=/dev/urandom of=50mb.0 bs=1M count=50
-dd if=/dev/urandom of=50mb.1 bs=1M count=50
-dd if=/dev/urandom of=50mb.2 bs=1M count=50
+for N in 4 8 16 32 64 128 256 512 1024 2048 4096 8192 16384 32768 65536 131072
+do
+	dd if=/dev/urandom of=${N}kb bs=${N}K count=1
+done
 
 echo "create checksums"
 md5sum * > checksums

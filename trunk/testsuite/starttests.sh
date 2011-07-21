@@ -1,6 +1,7 @@
 #!/bin/bash
 
 mntpoint="$HOME/nubisave"
+statsfile=nubisave.test.out
 
 function shouldexist {
 if [ -e "$mntpoint/$1" ]
@@ -79,127 +80,46 @@ do
 done
 
 mntpoint=$answer
+rm $mntpoint/*
 
-echo "create 0 byte file"
-touch "$mntpoint/0bytefile"
-shouldexist "/0bytefile"
+echo "size	run	write	rewrite	read	reread" > $statsfile
 
-echo "remove 0 byte file"
-rm "$mntpoint/0bytefile"
-shouldntexist "0bytefile"
+for N in 4 8 16 32 64 128 256 512 1024 2048 4096 8192 16384 32768 65536 131072
+do
+	for C in 1 2 3 4 5 6 7 8
+	do
+		rm "$mntpoint/${N}kb"
+		
+		beginwrite=$(date +%s.%N)
+		cp samplefiles/${N}kb "$mntpoint/"
+		endwrite=$(date +%s.%N)
+	
+		beginrewrite=$(date +%s.%N)
+		cp samplefiles/${N}kb "$mntpoint/"
+		endrewrite=$(date +%s.%N)
+	
+		beginread=$(date +%s.%N)
+		cp "$mntpoint/${N}kb" /dev/null
+		endread=$(date +%s.%N)
+	
+		beginreread=$(date +%s.%N)
+		cp "$mntpoint/${N}kb" /dev/null
+		endreread=$(date +%s.%N)
+	
+		shouldexist ${N}kb
+		checksum ${N}kb
 
-echo "create 1st 0 byte file"
-touch "$mntpoint/0bytefile1"
-shouldexist "0bytefile1"
+		rm "$mntpoint/${N}kb"
+	
+		echo "$N	$C	`echo "scale=0; $N / ($endwrite - $beginwrite)" | bc`	`echo "scale=0; $N / ($endrewrite - $beginrewrite)" | bc`	`echo "scale=0; $N / ($endread - $beginread)" | bc`	`echo "scale=0; $N / ($endreread - $beginreread)" | bc`" | tee -a $statsfile
+	done
+done
 
-echo "create 2nd 0 byte file"
-touch "$mntpoint/0bytefile2"
-shouldexist "0bytefile2"
+echo "times written to $statsfile"
 
-echo "create 3rd 0 byte file"
-touch "$mntpoint/0bytefile3"
-shouldexist "0bytefile3"
+./gengnuplot.sh $statsfile write
+./gengnuplot.sh $statsfile rewrite
+./gengnuplot.sh $statsfile read
+./gengnuplot.sh $statsfile reread
 
-echo "remove 1st 0 byte file"
-rm "$mntpoint/0bytefile1"
-shouldntexist "0bytefile1"
-
-echo "remove 3rd 0 byte file"
-rm "$mntpoint/0bytefile3"
-shouldntexist "0bytefile3"
-
-echo "remove 2nd 0 byte file"
-rm "$mntpoint/0bytefile2"
-shouldntexist "0bytefile2"
-
-echo ""
-echo "Speedtest - write:"
-echo "#size total user sys" > times.dat
-
-file="500kb.0"
-echo "create $file"
-/usr/bin/time -a -f "`stat -c%s samplefiles/$file` %e %U %S" -o times.dat cp samplefiles/$file "$mntpoint/"
-shouldexist $file
-checksum $file
-
-file="500kb.1"
-echo "create $file"
-/usr/bin/time -a -f "`stat -c%s samplefiles/$file` %e %U %S" -o times.dat cp samplefiles/$file "$mntpoint/"
-shouldexist $file
-checksum $file
-
-file="500kb.2"
-echo "create $file"
-/usr/bin/time -a -f "`stat -c%s samplefiles/$file` %e %U %S" -o times.dat cp samplefiles/$file "$mntpoint/"
-shouldexist $file
-checksum $file
-
-file="1mb.0"
-echo "create $file"
-/usr/bin/time -a -f "`stat -c%s samplefiles/$file` %e %U %S" -o times.dat cp samplefiles/$file "$mntpoint/"
-shouldexist $file
-checksum $file
-
-file="1mb.1"
-echo "create $file"
-/usr/bin/time -a -f "`stat -c%s samplefiles/$file` %e %U %S" -o times.dat cp samplefiles/$file "$mntpoint/"
-shouldexist $file
-checksum $file
-
-file="1mb.2"
-echo "create $file"
-/usr/bin/time -a -f "`stat -c%s samplefiles/$file` %e %U %S" -o times.dat cp samplefiles/$file "$mntpoint/"
-shouldexist $file
-checksum $file
-
-file="10mb.0"
-echo "create $file"
-/usr/bin/time -a -f "`stat -c%s samplefiles/$file` %e %U %S" -o times.dat cp samplefiles/$file "$mntpoint/"
-shouldexist $file
-checksum $file
-
-file="10mb.1"
-echo "create $file"
-/usr/bin/time -a -f "`stat -c%s samplefiles/$file` %e %U %S" -o times.dat cp samplefiles/$file "$mntpoint/"
-shouldexist $file
-checksum $file
-
-file="10mb.2"
-echo "create $file"
-/usr/bin/time -a -f "`stat -c%s samplefiles/$file` %e %U %S" -o times.dat cp samplefiles/$file "$mntpoint/"
-shouldexist $file
-checksum $file
-
-file="50mb.0"
-echo "create $file"
-/usr/bin/time -a -f "`stat -c%s samplefiles/$file` %e %U %S" -o times.dat cp samplefiles/$file "$mntpoint/"
-shouldexist $file
-checksum $file
-
-file="50mb.1"
-echo "create $file"
-/usr/bin/time -a -f "`stat -c%s samplefiles/$file` %e %U %S" -o times.dat cp samplefiles/$file "$mntpoint/"
-shouldexist $file
-checksum $file
-
-file="50mb.2"
-echo "create $file"
-/usr/bin/time -a -f "`stat -c%s samplefiles/$file` %e %U %S" -o times.dat cp samplefiles/$file "$mntpoint/"
-shouldexist $file
-checksum $file
-
-echo "times written to times.dat"
-
-echo "remove testfiles"
-rm "$mntpoint/500kb.0"
-rm "$mntpoint/500kb.1"
-rm "$mntpoint/500kb.2"
-rm "$mntpoint/1mb.0"
-rm "$mntpoint/1mb.1"
-rm "$mntpoint/1mb.2"
-rm "$mntpoint/10mb.0"
-rm "$mntpoint/10mb.1"
-rm "$mntpoint/10mb.2"
-rm "$mntpoint/50mb.0"
-rm "$mntpoint/50mb.1"
-rm "$mntpoint/50mb.2"
+gnuplot nubi3d.dem
