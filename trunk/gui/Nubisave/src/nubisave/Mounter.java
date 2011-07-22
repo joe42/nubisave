@@ -9,8 +9,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -209,5 +207,11 @@ public class Mounter {
 
     private void mountCustom(CustomMntPoint cmp) {
         throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    public void umountService(StorageService service) {
+        File mntPoint = new File(storagesDir + "/" + service.getUniqName());
+        umountFuse(mntPoint);
+        mntPoint.delete();
     }
 }

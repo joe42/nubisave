@@ -33,7 +33,9 @@ public class MainWindow extends javax.swing.JFrame {
         providerTable.setDefaultRenderer(String.class, new ShowSupportedCellRenderer());
         providerTable.getColumn("Edit").setCellRenderer(new ButtonRenderer());
         providerTable.getColumn("Edit").setCellEditor(new ButtonEditor(new JCheckBox(), this));
-
+        providerTable.getColumn("Remove").setCellRenderer(new ButtonRenderer());
+        providerTable.getColumn("Remove").setCellEditor(new ButtonEditor(new JCheckBox(), this));
+        
         String mntPoint = Properties.getProperty("mntPoint");
         if (mntPoint == null) {
             mntPoint = "";
@@ -115,6 +117,7 @@ public class MainWindow extends javax.swing.JFrame {
         });
 
         jButton3.setText("custom");
+        jButton3.setEnabled(false);
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
@@ -285,6 +288,7 @@ public class MainWindow extends javax.swing.JFrame {
     private void applyBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_applyBtnActionPerformed
         CoreWriter writer = new CoreWriter();
         writer.writeToCoreModule(Nubisave.services);
+        mounter.mountServices();
     }//GEN-LAST:event_applyBtnActionPerformed
 
     private void mntDirTxtFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mntDirTxtFieldActionPerformed

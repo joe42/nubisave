@@ -41,6 +41,11 @@ public class CoreWriter {
         return true;
     }
 
+    public void removeCloudStorageFile(StorageService s) {
+        File cloudFile = new File(confDir + File.separator + s.getUniqName() + ".cloudstorage");
+        cloudFile.delete();
+    }
+    
     private void writeCloudStorageFile(StorageService s) {
 
         File cloudFile = new File(confDir + File.separator + s.getUniqName() + ".cloudstorage");

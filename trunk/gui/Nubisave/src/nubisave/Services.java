@@ -54,4 +54,28 @@ public class Services {
             return cstmMntPnts.get(i);
         }
     }
+
+    public void remove(int i) {
+        if (i < 0) {
+            return;
+        }
+        int size = aServices.size() + cstmMntPnts.size() + mmServices.size();
+        if (i >= size) {
+            return;
+        }
+        
+        new CoreWriter().removeCloudStorageFile(get(i));
+
+        if (i < mmServices.size()) {
+            mmServices.remove(i);
+        } else if (i < mmServices.size() + aServices.size() - 1) { // Object is AgreementService
+            i -= mmServices.size() - 1;
+            aServices.remove(i);
+        } else { // Object is CustomMntPoint
+            i -= mmServices.size();
+            i -= aServices.size();
+            cstmMntPnts.remove(i);
+        }
+
+    }
 }

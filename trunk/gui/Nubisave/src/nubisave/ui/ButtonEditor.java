@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import nubisave.*;
 
@@ -24,8 +25,9 @@ public class ButtonEditor extends DefaultCellEditor {
     private boolean isPushed;
     private MainWindow owner;
     private int row;
+    private int column;
 
-    public ButtonEditor(JCheckBox checkBox,MainWindow owner) {
+    public ButtonEditor(JCheckBox checkBox, MainWindow owner) {
         super(checkBox);
         button = new JButton();
         button.setOpaque(true);
@@ -53,27 +55,51 @@ public class ButtonEditor extends DefaultCellEditor {
         button.setText(label);
         isPushed = true;
         this.row = row;
+        this.column = column;
         return button;
     }
 
     @Override
     public Object getCellEditorValue() {
         if (isPushed) {
-            String type = (String) owner.tableModel.getValueAt(row, 1);
-            if ("Service".equals(type)) {
-                MatchmakerService service = Nubisave.services.getMmServices().get(row);
-                ServiceEditDialog editDialog = new ServiceEditDialog(owner,true,service);
-                editDialog.setTitle(service.getName());
-                editDialog.setVisible(true);
-            } else if ("Custom".equals(type)) {
-                row -= Nubisave.services.getMmServices().size();
-                CustomMntPoint service = Nubisave.services.getCstmMntPnts().get(row);
-                CustomEditDialog editDialog = new CustomEditDialog(owner,true,service);
-                editDialog.setTitle(service.getName());
-                editDialog.setVisible(true);
+
+            switch (column) {
+                case 3:
+                    String type = (String) owner.tableModel.getValueAt(row, 1);
+                    if ("Service".equals(type)) {
+                        MatchmakerService service = Nubisave.services.getMmServices().get(row);
+                        ServiceEditDialog editDialog = new ServiceEditDialog(owner, true, service);
+                        editDialog.setTitle(service.getName());
+                        editDialog.setVisible(true);
+                    } else if ("Custom".equals(type)) {
+                        row -= Nubisave.services.getMmServices().size();
+                        CustomMntPoint service = Nubisave.services.getCstmMntPnts().get(row);
+                        CustomEditDialog editDialog = new CustomEditDialog(owner, true, service);
+                        editDialog.setTitle(service.getName());
+                        editDialog.setVisible(true);
+                    }
+                    break;
+                case 4:
+                    String desc = (String) owner.tableModel.getValueAt(row, 2);
+                    String[] options = {"No", "Remove"};
+                    int n = JOptionPane.showOptionDialog(owner,
+                            "Remove and umount " + desc + "?",
+                            "Remove?",
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE,
+                            null,
+                            options,
+                            options[1]);
+                    if (n == 1) {
+                        new Mounter().umountService(Nubisave.services.get(row));
+                        Nubisave.services.remove(row);
+                        
+                    }
             }
         }
         isPushed = false;
+
+
         return new String(label);
     }
 

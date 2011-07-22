@@ -13,12 +13,12 @@ import nubisave.*;
  */
 public class NubiTableModel extends AbstractTableModel {
 
-    private final String headers[] = {"Use", "Type", "Description", "Edit"};
+    private final String headers[] = {"Use", "Type", "Description", "Edit", "Remove"};
     private Class[] types = new Class[]{
-        java.lang.Boolean.class, java.lang.String.class, java.lang.String.class, javax.swing.JButton.class
+        java.lang.Boolean.class, java.lang.String.class, java.lang.String.class, javax.swing.JButton.class,javax.swing.JButton.class
     };
     private boolean[] canEdit = new boolean[]{
-        true, false, false, true
+        true, false, false, true,true
     };
 
     @Override
@@ -32,7 +32,7 @@ public class NubiTableModel extends AbstractTableModel {
 
     @Override
     public int getColumnCount() {
-        return 4;
+        return 5;
     }
 
     @Override
@@ -47,6 +47,9 @@ public class NubiTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
+        if (columnIndex == 4) {
+            return true;
+        }
         return Nubisave.services.get(rowIndex).isSupported() && canEdit[columnIndex];
     }
 
@@ -90,6 +93,8 @@ public class NubiTableModel extends AbstractTableModel {
                     case CUSTOM:
                         return "...";
                 }
+            case 4:
+                return "remove";
         }
 
         return null;
