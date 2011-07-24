@@ -53,7 +53,7 @@ class SugarsyncStore(Store):
                 self.path_cache[ parent_dir+to_unicode( item["name"], "utf8") ] = item["reference"]
             if not path in self.path_cache:
                 self.logger.warn("could not translate path: " +path)
-                raise NoSuchFilesytemObjectError(path)
+                raise NoSuchFilesytemObjectError(path,0)
             return self.path_cache[path]
             
             
@@ -63,7 +63,7 @@ class SugarsyncStore(Store):
         resp = self.client.get_dir_listing(translated_path)
         if resp.status <200 or resp.status >300:
             self.logger.warn("could not get direcory listing: " +translated_path+"\nstatus: %s reason: %s" % (resp.status, resp.reason))
-            raise NoSuchFilesytemObjectError(translated_path)
+            raise NoSuchFilesytemObjectError(translated_path, resp.status)
         xml_tree = dom.parseString(resp.data)
         for collection in xml_tree.documentElement.getElementsByTagName("collection"): 
             item = {}
@@ -155,7 +155,10 @@ class SugarsyncStore(Store):
             resp = self.client.delete_folder( self._translate_path(path) )
         if resp.status <200 or resp.status >300:
             self.logger.warn("could not delete " +path+"\nstatus: %s reason: %s" % (resp.status, resp.reason))
-        del self.path_cache[path]
+        else:
+            del self.path_cache[path]
+        return resp.status
+        
     
     def create_directory(self, path):
         self.logger.debug("creating directory " +path)
@@ -165,12 +168,14 @@ class SugarsyncStore(Store):
         if path[-1] == "/":
             path = path[0:-1]
         if self.exists(path):
-            return -1;
+            raise AlreadyExistsError("directory %s does already exist"%path, 401)
         name = os.path.basename(path)
         directory = os.path.dirname(path)
         resp = self.client.create_folder( self._translate_path(directory), name ) 
         if resp.status <200 or resp.status >300:
             self.logger.warn("could not create directory: " +path+"\nstatus: %s reason: %s" % (resp.status, resp.reason))
+        print "wrapped ",repr(resp)
+        return resp.status
 
     def get_directory_listing(self, directory):
         self.logger.debug("getting directory listing for "+directory)
@@ -248,7 +253,7 @@ class SugarsyncStore(Store):
             resp = self.client.get_folder_metadata( self._translate_path(path) )
         if resp.status <200 or resp.status >300:
             self.logger.warn("could not get metadata: " +path+"\nstatus: %s reason: %s" % (resp.status, resp.reason))
-            raise NoSuchFilesytemObjectError(path)
+            raise NoSuchFilesytemObjectError(path, resp.status)
         ret = {}
         if is_file:
             partial_tree = {"file": {"size": "", "lastModified": "", "timeCreated": ""}}

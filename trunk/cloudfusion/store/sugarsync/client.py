@@ -18,11 +18,15 @@ class SugarsyncClient(object):
         self.private_access_key = config["private_access_key"] 
         self.username = config["user"]
         self.password = config["password"] 
+        self._reconnect()
+    
+    def _reconnect(self):
         response = self.create_token()
         self.token = response.getheader("location")
         partial_tree = {"authorization": {"user": ""}}
         DictXMLParser().populate_dict_with_XML_leaf_textnodes(response.data, partial_tree)
         self.uid= regSearchString(self.server_url+'user/(.*)', partial_tree['authorization']['user'])
+        
     
     def create_token(self):
         params = '<?xml version="1.0" encoding="UTF-8" ?><authRequest>    <username>%s</username>    <password>%s</password>    <accessKeyId>%s</accessKeyId>    <privateAccessKey>%s</privateAccessKey></authRequest>' % (self.username, self.password, self.access_key_id, self.private_access_key)

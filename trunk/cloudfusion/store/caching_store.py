@@ -12,7 +12,7 @@ Created on 08.04.2011
 import tempfile
 from cloudfusion.util.cache import Cache
 from cloudfusion.store.dropbox.file_decorator import *
-from cloudfusion.store.store import Store
+from cloudfusion.store.store import *
 import time
 
 """Wrapped store needs a logger as an attribute called logger """
@@ -35,28 +35,41 @@ class CachingStore(Store):
         return self.store.get_name()
     
     def _refresh_cache(self, path_to_file):
-        """ Refreshes the cache entry with the key :param:`path_to_file` from the wrapped store.
-        The modified time stamp of the cache is the wrapped stores modified time stamp.
-        :raises: NoSuchFilesytemObjectError if file does not exist in wrapped store
-        TODO: exception handling needs to be implemented
+        """ Reloads the existing cache entry with the key :param:`path_to_file` from the wrapped store, only if it was changed in the wrapped store.
+        The cache entries last updated time is set to the current point of time.
+        Makes a new cache entry if it does not exist yet.
+        If it was changed in the wrapped store after the cache entry's modified time:
+        
+        * The modified time stamp of the cache entry is set to the wrapped stores modified time stamp.
+        * The entry is set to not dirty.
+        * The entry's value is set to the wrapped store's value.
+        :raises: NoSuchFilesytemObjectError if file does not exist in wrapped store.
+        TODO: exception raising does not work and needs to be implemented 
         """
-        data = self.store.get_file(path_to_file)
-        modified = self._get_actual_modified_date(path_to_file)
-        self.cache.refresh(path_to_file, data, modified)
+        if self.cache.exists(path_to_file):
+            self.cache.write(path_to_file, "")
+        actual_modified_date = self._get_actual_modified_date(path_to_file)
+        cached_modified_date = self.cache[path_to_file]['modified']
+        if actual_modified_date > cached_modified_date:
+            data = self.store.get_file(path_to_file)
+            modified = actual_modified_date
+            self.cache.refresh(path_to_file, data, modified)
+            self.logger.debug("refreshed fileobject")
+        self.cache.update(path_to_file)
     
     def get_file(self, path_to_file):
+        """ :returns: string -- the data of the file with the path :param: path_to_file
+        If the files cache entry is dirty and expired it is written to the wrapped store.
+        If the file was updated in the wrapped store, then its content will be updated if its cache entry is expired. 
+        """
         if not self.cache.exists(path_to_file):
             self._refresh_cache(path_to_file)
             return self.cache.get_value(path_to_file)
         if self.cache.is_expired(path_to_file): 
             if self.cache.is_dirty(path_to_file): #dirty&expired->flush
-                self._flush()
+                self.__flush(path_to_file)
             else: #not dirty&expired->update cache from store
-                self.cache.update(path_to_file)
-                actual_modified_date = self._get_actual_modified_date(path_to_file)
-                cached_modified_date = self.cache[path_to_file]['modified']
-                if actual_modified_date > cached_modified_date:
-                    self._refresh_cache(path_to_file)
+                self._refresh_cache(path_to_file)
         return self.cache.get_value(path_to_file) #not expired->from cache
     
     def store_file(self, path_to_file, dest_dir="/", remote_file_name = None):
@@ -72,7 +85,9 @@ class CachingStore(Store):
         return ret
                 
     def store_fileobject(self, fileobject, path):
-        """ Stores a fileobject to the :class:`cloudfusion.util.cache.Cache` and if the existing fileobject has expired it is also stored to the wrapped store
+        """ Stores a fileobject to the :class:`~cloudfusion.util.cache.Cache` and if the existing fileobject has expired and is dirty it is also stored to the wrapped store.
+        If the cache entry is expired then its last updated time will be reset to the current point of time.
+        If the file was updated in the wrapped store, then its content will be updated if its cache entry is expired and not dirty. 
         :param fileobject: The file object with the method read() returning data as a string 
         :param path: The path where the file object's data should be stored, including the filename
         """
@@ -83,9 +98,7 @@ class CachingStore(Store):
             actual_modified_date = self._get_actual_modified_date(path)
             cached_modified_date = self.cache.get_modified(path)
             if not self.cache.is_dirty(path):
-                if actual_modified_date > cached_modified_date:
-                    self._refresh_cache(path)
-                    self.logger.debug("refreshed fileobject")
+                self._refresh_cache(path)
             else: #dirty
                 if actual_modified_date < cached_modified_date:
                     file = DataFileWrapper(self.cache.get_value(path))
@@ -123,57 +136,55 @@ class CachingStore(Store):
         return self.store.create_directory(directory)
         
     def duplicate(self, path_to_src, path_to_dest):
-        if self.exists(path_to_src) and not self.is_dir(path_to_src):
+        if self.cache.exists(path_to_src):
             self.cache.write(path_to_dest, self.cache.get_value(path_to_src))
-            self.flush() 
         return self.store.duplicate(path_to_src, path_to_dest)
         
     def move(self, path_to_src, path_to_dest):
-        self.flush()
-        self.cache.delete(path_to_dest)
+        if self.cache.exists(path_to_src):
+            self.cache.write(path_to_dest, self.cache.get_value(path_to_src))
+            self.cache.delete(path_to_dest)
+            self.__flush(path_to_src)
         self.store.move(path_to_src, path_to_dest)
  
     def get_modified(self, path):
-        self.flush()
-        return self.store.get_modified(path)
+        return self._get_metadata(path)["modified"]
     
     def get_directory_listing(self, directory):
         self.flush()
-        return self.store.get_directory_listing(directory)
+        return self.store.get_directory_listing(directory) #so far only cached by dropbox
     
     def get_bytes(self, path):
-        self.flush()
-        return self.store._get_metadata(path)['bytes']
+        return self._get_metadata(path)['bytes']
     
     def exists(self, path):
-        return self.cache.exists(path) or self.store.exists(path)
+        if self.cache.exists(path):
+            return True
+        try:
+            self._get_metadata(path)
+            return True
+        except NoSuchFilesytemObjectError:
+            return False;
     
     def _get_metadata(self, path):
         self.flush()
         return self.store._get_metadata(path)
 
     def is_dir(self, path):
-        self.flush()
-        return self.store.is_dir(path)
+        return self._get_metadata(path)["is_dir"]
     
     def flush(self):
+        """ Writes all dirty cache entries to the wrapped store."""
         self.logger.debug("flushing cache")
         for path in self.cache.get_keys():
             self.__flush(path)
             
     def __flush(self, path):
-        self.logger.debug("flushing %s ?" % path)
+        """ Writes the cache entry with the key :param:`path` to the wrapped store, only if it is dirty."""
         self.cache.update(path)
         if self.cache.is_dirty(path):
-            self.logger.debug("flushing %s ? -- it is dirty" % path)
-            actual_modified_date = self._get_actual_modified_date(path)
-            self.logger.debug("actual_modified_date: %s file: %s " % (actual_modified_date, path))
-            cached_modified_date = self.cache.get_modified(path)
-            self.logger.debug("cached_modified_date: %s file: %s " % (cached_modified_date, path))
-            if actual_modified_date < cached_modified_date:
-                self.logger.debug("flushing %s !" % path)
-                file = DataFileWrapper(self.cache.get_value(path))
-                file.fileno()#
-                self.store.store_fileobject(file, path)
-                self.cache.update(path)
-                self.logger.debug("flushing %s with content starting with %s" % (path, self.cache.get_value(path)[0:10]))
+            file = DataFileWrapper(self.cache.get_value(path))
+            file.fileno()#
+            self.store.store_fileobject(file, path)
+            self.cache.update(path)
+            self.logger.debug("flushing %s with content starting with %s" % (path, self.cache.get_value(path)[0:10]))

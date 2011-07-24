@@ -98,6 +98,11 @@ Mo
 90 cache tests and implementation
 Fr
 115 debugging why touch does not work with cache
+
+[Errno 110] Connection timed out must be handled
+
+
+
 Regex for decorator generation from existing interface 
 def ([^)]*)(self,? ?)([^)]*)\):\R        raise NotImplementedError\(\)  
 def \1\2\3):\R        self.store.\1\3)

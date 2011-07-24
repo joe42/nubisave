@@ -10,7 +10,8 @@ import os.path, time
 import tempfile
 from dropbox import auth
 from ConfigParser import SafeConfigParser
-
+from cloudfusion.store.sugarsync.error_handling_sugarsync_store import ErrorHandlingSugarsyncStore
+import time
 LOCAL_TESTFILE_PATH = "cloudfusion/tests/testfile"
 REMOTE_TESTDIR = "/testdir"
 REMOTE_MODIFIED_TESTDIR = REMOTE_TESTDIR+"/"+"testdir"
@@ -43,10 +44,11 @@ io_apis = []
 def setUp():
     dropbox_config = get_dropbox_config()
     sugarsync_config = get_sugarsync_config()
-    io_apis.append( CachingStore( DropboxStore(dropbox_config) ) )
-    io_apis.append( CachingStore( SugarsyncStore(sugarsync_config) ) )
-    io_apis.append( SugarsyncStore(sugarsync_config) )
-    io_apis.append( DropboxStore(dropbox_config) )
+    #io_apis.append( CachingStore( DropboxStore(dropbox_config) ) )
+    #io_apis.append( CachingStore( SugarsyncStore(sugarsync_config) ) )
+    #io_apis.append( ErrorHandlingSugarsyncStore( SugarsyncStore(sugarsync_config) )  ) 
+    io_apis.append( DropboxStore(dropbox_config) ) 
+    #time.sleep(10)
     for io_api in io_apis:
         io_api.create_directory(REMOTE_TESTDIR)
         
@@ -237,11 +239,14 @@ def _test_get_directory_listing(io_api):
 def _test_move_directory(io_api):
     io_api.create_directory(REMOTE_MOVE_TESTDIR_ORIGIN)
     io_api.move(REMOTE_MOVE_TESTDIR_ORIGIN, REMOTE_MOVE_TESTDIR_RENAMED)
+    assert _dir_exists(io_api, REMOTE_MOVE_TESTDIR_RENAMED)
     io_api.delete(REMOTE_MOVE_TESTDIR_RENAMED)
             
 def _test_move_file(io_api):
-    io_api.store_file(LOCAL_TESTFILE_PATH, REMOTE_TESTDIR) 
+    io_api.store_file(LOCAL_TESTFILE_PATH, REMOTE_TESTDIR)
+    assert io_api.exists(REMOTE_TESTDIR+"/"+LOCAL_TESTFILE_NAME) 
     io_api.move(REMOTE_TESTDIR+"/"+LOCAL_TESTFILE_NAME, REMOTE_TESTDIR+"/"+REMOTE_MOVE_TESTFILE_RENAMED)
+    assert io_api.exists(REMOTE_TESTDIR+"/"+REMOTE_MOVE_TESTFILE_RENAMED) 
     io_api.delete(REMOTE_TESTDIR+"/"+REMOTE_MOVE_TESTFILE_RENAMED)
 
 def _test_create_delete_directory(io_api):
@@ -313,9 +318,13 @@ def _delete_file(io_api, file, root_dir="/"):
     
 def _test_duplicate(io_api):
     io_api.create_directory(REMOTE_DUPLICATE_TESTDIR_ORIGIN)
+    assert _dir_exists(io_api, REMOTE_DUPLICATE_TESTDIR_ORIGIN)
     io_api.store_file(LOCAL_TESTFILE_PATH, REMOTE_TESTDIR, REMOTE_TESTFILE_NAME) 
+    assert io_api.exists(REMOTE_TESTDIR+"/"+REMOTE_TESTFILE_NAME)
     io_api.duplicate(REMOTE_DUPLICATE_TESTDIR_ORIGIN, REMOTE_DUPLICATE_TESTDIR_COPY)
+    assert _dir_exists(io_api, REMOTE_DUPLICATE_TESTDIR_COPY)
     io_api.duplicate(REMOTE_DUPLICATE_TESTFILE_ORIGIN, REMOTE_DUPLICATE_TESTFILE_COPY)
+    assert io_api.exists(REMOTE_DUPLICATE_TESTFILE_COPY)
     io_api.delete(REMOTE_DUPLICATE_TESTDIR_ORIGIN)
     io_api.delete(REMOTE_DUPLICATE_TESTDIR_COPY)
     io_api.delete(REMOTE_DUPLICATE_TESTFILE_ORIGIN)

@@ -6,23 +6,28 @@ Created on 08.04.2011
 import os.path
 
 class StoreAccessError(Exception):
-    def __init__(self, msg):
-        super(StoreAccessError, self).__init__(msg)
-class DateParseError(StoreAccessError):
+    def __init__(self, msg, status):
+        super(StoreAccessError, self).__init__(msg+"\nStatus: %s" %status)
+        self.status = status
+class DateParseError(Exception):
     def __init__(self, msg):
         super(DateParseError, self).__init__(msg)
 class RetrieveMetadataError(StoreAccessError):
-    def __init__(self, path, msg):
-        super(RetrieveMetadataError, self).__init__("Could not retrieve metadata for "+path+"\nDescription: "+msg)
+    def __init__(self, path, msg, status):
+        super(RetrieveMetadataError, self).__init__("Could not retrieve metadata for "+path+"\nDescription: "+msg, status)
 class NoSuchFilesytemObjectError(StoreAccessError):
-    def __init__(self, path):
-        super(NoSuchFilesytemObjectError, self).__init__("%s does not exist." % path)
+    def __init__(self, path, status):
+        super(NoSuchFilesytemObjectError, self).__init__("%s does not exist." % path, status)
+class StoreAutorizationError(StoreAccessError):
+    def __init__(self, msg, status):
+        super(NoSuchFilesytemObjectError, self).__init__(msg, status)
+class AlreadyExistsError(StoreAccessError):
+    def __init__(self, msg, status):
+        super(NoSuchFilesytemObjectError, self).__init__(msg, status)
 class InvalidPathValueError(ValueError):
     def __init__(self, path):
         super(InvalidPathValueError, self).__init__(path+" "+"is no valid path!!") 
-class NoRemoteFileobjectNameGiven(StoreAccessError):
-    def __init__(self, msg):
-        super(DateParseError, self).__init__(msg)
+
     
 class Store(object):
     def _is_valid_path(self, path):

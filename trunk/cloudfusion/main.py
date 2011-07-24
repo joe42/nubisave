@@ -57,7 +57,7 @@ def main():
     if "cache" in sys.argv:
         store = CachingStore( store )
     fuse_operations = PyFuseBox(sys.argv[1], store)
-    FUSE(fuse_operations, sys.argv[1], foreground=False, nothreads=True)
+    FUSE(fuse_operations, sys.argv[1], foreground=True, nothreads=True)
     
 if __name__ == '__main__':
     main()

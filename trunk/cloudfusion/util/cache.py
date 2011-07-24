@@ -11,7 +11,7 @@ class Cache(object):
         self.expire = expiration_time
         
     def refresh(self, key, disk_value, modified):
-        """ Refreshes an out of date or non existent cache entry. """
+        """ Refreshes a cache entry, if :param:`modified` is bigger than the cache entry's modified date. """
         if key in self.cache:
             disk_entry_is_newer = modified > self.cache[key]['modified']
             if not disk_entry_is_newer:

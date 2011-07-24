@@ -1,6 +1,8 @@
 from cloudfusion.store.dropbox.file_decorator import NonclosingFile
+from cloudfusion.store.store import NoSuchFilesytemObjectError,\
+    AlreadyExistsError, StoreAccessError, StoreAutorizationError
 import os, sys, stat,  time
-from errno import ENOENT
+from errno import *
 from cloudfusion.fuse import FUSE, FuseOSError, Operations, LoggingMixIn
 import tempfile
 
@@ -32,6 +34,7 @@ class PyFuseBox(Operations):
 
         #store.store_file(file, root_dir)
     def getattr(self, path, fh=None):
+        #FuseOSError(EPERM)#zugriff nicht moeglich
         #self.f.write( "getattr "+path+"\n")
         st = zstat()
         try:
@@ -79,12 +82,31 @@ class PyFuseBox(Operations):
         return 0
     
     def rmdir(self, path):
+        #raise FuseOSError(EPERM)#nicht gefunden
         self.f.write( "rmdir %s\n" % (path))
-        self.store.delete(path)
+        try:
+            self.store.delete(path)
+        except NoSuchFilesytemObjectError:
+            raise FuseOSError(ENOENT)
+        except StoreAccessError:
+            raise FuseOSError(EIO)
+        except StoreAutorizationError:
+            raise FuseOSError(EACCES) 
         
     def mkdir(self, path, mode):
+        #raise FuseOSError(EACCES)#keine berechtigung
+        #raise FuseOSError(EPERM) #operation ist nicht moeglich
         self.f.write( "mkdir %s with mode: %s\n" % (path, str(mode)))
-        self.store.create_directory(path)
+        try:
+            self.store.create_directory(path)
+        except NoSuchFilesytemObjectError:
+            raise FuseOSError(ENOENT)
+        except AlreadyExistsError:
+            raise FuseOSError(EEXIST)
+        except StoreAccessError:
+            raise FuseOSError(EIO)
+        except StoreAutorizationError:
+            raise FuseOSError(EACCES) #keine Berechtigung
 
     def statfs(self, path):
         """ This implementation should be looked at by a linux guru, since I have little experience concerning filesystems. """

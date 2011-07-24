@@ -38,7 +38,13 @@ class DropboxStore(Store):
         self.dir_listing_cache = {}
         dba = auth.Authenticator(config)
         access_token = dba.obtain_trusted_access_token(config['user'], config['password'])
-        self.client = client.DropboxClient(config['server'], config['content_server'], config['port'], dba, access_token)
+        try:
+            self.client = client.DropboxClient(config['server'], config['content_server'], config['port'], dba, access_token)
+        except Exception, e:
+            try:
+                self.client = client.DropboxClient(config['server'], config['content_server'], config['port'], dba, access_token)
+            except Exception, e:
+                raise StoreAccessError("Transfer error: "+str(e), 0)
         self.root = config['root']
         self.time_difference = self._get_time_difference()
         self.logger.debug("api initialized")
@@ -51,9 +57,15 @@ class DropboxStore(Store):
     def get_file(self, path_to_file): 
         self.logger.debug("getting file: " +path_to_file)
         self._raise_error_if_invalid_path(path_to_file)
-        resp = self.client.get_file(self.root, path_to_file)
+        try:
+            resp = self.client.get_file(self.root, path_to_file)
+        except Exception, e:
+            try:
+                resp = self.client.get_file(self.root, path_to_file)
+            except Exception, e:
+                raise StoreAccessError("Transfer error: "+str(e), 0)
         if resp.status != 200:
-            self.logger.warn("could not get file: " +path_to_file+"\ndata: "+resp.data['error'])
+            self.logger.warn("could not get file: " +path_to_file+"\ndata: "+str(resp.status))
         return resp.read()
     
     def store_fileobject(self, fileobject, path):
@@ -61,23 +73,41 @@ class DropboxStore(Store):
         remote_file_name = os.path.basename(path)
         dest_dir = os.path.dirname(path);
         namable_file = NameableFile( fileobject, remote_file_name )
-        resp = self.client.put_file(self.root, dest_dir, namable_file) 
+        try:
+            resp = self.client.put_file(self.root, dest_dir, namable_file) 
+        except Exception, e:
+            try:
+                resp = self.client.put_file(self.root, dest_dir, namable_file) 
+            except Exception, e:
+                raise StoreAccessError("Transfer error: "+str(e), 0)
         if resp.status != 200:
-            self.logger.warn("could not store file: " +dest_dir+remote_file_name+"\ndata: "+resp.data['error'])
+            self.logger.warn("could not store file: " +dest_dir+remote_file_name+"\ndata: "+str(resp.status))
     
     def delete(self, path):
         self.logger.debug("deleting " +path)
         self._raise_error_if_invalid_path(path)
-        resp = self.client.file_delete(self.root, path)
+        try:
+            resp = self.client.file_delete(self.root, path)
+        except Exception, e:
+            try:
+                resp = self.client.file_delete(self.root, path)
+            except Exception, e:
+                raise StoreAccessError("Transfer error: "+str(e), 0)
         if resp.status != 200:
-            self.logger.warn("could not delete " +path+"\ndata: "+resp.data['error'])
+            self.logger.warn("could not delete " +path+"\ndata: "+str(resp.status))
             #assert_all_in(resp.data.keys(), [u'is_deleted', u'thumb_exists', u'bytes', u'modified',u'path', u'is_dir', u'size', u'root', u'mime_type', u'icon'])
         
     def account_info(self):
         self.logger.debug("retrieving account info")
-        resp =  self.client.account_info()
+        try:
+            resp =  self.client.account_info()
+        except Exception, e:
+            try:
+                resp =  self.client.account_info()
+            except Exception, e:
+                raise StoreAccessError("Transfer error: "+str(e), 0)
         if resp.status != 200:
-            self.logger.warn("could not retrieve account data"+"\ndata: "+resp.data['error'])
+            self.logger.warn("could not retrieve account data"+"\ndata: "+str(resp.status))
             #assert_all_in(resp.data.keys(), [u'country', u'display_name', u'uid', u'quota_info'])
         return str(resp.data)
 
@@ -86,40 +116,70 @@ class DropboxStore(Store):
         self._raise_error_if_invalid_path(directory)
         if directory == "/":
             return
-        resp = self.client.file_create_folder(self.root, directory)
+        try:
+            resp = self.client.file_create_folder(self.root, directory)
+        except Exception, e:
+            try:
+                resp = self.client.file_create_folder(self.root, directory)
+            except Exception, e:
+                raise StoreAccessError("Transfer error: "+str(e), 0)
         if resp.status != 200:
-            self.logger.warn("could not create directory: " +directory+"\ndata: "+resp.data['error'])
+            self.logger.warn("could not create directory: " +directory+"\ndata: "+str(resp.status))
         #assert_all_in(resp.data.keys(), [u'thumb_exists', u'bytes', u'modified', u'path', u'is_dir', u'size', u'root', u'icon'])
         
     def duplicate(self, path_to_src, path_to_dest):
         self.logger.debug("duplicating " +path_to_src+" to "+path_to_dest)
         self._raise_error_if_invalid_path(path_to_src)
         self._raise_error_if_invalid_path(path_to_dest)
-        resp = self.client.file_copy(self.root, path_to_src, path_to_dest)
+        try:
+            resp = self.client.file_copy(self.root, path_to_src, path_to_dest)
+        except Exception, e:
+            try:
+                resp = self.client.file_copy(self.root, path_to_src, path_to_dest)
+            except Exception, e:
+                raise StoreAccessError("Transfer error: "+str(e), 0)
         if resp.status != 200:
-            self.logger.warn("could not duplicate " +path_to_src+" to "+path_to_dest+"\ndata: "+resp.data['error'])
+            self.logger.warn("could not duplicate " +path_to_src+" to "+path_to_dest+"\ndata: "+str(resp.status))
         #ssert_all_in(resp.data.keys(), [u'thumb_exists', u'bytes', u'modified',u'path', u'is_dir', u'size', u'root', u'mime_type', u'icon'])
     
     def move(self, path_to_src, path_to_dest):
         self.logger.debug("moving " +path_to_src+" to "+path_to_dest)
         self._raise_error_if_invalid_path(path_to_src)
         self._raise_error_if_invalid_path(path_to_dest)
-        resp = self.client.file_move(self.root, path_to_src, path_to_dest)
+        try:
+            resp = self.client.file_move(self.root, path_to_src, path_to_dest)
+        except Exception, e:
+            try:
+                resp = self.client.file_move(self.root, path_to_src, path_to_dest)
+            except Exception, e:
+                raise StoreAccessError("Transfer error: "+str(e), 0)
         if resp.status != 200:
-            self.logger.warn("could not move " +path_to_src+" to "+path_to_dest+"\ndata: "+resp.data['error'])
+            self.logger.warn("could not move " +path_to_src+" to "+path_to_dest+"\ndata: "+str(resp.status))
     
     def get_overall_space(self):
         self.logger.debug("retrieving all space")
-        resp =  self.client.account_info()
+        try:
+            resp =  self.client.account_info()
+        except Exception, e:
+            try:
+                resp =  self.client.account_info()
+            except Exception, e:
+                raise StoreAccessError("Transfer error: "+str(e), 0)
         if resp.status != 200:
-            self.logger.warn("could not retrieve all space"+"\ndata: "+resp.data['error'])
+            self.logger.warn("could not retrieve all space"+"\ndata: "+str(resp.status))
         return resp.data[u'quota_info']["quota"]
 
     def get_used_space(self):
         self.logger.debug("retrieving used space")
-        resp =  self.client.account_info()
+        try:
+            resp =  self.client.account_info()
+        except Exception, e:
+            try:
+                resp =  self.client.account_info()
+            except Exception, e:
+                raise StoreAccessError("Transfer error: "+str(e), 0)
         if resp.status != 200:
-            self.logger.warn("could not retrieve used space"+"\ndata: "+resp.data['error'])
+            self.logger.warn("could not retrieve used space"+"\ndata: "+str(resp.status))
         return resp.data[u'quota_info']["shared"] + resp.data[u'quota_info']["normal"]
         
     def get_directory_listing(self, directory):
@@ -128,13 +188,19 @@ class DropboxStore(Store):
         hash = None
         if directory in self.dir_listing_cache:
             hash = self.dir_listing_cache[directory]['hash']
-        resp = self.client.metadata(self.root, directory, hash=hash, list=True)
+        try:
+            resp = self.client.metadata(self.root, directory, hash=hash, list=True)
+        except Exception, e:
+            try:
+                resp = self.client.metadata(self.root, directory, hash=hash, list=True)
+            except Exception, e:
+                raise StoreAccessError("Transfer error: "+str(e), 0)
         if resp.status != 200: 
             if resp.status == 304: 
                 self.logger.debug("retrieving listing from cache " +directory)
                 ret = self.dir_listing_cache[directory]['dir_listing']
             else:
-                self.logger.warn("could not get directory listing for " +directory+"\ndata: "+resp.data['error'])
+                self.logger.warn("could not get directory listing for " +directory+"\ndata: "+str(resp.status))
         else:
             ret = self._parse_dir_list(resp.data)
             self.dir_listing_cache[directory] = {}
@@ -169,17 +235,23 @@ class DropboxStore(Store):
             ret["path"] = "/"
             ret["is_dir"] = True
             return ret;
-        resp = self.client.metadata(self.root, path, list=False)
+        try:
+            resp = self.client.metadata(self.root, path, list=False)
+        except Exception, e:
+            try:
+                resp = self.client.metadata(self.root, path, list=False)
+            except Exception, e:
+                raise StoreAccessError("Transfer error: "+str(e), 0)
         object_is_deleted = 'is_deleted' in resp.data and resp.data['is_deleted']
         if resp.status == 404 or object_is_deleted:
             msg = None
             if object_is_deleted:
                 msg = "filesystem object has been deleted"
             self._log_error("_get_metadata", path, resp, msg)
-            raise NoSuchFilesytemObjectError(path)
+            raise NoSuchFilesytemObjectError(path, resp.status)
         elif resp.status != 200:
             self._log_error("_get_metadata", path, resp)
-            raise RetrieveMetadataError(path, resp.data['error'])
+            raise RetrieveMetadataError(path, resp.data['error'], resp.status)
         elif resp.status == 200:
             return self._parse_filesys_obj(resp.data)
     
@@ -201,7 +273,13 @@ class DropboxStore(Store):
     
     def _get_time_difference(self):
         self.logger.debug("getting time difference")
-        resp =  self.client.account_info()
+        try:
+            resp =  self.client.account_info()
+        except Exception, e:
+            try:
+                resp =  self.client.account_info()
+            except Exception, e:
+                raise StoreAccessError("Transfer error: "+str(e), 0)
         return time.mktime( time.strptime(resp.headers['date'], "%a, %d %b %Y %H:%M:%S GMT") ) - time.time()
     
         
