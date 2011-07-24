@@ -43,8 +43,8 @@ io_apis = []
 def setUp():
     dropbox_config = get_dropbox_config()
     sugarsync_config = get_sugarsync_config()
-    io_apis.append( CachingStore( SugarsyncStore(sugarsync_config) ) )
     io_apis.append( CachingStore( DropboxStore(dropbox_config) ) )
+    io_apis.append( CachingStore( SugarsyncStore(sugarsync_config) ) )
     io_apis.append( SugarsyncStore(sugarsync_config) )
     io_apis.append( DropboxStore(dropbox_config) )
     for io_api in io_apis:
