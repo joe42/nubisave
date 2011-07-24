@@ -5,6 +5,9 @@ import os, sys, stat,  time
 from errno import *
 from cloudfusion.fuse import FUSE, FuseOSError, Operations, LoggingMixIn
 import tempfile
+import logging.config
+
+logging.config.fileConfig('cloudfusion/config/logging.conf')
 
 # Specify what Fuse API use: 0.2
 #fuse.fuse_python_api = (0, 2)
@@ -31,11 +34,13 @@ class PyFuseBox(Operations):
         self.read_temp_file = {}
         self.store = store
         self.f = open('fuselog', 'w')
+        self.logger = logging.getLogger('pyfusebox')
+        self.logger.info("PyFuseBox initialized")
 
         #store.store_file(file, root_dir)
     def getattr(self, path, fh=None):
         #FuseOSError(EPERM)#zugriff nicht moeglich
-        #self.f.write( "getattr "+path+"\n")
+        self.logger.debug("getattr "+path+"")
         st = zstat()
         try:
             metadata = self.store._get_metadata(path)
@@ -45,19 +50,19 @@ class PyFuseBox(Operations):
         st['st_mtime']= metadata['modified']
         st['st_ctime']= metadata['modified']
         if metadata['is_dir']:
-            self.f.write( " isDir\n")
+            self.logger.debug(" isDir")
             st['st_mode'] = 0777 | stat.S_IFDIR
             st['st_nlink']=2
             st['st_size'] = 1
         else:
-            self.f.write( " isFile\n")
+            self.logger.debug(" isFile")
             st['st_mode'] = 0777 | stat.S_IFREG
             st['st_size'] = metadata['bytes']
         st['st_blocks'] = (int) ((st['st_size'] + 4095L) / 4096L);
         return st
     
     def open(self, path, flags):
-        """self.f.write( "open "+path+"\n")
+        """self.logger.debug("open "+path+"")
         temp_file = tempfile.SpooledTemporaryFile()
         #self.temp_file = tempfile.SpooledTemporaryFile()
         if self.store.exists(path):
@@ -71,7 +76,7 @@ class PyFuseBox(Operations):
         return 0
     
     def truncate(self, path, length, fh=None):
-        self.f.write( "truncate %s to %s\n" % (path, length))
+        self.logger.debug("truncate %s to %s" % (path, length))
         self.store.delete(path)
         temp_file = tempfile.SpooledTemporaryFile()
         self.store.store_fileobject(temp_file, path)
@@ -83,7 +88,7 @@ class PyFuseBox(Operations):
     
     def rmdir(self, path):
         #raise FuseOSError(EPERM)#nicht gefunden
-        self.f.write( "rmdir %s\n" % (path))
+        self.logger.debug("rmdir %s" % (path))
         try:
             self.store.delete(path)
         except NoSuchFilesytemObjectError:
@@ -96,7 +101,7 @@ class PyFuseBox(Operations):
     def mkdir(self, path, mode):
         #raise FuseOSError(EACCES)#keine berechtigung
         #raise FuseOSError(EPERM) #operation ist nicht moeglich
-        self.f.write( "mkdir %s with mode: %s\n" % (path, str(mode)))
+        self.logger.debug("mkdir %s with mode: %s" % (path, str(mode)))
         try:
             self.store.create_directory(path)
         except NoSuchFilesytemObjectError:
@@ -124,11 +129,11 @@ class PyFuseBox(Operations):
         return ret
     
     def rename(self, old, new):
-        self.f.write( "rename %s to %s\n" % (old, new))
+        self.logger.debug("rename %s to %s" % (old, new))
         self.store.move(old, new)
 
     def create(self, path, mode):
-        self.f.write( "create %s with mode %s\n" % (path, str(mode)))
+        self.logger.debug("create %s with mode %s" % (path, str(mode)))
         temp_file = tempfile.SpooledTemporaryFile()
         self.store.store_fileobject(temp_file, path)
         try:
@@ -145,11 +150,11 @@ class PyFuseBox(Operations):
         self.files[path]['st_size'] = length"""
     
     def unlink(self, path):
-        self.f.write( "unlink %s\n" % path)
+        self.logger.debug("unlink %s" % path)
         self.store.delete(path)
 
     def read(self, path, size, offset, fh):
-        self.f.write( "read %s bytes from %s at %s - fh %s\n" % (size, path, offset, fh))
+        self.logger.debug("read %s bytes from %s at %s - fh %s" % (size, path, offset, fh))
         if not path in self.read_temp_file:
             self.read_temp_file[path] = tempfile.SpooledTemporaryFile()
             file = self.store.get_file(path)
@@ -160,7 +165,7 @@ class PyFuseBox(Operations):
         return  file[offset: offset+size]
 
     def write(self, path, buf, offset, fh):
-        self.f.write( "write %s ... starting with %s at %s - fh: %s\n" % (path, buf[0:10], offset, fh))
+        self.logger.debug("write %s ... starting with %s at %s - fh: %s" % (path, buf[0:10], offset, fh))
         if not path in self.temp_file:
             self.temp_file[path] = tempfile.SpooledTemporaryFile()
             file = self.store.get_file(path)
@@ -172,7 +177,7 @@ class PyFuseBox(Operations):
         return len(buf)
     
     def flush(self, path, fh):
-        self.f.write( "flush %s - fh: %s\n" % (path, fh))
+        self.logger.debug("flush %s - fh: %s" % (path, fh))
         if path in self.temp_file: #after writes
             self.store.store_fileobject(self.temp_file[path], path)
             try:
@@ -182,7 +187,7 @@ class PyFuseBox(Operations):
         return 0
     
     def release(self, path, fh):
-        self.f.write( "release %s - fh: %s\n" % (path, fh))
+        self.logger.debug("release %s - fh: %s" % (path, fh))
         if path in self.temp_file: #after writes
             self.temp_file[path].close()
             del self.temp_file[path]
@@ -194,9 +199,9 @@ class PyFuseBox(Operations):
         return 0 #UnicodeEncodeError: 'ascii' codec can't encode character u'\xed' in position 20: ordinal not in range(128)    
        
     def readdir(self, path, fh):
-        self.f.write( "readdir "+path+"\n")
+        self.logger.debug("readdir "+path+"")
         directories = self.store.get_directory_listing(path)
-        #self.f.write( "readdir -> "+str(directories)+"\n")
+        #self.logger.debug("readdir -> "+str(directories)+"")
         file_objects = [".", ".."]
         for file_object in directories:
             if file_object != "/":
