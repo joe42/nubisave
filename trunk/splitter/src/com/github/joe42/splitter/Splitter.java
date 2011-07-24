@@ -46,8 +46,8 @@ import org.jigdfs.ida.base.InformationDispersalEncoder;
 
 import org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalCodec;
 
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 //TODO: add copyright
 //Parallel read: done
@@ -56,17 +56,17 @@ import org.apache.commons.logging.Log;
 //overwrite existing files
 
 public class Splitter implements Filesystem1 {
-	private static final Log log = LogFactory.getLog(Splitter.class);
+	private static final Logger  log = Logger.getLogger("Splitter");
 
 	private static final int blockSize = 512;
 
-	private static int MAX_FILE_FRAGMENTS = 3;
+	private static int MAX_FILE_FRAGMENTS;
 
-	private static int MAX_FILE_FRAGMENTS_NEEDED = 3;
+	private static int MAX_FILE_FRAGMENTS_NEEDED;
 	private RecordManager recman;
 	private HTree filemap;
 	private HTree dirmap;
-	private Hashtable<String, FileChannel> tempFiles = new Hashtable<String, FileChannel>();
+	private RandomAccessTemporaryFileChannels tempFiles = new RandomAccessTemporaryFileChannels();
 
 	private MultipleFileHandler multi_file_handler;
 
@@ -76,12 +76,14 @@ public class Splitter implements Filesystem1 {
 
 	private int redundancy;
 
-	private FileChannel tempReadChannel;
+	private RandomAccessTemporaryFileChannel tempReadChannel;
 
 	public Splitter(String storages, int redundancy) throws IOException {
 		// .config###/
 		// aufruf splitter_mount.sh mountordner ordner_mit_storage_ordner
 		// "redundancy level in percent 0-100"
+		PropertyConfigurator.configure("log4j.properties");
+		
 		this.storages = storages;
 		this.redundancy = redundancy;
 		multi_file_handler = new ConcurrentMultipleFileHandler();
@@ -99,7 +101,7 @@ public class Splitter implements Filesystem1 {
 			throw new IOException("IO Exception on accessing metadata");
 		}
 
-		log.info("dirmap size:" + ((Entry) dirmap.get("/")).size);
+		log.debug("dirmap size:" + ((Entry) dirmap.get("/")).size);
 	}
 
 	private HTree loadPersistentMap(RecordManager recman, String mapName)
@@ -239,7 +241,7 @@ public class Splitter implements Filesystem1 {
 		try {
 			File temp = File.createTempFile(path + "longer", ".tmp");
 			temp.deleteOnExit();
-			tempFiles.put(path, new RandomAccessFile(temp, "rw").getChannel());
+			tempFiles.putNewFileChannel(path);
 			filemap.put(path, new FileEntry());
 			recman.commit();
 		} catch (IOException e) {
@@ -250,7 +252,7 @@ public class Splitter implements Filesystem1 {
 	}
 
 	public void open(String path, int flags) throws FuseException {
-		log.info("opened: " + path);
+		log.debug("opened: " + path);
 		// ZipEntry entry = getFileZipEntry(path);
 
 		// if (flags == O_WRONLY || flags == O_RDWR)
@@ -332,7 +334,7 @@ public class Splitter implements Filesystem1 {
 		statfs.filesFree = 0;
 		statfs.namelen = 2048;
 
-		log.info(files + " files, " + dirs + " directories, " + blocks
+		log.debug(files + " files, " + dirs + " directories, " + blocks
 				+ " blocks (" + blockSize + " byte/block).");
 		return statfs;
 	}
@@ -346,7 +348,7 @@ public class Splitter implements Filesystem1 {
 			if (filemap.get(path) != null) {
 				tempFiles.put(path, glueFilesTogether(path));
 				try {
-					tempFiles.get(path).truncate(size);
+					tempFiles.getFileChannel(path).truncate(size);
 				} catch (FileNotFoundException e) {
 					throw new FuseException("No Such Entry")
 							.initErrno(FuseException.ENOENT);
@@ -394,12 +396,12 @@ public class Splitter implements Filesystem1 {
 	public void write(String path, ByteBuffer buf, long offset)
 			throws FuseException {
 		try {
-			if (tempFiles.get(path) == null) {
+			if (tempFiles.getFileChannel(path) == null) {
 				System.out.println("glue? ");
 				tempFiles.put(path, glueFilesTogether(path));
 				System.out.println("glued! ");
 			}
-			FileChannel wChannel = tempFiles.get(path);
+			FileChannel wChannel = tempFiles.getFileChannel(path);
 			System.out.println("write to buf? " + offset);
 			//wChannel.position(offset);
 			wChannel.write(buf,offset);
@@ -426,22 +428,18 @@ public class Splitter implements Filesystem1 {
 	}
 
 	private void splitFile(String path) throws FuseException {
-		if (tempFiles.get(path) == null) {
+		if (tempFiles.getFileChannel(path) == null) {
 			throw new FuseException("IO Exception - nothing to split")
 					.initErrno(FuseException.EIO);
 		}
 		int nr_of_file_parts_successfully_stored = 0;
 		List<String> fragmentStores = getFragmentStores();
-		for(String store: fragmentStores){
-			if (log.isDebugEnabled())
-			  log.info(store);
-		}
 		MAX_FILE_FRAGMENTS = fragmentStores.size();
-		MAX_FILE_FRAGMENTS_NEEDED = (int) Math.ceil(MAX_FILE_FRAGMENTS *redundancy /100f);
+		MAX_FILE_FRAGMENTS_NEEDED = (int) Math.ceil(MAX_FILE_FRAGMENTS *(100-redundancy) /100f); //100% redundancy -> only one file is enough to restore everything
 		if(MAX_FILE_FRAGMENTS_NEEDED <1){
 			MAX_FILE_FRAGMENTS_NEEDED=1;
 		}
-		FileChannel temp = tempFiles.get(path);
+		FileChannel temp = tempFiles.getFileChannel(path);
 		FileEntry fileEntry = null;
 		try {
 			fileEntry = (FileEntry) filemap.get(path);
@@ -469,6 +467,7 @@ public class Splitter implements Filesystem1 {
 					MAX_FILE_FRAGMENTS, MAX_FILE_FRAGMENTS_NEEDED, 1);
 			encoder = crsidacodec.getEncoder();
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new FuseException("IDA could not be initialized")
 					.initErrno(FuseException.EACCES);
 		}
@@ -481,8 +480,8 @@ public class Splitter implements Filesystem1 {
 
 			for (int fragment_nr = 0; fragment_nr < MAX_FILE_FRAGMENTS; fragment_nr++) {
 
-				log.info("write: " + fragment_nr);
 				fragment_name = fileEntry.fragment_names.get(fragment_nr);
+				log.debug("write: " + fragment_name);
 				fileEntry.fragment_names.add(fragment_name);
 				File fileSegment = new File(fragment_name);
 				byte[] b = result.get(fragment_nr);
@@ -497,7 +496,7 @@ public class Splitter implements Filesystem1 {
 					out.flush();
 					out.close();
 				} catch (Exception e) {
-					
+					e.printStackTrace();
 					nr_of_file_parts_successfully_stored--;
 				}
 				nr_of_file_parts_successfully_stored++;
@@ -507,12 +506,13 @@ public class Splitter implements Filesystem1 {
 			filemap.put(path, fileEntry);
 			recman.commit();
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new FuseException("IO error: " + e.toString(), e)
 					.initErrno(FuseException.EIO);
 		}
 
 		//if (log.isDebugEnabled())
-		  log.info("nr_of_file_parts_successfully_stored: "+nr_of_file_parts_successfully_stored+" - MAX_FILE_FRAGMENTS_NEEDED "+MAX_FILE_FRAGMENTS_NEEDED);
+		  log.debug("nr_of_file_parts_successfully_stored: "+nr_of_file_parts_successfully_stored+" - MAX_FILE_FRAGMENTS_NEEDED "+MAX_FILE_FRAGMENTS_NEEDED);
 		if (nr_of_file_parts_successfully_stored < MAX_FILE_FRAGMENTS_NEEDED) {
 			throw new FuseException(
 					"IO error: Not enough file parts could be stored.")
@@ -520,8 +520,8 @@ public class Splitter implements Filesystem1 {
 		}
 	}
 
-	private FileChannel glueFilesTogether(String path) throws FuseException {
-		FileChannel ret = null;
+	private RandomAccessTemporaryFileChannel glueFilesTogether(String path) throws FuseException {
+		RandomAccessTemporaryFileChannel ret = null;
 		List<byte[]> receivedFileSegments = new ArrayList<byte[]>();
 		Digest digestFunc = new SHA256Digest();
 		byte[] digestByteArray = new byte[digestFunc.getDigestSize()];
@@ -532,23 +532,22 @@ public class Splitter implements Filesystem1 {
 					MAX_FILE_FRAGMENTS, MAX_FILE_FRAGMENTS_NEEDED, 1);
 			decoder = crsidacodec.getDecoder();
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new FuseException("IDA could not be initialized")
 					.initErrno(FuseException.EACCES);
 		}
 		String hexString = null;
-		System.out.println("glue 1");
+		log.info("glue ");
 		int readBytes;
 		try {
-			File tmp = File.createTempFile(path + "longer", ".tmp");
-			//tmp.deleteOnExit();
-			ret = new RandomAccessFile(tmp, "rw").getChannel(); 
+			ret = new RandomAccessTemporaryFileChannel();
 			int validSegment = 0;
 			List<String> fragmentNames = ((FileEntry) filemap.get(path)).fragment_names;
 
 			List<byte[]> segmentBuffers = multi_file_handler
 					.getFilesAsByteArrays(fragmentNames.toArray(new String[0]));
 			for (byte[] segmentBuffer : segmentBuffers) {
-				System.out.println("glue 2" + new String(segmentBuffer));
+				//log.info("glue " + new String(segmentBuffer));
 
 				digestFunc.reset();
 
@@ -566,7 +565,6 @@ public class Splitter implements Filesystem1 {
 				receivedFileSegments.add(segmentBuffer);
 				validSegment++;
 
-				System.out.println("glue 3");
 				if (validSegment >= MAX_FILE_FRAGMENTS_NEEDED) {
 					break;
 				}
@@ -580,11 +578,10 @@ public class Splitter implements Filesystem1 {
 
 			digestFunc.doFinal(digestByteArray, 0);
 
-			System.out.println("glue 4");
-			ret.write(ByteBuffer.wrap(recoveredFile));
-			System.out.println("glue 5");
+			ret.getChannel().write(ByteBuffer.wrap(recoveredFile));
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new FuseException("IO error", e).initErrno(FuseException.EIO);
 		}
 		return ret;
@@ -596,7 +593,7 @@ public class Splitter implements Filesystem1 {
 			if (tempReadChannel == null) {
 				tempReadChannel = glueFilesTogether(path);
 			}
-		tempReadChannel.read(buf, offset);
+		tempReadChannel.getChannel().read(buf, offset);
 		} catch (IOException e) {
 			throw new FuseException("IO Exception")
 					.initErrno(FuseException.EIO);
@@ -607,19 +604,12 @@ public class Splitter implements Filesystem1 {
 	}
 
 	public void release(String path, int flags) throws FuseException {
-		if (tempFiles.get(path) != null) {
+		if (tempFiles.getFileChannel(path) != null) {
 			splitFile(path);
-			try {
-				tempFiles.get(path).close();
-			} catch (IOException e) {
-			}
-			tempFiles.remove(path);
+			tempFiles.delete(path);
 		}
 		if (tempReadChannel != null) {
-			try {
-				tempReadChannel.close();
-			} catch (IOException e) {
-			}
+			tempReadChannel.delete();
 			tempReadChannel = null;
 		}
 	}

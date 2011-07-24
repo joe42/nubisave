@@ -23,13 +23,15 @@ public class SerialMultipleFileHandler implements MultipleFileHandler {
 	private byte[] getFileAsByteArray(String file_name) {
 		byte[] ret = null;
 		File file = new File(file_name);
-		if (file.exists() && file.isFile()) {
+		if (file.exists()) {
 			try {
 				FileInputStream in = new FileInputStream(file);
 				ret = new byte[(int) file.length()];
 				in.read(ret);
+				in.close();
 			} catch (IOException e) {
 				//don't care
+				e.printStackTrace();
 			}
 		}
 		return ret;

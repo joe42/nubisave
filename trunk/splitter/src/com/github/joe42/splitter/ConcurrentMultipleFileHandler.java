@@ -4,8 +4,12 @@ import java.io.*;
 import java.util.*;
 import java.util.concurrent.*;
 
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 public class ConcurrentMultipleFileHandler implements MultipleFileHandler{
+		private static final Logger  log = Logger.getLogger("concurrent multiple filehandler");
 		public ConcurrentMultipleFileHandler() {
+			PropertyConfigurator.configure("log4j.properties");
 		}
 
 		public List<byte[]> getFilesAsByteArrays(String[] file_names){
@@ -23,7 +27,9 @@ public class ConcurrentMultipleFileHandler implements MultipleFileHandler{
 				// Now retrieve the result
 				for (Future<byte[]> future : list) {
 					try {
-						ret.add(future.get());
+						if(future.get() != null){
+							ret.add(future.get());
+						}
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					} catch (ExecutionException e) {
@@ -49,13 +55,22 @@ public class ConcurrentMultipleFileHandler implements MultipleFileHandler{
 			private byte[] getFileAsByteArray(String file_name) {
 				byte[] ret = null;
 				File file = new File(file_name);
-				if (file.exists() && file.isFile()) {
+				if (file.exists()) {
 					try {
 						FileInputStream in = new FileInputStream(file);
+						int len = (int) file.length();
+						if(len < 0){
+							log.error("file length returned must not be negative, but is:"+len);
+						} 
 						ret = new byte[(int) file.length()];
+						if(len == 0){
+							return ret;
+						}
 						in.read(ret);
+						in.close();
 					} catch (IOException e) {
 						//don't care
+						e.printStackTrace();
 					}
 				}
 				return ret;
