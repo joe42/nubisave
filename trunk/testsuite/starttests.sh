@@ -1,6 +1,6 @@
 #!/bin/bash
 
-mntpoint="$HOME/nubisave"
+mntpoint="splitter"
 statsfile=nubisave.test.out
 
 function shouldexist {
@@ -22,8 +22,8 @@ fi
 }
 
 function checksum {
-	csum=`grep $1 samplefiles/checksums | head -n1 | cut -d " "  -f 1`	
-	sum=`md5sum -b "$mntpoint/$1" | cut -d " "  -f 1`
+	csum=`md5sum -b "samplefiles/$1" | cut -d " "  -f 1`
+	sum=`md5sum -b "copies/$1" | cut -d " "  -f 1`
 	if [ $csum == $sum ]
 	then
 		echo "	OK checksum" 
@@ -99,11 +99,11 @@ do
 		endrewrite=$(date +%s.%N)
 	
 		beginread=$(date +%s.%N)
-		cp "$mntpoint/${N}kb" /dev/null
+		cp "$mntpoint/${N}kb" copies
 		endread=$(date +%s.%N)
 	
 		beginreread=$(date +%s.%N)
-		cp "$mntpoint/${N}kb" /dev/null
+		cp "$mntpoint/${N}kb" copies
 		endreread=$(date +%s.%N)
 	
 		shouldexist ${N}kb
