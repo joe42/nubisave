@@ -62,7 +62,9 @@ class SugarsyncStore(Store):
         ret = []
         resp = self.client.get_dir_listing(translated_path)
         if resp.status <200 or resp.status >300:
-            self.logger.warn("could not get direcory listing: " +translated_path+"\nstatus: %s reason: %s" % (resp.status, resp.reason))
+            self.logger.warn("could not get directory listing: " +translated_path+"\nstatus: %s reason: %s" % (resp.status, resp.reason))
+            if resp.status == 401:
+                self._reconnect()
             raise NoSuchFilesytemObjectError(translated_path, resp.status)
         xml_tree = dom.parseString(resp.data)
         for collection in xml_tree.documentElement.getElementsByTagName("collection"): 
@@ -287,3 +289,6 @@ class SugarsyncStore(Store):
     def _get_time_difference(self):
         resp =  self.client.user_info()
         return time.mktime( time.strptime(resp.getheader('date'), "%a, %d %b %Y %H:%M:%S GMT") ) - time.time()
+    
+    def _reconnect(self):
+        self.client._reconnect()

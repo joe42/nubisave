@@ -23,7 +23,7 @@ class CachingStore(Store):
         self.logger.debug("creating CachingStore object")
         self.store = store
 #        self.temp_file = tempfile.SpooledTemporaryFile()
-        self.cache = Cache(240)
+        self.cache = Cache(10*60)
     
     def _is_valid_path(self, path):
         return self.store._is_valid_path(path)
@@ -187,4 +187,5 @@ class CachingStore(Store):
             file.fileno()#
             self.store.store_fileobject(file, path)
             self.cache.update(path)
+            self.cache.set_dirty(path, False) 
             self.logger.debug("flushing %s with content starting with %s" % (path, self.cache.get_value(path)[0:10]))

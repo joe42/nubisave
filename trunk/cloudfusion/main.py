@@ -27,37 +27,49 @@ def get_sugarsync_config():
     config.readfp(config_file)
     return dict(config.items('auth'))
 
-def get_store(service, password=None):
+def get_store(service, key, secret, username, password=None):
     if password == None:
         password = get_password()
     if service.lower() == "sugarsync":
         config = get_sugarsync_config()
         config['password'] = password
+        config['user'] = username
+        config['access_key_id'] = key
+        config['private_access_key'] = secret
         store = SugarsyncStore(config)
     else: # default
         config = get_dropbox_config()
         config['password'] = password
+        config['user'] = username
+        config['consumer_key'] = key
+        config['consumer_secret'] = secret
         store = DropboxStore(config)
     return store
 
 def check_arguments(args):
-    if not len(args) in [2,3,4,5]:
-        print 'usage: %s mountpoint  [service] [service password] [cache]' % args[0]
+    if not len(args) in [6,8]:
+        print 'usage: %s mountpoint service username key secret [password | password cache]' % args[0]
         exit(1)
 
 def main():
     check_arguments(sys.argv)
     service = "dropbox"
     password  = None
-    if len(sys.argv) in [3,4,5]:
+    username  = None
+    key  = None
+    secret  = None
+    if len(sys.argv) in [6,7,8]:
         service = sys.argv[2]
-    if len(sys.argv) in [4,5]:
-        password= sys.argv[3]
-    store = get_store(service, password)
-    if "cache" in sys.argv:
+        username= sys.argv[3]
+        key= sys.argv[4]
+        secret= sys.argv[5]
+    if len(sys.argv) in [7,8]:
+        password= sys.argv[6]
+    store = get_store(service, key, secret, username, password)
+    if len(sys.argv) == 8 and "cache" == sys.argv[7]:
         store = CachingStore( store )
     fuse_operations = PyFuseBox(sys.argv[1], store)
-    FUSE(fuse_operations, sys.argv[1], foreground=True, nothreads=True)
+    FUSE(fuse_operations, sys.argv[1], foreground=False, nothreads=True)
     
 if __name__ == '__main__':
     main()

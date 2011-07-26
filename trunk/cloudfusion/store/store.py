@@ -104,3 +104,6 @@ class Store(object):
     
     def flush(self):
         pass
+    
+    def _reconnect(self):
+        pass

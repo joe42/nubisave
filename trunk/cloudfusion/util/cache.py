@@ -11,7 +11,7 @@ class Cache(object):
         self.expire = expiration_time
         
     def refresh(self, key, disk_value, modified):
-        """ Refreshes a cache entry, if :param:`modified` is bigger than the cache entry's modified date. """
+        """ Refreshes a cache entry with :param:`disk_value`, if :param:`modified` is bigger than the cache entry's modified date. """
         if key in self.cache:
             disk_entry_is_newer = modified > self.cache[key]['modified']
             if not disk_entry_is_newer:
@@ -66,6 +66,9 @@ class Cache(object):
     
     def is_dirty(self, key):
         return self.cache[key]['dirty']
+    
+    def set_dirty(self, key, is_dirty):
+        self.cache[key]['dirty'] = is_dirty
     
     def delete(self, key):
         try:
