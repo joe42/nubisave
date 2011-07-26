@@ -402,10 +402,8 @@ public class Splitter implements Filesystem1 {
 				System.out.println("glued! ");
 			}
 			FileChannel wChannel = tempFiles.getFileChannel(path);
-			System.out.println("write to buf? " + offset);
 			//wChannel.position(offset);
 			wChannel.write(buf,offset);
-			System.out.println("written to buf! " + wChannel.position());
 		} catch (IOException e) {
 			throw new FuseException("IO Exception")
 					.initErrno(FuseException.EIO);
@@ -433,9 +431,10 @@ public class Splitter implements Filesystem1 {
 					.initErrno(FuseException.EIO);
 		}
 		int nr_of_file_parts_successfully_stored = 0;
+		HashMap<String, byte[]> fileParts = new HashMap<String, byte[]>();
 		List<String> fragmentStores = getFragmentStores();
 		MAX_FILE_FRAGMENTS = fragmentStores.size();
-		MAX_FILE_FRAGMENTS_NEEDED = (int) Math.ceil(MAX_FILE_FRAGMENTS *(100-redundancy) /100f); //100% redundancy -> only one file is enough to restore everything
+		MAX_FILE_FRAGMENTS_NEEDED = (int) (MAX_FILE_FRAGMENTS *(100-redundancy) /100f); //100% redundancy -> only one file is enough to restore everything
 		if(MAX_FILE_FRAGMENTS_NEEDED <1){
 			MAX_FILE_FRAGMENTS_NEEDED=1;
 		}
@@ -483,24 +482,15 @@ public class Splitter implements Filesystem1 {
 				fragment_name = fileEntry.fragment_names.get(fragment_nr);
 				log.debug("write: " + fragment_name);
 				fileEntry.fragment_names.add(fragment_name);
-				File fileSegment = new File(fragment_name);
 				byte[] b = result.get(fragment_nr);
 				digestFunc.reset();
 				digestFunc.update(b, 0, b.length);
 				digestFunc.doFinal(digestByteArray, 0);
 
 				hexString = new String(Hex.encode(digestByteArray));
-				try {
-					OutputStream out = new FileOutputStream(fileSegment);
-					out.write(b);
-					out.flush();
-					out.close();
-				} catch (Exception e) {
-					e.printStackTrace();
-					nr_of_file_parts_successfully_stored--;
-				}
-				nr_of_file_parts_successfully_stored++;
+				fileParts.put(fragment_name, b);
 			}
+			nr_of_file_parts_successfully_stored = multi_file_handler.writeFilesAsByteArrays(fileParts);
 			fileEntry.size = (int) temp.size();
 
 			filemap.put(path, fileEntry);
@@ -545,7 +535,7 @@ public class Splitter implements Filesystem1 {
 			List<String> fragmentNames = ((FileEntry) filemap.get(path)).fragment_names;
 
 			List<byte[]> segmentBuffers = multi_file_handler
-					.getFilesAsByteArrays(fragmentNames.toArray(new String[0]));
+					.getFilesAsByteArrays(fragmentNames.toArray(new String[0]), MAX_FILE_FRAGMENTS_NEEDED);
 			for (byte[] segmentBuffer : segmentBuffers) {
 				//log.info("glue " + new String(segmentBuffer));
 
