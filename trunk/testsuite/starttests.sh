@@ -112,6 +112,13 @@ do
 		rm "$mntpoint/${N}kb"
 	
 		echo "$N	$C	`echo "scale=0; $N / ($endwrite - $beginwrite)" | bc`	`echo "scale=0; $N / ($endrewrite - $beginrewrite)" | bc`	`echo "scale=0; $N / ($endread - $beginread)" | bc`	`echo "scale=0; $N / ($endreread - $beginreread)" | bc`" | tee -a $statsfile
+
+		if [ -e "stop" ]
+		then
+			echo "	stopping" 
+			read x
+		fi
+
 	done
 done
 
