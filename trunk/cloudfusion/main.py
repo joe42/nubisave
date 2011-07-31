@@ -12,6 +12,7 @@ import os, sys, stat,  time
 from dropbox import auth
 import getpass
 from ConfigParser import SafeConfigParser
+from cloudfusion.store.metadata_caching_store import MetadataCachingStore
 
 def get_password():
     print "Enter Password for the account:"
@@ -47,8 +48,8 @@ def get_store(service, key, secret, username, password=None):
     return store
 
 def check_arguments(args):
-    if not len(args) in [6,8]:
-        print 'usage: %s mountpoint service username key secret [password | password cache]' % args[0]
+    if not len(args) in [6,7,8]:
+        print 'usage: %s mountpoint service username key secret [password | password [cache]]' % args[0]
         exit(1)
 
 def main():
@@ -67,7 +68,7 @@ def main():
         password= sys.argv[6]
     store = get_store(service, key, secret, username, password)
     if len(sys.argv) == 8 and "cache" == sys.argv[7]:
-        store = CachingStore( store )
+        store = MetadataCachingStore( CachingStore( MetadataCachingStore( store ) ) )
     fuse_operations = PyFuseBox(sys.argv[1], store)
     FUSE(fuse_operations, sys.argv[1], foreground=False, nothreads=True)
     

@@ -23,7 +23,9 @@ logging.config.fileConfig('cloudfusion/config/logging.conf')
 class SugarsyncStore(Store):
     def __init__(self, config):
         #self.dir_listing_cache = {}
-        self.logger = logging.getLogger('sugarsync')
+        self.robustness = 10
+        self._logging_handler = 'sugarsync'
+        self.logger = logging.getLogger(self._logging_handler)
         self.path_cache = {}
         self.root = config["root"]
         self.client = SugarsyncClient(config)
@@ -61,9 +63,9 @@ class SugarsyncStore(Store):
         """:returns: dict a dictionary with all paths of the collection at :param:`translated_path` as keys and the corresponding nested dictionaries with the key/value pair for is_dir and reference."""
         ret = []
         resp = self.client.get_dir_listing(translated_path)
-        if resp.status <200 or resp.status >300:
+        if resp.status <200 or resp.status >= 300:
             self.logger.warn("could not get directory listing: " +translated_path+"\nstatus: %s reason: %s" % (resp.status, resp.reason))
-            if resp.status == 401:
+            if resp.status == 401 or resp.status >= 500:
                 self._reconnect()
             raise NoSuchFilesytemObjectError(translated_path, resp.status)
         xml_tree = dom.parseString(resp.data)
@@ -106,7 +108,7 @@ class SugarsyncStore(Store):
         partial_tree = {"user": {"quota": {"limit": "limit", "usage": "usage"}}}
         DictXMLParser().populate_dict_with_XML_leaf_textnodes(info.data, partial_tree)
         #print response.status, response.reason, response.getheaders()
-        if info.status <200 or info.status >300:
+        if info.status <200 or info.status >= 300:
             self.logger.warn("could not retrieve overall space"+"\nstatus: %s reason: %s" % (info.status, info.reason))
         return int(partial_tree['user']['quota']['limit'])
     
@@ -116,7 +118,7 @@ class SugarsyncStore(Store):
         partial_tree = {"user": {"quota": {"limit": "limit", "usage": "usage"}}}
         DictXMLParser().populate_dict_with_XML_leaf_textnodes(info.data, partial_tree)
         #print response.status, response.reason, response.getheaders()
-        if info.status <200 or info.status >300:
+        if info.status <200 or info.status >= 300:
             self.logger.warn("could not retrieve used space"+"\nstatus: %s reason: %s" % (info.status, info.reason))
         return int(partial_tree['user']['quota']['usage'])
     
@@ -124,8 +126,14 @@ class SugarsyncStore(Store):
         self.logger.debug("getting file: " +path_to_file)
         self._raise_error_if_invalid_path(path_to_file)
         file = self.client.get_file( self._translate_path(path_to_file) )
-        if file.status <200 or file.status >300:
+        if file.status <200 or file.status >= 300:
             self.logger.warn("could not get file: %s\nstatus: %s reason: %s" % (path_to_file, file.status, file.reason))
+            if file.status == 401 or file.status >= 500:
+                self._reconnect()
+                self.robustness -= 1
+                if self.robustness > 0:
+                    self.logger.info("retrying")
+                    return self.get_file(path_to_file)
         return file.data 
     
     def store_fileobject(self, fileobject, path_to_file):
@@ -133,8 +141,14 @@ class SugarsyncStore(Store):
         if not self.exists(path_to_file):
             self._create_file(path_to_file)
         resp = self.client.put_file( fileobject, self._translate_path(path_to_file) ) 
-        if resp.status <200 or resp.status >300:
+        if resp.status <200 or resp.status >= 300:
             self.logger.warn("could not store file to " +path_to_file+"\nstatus: %s reason: %s" % (resp.status, resp.reason))
+            if resp.status == 401 or resp.status >= 500:
+                self._reconnect()
+                self.robustness -= 1
+                if self.robustness > 0:
+                    self.logger.info("retrying")
+                    self.store_fileobject(fileobject, path_to_file)
             
     def _create_file(self, path, mime='text/x-cloudfusion'):
         self.logger.debug("creating file object "+path)
@@ -142,8 +156,10 @@ class SugarsyncStore(Store):
         directory = os.path.dirname(path)
         translated_dir = self._translate_path(directory)
         resp = self.client.create_file(translated_dir, name)
-        if resp.status <200 or resp.status >300:
+        if resp.status <200 or resp.status >= 300:
             self.logger.warn("could not create file " +path+"\nstatus: %s reason: %s" % (resp.status, resp.reason))
+            if resp.status == 401 or resp.status >= 500:
+                self._reconnect()
     
     def delete(self, path):
         self.logger.debug("deleting " +path)
@@ -153,10 +169,12 @@ class SugarsyncStore(Store):
             path = path[0:-1]
         self._raise_error_if_invalid_path(path)
         resp = self.client.delete_file( self._translate_path(path) )
-        if resp.status <200 or resp.status >300:
+        if resp.status <200 or resp.status >= 300:
             resp = self.client.delete_folder( self._translate_path(path) )
-        if resp.status <200 or resp.status >300:
+        if resp.status <200 or resp.status >= 300:
             self.logger.warn("could not delete " +path+"\nstatus: %s reason: %s" % (resp.status, resp.reason))
+            if resp.status == 401 or resp.status >= 500:
+                self._reconnect()
         else:
             del self.path_cache[path]
         return resp.status
@@ -174,9 +192,10 @@ class SugarsyncStore(Store):
         name = os.path.basename(path)
         directory = os.path.dirname(path)
         resp = self.client.create_folder( self._translate_path(directory), name ) 
-        if resp.status <200 or resp.status >300:
+        if resp.status <200 or resp.status >= 300:
             self.logger.warn("could not create directory: " +path+"\nstatus: %s reason: %s" % (resp.status, resp.reason))
-        print "wrapped ",repr(resp)
+            if resp.status == 401 or resp.status >= 500:
+                self._reconnect()
         return resp.status
 
     def get_directory_listing(self, directory):
@@ -218,14 +237,17 @@ class SugarsyncStore(Store):
                     resp = self.client.duplicate_file(item['reference'], translated_dest_dir, dest_name)
                     if resp.status != 200:
                         self.logger.warn("could not duplicate " +path_to_src+" to "+path_to_dest+"\nstatus: %s reason: %s" % (resp.status, resp.reason))
+                        if resp.status == 401 or resp.status >= 500:
+                            self._reconnect()
         else:
-            #if dest exists raise error
+            #if dest exists remove
             if self.exists(path_to_dest):
-                self.logger.warn("could not duplicate " +path_to_src+" to "+path_to_dest+"\nfile already exists")
-                return
+                self.delete(path_to_dest)
             resp = self.client.duplicate_file(translated_src, translated_dest_dir, dest_name)
-            if resp.status != 200:
+            if resp.status < 200 or resp.status >= 300:
                 self.logger.warn("could not duplicate " +path_to_src+" to "+path_to_dest+"\nstatus: %s reason: %s" % (resp.status, resp.reason))
+                if resp.status == 401 or resp.status >= 500:
+                    self._reconnect()
 
     def _get_metadata(self, path):
         self.logger.debug("getting metadata for "+path)
@@ -250,10 +272,12 @@ class SugarsyncStore(Store):
             resp = self.client.get_file_metadata( p )
         except Exception as e:
             self.logger.debug("getting metadata 5 for "+path+" failed with: "+str(e))
-        if resp.status <200 or resp.status >300:
+        if resp.status <200 or resp.status >= 300:
             is_file = False
             resp = self.client.get_folder_metadata( self._translate_path(path) )
-        if resp.status <200 or resp.status >300:
+            if resp.status == 401 or resp.status >= 500:
+                self._reconnect()
+        if resp.status <200 or resp.status >= 300:
             self.logger.warn("could not get metadata: " +path+"\nstatus: %s reason: %s" % (resp.status, resp.reason))
             raise NoSuchFilesytemObjectError(path, resp.status)
         ret = {}
@@ -292,3 +316,7 @@ class SugarsyncStore(Store):
     
     def _reconnect(self):
         self.client._reconnect()
+        
+        
+    def get_logging_handler(self):
+        return self._logging_handler

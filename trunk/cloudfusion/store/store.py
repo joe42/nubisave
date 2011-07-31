@@ -12,7 +12,7 @@ class StoreAccessError(Exception):
 class DateParseError(Exception):
     def __init__(self, msg):
         super(DateParseError, self).__init__(msg)
-class RetrieveMetadataError(StoreAccessError):
+class RetrieveMetadataError(StoreAccessError): 
     def __init__(self, path, msg, status):
         super(RetrieveMetadataError, self).__init__("Could not retrieve metadata for "+path+"\nDescription: "+msg, status)
 class NoSuchFilesytemObjectError(StoreAccessError):
@@ -20,10 +20,10 @@ class NoSuchFilesytemObjectError(StoreAccessError):
         super(NoSuchFilesytemObjectError, self).__init__("%s does not exist." % path, status)
 class StoreAutorizationError(StoreAccessError):
     def __init__(self, msg, status):
-        super(NoSuchFilesytemObjectError, self).__init__(msg, status)
+        super(StoreAutorizationError, self).__init__(msg, status)
 class AlreadyExistsError(StoreAccessError):
     def __init__(self, msg, status):
-        super(NoSuchFilesytemObjectError, self).__init__(msg, status)
+        super(AlreadyExistsError, self).__init__(msg, status)
 class InvalidPathValueError(ValueError):
     def __init__(self, path):
         super(InvalidPathValueError, self).__init__(path+" "+"is no valid path!!") 
@@ -44,6 +44,8 @@ class Store(object):
         raise NotImplementedError()
     
     def store_file(self, path_to_file, dest_dir="/", remote_file_name = None):
+        if dest_dir == "/":
+            dest_dir = ""
         fileobject = open(path_to_file)
         if not remote_file_name:
             remote_file_name = os.path.basename(path_to_file)
@@ -96,11 +98,23 @@ class Store(object):
             return False;
     
     def _get_metadata(self, path):
+        """ This method is a hook that can be implemented by subclasses. 
+        If it is implemented, the methods :meth:`~.exists`, :meth:`~.get_bytes`, :meth:`~.is_dir` work out of the box.
+        :returns: A dictionary with the keys 'modified', 'bytes' and 'is_dir' containing the corresponding metadata for :param:`path`  
+        The value for 'modified' is a date in seconds, stating when the object corresponding to :param:`path` was last modified.  
+        The value for 'bytes' is the number of bytes of the object corresponding to :param:`path`. It is 0 if the object is a directory.
+        The value for 'is_dir' is True if the object is a directory and False otherwise.
+        :raises: NoSuchFilesytemObjectError if the object does not exist
+        :raises: NotImplementedError if the method is not implemented
+        """
         raise NotImplementedError()
 
     def is_dir(self, path):
         resp = self._get_metadata(path)
         return resp['is_dir']
+    
+    def get_logging_handler(self):
+        raise NotImplementedError()
     
     def flush(self):
         pass

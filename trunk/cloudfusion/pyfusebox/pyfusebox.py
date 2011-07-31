@@ -1,4 +1,3 @@
-from cloudfusion.store.dropbox.file_decorator import NonclosingFile
 from cloudfusion.store.store import NoSuchFilesytemObjectError,\
     AlreadyExistsError, StoreAccessError, StoreAutorizationError
 import os, sys, stat,  time
@@ -53,7 +52,7 @@ class PyFuseBox(Operations):
             self.logger.debug(" isDir")
             st['st_mode'] = 0777 | stat.S_IFDIR
             st['st_nlink']=2
-            st['st_size'] = 1
+            st['st_size'] = 4096
         else:
             self.logger.debug(" isFile")
             st['st_mode'] = 0777 | stat.S_IFREG
@@ -80,10 +79,6 @@ class PyFuseBox(Operations):
         self.store.delete(path)
         temp_file = tempfile.SpooledTemporaryFile()
         self.store.store_fileobject(temp_file, path)
-        try:
-            self.store.flush()
-        except:
-            pass;
         return 0
     
     def rmdir(self, path):
@@ -136,10 +131,6 @@ class PyFuseBox(Operations):
         self.logger.debug("create %s with mode %s" % (path, str(mode)))
         temp_file = tempfile.SpooledTemporaryFile()
         self.store.store_fileobject(temp_file, path)
-        try:
-            self.store.flush()
-        except:
-            pass;
         return 0
         """       self.files[path] = dict(st_mode=(S_IFREG | mode), st_nlink=1,
             st_size=0, st_ctime=time(), st_mtime=time(), st_atime=time())
@@ -180,10 +171,6 @@ class PyFuseBox(Operations):
         self.logger.debug("flush %s - fh: %s" % (path, fh))
         if path in self.temp_file: #after writes
             self.store.store_fileobject(self.temp_file[path], path)
-            try:
-                self.store.flush()
-            except:
-                pass;
         return 0
     
     def release(self, path, fh):

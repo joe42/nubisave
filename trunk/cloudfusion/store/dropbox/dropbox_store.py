@@ -13,8 +13,10 @@ import logging.config
 import os.path
 from cloudfusion.store.dropbox.file_decorator import NameableFile
 import tempfile
+import ConfigParser
+import StringIO
 
-logging.config.fileConfig('cloudfusion/config/logging.conf')
+
 
 
 class ServerError(StoreAccessError):
@@ -34,7 +36,26 @@ class DropboxError(object):
 
 class DropboxStore(Store):
     def __init__(self, config):
-        self.logger = logging.getLogger('dropbox')
+        self._logging_handler = 'dropbox'
+                #TODO: check if is filehandler
+        #Increment number after log file if this process is started multiple times
+        instream = open('cloudfusion/config/logging.conf')
+        cp = ConfigParser.ConfigParser()
+        cp.readfp(instream)
+        section = "handler_%s_fileHandler" % self._logging_handler
+        oldargs = eval(cp.get(section, "args"))
+        logfile_nr=0
+        old_log_filename = log_filename = oldargs[0]
+        while os.path.isfile(log_filename):
+            logfile_nr += 1
+            log_filename = old_log_filename + str(logfile_nr)
+        cp.set(section, "args", (log_filename,) ) 
+        outstream = StringIO.StringIO()
+        cp.write(outstream)
+        outstream.seek(0) 
+        logging.config.fileConfig(outstream)
+        ###############################################################
+        self.logger = logging.getLogger(self._logging_handler)
         self.dir_listing_cache = {}
         dba = auth.Authenticator(config)
         access_token = dba.obtain_trusted_access_token(config['user'], config['password'])
@@ -68,7 +89,8 @@ class DropboxStore(Store):
             msg= "could not get file: " +path_to_file
             self._log_http_error("get_file", path_to_file, resp, msg)
             return ""
-        return resp.read()
+        ret = resp.read()
+        return ret
     
     def store_fileobject(self, fileobject, path):
         self.logger.debug("storing file object to "+path)
@@ -161,8 +183,12 @@ class DropboxStore(Store):
             except Exception, e:
                 raise StoreAccessError("Transfer error: "+str(e), 0)
         if resp.status != 200:
-            msg= "could not move " +path_to_src+" to "+path_to_dest
-            self._log_http_error("move", None, resp, msg)
+            if resp.status == 400:
+                self.delete(path_to_dest)
+                self.move(path_to_src, path_to_dest)
+            else:
+                msg= "could not move " +path_to_src+" to "+path_to_dest
+                self._log_http_error("move", None, resp, msg)
     
     def get_overall_space(self):
         self.logger.debug("retrieving all space")
@@ -219,7 +245,7 @@ class DropboxStore(Store):
             self.dir_listing_cache[directory] = {}
             self.dir_listing_cache[directory]['hash'] = resp.data["hash"]
             self.dir_listing_cache[directory]['dir_listing'] = ret
-        return ret 
+        return ret.keys()
     
     def _parse_dir_list(self, data):
         #OverflowError or ValueError
@@ -276,7 +302,7 @@ class DropboxStore(Store):
         ret = {}
         ret["bytes"] = data["bytes"]
         try:
-            ret["modified"] = time.mktime( time.strptime(data["modified"], "%a, %d %b %Y %H:%M:%S +0000") ) - self.time_difference
+            ret["modified"] = int(time.mktime( time.strptime(data["modified"], "%a, %d %b %Y %H:%M:%S +0000") ) - self.time_difference)
         except Exception as x:
             self.logger.warn("Time conversion error: %s" % str(data["modified"]))
             raise DateParseError("Error parsing modified attribute: %s" % str(x));
@@ -297,6 +323,10 @@ class DropboxStore(Store):
             except Exception, e:
                 raise StoreAccessError("Transfer error: "+str(e), 0)
         return time.mktime( time.strptime(resp.headers['date'], "%a, %d %b %Y %H:%M:%S GMT") ) - time.time()
+    
+    
+    def get_logging_handler(self):
+        return self._logging_handler
     
         
 

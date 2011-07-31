@@ -6,6 +6,7 @@ from nose.tools import *
 from nose.tools import eq_ as eq
 from cloudfusion.store.store import *
 from cloudfusion.store.caching_store import CachingStore
+from cloudfusion.store.metadata_caching_store import MetadataCachingStore
 import os.path, time
 import tempfile
 from dropbox import auth
@@ -44,13 +45,19 @@ io_apis = []
 def setUp():
     dropbox_config = get_dropbox_config()
     sugarsync_config = get_sugarsync_config()
-    #io_apis.append( CachingStore( DropboxStore(dropbox_config) ) )
-    #io_apis.append( CachingStore( SugarsyncStore(sugarsync_config) ) )
-    #io_apis.append( ErrorHandlingSugarsyncStore( SugarsyncStore(sugarsync_config) )  ) 
     io_apis.append( DropboxStore(dropbox_config) ) 
+    io_apis.append( SugarsyncStore(sugarsync_config) ) 
+    io_apis.append( CachingStore( DropboxStore(dropbox_config) ) ) 
+    io_apis.append( CachingStore( SugarsyncStore(sugarsync_config) ) )
+    io_apis.append( MetadataCachingStore( CachingStore( SugarsyncStore(sugarsync_config) ) ) )
+    io_apis.append( CachingStore( MetadataCachingStore( DropboxStore(dropbox_config) ) ) )
+    #io_apis.append( ErrorHandlingSugarsyncStore( SugarsyncStore(sugarsync_config) )  ) 
     #time.sleep(10)
     for io_api in io_apis:
-        io_api.create_directory(REMOTE_TESTDIR)
+        try:
+            io_api.create_directory(REMOTE_TESTDIR)
+        except AlreadyExistsError:
+            pass
         
 def tearDown():
     for io_api in io_apis:
@@ -113,7 +120,7 @@ def test_io_apis():
         test.description = io_api.get_name()+":"+" "+"getting directory listing"
         yield (test, )  
         test = partial(_test_exists, io_api)
-        test.description = io_api.get_name()+":"+" "+"determine if file and direcory exists"
+        test.description = io_api.get_name()+":"+" "+"determine if file and directory exists"
         yield (test, )  
 
 def _assert_all_in(in_list, all_list):
@@ -223,7 +230,7 @@ def _test_get_used_space(io_api):
     except Exception as e:
         assert False, "exception on getting used space"+str(e)  
 
-def _test_get_directory_listing(io_api):
+def _test_get_directory_listing(io_api): 
     _create_directories(io_api, REMOTE_TESTDIR)
     io_api.store_file(LOCAL_TESTFILE_PATH, REMOTE_TESTDIR)
     listing = io_api.get_directory_listing(REMOTE_TESTDIR)
@@ -269,10 +276,16 @@ def _create_directories(io_api, root_dir="/"):
     assert _dir_exists(io_api, root_dir+"tesT2")
     io_api.create_directory(root_dir+"testdub")
     assert _dir_exists(io_api, root_dir+"testdub")
-    assert io_api.create_directory(root_dir+"testdub") != 200 
+    try:
+        assert io_api.create_directory(root_dir+"testdub") != 200
+    except AlreadyExistsError:
+        pass
     io_api.create_directory(root_dir+"testcasesensitivity")
     assert _dir_exists(io_api, root_dir+"testcasesensitivity")
-    assert io_api.create_directory(root_dir+"testcasesensitivity".upper() ) != 200
+    try:
+        assert io_api.create_directory(root_dir+"testcasesensitivity".upper() ) != 200
+    except AlreadyExistsError:
+        pass
         
 def _delete_directories(io_api, root_dir="/"):
     if root_dir[-1] != "/":
