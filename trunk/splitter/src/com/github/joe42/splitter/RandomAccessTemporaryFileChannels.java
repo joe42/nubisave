@@ -19,5 +19,6 @@ public class RandomAccessTemporaryFileChannels {
 	public void delete(String key){
 		tempMap.get(key).delete();
 		tempMap.remove(key);
+		assert tempMap.get(key) == null;
 	}
 }

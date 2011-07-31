@@ -125,6 +125,7 @@ public class ConcurrentMultipleFileHandler implements MultipleFileHandler{
 						int len = (int) file.length();
 						if(len < 0){
 							log.error("file length returned must not be negative, but is:"+len);
+							return null;
 						} 
 						ret = new byte[(int) file.length()];
 						if(len == 0){

@@ -158,7 +158,6 @@ public class Splitter implements Filesystem1 {
 		stat.mtime = entry.mtime;
 		stat.ctime = entry.ctime;
 		stat.blocks = (int) ((stat.size + 511L) / 512L);
-		System.out.println("gotattr");
 
 		return stat;
 	}

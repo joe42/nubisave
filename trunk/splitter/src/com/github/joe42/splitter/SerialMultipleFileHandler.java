@@ -7,8 +7,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.*;
 
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+
 public class SerialMultipleFileHandler implements MultipleFileHandler {
+	private static final Logger  log = Logger.getLogger("concurrent multiple filehandler");
 	public SerialMultipleFileHandler() {
+		PropertyConfigurator.configure("log4j.properties");
 	}
 	public int writeFilesAsByteArrays(HashMap<String, byte[]> files){
 		int nr_of_files_written = 0;
@@ -41,8 +46,12 @@ public class SerialMultipleFileHandler implements MultipleFileHandler {
 		if(file_names == null || file_names.length == 0){
 			return ret;
 		}
+		byte[] file;
 		for (String file_name : file_names) {
-			ret.add(getFileAsByteArray(file_name));
+			file = getFileAsByteArray(file_name);
+			if(file != null){
+				ret.add(file);
+			}
 			if(ret.size() >= files_needed){
 				break;
 			}
@@ -59,7 +68,12 @@ public class SerialMultipleFileHandler implements MultipleFileHandler {
 		if (file.exists()) {
 			try {
 				FileInputStream in = new FileInputStream(file);
-				ret = new byte[(int) file.length()];
+				int len = (int) file.length();
+				if(len < 0){
+					log.error("file length returned must not be negative, but is:"+len);
+					return null;
+				} 
+				ret = new byte[len];
 				in.read(ret);
 				in.close();
 			} catch (IOException e) {

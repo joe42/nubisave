@@ -29,16 +29,22 @@ public class Test {
 	        bb2.put((byte) ('A' + i));
 		bb2.rewind();
 		///////////////////write to tmp at certain pos
-	    FileChannel wChannel2 = new RandomAccessFile(temp, "rw").getChannel();
-    	wChannel2.position(5);
-	    wChannel2.write(bb2);
-	    wChannel2.close();
+	    FileChannel wChannel3 = new RandomAccessFile(temp, "rw").getChannel();
+    	wChannel3.position(5);
+	    wChannel3.write(bb2); 
+		bb2.rewind();
+		///////////////////write to tmp at certain pos
+		wChannel3.position(wChannel3.size());
+		wChannel3.write(bb2);
+		wChannel3.close();
 	    //////////////////
 	    byte[] ret = null;
 		FileInputStream in = new FileInputStream(temp);
 		ret = new byte[(int) temp.length()];
 		in.read(ret);
 	    System.out.println("output: "+new String(ret));
+	    bb2.rewind();
+	    System.out.println("output: "+((ByteBuffer)bb2.flip()).asCharBuffer().get(0));
 	}
 
 }
