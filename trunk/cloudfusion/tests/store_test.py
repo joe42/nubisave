@@ -13,6 +13,7 @@ from dropbox import auth
 from ConfigParser import SafeConfigParser
 from cloudfusion.store.sugarsync.error_handling_sugarsync_store import ErrorHandlingSugarsyncStore
 import time
+import cloudfusion
 LOCAL_TESTFILE_PATH = "cloudfusion/tests/testfile"
 REMOTE_TESTDIR = "/testdir"
 REMOTE_MODIFIED_TESTDIR = REMOTE_TESTDIR+"/"+"testdir"
@@ -32,11 +33,11 @@ REMOTE_DELETED_FILE = REMOTE_TESTDIR+"/"+"i_am_a_file_which_is_deleted"
 REMOTE_DELETED_DIR = REMOTE_TESTDIR+"/"+"i_am_a_folder_which_is_deleted"
 
 def get_dropbox_config():
-    return auth.Authenticator.load_config("cloudfusion/config/dropbox_testing.ini")
+    return auth.Authenticator.load_config(os.path.dirname(cloudfusion.__file__)+'/config/dropbox_testing.ini")
 
 def get_sugarsync_config():
     config = SafeConfigParser()
-    config_file = open("cloudfusion/config/sugarsync_testing.ini", "r")
+    config_file = open(os.path.dirname(cloudfusion.__file__)+'/config/sugarsync_testing.ini", "r")
     config.readfp(config_file)
     return dict(config.items('auth'))
 

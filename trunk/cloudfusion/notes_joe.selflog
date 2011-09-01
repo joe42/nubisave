@@ -121,10 +121,44 @@ Mo:
 24.08.2011 14:50:08 - 24.08.2011 15:42:56
 24.08.2011 15:58:39 - 24.08.2011 16:20:39
 	what happens on mv from outside to inside?
-
+	Traceback (most recent call last):
+		  File "cloudfusion/fuse.py", line 301, in _wrapper_
+		    return func(*args, **kwargs) or 0
+		  File "cloudfusion/fuse.py", line 428, in readdir
+		    for item in self.operations('readdir', path, fip.contents.fh):
+		  File "cloudfusion/fuse.py", line 507, in __call__
+		    return getattr(self, op)(*args)
+		  File "cloudfusion/pyfusebox/configurable_pyfusebox.py", line 135, in readdir
+		    directories += self.store.get_directory_listing(path)
+		  File "cloudfusion/store/dropbox/dropbox_store.py", line 242, in get_directory_listing
+		    self._log_http_error("move", None, resp, msg)
+		  File "cloudfusion/store/dropbox/dropbox_store.py", line 261, in _log_http_error
+		    if hasattr(resp,"data") and 'error' in resp.data: # data does not exist, on get_file?
+		TypeError: argument of type 'NoneType' is not iterable
 	Added cache_expired_time parameter to constructors of MetadataCachingStore and CachingStore
 pyfusebox & splitter: release tmp file only on opening new file?
 configuration for better RAM vs. speed/network efficiency
+30+40+120+20+20+30+80+80+80+50+50
+25.08.2011 17:24:16 - 25.08.2011 17:55:03: 
+26.08.2011 00:05:35 - 26.08.2011 00:44:10:
+	26.08.2011 11:07:19 - 26.08.2011 13:08:20:
+		struggling with file io
+	26.08.2011 14:05:13 - 26.08.2011 14:25:51:
+	26.08.2011 16:26:10 - 26.08.2011 16:46:02:
+	26.08.2011 17:25:58 26.08.2011 17:59:27:
+		27.08.2011 14:03:41 - 27.08.2011 15:26:57:
+			27.08.2011 23:00:39 - 28.08.2011 00:26:22:
+				28.08.2011 15:01:27 -28.08.2011 15:48:39:
+				28.08.2011 22:23:01 - 29.08.2011 23:13:01
+		FuseStat stat = new FuseStat();
+	delete Splitter line245
+	virtual configuration files for Splitter
+
+
+
+
+
+
 
 make decorators a file subclass -> not possible because the name would be non writable again
 implement error handling

@@ -15,6 +15,7 @@ from cloudfusion.store.dropbox.file_decorator import NameableFile
 import tempfile
 import ConfigParser
 import StringIO
+import cloudfusion
 
 
 
@@ -39,13 +40,13 @@ class DropboxStore(Store):
         self._logging_handler = 'dropbox'
                 #TODO: check if is filehandler
         #Increment number after log file if this process is started multiple times
-        instream = open('cloudfusion/config/logging.conf')
+        instream = open(os.path.dirname(cloudfusion.__file__)+'/config/logging.conf')
         cp = ConfigParser.ConfigParser()
         cp.readfp(instream)
         section = "handler_%s_fileHandler" % self._logging_handler
         oldargs = eval(cp.get(section, "args"))
         logfile_nr=0
-        old_log_filename = log_filename = oldargs[0]
+        old_log_filename = log_filename = os.path.expanduser(oldargs[0])
         while os.path.isfile(log_filename):
             logfile_nr += 1
             log_filename = old_log_filename + str(logfile_nr)
@@ -57,8 +58,11 @@ class DropboxStore(Store):
         ###############################################################
         self.logger = logging.getLogger(self._logging_handler)
         self.dir_listing_cache = {}
+        self.logger.debug("get Authenticator")
         dba = auth.Authenticator(config)
+        self.logger.debug("get access_token")
         access_token = dba.obtain_trusted_access_token(config['user'], config['password'])
+        self.logger.debug("get DropboxClient")
         try:
             self.client = client.DropboxClient(config['server'], config['content_server'], config['port'], dba, access_token)
         except Exception, e:

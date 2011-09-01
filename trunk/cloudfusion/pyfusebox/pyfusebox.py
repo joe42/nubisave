@@ -3,10 +3,11 @@ from cloudfusion.store.store import NoSuchFilesytemObjectError,\
 import os, sys, stat,  time
 from errno import *
 from cloudfusion.fuse import FUSE, FuseOSError, Operations, LoggingMixIn
+import cloudfusion
 import tempfile
 import logging.config
 
-logging.config.fileConfig('cloudfusion/config/logging.conf')
+logging.config.fileConfig(os.path.dirname(cloudfusion.__file__)+'/config/logging.conf')
 
 # Specify what Fuse API use: 0.2
 #fuse.fuse_python_api = (0, 2)
@@ -43,7 +44,6 @@ class PyFuseBox(Operations):
         try:
             metadata = self.store._get_metadata(path)
         except:
-            print "noent"
             raise FuseOSError(ENOENT)
         st['st_atime']= metadata['modified']
         st['st_mtime']= metadata['modified']
@@ -58,10 +58,10 @@ class PyFuseBox(Operations):
             st['st_mode'] = 0777 | stat.S_IFREG
             st['st_size'] = metadata['bytes']
         st['st_blocks'] = (int) ((st['st_size'] + 4095L) / 4096L);
-        print "return in pyfusebox getattr"
         return st
     
     def open(self, path, flags):
+        self.logger.debug("open "+path+"")
         """self.logger.debug("open "+path+"")
         temp_file = tempfile.SpooledTemporaryFile()
         #self.temp_file = tempfile.SpooledTemporaryFile()

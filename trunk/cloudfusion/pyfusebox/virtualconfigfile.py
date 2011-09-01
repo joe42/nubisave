@@ -30,14 +30,13 @@ class VirtualConfigFile(VirtualFile):
         config.readfp(vtf)
         return dict(config.items('store'))
     
-    def __check_data(self, text):
-        """::returns: True iff text contains all necessary parameters in the right format and False otherwise."""
-        return True
+    #def __check_data(self, text):
+    #    """::returns: True iff text contains all necessary parameters in the right format and False otherwise."""
+    #    return True
 
-    
-    def write(self, buf, offset):
+    """def write(self, buf, offset):
         text_tmp = self.text[:offset]+buf+self.text[len(buf)+offset:] 
         if self.__check_data(text_tmp):
             self.text = text_tmp
             return len(buf)
-        return 0
+        return 0"""

@@ -14,9 +14,17 @@ Requirements
 Usage
 ---------------------
 
-To run the application make a directory mnt and call: 
+Make a directory for the logs:
 
-**python** *-m cloudfusion.pyfusebox.pyfusebox mnt* 
+**mkdir** *-p .cloudfusion/logs*
+
+Or instead change the logging configuration in cloudfusion/config/logging.conf to specify another location for log files.
+
+To run the application make a directory mnt and from your home directory call: 
+
+**python** *-m cloudfusion.main mnt "/configfilename"* 
+
+Now put the content of one of the ini files in cloudfusion/config with your own login data into mnt/configfilename.
 
 To unmount run the following in the same directory you ran the above command:
 

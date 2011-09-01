@@ -6,12 +6,16 @@ Created on 24.08.2011
 import os
 from cloudfusion.pyfusebox.pyfusebox import zstat
 import stat
-  
+import logging.config
+import cloudfusion
+logging.config.fileConfig(os.path.dirname(cloudfusion.__file__)+'/config/logging.conf')
+        
 class VirtualFile(object):
     INITIAL_TEXT="""
 Some virtual Text.
 """
     def __init__(self, path):
+        self.logger = logging.getLogger('pyfusebox')
         self.path = path
         self.stats = zstat()
         self.text = self.INITIAL_TEXT
@@ -31,7 +35,9 @@ Some virtual Text.
     def read(self, size, offset):
         return self.text[offset: offset+size]
     def write(self, buf, offset):
-        self.text_tmp = self.text[:offset]+buf+self.text[len(buf)+offset:] 
+        self.logger.debug("write %s to %s" % (buf,offset))
+        self.text = self.text[:offset]+buf+self.text[len(buf)+offset:] 
+        self.logger.debug("wrote %s bytes starting with %s..." % (len(buf), self.text[0:30]))
         return len(buf)
     def get_dir(self):
         return os.path.dirname(self.path)

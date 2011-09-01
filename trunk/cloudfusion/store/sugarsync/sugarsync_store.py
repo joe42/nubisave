@@ -17,7 +17,6 @@ import tempfile
 import httplib
 import xml.dom.minidom as dom
         
-logging.config.fileConfig('cloudfusion/config/logging.conf')
 
  
 class SugarsyncStore(Store):
