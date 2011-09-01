@@ -1,4 +1,4 @@
-package com.github.joe42.splitter;
+package com.github.joe42.splitter.util.file;
 
 import java.io.*;
 import java.util.*;

@@ -1,4 +1,4 @@
-package com.github.joe42.splitter;
+package com.github.joe42.splitter.util.file;
 
 import java.nio.channels.FileChannel;
 import java.util.HashMap;
@@ -15,6 +15,11 @@ public class RandomAccessTemporaryFileChannels {
 		if(tempMap.get(key) == null)
 			return null;
 		return tempMap.get(key).getChannel();
+	}
+	public FileChannel getFileChannel(String key, long position){
+		if(tempMap.get(key) == null)
+			return null;
+		return tempMap.get(key).getChannel(position);
 	}
 	public void delete(String key){
 		tempMap.get(key).delete();

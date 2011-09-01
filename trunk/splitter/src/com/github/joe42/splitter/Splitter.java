@@ -1,53 +1,47 @@
 package com.github.joe42.splitter;
 
-import fuse.*;
-import fuse.compat.Filesystem1;
-import fuse.compat.FuseDirEnt;
-import fuse.compat.FuseStat;
-import fuse.zipfs.util.Tree;
-
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.RandomAccessFile;
-import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import jdbm.RecordManager;
 import jdbm.RecordManagerFactory;
 import jdbm.helper.FastIterator;
-import jdbm.helper.Serializer;
 import jdbm.htree.HTree;
 
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.util.encoders.Hex;
 import org.jigdfs.ida.base.InformationDispersalCodec;
 import org.jigdfs.ida.base.InformationDispersalDecoder;
 import org.jigdfs.ida.base.InformationDispersalEncoder;
-
 import org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalCodec;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import com.github.joe42.splitter.util.StringUtil;
+import com.github.joe42.splitter.util.file.ConcurrentMultipleFileHandler;
+import com.github.joe42.splitter.util.file.MultipleFileHandler;
+import com.github.joe42.splitter.util.file.RandomAccessTemporaryFileChannel;
+import com.github.joe42.splitter.util.file.RandomAccessTemporaryFileChannels;
+import com.github.joe42.splitter.vtf.Entry;
+import com.github.joe42.splitter.vtf.FileEntry;
+import com.github.joe42.splitter.vtf.FolderEntry;
+import com.github.joe42.splitter.vtf.VirtualFileContainer;
+
+import fuse.FuseException;
+import fuse.FuseFtype;
+import fuse.FuseMount;
+import fuse.FuseStatfs;
+import fuse.compat.Filesystem1;
+import fuse.compat.FuseDirEnt;
+import fuse.compat.FuseStat;
 
 //TODO: add copyright
 //Parallel read: done
@@ -72,11 +66,13 @@ public class Splitter implements Filesystem1 {
 
 	private FuseStatfs statfs;
 
-	private String storages;
+	protected String storages;
 
-	private int redundancy;
+	protected int redundancy;
 
 	private RandomAccessTemporaryFileChannel tempReadChannel;
+
+	private VirtualFileContainer virtualFileContainer;
 
 	public Splitter(String storages, int redundancy) throws IOException {
 		// .config###/
@@ -149,7 +145,7 @@ public class Splitter implements Filesystem1 {
 		if (entry == null)
 			throw new FuseException("No Such Entry")
 					.initErrno(FuseException.ENOENT);
-
+		//TODO: tidy up
 		stat.nlink = entry.nlink;
 		stat.uid = entry.uid;
 		stat.gid = entry.gid;
@@ -163,6 +159,7 @@ public class Splitter implements Filesystem1 {
 	}
 
 	public FuseDirEnt[] getdir(String path) throws FuseException {
+		//TODO: tidy up
 		FastIterator pathes;
 		try {
 			if (filemap.get(path) != null)
@@ -238,8 +235,6 @@ public class Splitter implements Filesystem1 {
 	public void mknod(String path, int mode, int rdev) throws FuseException {
 
 		try {
-			File temp = File.createTempFile(path + "longer", ".tmp");
-			temp.deleteOnExit();
 			tempFiles.putNewFileChannel(path);
 			filemap.put(path, new FileEntry());
 			recman.commit();
@@ -247,7 +242,7 @@ public class Splitter implements Filesystem1 {
 			throw new FuseException("IO Exception on accessing metadata")
 					.initErrno(FuseException.EIO);
 		}
-		splitFile(path); //kann man nicht rausnehmen
+		splitFile(path); //kann man nicht rausnehmen (vielleicht doch; Dropbox 400 Error bei leeren Dateien ist gefixed)
 	}
 
 	public void open(String path, int flags) throws FuseException {
@@ -339,7 +334,7 @@ public class Splitter implements Filesystem1 {
 	}
 
 	public void symlink(String from, String to) throws FuseException {
-		throw new FuseException("Read Only").initErrno(FuseException.EACCES);
+		throw new FuseException("Read Only").initErrno(FuseException.EOPNOTSUPP);
 	}
 
 	public void truncate(String path, long size) throws FuseException {
@@ -607,18 +602,17 @@ public class Splitter implements Filesystem1 {
 	// Java entry point
 
 	public static void main(String[] args) {
-		if (args.length < 5) {
+		if (args.length < 4) {
 			System.out
-					.println("Must specify mountpoint folder_with_storage_mountpoints redundancy_level_in_percent_from_0_to_100");
+					.println("Must specify mountpoint folder_with_storage_mountpoints");
 			System.exit(-1);
 		}
 
-		String fuseArgs[] = new String[args.length-2];
+		String fuseArgs[] = new String[args.length-1];
 		System.arraycopy(args, 0, fuseArgs, 0, fuseArgs.length);
 		// System.out.println(fuseArgs[0]);
 		try {
-			FuseMount.mount(fuseArgs, new Splitter(args[3], Integer
-					.parseInt(args[4])));
+			FuseMount.mount(fuseArgs, new ConfigurableSplitter(args[3]));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

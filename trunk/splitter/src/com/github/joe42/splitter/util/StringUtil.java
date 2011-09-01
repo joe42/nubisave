@@ -1,4 +1,4 @@
-package com.github.joe42.splitter;
+package com.github.joe42.splitter.util;
 
 import java.nio.*;
 import java.nio.charset.*;
@@ -32,6 +32,42 @@ public class StringUtil {
 		String res;
 		res = filterNonAscii(inString)+string_uid++;
 		return res;	
+	}
+
+	public static String getUTF8FromByteBuffer(ByteBuffer bb) {
+		Charset charset = Charset.forName("UTF-8");
+		CharsetDecoder decoder = charset.newDecoder();
+		try {
+			return decoder.decode(bb).toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static ByteBuffer getByteBufferFromUTF8(String str) {
+		Charset charset = Charset.forName("UTF-8");
+		CharsetEncoder encoder = charset.newEncoder();
+		try {
+			return encoder.encode(CharBuffer.wrap(str));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static void writeUTF8StringToByteBuffer(String str, ByteBuffer bb) {
+		Charset charset = Charset.forName("UTF-8");
+		CharsetEncoder encoder = charset.newEncoder();
+		CharBuffer in = CharBuffer.wrap(str);
+		try {
+			encoder.encode(in, bb, true);
+			return;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		bb = null;
+		return;
 	}
 
 }
