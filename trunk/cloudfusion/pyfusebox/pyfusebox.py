@@ -32,7 +32,6 @@ class PyFuseBox(Operations):
         self.temp_file = {}
         self.read_temp_file = {}
         self.store = store
-        self.f = open('fuselog', 'w')
         self.logger = logging.getLogger('pyfusebox')
         self.logger.info("PyFuseBox initialized")
 
@@ -43,7 +42,8 @@ class PyFuseBox(Operations):
         st = zstat()
         try:
             metadata = self.store._get_metadata(path)
-        except: 
+        except:
+            print "noent"
             raise FuseOSError(ENOENT)
         st['st_atime']= metadata['modified']
         st['st_mtime']= metadata['modified']
@@ -58,6 +58,7 @@ class PyFuseBox(Operations):
             st['st_mode'] = 0777 | stat.S_IFREG
             st['st_size'] = metadata['bytes']
         st['st_blocks'] = (int) ((st['st_size'] + 4095L) / 4096L);
+        print "return in pyfusebox getattr"
         return st
     
     def open(self, path, flags):
@@ -126,6 +127,7 @@ class PyFuseBox(Operations):
     def rename(self, old, new):
         self.logger.debug("rename %s to %s" % (old, new))
         self.store.move(old, new)
+        return 0
 
     def create(self, path, mode):
         self.logger.debug("create %s with mode %s" % (path, str(mode)))

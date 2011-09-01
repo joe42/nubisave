@@ -19,12 +19,12 @@ import logging
 """Wrapped store needs a logger as an attribute called logger """
 
 class CachingStore(Store):
-    def __init__(self, store):
+    def __init__(self, store, cache_expiration_time):
         self.store = store
         self.logger = logging.getLogger(self.get_logging_handler())
         self.logger.debug("creating CachingStore object")
 #        self.temp_file = tempfile.SpooledTemporaryFile()
-        self.entries = Cache(10*60)
+        self.entries = Cache(cache_expiration_time)
     
     def _is_valid_path(self, path):
         return self.store._is_valid_path(path)

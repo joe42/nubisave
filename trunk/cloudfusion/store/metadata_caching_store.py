@@ -37,12 +37,12 @@ class Entry(object):
 #class Entries(Cache):
         
 class MetadataCachingStore(Store):
-    def __init__(self, store):
+    def __init__(self, store, cache_expiration_time):
         self.store = store
         self.logger = logging.getLogger(self.get_logging_handler())
         self.logger.debug("creating MetadataCachingStore object")
-        self.entries = Cache(10)
-        self.store_metadata = Cache(10)
+        self.entries = Cache(cache_expiration_time)
+        self.store_metadata = Cache(cache_expiration_time)
     
     def _is_valid_path(self, path):
         return self.store._is_valid_path(path)
