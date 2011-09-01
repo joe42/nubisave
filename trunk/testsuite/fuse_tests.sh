@@ -84,6 +84,10 @@ rm "$path"
 ##########################################################
 echo "Appending to non empty file and reading"
 ##########################################################
+if [ -f "$path" ]
+then
+    echo "Error: File does exists."
+fi
 echo $short >> "$path" 
 if [ ! -f "$path" ]
 then
