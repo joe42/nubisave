@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" >
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="author" content="" />
+	<meta name="keywords" content="" />
+	<meta name="description" content="" />
+	<meta name="robots" content="all" />
+	<title>NubiSave</title>
+	<style type="text/css" media="all">
+		@import "main.css";
+	</style>
+</head>
+<body>
+<div id="body">
+	<div id="head">
+		<h1>NubiSave - Cloud Storage Dispersal Controller</h1>
+		<h2>Distributed secure data storage over optimal clouds for desktop users</h2>
+	</div>
+	<div id="menu">
+		<a href='index.html'>Home</a>
+		<a href='install.html'>Install</a>
+		<a href='learn.html'>Learn</a>
+		<a href='verify.html'>Verify</a>
+		<a href='join.html'>Join</a>
+	</div>
+	<div id="content">
+		<div class="section">
+			<h1>Learn how it works</h1>
+			A scientific publication about the goals, concepts and architecture decisions behind NubiSave as well as its
+			remaining limitations has been submitted and accepted for publication at the
+			<a href="http://www.cloudbus.org/ucc2011/">4th IEEE International Conference on Utility and Cloud Computing</a> in December 2011:
+			<ul>
+			<li>J. Spillner, G. Bombach, S. Matthischke, J. Müller, R. Tzschichholz, A. Schill: Information Dispersion over Redundant Arrays of Optimal Cloud Storage for Desktop Users
+			(read <a href="downloads/dispersal-raoc-nubisave.pdf">preprint</a>)</li>
+			</ul>
+			For a less technical explanation, please read the background information below.
+		</div>
+		<div class="section">
+			<h2>Motivation</h2>
+			Mozilla's "take back the web" applied to cloud computing means "take back data sovereignty"!
+			NubiSave is designed to achieve exactly this by establishing a local cloud storage controller within the realm
+			of the user - either directly as backup user, or as administrator responsible for securing the data of a group of people.
+		</div>
+		<div class="section">
+			<h2>Technical Background</h2>
+			Storing data locally on disks which are subject to breakage, theft and technical restrictions in capacity and performance
+			has led to sophisticated concepts for encryption and for connecting disks as striped (RAID-0), fully redundant (RAID-1) or
+			error-coding redundant (e.g. RAID-5) arrays.
+			In the cloud, however, users entrust all of their data to a single storage provider, either with encryption, or without.
+			Even encrypted cloud storage is still subject to unauthorised storage area access, deletion and brute-force attacks on the encryption.
+			Data dispersal (RAIC-n for n &gt;= 1) is the concept of ensuring that each provider only gets a part of the data, while at the same time
+			reaching higher long-term availability and access performance. NubiSave introduces RAOC-n for optimally selected storage providers
+			over which a RAIC-n is constructed.
+		</div>
+	</div>
+	<div id="foot">
+		Design based on <a href="http://www.oswd.org/design/information/id/3561">AgooHttp</a> by <a href="http://www.oswd.org/user/profile/id/7850">LocaWapp</a>
+	</div>
+</div>
+</body>
+</html>
