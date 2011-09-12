@@ -38,9 +38,9 @@ sudo cp services/CloudQoS.wsml $ontologiepath
 
 echo
 echo
-echo "Installiere openJDK"
+echo "Installiere Entwicklerpakete (openJDK, FUSE, ...)"
 
-sudo apt-get install openjdk-6-jdk
+sudo apt-get install openjdk-6-jdk libfuse-dev python-simplejson
 
 echo
 echo

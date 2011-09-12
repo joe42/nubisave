@@ -6,34 +6,37 @@ echo "~/.cache/nubisave/storages/storage01"
 echo "~/.cache/nubisave/storages/storage02"
 echo "~/.cache/nubisave/storages/storage03"
 
-echo -n "Cloud-Services in Mountpoints hängen?j/N"
+# FIXME: find out why this is needed here
+mkdir -p .cloudfusion/logs
 
-read antwort
-if [ $antwort == "j" ] 
-  then
-   for mount in mount_script/mount_*.sh ; do 
-      mountname=$( basename "$mount")
-      echo "Mounte CloudStorage :    $mountname"
-      echo "-------------------------------------------"
-      bash ./$mount
-     done  
+read -p "Cloud-Services in Mountpoints hängen? (j/N) " antwort
+
+if [ $antwort == "j" ]
+then
+	for mount in mount_script/mount_*.sh
+	do
+		mountname=$(basename "$mount")
+		echo "-------------------------------------------"
+		echo "Mounte CloudStorage :    $mountname"
+		bash ./$mount
+	done
 else
-echo "Ohne Sample-Mounts weiter"
+	echo "Ohne Sample-Mounts weiter"
 fi
 
 echo "Starten des Core-Moduls"
 
-sudo umount /home/demo/nubisave 
+sudo umount ~/nubisave
 
-./splitter_mount.sh >> /dev/null 2>/dev/null& 
+./splitter_mount.sh >> /dev/null 2>/dev/null &
 
-echo "CloudStorage Anbieter konfigurieren?"
-read antwort
-if [ $antwort == "j" ] 
-  then
-   cd bin/
-   java -jar Nubisave.jar
-   cd ..
+read -p "CloudStorage Anbieter konfigurieren? (j/N) " antwort
+
+if [ $antwort == "j" ]
+then
+	cd bin/
+	java -jar Nubisave.jar
+	cd ..
 fi
 
 echo "Nubisave erfolgreich gestartet"
