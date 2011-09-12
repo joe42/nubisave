@@ -29,7 +29,7 @@ for service in services/CloudServices/*.wsml; do
 done
 
 #ontologiepath=`find /var/lib 2>/dev/null | grep Matchmaker/ontologies | head -n 1 `cloud
-ontologiepath=/var/lib/tomcat6/Matchmaker/ontologies/
+ontologiepath=/var/lib/tomcat6/webapps/Matchmaker/ontologies/
 
 echo
 echo
