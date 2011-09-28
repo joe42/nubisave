@@ -1,5 +1,9 @@
 #!/bin/bash
 
+scriptpath=`readlink -f $0`
+scriptloc=`dirname $scriptpath`
+cd $scriptloc
+
 echo "Start von nubisave"
 echo "Files werden auf 3 Ordner gesplittet"
 echo "~/.cache/nubisave/storages/storage01"
@@ -26,7 +30,7 @@ fi
 
 echo "Starten des Core-Moduls"
 
-sudo umount ~/nubisave
+sudo umount ~/nubisave 2>&dev/null
 
 ./splitter_mount.sh >> /dev/null 2>/dev/null &
 
