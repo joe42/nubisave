@@ -15,7 +15,7 @@ mkdir -p .cloudfusion/logs
 
 read -p "Cloud-Services in Mountpoints hängen? (j/N) " antwort
 
-if [ $antwort == "j" ]
+if [ "$antwort" == "j" ]
 then
 	for mount in mount_script/mount_*.sh
 	do
@@ -30,13 +30,13 @@ fi
 
 echo "Starten des Core-Moduls"
 
-sudo umount ~/nubisave 2>&dev/null
+sudo umount ~/nubisave 2>/dev/null
 
 ./splitter_mount.sh >> /dev/null 2>/dev/null &
 
 read -p "CloudStorage Anbieter konfigurieren? (j/N) " antwort
 
-if [ $antwort == "j" ]
+if [ "$antwort" == "j" ]
 then
 	cd bin/
 	java -jar Nubisave.jar

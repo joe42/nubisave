@@ -9,7 +9,7 @@ fi
 
 read -p "SPACE-Plattformdienste installieren? (j/N) " antwort
 
-if [ $antwort == "j" ]
+if [ "$antwort" == "j" ]
 then
 	sudo bash -c "echo 'deb http://serviceplatform.org/packages/ ./' >> /etc/apt/sources.list.d/space.list"
 	sudo apt-get update
@@ -56,7 +56,7 @@ echo
 echo
 read -p "Möchten Sie Beispiel-Services mounten und Nubisave starten? [start.sh] (j/N) " antwort
 
-if [ $antwort == "j" ]
+if [ "$antwort" == "j" ]
 then
 	bash ./start.sh
 fi
