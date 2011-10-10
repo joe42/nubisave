@@ -17,7 +17,7 @@ public class VirtualRealFile extends VirtualFile {
 	}
 	public FuseStat getAttr(){
 		FileEntry entry = getFileEntry();
-		entry.size = (int) realFile.length();
+		entry.size = (int) realFile.length()*2;
 		return entry.getFuseStat(); 
 	}
 	public void truncate(){
@@ -34,7 +34,12 @@ public class VirtualRealFile extends VirtualFile {
 	public void read(ByteBuffer buf, long offset) {
 		String text = FileUtil.readFile(realFile);
 		CharBuffer cbuf = buf.asCharBuffer();
-		cbuf.put(text.substring((int) offset, buf.limit()));
+		int limit = text.length();
+		if(text.length()>buf.limit()){
+			limit = buf.limit();
+		}
+		cbuf.put(text.substring((int) offset, limit));
+		buf.position(limit*2);
 	}
 
 	public void write(ByteBuffer buf, long offset) {

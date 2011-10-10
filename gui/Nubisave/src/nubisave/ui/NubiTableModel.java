@@ -13,12 +13,12 @@ import nubisave.*;
  */
 public class NubiTableModel extends AbstractTableModel {
 
-    private final String headers[] = {"Use", "Type", "Description", "Edit", "Remove"};
+    private final String headers[] = {"Use", "Type", "Description", "Edit", "Remove", "Mounted"};
     private Class[] types = new Class[]{
-        java.lang.Boolean.class, java.lang.String.class, java.lang.String.class, javax.swing.JButton.class,javax.swing.JButton.class
+        java.lang.Boolean.class, java.lang.String.class, java.lang.String.class, javax.swing.JButton.class,javax.swing.JButton.class, java.lang.Boolean.class
     };
     private boolean[] canEdit = new boolean[]{
-        true, false, false, true,true
+        true, false, false, true,true,true
     };
 
     @Override
@@ -32,7 +32,7 @@ public class NubiTableModel extends AbstractTableModel {
 
     @Override
     public int getColumnCount() {
-        return 5;
+        return headers.length;
     }
 
     @Override
@@ -95,6 +95,8 @@ public class NubiTableModel extends AbstractTableModel {
                 }
             case 4:
                 return "remove";
+            case 5:
+                return Nubisave.mainSplitter.isModuleMounted(Nubisave.services.get(i));
         }
 
         return null;
@@ -104,6 +106,9 @@ public class NubiTableModel extends AbstractTableModel {
     public void setValueAt(Object o,int row,int column) {
         if (column == 0) {
             Nubisave.services.get(row).setEnabled(((Boolean)o).booleanValue());
+        }
+        if (column == 5) {
+            Nubisave.mainSplitter.mountStorageModule(Nubisave.services.get(row));
         }
     }
 }

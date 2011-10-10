@@ -39,28 +39,11 @@ class DropboxStore(Store):
     def __init__(self, config):
         self._logging_handler = 'dropbox'
                 #TODO: check if is filehandler
-        #Increment number after log file if this process is started multiple times
-        instream = open(os.path.dirname(cloudfusion.__file__)+'/config/logging.conf')
-        cp = ConfigParser.ConfigParser()
-        cp.readfp(instream)
-        section = "handler_%s_fileHandler" % self._logging_handler
-        oldargs = eval(cp.get(section, "args"))
-        logfile_nr=0
-        old_log_filename = log_filename = os.path.expanduser(oldargs[0])
-        while os.path.isfile(log_filename):
-            logfile_nr += 1
-            log_filename = old_log_filename + str(logfile_nr)
-        cp.set(section, "args", (log_filename,) ) 
-        outstream = StringIO.StringIO()
-        cp.write(outstream)
-        outstream.seek(0) 
-        logging.config.fileConfig(outstream)
-        ###############################################################
         self.logger = logging.getLogger(self._logging_handler)
         self.dir_listing_cache = {}
         self.logger.debug("get Authenticator")
         dba = auth.Authenticator(config)
-        self.logger.debug("get access_token")
+        self.logger.debug("get access_token: for: "+config['user']+" "+ config['password'])
         access_token = dba.obtain_trusted_access_token(config['user'], config['password'])
         self.logger.debug("get DropboxClient")
         try:

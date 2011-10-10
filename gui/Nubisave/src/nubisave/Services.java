@@ -35,6 +35,15 @@ public class Services {
         return mmServices;
     }
 
+    public MatchmakerService getMmService(String name) {
+        for(MatchmakerService s: mmServices){
+            if(s.getName().equals(name)){
+                return s;
+            }
+        }
+        return null;
+    }
+
     public StorageService get(int i) {
         if (i < 0) {
             return null;

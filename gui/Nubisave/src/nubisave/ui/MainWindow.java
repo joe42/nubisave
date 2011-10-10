@@ -13,6 +13,8 @@ package nubisave.ui;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JCheckBox;
@@ -35,11 +37,10 @@ public class MainWindow extends javax.swing.JFrame {
         providerTable.getColumn("Edit").setCellEditor(new ButtonEditor(new JCheckBox(), this));
         providerTable.getColumn("Remove").setCellRenderer(new ButtonRenderer());
         providerTable.getColumn("Remove").setCellEditor(new ButtonEditor(new JCheckBox(), this));
+        providerTable.getColumn("Remove").setCellEditor(new ButtonEditor(new JCheckBox(), this));
         
-        String mntPoint = Properties.getProperty("mntPoint");
-        if (mntPoint == null) {
-            mntPoint = "";
-        }
+        String mntPoint = Properties.getProperty("splitter_mountpoint");
+
         mntDirTxtField.setText(mntPoint);
 
         String redundancyStr = Properties.getProperty("redundancy");
@@ -50,21 +51,9 @@ public class MainWindow extends javax.swing.JFrame {
         redundancySlider.setValue(redundancy);
         //matchmakerURIField.setText(Properties.getProperty("matchmakerURI"));
 
-        if (!mounter.isMounted(new File(mntPoint))) {
-            String[] options = {"No", "Mount"};
-            int n = JOptionPane.showOptionDialog(this,
-                    "Nubisave not mounted. Mount in '" + mntPoint + "'?",
-                    "Mount Nubisave?",
-                    JOptionPane.YES_NO_OPTION,
-                    JOptionPane.QUESTION_MESSAGE,
-                    null,
-                    options,
-                    options[1]);
-            if (n == 1) {
-                mounter.mount();
-            }
+        if (!Nubisave.mainSplitter.isMounted()) {
+            JOptionPane.showMessageDialog(null, "Nubisave is not mounted.", "Mount Error", JOptionPane.ERROR_MESSAGE);
         }
-        mountBtn.setText((mounter.isMounted(new File(mntPoint))) ? "Unmount" : "Mount");
     }
 
     /** This method is called from within the constructor to
@@ -84,22 +73,21 @@ public class MainWindow extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        applyBtn = new javax.swing.JButton();
-        mountBtn = new javax.swing.JButton();
         optionPanel = new javax.swing.JPanel();
         mntDirTxtField = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         redundancySlider = new javax.swing.JSlider();
         jLabel3 = new javax.swing.JLabel();
-        mntDirOpenBtn = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Nubisave");
 
         providerTable.setModel(tableModel);
+        providerTable.setColumnSelectionAllowed(true);
         providerTable.setRowHeight(30);
         jScrollPane1.setViewportView(providerTable);
+        providerTable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
 
         jButton1.setText("Service");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -126,67 +114,41 @@ public class MainWindow extends javax.swing.JFrame {
 
         jLabel1.setText("add by:");
 
-        applyBtn.setText("Apply");
-        applyBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                applyBtnActionPerformed(evt);
-            }
-        });
-
-        mountBtn.setText("Mount");
-        mountBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mountBtnActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout providerPanelLayout = new javax.swing.GroupLayout(providerPanel);
         providerPanel.setLayout(providerPanelLayout);
         providerPanelLayout.setHorizontalGroup(
             providerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, providerPanelLayout.createSequentialGroup()
-                .addContainerGap(593, Short.MAX_VALUE)
-                .addComponent(mountBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 569, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(providerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButton3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)
+                    .addComponent(jLabel1))
                 .addContainerGap())
-            .addGroup(providerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, providerPanelLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 569, Short.MAX_VALUE)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addGroup(providerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jButton3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)
-                        .addComponent(jLabel1)
-                        .addComponent(applyBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addContainerGap()))
         );
         providerPanelLayout.setVerticalGroup(
             providerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, providerPanelLayout.createSequentialGroup()
-                .addContainerGap(325, Short.MAX_VALUE)
-                .addComponent(mountBtn)
-                .addGap(52, 52, 52))
-            .addGroup(providerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(providerPanelLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addGroup(providerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 383, Short.MAX_VALUE)
-                        .addGroup(providerPanelLayout.createSequentialGroup()
-                            .addComponent(jLabel1)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jButton1)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jButton2)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jButton3)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 227, Short.MAX_VALUE)
-                            .addComponent(applyBtn)))
-                    .addContainerGap()))
+            .addGroup(providerPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(providerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 383, Short.MAX_VALUE)
+                    .addGroup(providerPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton3)))
+                .addContainerGap())
         );
 
         jTabbedPane1.addTab("Provider", providerPanel);
 
+        mntDirTxtField.setEditable(false);
         mntDirTxtField.setText("mntDirTxtField");
         mntDirTxtField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -204,13 +166,6 @@ public class MainWindow extends javax.swing.JFrame {
         });
 
         jLabel3.setText("Redundancy");
-
-        mntDirOpenBtn.setText("...");
-        mntDirOpenBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mntDirOpenBtnActionPerformed(evt);
-            }
-        });
 
         jButton5.setText("open");
         jButton5.addActionListener(new java.awt.event.ActionListener() {
@@ -231,9 +186,7 @@ public class MainWindow extends javax.swing.JFrame {
                     .addComponent(jLabel3)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, optionPanelLayout.createSequentialGroup()
                         .addComponent(mntDirTxtField, javax.swing.GroupLayout.DEFAULT_SIZE, 603, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(mntDirOpenBtn)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(36, 36, 36)
                         .addComponent(jButton5)))
                 .addContainerGap())
         );
@@ -245,13 +198,12 @@ public class MainWindow extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(mntDirTxtField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton5)
-                    .addComponent(mntDirOpenBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jButton5))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(redundancySlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(250, Short.MAX_VALUE))
+                .addContainerGap(245, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Options", optionPanel);
@@ -285,56 +237,27 @@ public class MainWindow extends javax.swing.JFrame {
         addCstmDlg.setVisible(true);
     }//GEN-LAST:event_jButton3ActionPerformed
 
-    private void applyBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_applyBtnActionPerformed
-        CoreWriter writer = new CoreWriter();
-        writer.writeToCoreModule(Nubisave.services);
-        mounter.mountServices();
-    }//GEN-LAST:event_applyBtnActionPerformed
-
     private void mntDirTxtFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mntDirTxtFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_mntDirTxtFieldActionPerformed
 
-    private void mntDirOpenBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mntDirOpenBtnActionPerformed
-        final JFileChooser fc = new JFileChooser();
-        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        int returnVal = fc.showOpenDialog(this);
-
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            File dir = fc.getSelectedFile();
-
-            Properties.setProperty("mntPoint", dir.getPath());
-            mntDirTxtField.setText(dir.getPath());
-        }
-    }//GEN-LAST:event_mntDirOpenBtnActionPerformed
-
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         if (Desktop.isDesktopSupported()) {
             try {
-                Desktop.getDesktop().open(new File(Properties.getProperty("mntPoint")));
+                Desktop.getDesktop().open(new File(Nubisave.mainSplitter.getDataDir()));
             } catch (IOException ex) {
                 Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }//GEN-LAST:event_jButton5ActionPerformed
 
-    private void mountBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mountBtnActionPerformed
-        String mntPoint = Properties.getProperty("mntPoint");
-        if (mountBtn.getText().equals("Mount")) {
-            mounter.mount();
-        } else {
-            mounter.umountFuse(new File(mntPoint));
-        }
-        mountBtn.setText((mounter.isMounted(new File(mntPoint))) ? "Unmount" : "Mount");
-    }//GEN-LAST:event_mountBtnActionPerformed
-
     private void redundancySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_redundancySliderStateChanged
-        Properties.setProperty("redundancy", redundancySlider.getValue() + "");
+        Properties.setProperty("redundancy", String.valueOf(redundancySlider.getValue()));
+        Nubisave.mainSplitter.setRedundancy(redundancySlider.getValue());
     }//GEN-LAST:event_redundancySliderStateChanged
     public NubiTableModel tableModel;
     private Mounter mounter = new Mounter();
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton applyBtn;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
@@ -344,9 +267,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JButton mntDirOpenBtn;
     private javax.swing.JTextField mntDirTxtField;
-    private javax.swing.JButton mountBtn;
     private javax.swing.JPanel optionPanel;
     private javax.swing.JPanel providerPanel;
     private javax.swing.JTable providerTable;

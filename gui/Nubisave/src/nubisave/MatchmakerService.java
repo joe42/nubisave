@@ -10,8 +10,6 @@ package nubisave;
  */
 public class MatchmakerService extends StorageService {
 
-    private String user;
-    private String pass;
     
     private double ranking;
     private boolean satAvailability;
@@ -25,22 +23,6 @@ public class MatchmakerService extends StorageService {
     public MatchmakerService(String name) {
         super(name);
         super.setType(StorageType.MATCHMAKER);
-    }
-
-    public String getPass() {
-        return pass;
-    }
-
-    public void setPass(String pass) {
-        this.pass = pass;
-    }
-
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
     }
 
     public double getRanking() {

@@ -19,7 +19,7 @@ import nubisave.*;
 import nubisave.request.Searcher;
 
 /**
- *
+ * Dialog to search a service and add it as another backend storage service.
  * @author demo
  */
 public class AddServiceDialog extends javax.swing.JDialog {
