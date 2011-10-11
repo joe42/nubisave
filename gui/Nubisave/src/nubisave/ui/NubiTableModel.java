@@ -13,7 +13,7 @@ import nubisave.*;
  */
 public class NubiTableModel extends AbstractTableModel {
 
-    private final String headers[] = {"Use", "Type", "Description", "Edit", "Remove", "Mounted"};
+    private final String headers[] = {"Use", "Type", "Description", "Password", "Remove", "Mounted"};
     private Class[] types = new Class[]{
         java.lang.Boolean.class, java.lang.String.class, java.lang.String.class, javax.swing.JButton.class,javax.swing.JButton.class, java.lang.Boolean.class
     };

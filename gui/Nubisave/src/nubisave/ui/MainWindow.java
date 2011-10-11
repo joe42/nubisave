@@ -33,8 +33,8 @@ public class MainWindow extends javax.swing.JFrame {
         tableModel = new NubiTableModel();
         initComponents();
         providerTable.setDefaultRenderer(String.class, new ShowSupportedCellRenderer());
-        providerTable.getColumn("Edit").setCellRenderer(new ButtonRenderer());
-        providerTable.getColumn("Edit").setCellEditor(new ButtonEditor(new JCheckBox(), this));
+        providerTable.getColumn("Password").setCellRenderer(new ButtonRenderer());
+        providerTable.getColumn("Password").setCellEditor(new ButtonEditor(new JCheckBox(), this));
         providerTable.getColumn("Remove").setCellRenderer(new ButtonRenderer());
         providerTable.getColumn("Remove").setCellEditor(new ButtonEditor(new JCheckBox(), this));
         providerTable.getColumn("Remove").setCellEditor(new ButtonEditor(new JCheckBox(), this));

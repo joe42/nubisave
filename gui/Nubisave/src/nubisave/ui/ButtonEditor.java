@@ -68,7 +68,7 @@ public class ButtonEditor extends DefaultCellEditor {
                     String type = (String) owner.tableModel.getValueAt(row, 1);
                     if ("Service".equals(type)) {
                         MatchmakerService service = Nubisave.services.getMmServices().get(row);
-                        ServiceEditDialog editDialog = new ServiceEditDialog(owner, true, service);
+                        ServicePasswordDialog editDialog = new ServicePasswordDialog(owner, true, service);
                         editDialog.setTitle(service.getName());
                         editDialog.setVisible(true);
                     } else if ("Custom".equals(type)) {
