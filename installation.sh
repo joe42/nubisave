@@ -49,6 +49,12 @@ cd ..
 
 echo
 echo
+echo "Installation von CloudFusion"
+sudo python setup.py install
+
+
+echo
+echo
 echo -n "Möchten Sie Beispiel-Services mounten und Nubisave starten? [start.sh] j/n "
 read antwort 
 

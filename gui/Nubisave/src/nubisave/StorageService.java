@@ -13,7 +13,10 @@ import java.util.Random;
 public class StorageService {
     private boolean enabled;
     private boolean supported;
-    
+
+
+    private String user;
+    private String pass;
     private String name;
     private String uniqName;
     private StorageType type;
@@ -30,6 +33,22 @@ public class StorageService {
                 break;
             }
         }
+    }
+
+    public String getPass() {
+        return pass;
+    }
+
+    public void setPass(String pass) {
+        this.pass = pass;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
     }
 
     public boolean isEnabled() {
@@ -67,6 +86,6 @@ public class StorageService {
     public void setUniqName(String uniqName) {
         this.uniqName = uniqName;
     }
-    
+
     
 }

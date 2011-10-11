@@ -161,10 +161,10 @@ public class Splitter implements Filesystem1 {
 	public FuseDirEnt[] getdir(String path) throws FuseException {
 		//TODO: tidy up
 		FastIterator pathes;
-		try {
+		try {/*//should not occur
 			if (filemap.get(path) != null)
 				throw new FuseException("Not A Directory")
-						.initErrno(FuseException.ENOTDIR);
+						.initErrno(FuseException.ENOTDIR);*/
 			if (dirmap.get(path) == null)
 				throw new FuseException("No Such Entry")
 						.initErrno(FuseException.ENOENT);
@@ -255,7 +255,8 @@ public class Splitter implements Filesystem1 {
 
 	public void rename(String from, String to) throws FuseException {
 		if (from.equals(to))
-			return;
+			throw new FuseException("Entity"+to+" already exists.")
+				.initErrno(FuseException.EEXIST);
 		Entry entry = null;
 		HTree map = null;
 		try {
@@ -405,15 +406,30 @@ public class Splitter implements Filesystem1 {
 	}
 
 	private List<String> getFragmentStores() {
+		log.debug("getting fragment stores");
 		List<String> ret = new ArrayList<String>();
-		File f = new File(storages);
-		String[] folders = f.list();
+		File storageFolder = new File(storages);
+		File dataStorages;
+		String[] folders = storageFolder.list();
+		String[] dataFolders;
 		ret.clear();
 		if (folders == null) {
-			System.out.println(storages + " is not a directory!");
+			log.debug(storages + " is not a directory!");
 		} else {
 			for (int i = 0; i < folders.length; i++) {
-				ret.add(f.getAbsolutePath()+"/"+folders[i]);
+				log.debug("checking "+storageFolder.getAbsolutePath()+"/"+folders[i]);
+				dataStorages = new File(storageFolder.getAbsolutePath()+"/"+folders[i]);
+				dataFolders = dataStorages.list();
+				if (dataStorages == null) {
+					log.debug(storageFolder.getAbsolutePath()+"/"+folders[i] + " has no data directory!");
+				} else {
+					for (int j = 0; j < dataFolders.length;j++) {
+						if(dataFolders[j].equals("data")){
+							log.debug(dataStorages.getAbsolutePath()+"/data"+ " added");
+							ret.add(dataStorages.getAbsolutePath()+"/data");
+						}
+					}
+				}
 			}
 		}
 		return ret;
@@ -428,6 +444,7 @@ public class Splitter implements Filesystem1 {
 		HashMap<String, byte[]> fileParts = new HashMap<String, byte[]>();
 		List<String> fragmentStores = getFragmentStores();
 		MAX_FILE_FRAGMENTS = fragmentStores.size();
+		log.debug("MAX_FILE_FRAGMENTS:" + MAX_FILE_FRAGMENTS);
 		MAX_FILE_FRAGMENTS_NEEDED = (int) (MAX_FILE_FRAGMENTS *(100-redundancy) /100f); //100% redundancy -> only one file is enough to restore everything
 		if(MAX_FILE_FRAGMENTS_NEEDED <1){
 			MAX_FILE_FRAGMENTS_NEEDED=1;

@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author demo
+ * Obsolete
  */
 public class CoreWriter {
 
