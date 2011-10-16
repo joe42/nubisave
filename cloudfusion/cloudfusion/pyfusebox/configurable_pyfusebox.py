@@ -5,7 +5,9 @@ Created on 23.08.2011
 
 This FUSE module initializes the store at runtime when the user accesses the virtual file /.config/.###config### and writes the appropriate parameters to the file.
 '''
+
 from cloudfusion.pyfusebox.pyfusebox import *
+from cloudfusion.pyfusebox.flushing_pyfusebox import FlushingPyFuseBox
 from cloudfusion.pyfusebox.virtualconfigfile import VirtualConfigFile
 from cloudfusion.store.dropbox.dropbox_store import DropboxStore
 from cloudfusion.store.sugarsync.sugarsync_store import SugarsyncStore
@@ -13,7 +15,7 @@ from cloudfusion.store.caching_store import CachingStore
 from cloudfusion.store.metadata_caching_store import MetadataCachingStore
 
 
-class ConfigurablePyFuseBox(PyFuseBox):
+class ConfigurablePyFuseBox(FlushingPyFuseBox):
     VIRTUAL_CONFIG_FILE = '/config/config'
     DATA_FOLDER_PATH = "/data"
     def __init__(self, root):

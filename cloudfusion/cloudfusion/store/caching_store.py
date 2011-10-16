@@ -20,11 +20,23 @@ import logging
 
 class CachingStore(Store):
     def __init__(self, store, cache_expiration_time):
+        """":param store: the store whose access should be cached 
+            :param cache_expiration_time: the time in seconds until any cache entry is expired""" 
         self.store = store
         self.logger = logging.getLogger(self.get_logging_handler())
         self.logger.debug("creating CachingStore object")
 #        self.temp_file = tempfile.SpooledTemporaryFile()
+        self.cache_expiration_time = cache_expiration_time
+        self.time_of_last_flush = time.time()
         self.entries = Cache(cache_expiration_time)
+    
+    def get_cache_expiration_time(self):
+        """:returns: the time in seconds until any cache entry is expired"""
+        return self.cache_expiration_time;
+    
+    def get_time_of_last_flush(self):
+        """:returns: the most recent point of time at which the cache has been flushed"""
+        return self.time_of_last_flush;
     
     def _is_valid_path(self, path):
         return self.store._is_valid_path(path)
@@ -188,6 +200,7 @@ class CachingStore(Store):
     def flush(self):
         """ Writes all dirty  entries to the wrapped store."""
         self.logger.debug("flushing entries")
+        self.time_of_last_flush = time.time()
         for path in self.entries.get_keys():
             self.__flush(path)
             
