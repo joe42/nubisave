@@ -17,6 +17,7 @@ public class VirtualFile {
 	private FileEntry entry;
 	public VirtualFile(String path) {
 		this.path = path;
+		this.text = "";
 		entry = new FileEntry();
 	}
 	protected FileEntry getFileEntry(){

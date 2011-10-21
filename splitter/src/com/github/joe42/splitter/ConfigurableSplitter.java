@@ -12,6 +12,7 @@ import org.ini4j.Ini;
 
 import jdbm.helper.FastIterator;
 
+import com.github.joe42.splitter.backend.Mounter;
 import com.github.joe42.splitter.util.file.IniUtil;
 import com.github.joe42.splitter.vtf.*;
 
@@ -110,7 +111,21 @@ public class ConfigurableSplitter extends Splitter{
 		}
 		if (vtSplitterConfig.getPath().equals(path)){
 			configureSplitter();
+			return;
 		}
+		//Mount backend modules:
+		String configFileName = new File(path).getName();
+		Ini options = IniUtil.getIni(vtf.getText());
+		boolean mounted = Mounter.mount(storages+"/"+configFileName, options); 
+		if (mounted) {
+			VirtualFile toRemove = virtualFolder.get(path);
+			virtualFolder.remove(toRemove); 
+			virtualFolder.add(new VirtualRealFile(path, storages+"/"+configFileName+CONFIG_PATH));
+			return;
+		} else {
+			throw new FuseException("IO Exception on creating store.")
+			.initErrno(FuseException.EIO);
+        }
 	}
 
 	private void configureSplitter() {
@@ -136,39 +151,8 @@ public class ConfigurableSplitter extends Splitter{
 		}
 	}
 	
-	private boolean mountCloudfusionModule(String mountpoint){
-		Runtime rt = Runtime.getRuntime();
-		boolean successful;
-		try {
-			System.out.println("python -m cloudfusion.main "+mountpoint);
-			rt.exec("mkdir -p "+mountpoint);
-			rt.exec("mkdir -p .cloudfusion/logs");
-			rt.exec("python -m cloudfusion.main "+mountpoint);
-			successful = waitUntilLoaded(mountpoint+"/config/config");
-		} catch (IOException e) {
-			e.printStackTrace();
-			successful =  false;
-		}
-		return successful;
-	}
 	
-	private boolean waitUntilLoaded(String configFilePath) {
-		/** Waits at most 10 Seconds until the file configFilePath exists.
-		 * This method is used to determine if the CloudFusion module has been mounted successfully.
-		 *  @returns: True iff the file exists
-		 */
-		System.err.println(configFilePath);
-		File configFile = new File(configFilePath);
-		int timeUsed = 0;
-		while(!configFile.exists() && timeUsed < 1000*10){
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-			}
-			timeUsed += 500;
-		}
-		return configFile.exists();
-	}
+	
 	public void mknod(String path, int mode, int rdev) throws FuseException {
 		/** Makes new mountpoints at storages/foldername, where foldername is the filename of path.
 		 *  The configuration file for the module is present in the same directory as the Splitter's configuration file.
@@ -178,14 +162,8 @@ public class ConfigurableSplitter extends Splitter{
 		makeNewStorage &= vtSplitterConfig.getDir().equals(new File(path).getParent());
 		if (makeNewStorage) {
 			String configFileName = new File(path).getName();
-			//TODO: move mount logic to write and only create stub here to be recognized by getattr. Then also allow to mount other "Modules".
-			boolean mounted = mountCloudfusionModule(storages+"/"+configFileName);
-			if (mounted) {
-					virtualFolder.add(new VirtualRealFile(path, storages+"/"+configFileName+CONFIG_PATH));
-			} else {
-				throw new FuseException("IO Exception on creating CloudFusion store.")
-				.initErrno(FuseException.EIO);
-            }
+	        //TODO: move mount logic to write and only create stub here to be recognized by getattr. Then also allow to mount other "Modules".
+			virtualFolder.add(new VirtualFile(path));
             return;
 		}
 		if(path.equals(DATA_DIR) || virtualFolder.containsFile(path)){
