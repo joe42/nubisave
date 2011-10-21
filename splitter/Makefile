@@ -25,7 +25,7 @@ clean: java_clean jni_clean
 # Java part
 
 java_all: ${JAVASRC}
-	mkdir build
+	mkdir -p build
 	${JAVAC} -Xlint -source 5 -classpath "${BUILD_CLASSPATH}" -d build ${JAVASRC}
 
 java_clean:
