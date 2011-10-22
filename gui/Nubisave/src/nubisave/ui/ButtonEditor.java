@@ -64,10 +64,10 @@ public class ButtonEditor extends DefaultCellEditor {
         if (isPushed) {
 
             switch (column) {
-                case 3:
+                case 2:
                     String type = (String) owner.tableModel.getValueAt(row, 1);
                     if ("Service".equals(type)) {
-                        MatchmakerService service = Nubisave.services.getMmServices().get(row);
+                        StorageService service = Nubisave.services.getMmServices().get(row);
                         ServicePasswordDialog editDialog = new ServicePasswordDialog(owner, true, service);
                         editDialog.setTitle(service.getName());
                         editDialog.setVisible(true);
@@ -79,7 +79,7 @@ public class ButtonEditor extends DefaultCellEditor {
                         editDialog.setVisible(true);
                     }
                     break;
-                case 4:
+                case 3:
                     String desc = (String) owner.tableModel.getValueAt(row, 2);
                     String[] options = {"No", "Remove"};
                     int n = JOptionPane.showOptionDialog(owner,
@@ -91,7 +91,7 @@ public class ButtonEditor extends DefaultCellEditor {
                             options,
                             options[1]);
                     if (n == 1) {
-                        //new Mounter().umountService(Nubisave.services.get(row));
+                        Nubisave.mainSplitter.unmountStorageModule(Nubisave.services.get(row));
                         Nubisave.services.remove(row);
                         
                     }
@@ -101,7 +101,7 @@ public class ButtonEditor extends DefaultCellEditor {
         isPushed = false;
 
 
-        return new String(label);
+        return label;
     }
 
     @Override

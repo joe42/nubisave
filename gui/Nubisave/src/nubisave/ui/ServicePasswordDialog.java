@@ -10,7 +10,7 @@
  */
 package nubisave.ui;
 
-import nubisave.MatchmakerService;
+import nubisave.StorageService;
 
 /**
  *
@@ -18,7 +18,7 @@ import nubisave.MatchmakerService;
  */
 public class ServicePasswordDialog extends javax.swing.JDialog {
 
-    private MatchmakerService service;
+    private StorageService service;
     
     /** Creates new form ServiceEditDialog */
     public ServicePasswordDialog(java.awt.Frame parent, boolean modal) {
@@ -26,7 +26,7 @@ public class ServicePasswordDialog extends javax.swing.JDialog {
         initComponents();
     }
 
-    public ServicePasswordDialog(java.awt.Frame parent, boolean modal,MatchmakerService service) {
+    public ServicePasswordDialog(java.awt.Frame parent, boolean modal,StorageService service) {
         super(parent, modal);
         this.service = service;
         initComponents();

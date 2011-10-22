@@ -13,12 +13,13 @@ import nubisave.*;
  */
 public class NubiTableModel extends AbstractTableModel {
 
-    private final String headers[] = {"Use", "Type", "Description", "Password", "Remove", "Mounted"};
+    private final String headers[] = {"Type", "Description", "Password", "Remove", "Mounted"};
+    private enum Headers { TYPE, DESCRIPTION, PASSWORD, REMOVE, MOUNTED };
     private Class[] types = new Class[]{
-        java.lang.Boolean.class, java.lang.String.class, java.lang.String.class, javax.swing.JButton.class,javax.swing.JButton.class, java.lang.Boolean.class
+        java.lang.String.class, java.lang.String.class, javax.swing.JButton.class,javax.swing.JButton.class, java.lang.Boolean.class
     };
     private boolean[] canEdit = new boolean[]{
-        true, false, false, true,true,true
+        false, false, true,true,true
     };
 
     @Override
@@ -47,7 +48,7 @@ public class NubiTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        if (columnIndex == 4) {
+        if (columnIndex == Headers.PASSWORD.ordinal()) {
             return true;
         }
         return Nubisave.services.get(rowIndex).isSupported() && canEdit[columnIndex];
@@ -66,8 +67,6 @@ public class NubiTableModel extends AbstractTableModel {
 
         switch (j) {
             case 0:
-                return service.isEnabled();
-            case 1:
                 switch (service.getType()) {
                     case MATCHMAKER:
                         return "Service";
@@ -76,13 +75,13 @@ public class NubiTableModel extends AbstractTableModel {
                     case CUSTOM:
                         return "Custom";
                 }
-            case 2:
+            case 1:
                 return service.getName();
-            case 3:
+            case 2:
                 switch (service.getType()) {
                     case MATCHMAKER:
                         String label = "User/Passwd";
-                        MatchmakerService mmService = (MatchmakerService)service;
+                        StorageService mmService = (StorageService)service;
                         if (mmService.getUser() != null) {
                             if (mmService.getUser().length() > 0) {
                                 return label;
@@ -93,9 +92,9 @@ public class NubiTableModel extends AbstractTableModel {
                     case CUSTOM:
                         return "...";
                 }
-            case 4:
+            case 3:
                 return "remove";
-            case 5:
+            case 4:
                 return Nubisave.mainSplitter.isModuleMounted(Nubisave.services.get(i));
         }
 
@@ -104,10 +103,7 @@ public class NubiTableModel extends AbstractTableModel {
     
     @Override
     public void setValueAt(Object o,int row,int column) {
-        if (column == 0) {
-            Nubisave.services.get(row).setEnabled(((Boolean)o).booleanValue());
-        }
-        if (column == 5) {
+        if (column == Headers.MOUNTED.ordinal()) {
             Nubisave.mainSplitter.mountStorageModule(Nubisave.services.get(row));
         }
     }

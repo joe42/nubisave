@@ -11,7 +11,6 @@ import java.util.Random;
  * @author demo
  */
 public class StorageService {
-    private boolean enabled;
     private boolean supported;
 
 
@@ -24,12 +23,10 @@ public class StorageService {
     public StorageService(String name) {
         this.name = name;
         uniqName = name + new Random().nextInt(10000000);
-        enabled = false;
         supported = false;
         for (String s :Nubisave.supportedProvider) {
             if (s.equalsIgnoreCase(name)) {
                 supported = true;
-                enabled = true;
                 break;
             }
         }
@@ -51,12 +48,8 @@ public class StorageService {
         this.user = user;
     }
 
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    public void setSupported(boolean supported) {
+        this.supported = supported;
     }
  
     public String getName() {
