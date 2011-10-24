@@ -95,8 +95,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.979899"
-     inkscape:cx="349.31379"
-     inkscape:cy="816.8893"
+     inkscape:cx="331.13104"
+     inkscape:cy="837.09235"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -113,7 +113,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -293,7 +293,7 @@
          sodipodi:role="line"
          id="tspan3759"
          x="159.70953"
-         y="69.535744">              Architektur </tspan></text>
+         y="69.535744">         Architektur </tspan></text>
     <rect
        style="fill:#0000ff;fill-opacity:0;fill-rule:evenodd;stroke:#000000;stroke-width:1.11967218px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        id="rect7753"
@@ -541,7 +541,7 @@
        id="text3078"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
-         id="tspan3080"></tspan></text>
+         id="tspan3080" /></text>
     <rect
        style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.29475543px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        id="rect6636-3-8-61-5"
@@ -666,7 +666,7 @@
        id="text6273"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
-         id="tspan6275"></tspan></text>
+         id="tspan6275" /></text>
     <text
        xml:space="preserve"
        style="font-size:11px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
@@ -792,7 +792,7 @@
          sodipodi:role="line"
          id="tspan5571-2-8-5-6-1-7"
          x="630.88495"
-         y="405.66943">     Modul </tspan></text>
+         y="405.66943">   Frontend </tspan></text>
     <g
        transform="matrix(0.52369674,0,0,0.62929564,-240.0753,238.64134)"
        id="g5451-6"
@@ -863,7 +863,7 @@
          sodipodi:role="line"
          id="tspan5571-2-8-5-6-1-5"
          x="25.501106"
-         y="420.02588">Lokales </tspan><tspan
+         y="420.02588">Klassisches </tspan><tspan
          sodipodi:role="line"
          x="25.501106"
          y="434.76364"
@@ -995,5 +995,176 @@
        d="M 283.85286,407.88486 239.91123,375.05491"
        id="path8839"
        inkscape:connector-curvature="0" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:2.55655527px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="rect6636-3-8-61-1"
+       width="557.0415"
+       height="150.61819"
+       x="60.637959"
+       y="112.81438" />
+    <text
+       xml:space="preserve"
+       style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Microsoft JhengHei;-inkscape-font-specification:Microsoft JhengHei"
+       x="322.28864"
+       y="129.53915"
+       id="text5569-7-4-3-7-7"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan5571-2-8-5-56-40"
+         x="322.28864"
+         y="129.53915"
+         style="font-size:14px;font-weight:bold;-inkscape-font-specification:Microsoft JhengHei Bold">Legende</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:11.79021645000000100px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Microsoft JhengHei;-inkscape-font-specification:Microsoft JhengHei"
+       x="425.79269"
+       y="152.50932"
+       id="text5569-7-4-3-5-0-9-9"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan5571-2-8-5-6-1-7-9"
+         x="425.79269"
+         y="152.50932">     Modul: </tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:11.79021645000000100px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Microsoft JhengHei;-inkscape-font-specification:Microsoft JhengHei"
+       x="70.227539"
+       y="153.38666"
+       id="text5569-7-4-3-5-0-1-8"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="70.227539"
+         y="153.38666"
+         id="tspan7654-4">Klassisches Medium:</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:11.79021645px;font-style:oblique;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Microsoft JhengHei;-inkscape-font-specification:Microsoft JhengHei Oblique"
+       x="70.439056"
+       y="173.31897"
+       id="text5569-7-4-3-5-0-9-9-6"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan5571-2-8-5-6-1-7-9-4"
+         x="70.439056"
+         y="173.31897">-NFS,</tspan><tspan
+         sodipodi:role="line"
+         x="70.439056"
+         y="188.05675"
+         id="tspan3221">-RAM</tspan><tspan
+         sodipodi:role="line"
+         x="70.439056"
+         y="202.79451"
+         id="tspan3223">-Festplatte</tspan><tspan
+         sodipodi:role="line"
+         x="70.439056"
+         y="217.53229"
+         id="tspan3225">-SAMBA</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:11.79021645px;font-style:oblique;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Microsoft JhengHei;-inkscape-font-specification:Microsoft JhengHei Oblique"
+       x="439.76291"
+       y="173.7623"
+       id="text5569-7-4-3-5-0-9-9-6-0"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="439.76291"
+         y="173.7623"
+         id="tspan3225-9">-Splitter</tspan><tspan
+         sodipodi:role="line"
+         x="439.76291"
+         y="188.50008"
+         id="tspan3266">-Dropbox</tspan><tspan
+         sodipodi:role="line"
+         x="439.76291"
+         y="203.23784"
+         id="tspan3268">-SugerSync</tspan><tspan
+         sodipodi:role="line"
+         x="439.76291"
+         y="217.97562"
+         id="tspan3270">-davfs</tspan><tspan
+         sodipodi:role="line"
+         x="439.76291"
+         y="232.71338"
+         id="tspan3272">-SSHFS</tspan><tspan
+         sodipodi:role="line"
+         x="439.76291"
+         y="247.45116"
+         id="tspan3274">-gzip FS</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:11.79021645000000100px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Microsoft JhengHei;-inkscape-font-specification:Microsoft JhengHei"
+       x="530.06128"
+       y="152.9689"
+       id="text5569-7-4-3-5-0-9-9-2"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan5571-2-8-5-6-1-7-9-6"
+         x="530.06128"
+         y="152.9689">     Frontend: </tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:11.79021645px;font-style:oblique;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Microsoft JhengHei;-inkscape-font-specification:Microsoft JhengHei Oblique"
+       x="544.03149"
+       y="174.22188"
+       id="text5569-7-4-3-5-0-9-9-6-0-1"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="544.03149"
+         y="174.22188"
+         id="tspan3274-1">-WebDAV</tspan><tspan
+         sodipodi:role="line"
+         x="544.03149"
+         y="188.95966"
+         id="tspan3340">-FTP</tspan><tspan
+         sodipodi:role="line"
+         x="544.03149"
+         y="203.69742"
+         id="tspan3342">-HTTP</tspan><tspan
+         sodipodi:role="line"
+         x="544.03149"
+         y="218.4352"
+         id="tspan3344">-gzip FS</tspan><tspan
+         sodipodi:role="line"
+         x="544.03149"
+         y="233.17296"
+         id="tspan3346">-EncFS</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:11.79021645000000100px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Microsoft JhengHei;-inkscape-font-specification:Microsoft JhengHei"
+       x="219.95773"
+       y="154.17509"
+       id="text5569-7-4-3-5-0-1-8-2"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="219.95773"
+         y="154.17509"
+         id="tspan7654-4-1">Cloud Anbieter:</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:11.79021645px;font-style:oblique;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Microsoft JhengHei;-inkscape-font-specification:Microsoft JhengHei Oblique"
+       x="220.16925"
+       y="174.10741"
+       id="text5569-7-4-3-5-0-9-9-6-1"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="220.16925"
+         y="174.10741"
+         id="tspan3225-8">-Google</tspan><tspan
+         sodipodi:role="line"
+         x="220.16925"
+         y="188.84518"
+         id="tspan3393">-Amazon</tspan><tspan
+         sodipodi:role="line"
+         x="220.16925"
+         y="203.58295"
+         id="tspan3397">-Dropbox</tspan><tspan
+         sodipodi:role="line"
+         x="220.16925"
+         y="218.32072"
+         id="tspan3401">-SugarSync</tspan><tspan
+         sodipodi:role="line"
+         x="220.16925"
+         y="233.05849"
+         id="tspan3403">-OpenStack</tspan></text>
   </g>
 </svg>
