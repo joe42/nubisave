@@ -17,19 +17,34 @@ public class Mounter {
 		 * the command's parameter with the name mountpoint with mountpoint.
 		 * The execution should results in a FUSE module mounted so that its data can be accessed by folder mountpoint/data and 
 		 * a configuration file mountpoint/config/config.
-		 * @param mountpoint  the command executed should put a put the data directory and the config/config file into this folder
+		 * @param mountpoint  the command executed should put the data directory and the config/config file into this folder
 		 * @return true iff the file mountpoint/config/config exists  after at most 10 seconds
 		 * */
 		Runtime rt = Runtime.getRuntime();
 		boolean successful;
+		boolean isBackendModule = false;
+		try{
+			isBackendModule = mountOptions.get("splitter", "isbackendmodule", Boolean.class);
+		} catch(NullPointerException e){
+			System.out.println("Service is no backend module");
+		}
+		if(isBackendModule){
+			mountpoint = mountpoint+"/backend";	
+		}
 		String command = mountOptions.get("mounting", "command");
 		String substitutedCommand = "";
 		Map<String, String> substitutions = mountOptions.get("parameter");
 		for(String word: command.split(" ")){
 			if(word.equals("mountpoint")){
 				word = mountpoint;
-			} else if(substitutions != null && substitutions.containsKey(word)){
-				word = substitutions.get(word);
+			} else if(substitutions != null){
+				if( substitutions.containsKey(word) ){
+					if(word.startsWith("backendservice")){
+						word = mountpoint+"/backend/"+substitutions.get(word);
+					} else {
+						word = substitutions.get(word);
+					}
+				}
 			}
 			substitutedCommand += word+" ";
 		}
