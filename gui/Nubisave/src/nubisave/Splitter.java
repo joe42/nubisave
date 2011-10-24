@@ -52,6 +52,13 @@ public class Splitter {
             Ini serviceIni = new Ini(new File("../splitter/mountscripts/"+service.getName()+".ini"));
             serviceIni.put("auth", "user", service.getUser());
             serviceIni.put("auth", "password", service.getPass());
+            int serviceIndex = 1;
+            for(StorageService s: service.getBackendServices()){
+                serviceIni.put("parameter", "backendservice"+serviceIndex++, s.getUniqName());
+            }
+            if(service.isBackendModule()){
+                serviceIni.put("splitter", "isbackendmodule", true);
+            }
             serviceIni.store(new File(path));
         } catch(Exception e){
             e.printStackTrace();

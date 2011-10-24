@@ -37,7 +37,9 @@ public class MainWindow extends javax.swing.JFrame {
         providerTable.getColumn("Password").setCellEditor(new ButtonEditor(new JCheckBox(), this));
         providerTable.getColumn("Remove").setCellRenderer(new ButtonRenderer());
         providerTable.getColumn("Remove").setCellEditor(new ButtonEditor(new JCheckBox(), this));
-        providerTable.getColumn("Remove").setCellEditor(new ButtonEditor(new JCheckBox(), this));
+        providerTable.getColumn("Backend").setCellRenderer(new ButtonRenderer());
+        providerTable.getColumn("Backend").setCellEditor(new ButtonEditor(new JCheckBox(), this));
+
         
         String mntPoint = Properties.getProperty("splitter_mountpoint");
 
@@ -66,6 +68,7 @@ public class MainWindow extends javax.swing.JFrame {
     private void initComponents() {
 
         customStorageserviceChooser = new javax.swing.JFileChooser();
+        jOptionPane1 = new javax.swing.JOptionPane();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         providerPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -236,13 +239,10 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        System.out.println(new java.io.File("../splitter").exists());
         int returnVal = customStorageserviceChooser.showOpenDialog(null);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File file = customStorageserviceChooser.getSelectedFile();
-            StorageService newService = new StorageService(file.getName().split("\\.")[0]);
-            newService.setType(StorageType.CUSTOM);
-            newService.setSupported(true);
+            StorageService newService = new StorageService(file);
             Nubisave.services.getMmServices().add(newService);
         }
         tableModel.fireTableDataChanged();
@@ -276,6 +276,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JOptionPane jOptionPane1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextField mntDirTxtField;

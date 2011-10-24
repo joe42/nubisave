@@ -71,13 +71,7 @@ public class ButtonEditor extends DefaultCellEditor {
                         ServicePasswordDialog editDialog = new ServicePasswordDialog(owner, true, service);
                         editDialog.setTitle(service.getName());
                         editDialog.setVisible(true);
-                    } else if ("Custom".equals(type)) {
-                        row -= Nubisave.services.getMmServices().size();
-                        CustomMntPoint service = Nubisave.services.getCstmMntPnts().get(row);
-                        CustomEditDialog editDialog = new CustomEditDialog(owner, true, service);
-                        editDialog.setTitle(service.getName());
-                        editDialog.setVisible(true);
-                    }
+                    } 
                     break;
                 case 3:
                     String desc = (String) owner.tableModel.getValueAt(row, 2);
@@ -95,7 +89,14 @@ public class ButtonEditor extends DefaultCellEditor {
                         Nubisave.services.remove(row);
                         
                     }
-                    
+                    break;
+                case 5:
+                    type = (String) owner.tableModel.getValueAt(row, 1);
+                    StorageService service = Nubisave.services.getMmServices().get(row);
+                    BackendConfigurationDialog editDialog = new BackendConfigurationDialog(owner, true, service);
+                    editDialog.setTitle(service.getName());
+                    editDialog.setVisible(true);
+                    break;
             }
         }
         isPushed = false;
