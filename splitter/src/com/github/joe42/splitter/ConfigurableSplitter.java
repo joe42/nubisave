@@ -116,11 +116,11 @@ public class ConfigurableSplitter extends Splitter{
 		//Mount backend modules:
 		String configFileName = new File(path).getName();
 		Ini options = IniUtil.getIni(vtf.getText());
-		boolean mounted = Mounter.mount(storages+"/"+configFileName, options); 
-		if (mounted) {
+		String mountpoint = Mounter.mount(storages, configFileName, options); 
+		if (mountpoint != null) {
 			VirtualFile toRemove = virtualFolder.get(path);
 			virtualFolder.remove(toRemove); 
-			virtualFolder.add(new VirtualRealFile(path, storages+"/"+configFileName+CONFIG_PATH));
+			virtualFolder.add(new VirtualRealFile(path, mountpoint+CONFIG_PATH));
 			return;
 		} else {
 			throw new FuseException("IO Exception on creating store.")
@@ -190,7 +190,7 @@ public class ConfigurableSplitter extends Splitter{
 
 	public void unlink(String path) throws FuseException {
 		/**Don't remove virtual files*/
-		if(! path.startsWith(DATA_DIR)){
+		if(path.startsWith(DATA_DIR)){
 			throw new FuseException("Cannot unlink "+path)
 				.initErrno(FuseException.EACCES);
 		} else{
@@ -206,7 +206,6 @@ public class ConfigurableSplitter extends Splitter{
 	}	
 	
 	public void rmdir(String path) throws FuseException {
-		//TODO: unmount storage module if removing config file
 		if(! path.startsWith(DATA_DIR) || path.equals(DATA_DIR)){
 			throw new FuseException("Cannot remove "+path)
 				.initErrno(FuseException.EACCES);
