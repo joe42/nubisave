@@ -81,11 +81,11 @@ To this end the mountpoint parameter is substituted by store+"/"+HIDDEN_DIR_NAME
 	}
 	public String getMountcommand(){
 		/** @return the command to run to mount this service */
-		return path;
+		return mountCommand;
 	}
 	public String getName(){
 		/** @return the name of this service */
-		return path;
+		return name;
 	}
 	public String getDataDirPath(){
 		/** @return the path where this storage service keeps its data */
@@ -106,7 +106,7 @@ To this end the mountpoint parameter is substituted by store+"/"+HIDDEN_DIR_NAME
 		 * and providing a place to write the configuration file to.
 		 * */
 		Runtime rt =  Runtime.getRuntime();
-		rt .exec(mountCommand);
+		rt.exec(mountCommand);
 	}
 	public void unmount() throws IOException {
 		/** Executes fusermount -uz to unmount the service at this.getPath() and this.getPah()+"/data" */

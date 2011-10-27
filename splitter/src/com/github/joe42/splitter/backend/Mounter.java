@@ -47,8 +47,9 @@ public class Mounter {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
+			return null;
 		}
-		return null;
+		return service.getPath();
 	}
 	
 	public String getStorages(){
@@ -75,7 +76,7 @@ public class Mounter {
 		return false;
 	}
 	
-	private static boolean isMounted(String configFilePath) {
+	private boolean isMounted(String configFilePath) {
 		/** Waits at most 10 seconds until the file configFilePath exists.
 		 * This method is used to determine if a filesystem module is mounted successfully.
 		 *  @returns: True iff the file exists after at most 10 seconds
