@@ -112,15 +112,15 @@ public class ConfigurableSplitter extends Splitter  implements StorageService{
 			configureSplitter();
 			return;
 		}
-		//Mount backend modules:
+		//Mount backend module:
 		String configFileName = new File(path).getName();
 		Ini options = IniUtil.getIni(vtf.getText());
 		String mountpoint = mounter.mount(configFileName, options); 
 		if (mountpoint != null) {
-			VirtualFile toRemove = virtualFolder.get(path);
-			virtualFolder.remove(toRemove); 
+			virtualFolder.remove(path); 
 			virtualFolder.add(new VirtualRealFile(path, mountpoint+CONFIG_PATH));
 			vtf = virtualFolder.get(path);
+			buf.rewind();
 			vtf.write(buf, offset);
 			return;
 		} else {
