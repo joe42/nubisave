@@ -46,6 +46,9 @@ public class VirtualFile {
 	}
 
 	public String getPath() {
+		/**
+		 * @return the full path to this virtual file
+		 **/
 		return path;
 	}
 

@@ -13,6 +13,7 @@ import org.ini4j.Ini;
 import jdbm.helper.FastIterator;
 
 import com.github.joe42.splitter.backend.Mounter;
+import com.github.joe42.splitter.backend.StorageService;
 import com.github.joe42.splitter.util.file.IniUtil;
 import com.github.joe42.splitter.vtf.*;
 
@@ -21,20 +22,18 @@ import fuse.FuseFtype;
 import fuse.FuseStatfs;
 import fuse.compat.FuseDirEnt;
 import fuse.compat.FuseStat;
-public class ConfigurableSplitter extends Splitter{
+public class ConfigurableSplitter extends Splitter  implements StorageService{
 
-	private final String CONFIG_PATH = "/config/config";
-	private final String DATA_DIR_NAME = "data";
-	private final String DATA_DIR = "/data";
 	private VirtualFileContainer virtualFolder;
 	private VirtualFile vtSplitterConfig;
-
+	private Mounter mounter;
 	public ConfigurableSplitter(String storages) throws IOException{
 		super(storages, 0);
 		virtualFolder = new VirtualFileContainer();
 		vtSplitterConfig = new VirtualFile(CONFIG_PATH);
 		vtSplitterConfig.setText("[splitter]\nredundancy = 0");
 		virtualFolder.add(vtSplitterConfig);
+		mounter = new Mounter(storages);
 	}
 	
 	public FuseStat getattr(String path) throws FuseException {
@@ -116,7 +115,7 @@ public class ConfigurableSplitter extends Splitter{
 		//Mount backend modules:
 		String configFileName = new File(path).getName();
 		Ini options = IniUtil.getIni(vtf.getText());
-		String mountpoint = Mounter.mount(storages, configFileName, options); 
+		String mountpoint = mounter.mount(configFileName, options); 
 		if (mountpoint != null) {
 			VirtualFile toRemove = virtualFolder.get(path);
 			virtualFolder.remove(toRemove); 
@@ -161,7 +160,6 @@ public class ConfigurableSplitter extends Splitter{
 		makeNewStorage = ! virtualFolder.containsFile(path);
 		makeNewStorage &= vtSplitterConfig.getDir().equals(new File(path).getParent());
 		if (makeNewStorage) {
-			String configFileName = new File(path).getName();
 	        //TODO: move mount logic to write and only create stub here to be recognized by getattr. Then also allow to mount other "Modules".
 			virtualFolder.add(new VirtualFile(path));
             return;
@@ -189,11 +187,22 @@ public class ConfigurableSplitter extends Splitter{
 	}
 
 	public void unlink(String path) throws FuseException {
-		/**Don't remove virtual files*/
-		if(path.startsWith(DATA_DIR)){
-			throw new FuseException("Cannot unlink "+path)
+		//unmount storage module if removing config file
+		if(path.startsWith(CONFIG_DIR)){
+			VirtualFile vf = virtualFolder.get(path);
+			if(vf == null){
+				throw new FuseException("Cannot remove "+path)
+				.initErrno(FuseException.EEXIST);
+			}
+			if( ! (vf instanceof VirtualRealFile) ){
+				throw new FuseException("Cannot remove "+path)
 				.initErrno(FuseException.EACCES);
-		} else{
+			}
+			String uniqueServiceName = new File(path).getName();
+			mounter.unmount(uniqueServiceName);
+			virtualFolder.remove(path);
+		}
+		if(path.startsWith(DATA_DIR)){
 			path = removeDataFolderPrefix(path);
 			super.unlink(path);
 		}

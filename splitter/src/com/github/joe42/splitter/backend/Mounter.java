@@ -2,68 +2,82 @@ package com.github.joe42.splitter.backend;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.ini4j.Ini;
 
+
 public class Mounter {
+	private String storages;
+	private Map<String, BackendService> services;
 	/**
 	 * For mounting the FUSE modules.
 	 * */
-	public static String mount(String storages, String uniqueServiceName, Ini mountOptions){
+	public Mounter(String storages){
+		this.storages = storages;
+		services = new HashMap<String, BackendService>();
+	}
+	public String mount(String uniqueServiceName, Ini mountOptions){
 		/**
-		 * Execute the command given in mountOption's mounting section, 
-		 * substituting the commands parameters with parameters of the same name in moutOption's parameter section and 
-		 * the command's parameter with the name mountpoint with mountpoint.
-		 * The execution should results in a FUSE module mounted so that its data can be accessed by folder mountpoint/data and 
-		 * a configuration file mountpoint/config/config.
-		 * @param mountpoint  the command executed should put the data directory and the config/config file into this folder
-		 * @return the path to the mountpoint if the file mountpoint/config/config exists  after at most 10 seconds, null otherwise
+		 * Execute the command given in mountOption's mounting section, which should mount a filesystem. 
+		 * The command's parameters of the name mountpoint will be substituted by the path 
+		 * this.getStorages()+"/"+uniqueServiceName. This is where the filesystem should be mounted to. 
+		 * Further mountOptions may contain a parameter section with options, where each word in the command is substituted 
+		 * by the value of the parameter option of the same name. Last there can be a isbackendmodule option in the section splitter.
+		 * This option decides weather the service should be mounted in the special directory StorageService.HIDDEN_DIR_NAME. 
+		 * To this end the mountpoint parameter is substituted by the path
+		 * this.getStorages()+"/"+StorageService.HIDDEN_DIR_NAME+"/"+uniqueServiceName  instead.
+		 * 
+		 * The execution should result in a filesystem mounted so that its data can be accessed by the subdirectory called
+		 * StorageService.DATA_DIR_NAME in the path where it should be mounted and a configuration StorageService.CONFIG_PATH, 
+		 * also in the path, where the filesystem should be mounted.
+		 * @param uniqueServiceName the name of the subdirectory, where the filesystem should be mounted into
+		 * @param mountOptions an ini file with several mount options for the storage service to mount
+		 * @return the path to the mountpoint if the file StorageService.CONFIG_PATH exists  within it after at most 10 seconds and null otherwise
 		 * */
-		Runtime rt = Runtime.getRuntime();
-		String mountpoint = storages;
-		boolean isBackendModule = false;
-		try{
-			isBackendModule = mountOptions.get("splitter", "isbackendmodule", Boolean.class);
-		} catch(NullPointerException e){
-			System.out.println("Service is no backend module");
-		}
-		if(isBackendModule){
-			mountpoint += "/backend";	
-		}
-		mountpoint += "/"+uniqueServiceName;
-		String command = mountOptions.get("mounting", "command");
-		String substitutedCommand = "";
-		Map<String, String> substitutions = mountOptions.get("parameter");
-		for(String word: command.split(" ")){
-			if(word.equals("mountpoint")){
-				word = mountpoint;
-			} else if(substitutions != null){
-				if( substitutions.containsKey(word) ){
-					if(word.startsWith("backendservice")){
-						word = storages+"/backend"+"/"+substitutions.get(word);
-					} else {
-						word = substitutions.get(word);
-					}
-				}
-			}
-			substitutedCommand += word+" ";
-		}
+		BackendService service = new BackendService(storages, uniqueServiceName, mountOptions);
+		services.put(uniqueServiceName, service);
 		try {
-			System.out.println("Executing: "+substitutedCommand);
-			rt.exec(substitutedCommand);
-			if(! isMounted(mountpoint+"/config/config")){
-				mountpoint = null;
+			System.out.println("Executing: "+service.getMountcommand());
+			service.mount();
+			if(! isMounted(service.getConfigDirPath())){
+				return service.getPath();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			mountpoint = null;
 		}
-		return mountpoint;
+		return null;
 	}
+	
+	public String getStorages(){
+		/**@return the folder with this mounter's mounted filesystems*/
+		return storages;
+	}
+	
+	public boolean unmount(String uniqueServiceName){
+		/** Executes fusermount -uz to unmount the service at this.getPath() and this.getPah()+"/data"
+		 * @return true iff the service was unmounted within 10 seconds
+		 */
+		try {
+			BackendService service = services.get(uniqueServiceName);
+			if(service == null){
+				return false;
+			}
+			service.unmount();
+			if(! isMounted(service.getConfigDirPath())){
+				return true;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
 	private static boolean isMounted(String configFilePath) {
 		/** Waits at most 10 seconds until the file configFilePath exists.
-		 * This method is used to determine if the CloudFusion module has been mounted successfully.
+		 * This method is used to determine if a filesystem module is mounted successfully.
 		 *  @returns: True iff the file exists after at most 10 seconds
 		 */
 		System.err.println(configFilePath);
@@ -78,4 +92,5 @@ public class Mounter {
 		}
 		return configFile.exists();
 	}
+
 }

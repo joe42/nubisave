@@ -26,6 +26,12 @@ public class VirtualRealFile extends VirtualFile {
 	public String getText(){
 		return FileUtil.readFile(realFile);
 	}
+	public String getRealPath(){
+		/**
+		 * @return the real path of this virtual file
+		 */
+		return realFile.getAbsolutePath();
+	}
 
 	public String toString() {
 		return FileUtil.readFile(realFile);
