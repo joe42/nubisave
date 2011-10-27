@@ -198,6 +198,15 @@ public class ConfigurableSplitter extends Splitter  implements StorageService{
 				throw new FuseException("Cannot remove "+path)
 				.initErrno(FuseException.EACCES);
 			}
+			/*Bug:
+			 * Bugfix in feature #462 Unmounting Service via Virtual File Interface:
+Only remove virtual configuration file if the corresponding configuration 
+file is removed after at most 10 seconds
+						String uniqueServiceName = new File(path).getName();
+			if(mounter.unmount(uniqueServiceName)){
+				virtualFolder.remove(path);
+			}
+		}*/
 			String uniqueServiceName = new File(path).getName();
 			mounter.unmount(uniqueServiceName);
 			virtualFolder.remove(path);
@@ -225,7 +234,24 @@ public class ConfigurableSplitter extends Splitter  implements StorageService{
 	}	
 	
 	public void rename(String from, String to) throws FuseException {
-		if(from.equals(DATA_DIR) || to.equals(DATA_DIR)){
+		//FIX: success depends on targets beeing files or directories
+		if(from.startsWith(CONFIG_DIR) && to.startsWith(CONFIG_DIR)){
+			VirtualFile vfFrom = virtualFolder.get(from);
+			VirtualFile vfTo = virtualFolder.get(to);
+			if(vfFrom == null || vfTo == null){
+				throw new FuseException("Cannot move "+from+" to "+to)
+				.initErrno(FuseException.EEXIST);
+			}
+			if( ! (vfFrom instanceof VirtualRealFile && vfTo instanceof VirtualRealFile) ){
+				throw new FuseException("Cannot move "+from+" to "+to)
+				.initErrno(FuseException.EACCES);
+			}
+			String uniqueServiceNameFrom = new File(from).getName();
+			String uniqueServiceNameTo = new File(to).getName();
+			mounter.moveData(uniqueServiceNameFrom, uniqueServiceNameTo);
+			virtualFolder.remove(from);
+		}
+		if(from.equals(to)){
 			throw new FuseException("Cannot rename "+from+" to "+to)
 				.initErrno(FuseException.EACCES);
 		} 

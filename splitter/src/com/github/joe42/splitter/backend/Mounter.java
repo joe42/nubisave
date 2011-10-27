@@ -93,5 +93,16 @@ public class Mounter {
 		}
 		return configFile.exists();
 	}
+	public void moveData(String uniqueServiceNameFrom, String uniqueServiceNameTo) {
+		BackendService serviceFrom = services.get(uniqueServiceNameFrom);
+		BackendService serviceTo = services.get(uniqueServiceNameTo);
+		Runtime rt =  Runtime.getRuntime();
+		try {
+			rt.exec("mv "+serviceFrom.getDataDirPath()+"/* "+serviceTo.getDataDirPath());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 }

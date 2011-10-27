@@ -254,7 +254,7 @@ public class Splitter implements Filesystem1 {
 	}
 
 	public void rename(String from, String to) throws FuseException {
-		if (from.equals(to))
+		if (from.equals(to)) // only if from is dir and to is file 
 			throw new FuseException("Entity"+to+" already exists.")
 				.initErrno(FuseException.EEXIST);
 		Entry entry = null;
