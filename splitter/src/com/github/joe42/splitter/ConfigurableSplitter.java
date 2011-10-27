@@ -120,6 +120,8 @@ public class ConfigurableSplitter extends Splitter  implements StorageService{
 			VirtualFile toRemove = virtualFolder.get(path);
 			virtualFolder.remove(toRemove); 
 			virtualFolder.add(new VirtualRealFile(path, mountpoint+CONFIG_PATH));
+			vtf = virtualFolder.get(path);
+			vtf.write(buf, offset);
 			return;
 		} else {
 			throw new FuseException("IO Exception on creating store.")
@@ -250,6 +252,7 @@ file is removed after at most 10 seconds
 			String uniqueServiceNameTo = new File(to).getName();
 			mounter.moveData(uniqueServiceNameFrom, uniqueServiceNameTo);
 			virtualFolder.remove(from);
+			return;
 		}
 		if(from.equals(to)){
 			throw new FuseException("Cannot rename "+from+" to "+to)
