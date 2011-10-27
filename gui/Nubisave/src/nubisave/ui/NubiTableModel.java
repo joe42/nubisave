@@ -14,7 +14,7 @@ import nubisave.*;
 public class NubiTableModel extends AbstractTableModel {
 
     private final String headers[] = {"Type", "Description", "Password", "Remove", "Mounted", "Backend"};
-    private enum Headers { TYPE, DESCRIPTION, PASSWORD, REMOVE, MOUNTED, CONNECT };
+    public enum Headers { TYPE, DESCRIPTION, PASSWORD, REMOVE, MOUNTED, CONNECT };
     private Class[] types = new Class[]{
         java.lang.String.class, java.lang.String.class, javax.swing.JButton.class,javax.swing.JButton.class, java.lang.Boolean.class
     };

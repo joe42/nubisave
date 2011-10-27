@@ -65,8 +65,8 @@ public class ButtonEditor extends DefaultCellEditor {
 
             switch (column) {
                 case 2:
-                    String type = (String) owner.tableModel.getValueAt(row, 1);
-                    if ("Service".equals(type)) {
+                    String type = (String) owner.tableModel.getValueAt(row, NubiTableModel.Headers.TYPE.ordinal());
+                    if ("Service".equals(type) || "Custom".equals(type)) {
                         StorageService service = Nubisave.services.getMmServices().get(row);
                         ServicePasswordDialog editDialog = new ServicePasswordDialog(owner, true, service);
                         editDialog.setTitle(service.getName());
@@ -74,7 +74,7 @@ public class ButtonEditor extends DefaultCellEditor {
                     } 
                     break;
                 case 3:
-                    String desc = (String) owner.tableModel.getValueAt(row, 2);
+                    String desc = (String) owner.tableModel.getValueAt(row, NubiTableModel.Headers.DESCRIPTION.ordinal());
                     String[] options = {"No", "Remove"};
                     int n = JOptionPane.showOptionDialog(owner,
                             "Remove and umount " + desc + "?",
@@ -91,7 +91,7 @@ public class ButtonEditor extends DefaultCellEditor {
                     }
                     break;
                 case 5:
-                    type = (String) owner.tableModel.getValueAt(row, 1);
+                    //type = (String) owner.tableModel.getValueAt(row, NubiTableModel.Headers.TYPE.ordinal());
                     StorageService service = Nubisave.services.getMmServices().get(row);
                     BackendConfigurationDialog editDialog = new BackendConfigurationDialog(owner, true, service);
                     editDialog.setTitle(service.getName());
