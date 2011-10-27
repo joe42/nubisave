@@ -42,7 +42,7 @@ public class Mounter {
 		try {
 			System.out.println("Executing: "+service.getMountcommand());
 			service.mount();
-			if(! isMounted(service.getConfigDirPath())){
+			if(! isMounted(service.getConfigFilePath())){
 				return service.getPath();
 			}
 		} catch (IOException e) {
@@ -67,7 +67,7 @@ public class Mounter {
 				return false;
 			}
 			service.unmount();
-			if(! isMounted(service.getConfigDirPath())){
+			if(! isMounted(service.getConfigFilePath())){
 				return true;
 			}
 		} catch (IOException e) {
@@ -98,6 +98,7 @@ public class Mounter {
 		BackendService serviceTo = services.get(uniqueServiceNameTo);
 		Runtime rt =  Runtime.getRuntime();
 		try {
+			System.out.println("mv "+serviceFrom.getDataDirPath()+"/* "+serviceTo.getDataDirPath());
 			rt.exec("mv "+serviceFrom.getDataDirPath()+"/* "+serviceTo.getDataDirPath());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
