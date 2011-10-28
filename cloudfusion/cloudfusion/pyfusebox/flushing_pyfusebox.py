@@ -2,26 +2,35 @@ from cloudfusion.pyfusebox.pyfusebox import *
 import threading
 
 class StoreFlusher(threading.Thread):
-    def __init__(self, store, lock):
+    def __init__(self, store, lock, logger=None):
+        self.logger = logger
         self.store = store
         self.lock = lock
         threading.Thread.__init__(self)
  
+    def __log_debug(self, msg):
+        if self.logger:
+            self.logger.debug(msg)
+            
+    def __log_info(self, msg):
+        if self.logger:
+            self.logger.info(msg)
+    
     def run(self):
         with self.lock:
-            self.logger.debug("StoreFlusher: no ongoing file operation")
+            self.__log_debug("StoreFlusher: no ongoing file operation")
             if self.store:  # store is initialized
-                self.logger.debug("StoreFlusher: store is properly initialized")
+                self.__log_debug("StoreFlusher: store is properly initialized")
                 if(time.time() > self.store.get_cache_expiration_time() + self.store.get_time_of_last_flush()):
-                    self.logger.debug("StoreFlusher: cache expiration date is overdue; flushing store")
+                    self.__log_debug("StoreFlusher: cache expiration date is overdue; flushing store")
                     self.store.flush()
-                    self.logger.debug("StoreFlusher: store flushed")
+                    self.__log_info("StoreFlusher: store flushed")
 
 class FlushingPyFuseBox(PyFuseBox):
     def __init__(self, root, store):
-        self.fileoperation_is_pending = threading.Lock()
-        StoreFlusher(store, self.fileoperation_is_pending).start()
         super( FlushingPyFuseBox, self ).__init__(root, store)
+        self.fileoperation_is_pending = threading.Lock()
+        StoreFlusher(store, self.fileoperation_is_pending, self.logger).start()
     
     def getattr(self, path, fh=None):
         with self.fileoperation_is_pending:
