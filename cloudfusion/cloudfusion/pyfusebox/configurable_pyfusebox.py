@@ -118,7 +118,7 @@ class ConfigurablePyFuseBox(FlushingPyFuseBox):
             super( ConfigurablePyFuseBox, self ).unlink(path)
 
     def read(self, path, size, offset, fh):
-        self.logger.debug("unlink %s" % path)
+        self.logger.debug("read %s" % path)
         if path == self.virtual_file.get_path():
             return self.virtual_file.read(size, offset)
         if self.store_initialized and path.startswith(self.DATA_FOLDER_PATH):
@@ -133,9 +133,9 @@ class ConfigurablePyFuseBox(FlushingPyFuseBox):
         cache_time = 0
         metadata_cache_time = 0
         if 'cache' in conf:
-            cache_time = conf['cache'] 
+            cache_time = int(conf['cache']) 
         if 'metadata_cache' in conf:
-            metadata_cache_time = conf['metadata_cache'] 
+            metadata_cache_time = int(conf['metadata_cache']) 
         self.logger.debug("got cache parameter")
         auth = self.virtual_file.get_service_auth_data()
         self.logger.debug("got auth data: "+str(auth))
