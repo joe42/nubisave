@@ -52,9 +52,10 @@ class ConfigurablePyFuseBox(FlushingPyFuseBox):
         self.logger.debug("truncate %s to %s" % (path, length))
         if path == self.virtual_file.get_path():
             self.virtual_file.truncate()
+            return 0
         if self.store_initialized and path.startswith(self.DATA_FOLDER_PATH):
             path = self.remove_data_folder_prefix(path)
-            super( ConfigurablePyFuseBox, self ).truncate(path, length, fh)
+            return super( ConfigurablePyFuseBox, self ).truncate(path, length, fh)
         raise FuseOSError(ENOENT)
     
     def rmdir(self, path):
@@ -83,10 +84,12 @@ class ConfigurablePyFuseBox(FlushingPyFuseBox):
     
     def statfs(self, path):#add size of vtf
         self.logger.debug("statfs %s" % (path))
-        super( ConfigurablePyFuseBox, self ).statfs(path)
+        if self.store_initialized:
+            path = self.remove_data_folder_prefix(path)
+            return super( ConfigurablePyFuseBox, self ).statfs(path)
     
     def rename(self, old, new):
-        self.logger.debug("rename %s" % (old, new))
+        self.logger.debug("rename %s to %s" % (old, new))
         """if new == self.virtual_file.get_path():
             buf = 
             written_bytes =  self.virtual_file.write(buf, offset)
@@ -184,7 +187,7 @@ class ConfigurablePyFuseBox(FlushingPyFuseBox):
             return 0
         if self.store_initialized and path.startswith(self.DATA_FOLDER_PATH):
             path = self.remove_data_folder_prefix(path)
-            super( ConfigurablePyFuseBox, self ).flush(path, fh)
+            return super( ConfigurablePyFuseBox, self ).flush(path, fh)
     
     def release(self, path, fh):
         self.logger.debug("release %s - fh: %s" % (path, fh))
@@ -192,7 +195,7 @@ class ConfigurablePyFuseBox(FlushingPyFuseBox):
             return 0
         if self.store_initialized and path.startswith(self.DATA_FOLDER_PATH):
             path = self.remove_data_folder_prefix(path)
-            super( ConfigurablePyFuseBox, self ).release(path, fh) 
+            return super( ConfigurablePyFuseBox, self ).release(path, fh) 
        
     def readdir(self, path, fh):
         self.logger.debug("readdir "+path+"")
