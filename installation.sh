@@ -55,6 +55,7 @@ cd ..
 echo
 echo
 echo "Installation von CloudFusion"
+
 cd cloudfusion/
 sudo python setup.py install
 cd ..
