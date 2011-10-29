@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" >
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="author" content="" />
+	<meta name="keywords" content="" />
+	<meta name="description" content="" />
+	<meta name="robots" content="all" />
+	<title>NubiSave</title>
+	<style type="text/css" media="all">
+		@import "main.css";
+	</style>
+</head>
+<body>
+<div id="body">
+	<div id="head">
+		<h1>NubiSave - Cloud Storage Controller</h1>
+		<h2>Distributed secure data storage over optimal clouds for desktop users</h2>
+	</div>
+	<div id="menu">
+		<a href='index.html'>Home</a>
+		<a href='install.html'>Install</a>
+		<a href='integrate.html'>Integrate</a>
+		<a href='learn.html'>Learn</a>
+		<a href='verify.html'>Verify</a>
+		<a href='join.html'>Join</a>
+	</div>
+	<div id="content">
+		<div class="section">
+			<h1>NubiSave integration options</h1>
+			Of course, it is possible to just run NubiSave as a stand-alone tool
+			beneath a local virtual directory.
+			However, in many cases it might be more useful to run something on top
+			of it or in addition - like a web interface, a network integrator
+			or a status monitor.
+		</div>
+		<div class="section">
+			<h2>Web access</h2>
+			NubiSave can serve as backend to practically any web-based data management tool.
+			It does not have its own frontend on purpose, because so many already exist
+			- one tool for each job.
+			<a href="http://owncloud.org/">ownCloud</a> seems to be a very popular choice these days.
+		</div>
+		<div class="section">
+			<h2>Network integrator</h2>
+			Likewise, NubiSave doesn't include any local or wide area network integration proxy.
+			It is possible to run both SMB/CIFS servers (such as <a href="http://samba.org/">Samba</a>)
+			and WebDAV servers (such as <a href="http://webdav.org/catacomb/">Apache httpd/mod_dav/Catacomb</a>)
+			on top of NubiSave-provided directories. Interestingly, this allows remote chaining
+			of NubiSave installations!
+			<blockquote>
+			<i>We intend to offer a reasonable setup recipe by integrating the results from
+			<a href="http://flexcloud.eu/wp-content/uploads/2011/07/seccsie_ieee.pdf">SecCSIE</a>.</i>
+		</div>
+		<div class="section">
+			<h2>Status monitor</h2>
+			Does NubiSave also not ship with a status monitor? Actually, we provide one for you
+			because there don't seem to be useful ones, not even for user-friendly RAID monitoring :-)
+			Please download it from the <a href="http://flexcloud.eu/?p=1698">AllocDemo page</a>
+			while it is under development.
+		</div>
+	</div>
+	<div id="foot">
+		Design based on <a href="http://www.oswd.org/design/information/id/3561">AgooHttp</a> by <a href="http://www.oswd.org/user/profile/id/7850">LocaWapp</a>
+	</div>
+</div>
+</body>
+</html>
