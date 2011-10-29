@@ -30,6 +30,15 @@ Some virtual Text.
         return self.text
     def get_path(self):
         return self.path
+    def get_subdir(self, path):
+        """:returns: the parent directory of this virtualfile's path which is a subdirectory of path"""
+        dir = self.get_path()
+        while dir != "/":
+            parent_dir = os.path.dirname(dir)
+            if parent_dir == path:
+                return  os.path.basename(dir)
+            dir = parent_dir
+        return None
     def __str__(self):
         return self.path
     def read(self, size, offset):
@@ -40,6 +49,7 @@ Some virtual Text.
         self.logger.debug("wrote %s bytes starting with %s..." % (len(buf), self.text[0:30]))
         return len(buf)
     def get_dir(self):
+        """:returns: the pyth of the directory of this virtual file"""
         return os.path.dirname(self.path)
     def get_name(self):
         return os.path.basename(self.path)

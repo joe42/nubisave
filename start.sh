@@ -4,44 +4,20 @@ scriptpath=`readlink -f $0`
 scriptloc=`dirname $scriptpath`
 cd $scriptloc
 
-echo "Start von nubisave"
-echo "Files werden auf 3 Ordner gesplittet"
-echo "~/.cache/nubisave/storages/storage01"
-echo "~/.cache/nubisave/storages/storage02"
-echo "~/.cache/nubisave/storages/storage03"
+echo "Start des Splitter Modules"
+mountpoint=`pwd`/mount
+storages=`pwd`/storages
 
-# FIXME: find out why this is needed here
-mkdir -p .cloudfusion/logs
+mkdir $mountpoint $storages
+cd splitter
+./mount.sh $mountpoint $storages &
+cd ..
 
-read -p "Cloud-Services in Mountpoints hängen? (j/N) " antwort
+# FIXME: This should be solved by some event detection
+sleep 2;
 
-if [ "$antwort" == "j" ]
-then
-	for mount in mount_script/mount_*.sh
-	do
-		mountname=$(basename "$mount")
-		echo "-------------------------------------------"
-		echo "Mounte CloudStorage :    $mountname"
-		bash ./$mount
-	done
-else
-	echo "Ohne Sample-Mounts weiter"
-fi
+echo "Start von NubiSave"
 
-echo "Starten des Core-Moduls"
-
-sudo umount ~/nubisave 2>/dev/null
-
-./splitter_mount.sh >> /dev/null 2>/dev/null &
-
-read -p "CloudStorage Anbieter konfigurieren? (j/N) " antwort
-
-if [ "$antwort" == "j" ]
-then
-	cd bin/
-	java -jar Nubisave.jar
-	cd ..
-fi
-
-echo "Nubisave erfolgreich gestartet"
+cd bin/
+java -jar Nubisave.jar $mountpoint
 

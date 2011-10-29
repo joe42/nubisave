@@ -91,10 +91,11 @@ public class ButtonEditor extends DefaultCellEditor {
                             options,
                             options[1]);
                     if (n == 1) {
-                        new Mounter().umountService(Nubisave.services.get(row));
+                        //new Mounter().umountService(Nubisave.services.get(row));
                         Nubisave.services.remove(row);
                         
                     }
+                    
             }
         }
         isPushed = false;

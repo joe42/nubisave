@@ -43,6 +43,12 @@ class PyFuseBox(Operations):
         st = zstat()
         try:
             metadata = self.store._get_metadata(path)
+        except NoSuchFilesytemObjectError:
+            raise FuseOSError(ENOENT)
+        except StoreAccessError:
+            raise FuseOSError(EIO)
+        except StoreAutorizationError:
+            raise FuseOSError(EACCES) 
         except:
             raise FuseOSError(ENOENT)
         st['st_atime']= metadata['modified']
@@ -77,7 +83,14 @@ class PyFuseBox(Operations):
     
     def truncate(self, path, length, fh=None):
         self.logger.debug("truncate %s to %s" % (path, length))
-        self.store.delete(path)
+        try:
+            self.store.delete(path)
+        except NoSuchFilesytemObjectError:
+            raise FuseOSError(ENOENT)
+        except StoreAccessError:
+            raise FuseOSError(EIO)
+        except StoreAutorizationError:
+            raise FuseOSError(EACCES) 
         temp_file = tempfile.SpooledTemporaryFile()
         self.store.store_fileobject(temp_file, path)
         return 0
@@ -113,9 +126,14 @@ class PyFuseBox(Operations):
         """ This implementation should be looked at by a linux guru, since I have little experience concerning filesystems. """
         ret = {}
         ret['f_bsize'] = 4096 #Preferred file system block size.
-        ret['f_bavail'] = int( self.store.get_free_space() / ret['f_bsize'] ) #Free blocks available to non-super user.
-        ret['f_bfree'] = int( self.store.get_free_space() / ret['f_bsize'] ) #Total number of free blocks.
-        ret['f_blocks'] = int( self.store.get_overall_space() / ret['f_bsize'] ) #Total number of blocks in the filesystem.
+        try:
+            ret['f_bavail'] = int( self.store.get_free_space() / ret['f_bsize'] ) #Free blocks available to non-super user.
+            ret['f_bfree'] = int( self.store.get_free_space() / ret['f_bsize'] ) #Total number of free blocks.
+            ret['f_blocks'] = int( self.store.get_overall_space() / ret['f_bsize'] ) #Total number of blocks in the filesystem.
+        except StoreAccessError:
+            raise FuseOSError(EIO)
+        except StoreAutorizationError:
+            raise FuseOSError(EACCES) #keine Berechtigung
         ret['f_favail'] = 810280 #Free nodes available to non-super user -- not sure about this
         ret['f_ffree'] = ret['f_favail'] #Total number of free file nodes.
         ret['f_files'] = 810280 #Total number of file nodes -- not sure about this
@@ -126,13 +144,29 @@ class PyFuseBox(Operations):
     
     def rename(self, old, new):
         self.logger.debug("rename %s to %s" % (old, new))
-        self.store.move(old, new)
+        try:
+            self.store.move(old, new)
+        except NoSuchFilesytemObjectError:
+            raise FuseOSError(ENOENT)
+        except StoreAccessError:
+            raise FuseOSError(EIO)
+        except StoreAutorizationError:
+            raise FuseOSError(EACCES) #keine Berechtigung
         return 0
 
     def create(self, path, mode):
         self.logger.debug("create %s with mode %s" % (path, str(mode)))
         temp_file = tempfile.SpooledTemporaryFile()
-        self.store.store_fileobject(temp_file, path)
+        try:
+            self.store.store_fileobject(temp_file, path)
+        except NoSuchFilesytemObjectError:
+            raise FuseOSError(ENOENT)
+        except AlreadyExistsError:
+            raise FuseOSError(EEXIST)
+        except StoreAccessError:
+            raise FuseOSError(EIO)
+        except StoreAutorizationError:
+            raise FuseOSError(EACCES) #keine Berechtigung
         return 0
         """       self.files[path] = dict(st_mode=(S_IFREG | mode), st_nlink=1,
             st_size=0, st_ctime=time(), st_mtime=time(), st_atime=time())
@@ -144,13 +178,27 @@ class PyFuseBox(Operations):
     
     def unlink(self, path):
         self.logger.debug("unlink %s" % path)
-        self.store.delete(path)
+        try:
+            self.store.delete(path)
+        except NoSuchFilesytemObjectError:
+            raise FuseOSError(ENOENT)
+        except StoreAccessError:
+            raise FuseOSError(EIO)
+        except StoreAutorizationError:
+            raise FuseOSError(EACCES) #keine Berechtigung
 
     def read(self, path, size, offset, fh):
         self.logger.debug("read %s bytes from %s at %s - fh %s" % (size, path, offset, fh))
         if not path in self.read_temp_file:
             self.read_temp_file[path] = tempfile.SpooledTemporaryFile()
-            file = self.store.get_file(path)
+            try:
+                file = self.store.get_file(path)
+            except NoSuchFilesytemObjectError:
+                raise FuseOSError(ENOENT)
+            except StoreAccessError:
+                raise FuseOSError(EIO)
+            except StoreAutorizationError:
+                raise FuseOSError(EACCES) #keine Berechtigung
             self.read_temp_file[path].write(file)
         self.read_temp_file[path].seek(0)
         file =  self.read_temp_file[path].read()
@@ -161,7 +209,14 @@ class PyFuseBox(Operations):
         self.logger.debug("write %s ... starting with %s at %s - fh: %s" % (path, buf[0:10], offset, fh))
         if not path in self.temp_file:
             self.temp_file[path] = tempfile.SpooledTemporaryFile()
-            file = self.store.get_file(path)
+            try:
+                file = self.store.get_file(path)
+            except NoSuchFilesytemObjectError:
+                raise FuseOSError(ENOENT)
+            except StoreAccessError:
+                raise FuseOSError(EIO)
+            except StoreAutorizationError:
+                raise FuseOSError(EACCES) #keine Berechtigung
             self.temp_file[path].write(file)
         self.temp_file[path].seek(offset)
         self.temp_file[path].write(buf)
@@ -172,7 +227,14 @@ class PyFuseBox(Operations):
     def flush(self, path, fh):
         self.logger.debug("flush %s - fh: %s" % (path, fh))
         if path in self.temp_file: #after writes
-            self.store.store_fileobject(self.temp_file[path], path)
+            try:
+                self.store.store_fileobject(self.temp_file[path], path)
+            except NoSuchFilesytemObjectError:
+                raise FuseOSError(ENOENT)
+            except StoreAccessError:
+                raise FuseOSError(EIO)
+            except StoreAutorizationError:
+                raise FuseOSError(EACCES) #keine Berechtigung
         return 0
     
     def release(self, path, fh):
@@ -189,7 +251,14 @@ class PyFuseBox(Operations):
        
     def readdir(self, path, fh):
         self.logger.debug("readdir "+path+"")
-        directories = self.store.get_directory_listing(path)
+        try:
+            directories = self.store.get_directory_listing(path)
+        except NoSuchFilesytemObjectError:
+            raise FuseOSError(ENOENT)
+        except StoreAccessError:
+            raise FuseOSError(EIO)
+        except StoreAutorizationError:
+            raise FuseOSError(EACCES) #keine Berechtigung
         #self.logger.debug("readdir -> "+str(directories)+"")
         file_objects = [".", ".."]
         for file_object in directories:
@@ -197,6 +266,5 @@ class PyFuseBox(Operations):
                 file_object = os.path.basename(file_object.encode('utf8'))
                 file_objects.append( file_object )
         return file_objects;
-
 
 

@@ -18,6 +18,8 @@ public class Nubisave {
     public static final Services services = new Services();
     
     public static String[] supportedProvider = {"Dropbox","Sugarsync"};
+
+    public static Splitter mainSplitter;
     
     private void initalize() {
         // look like a native app
@@ -38,10 +40,16 @@ public class Nubisave {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-
+        if (args.length < 1) {
+            System.out.println("Must specify mountpoint of splitter module");
+            System.exit(-1);
+        }
+        String splitterMountpoint = args[0];
+        Nubisave.mainSplitter = new Splitter(splitterMountpoint);
+        Nubisave.mainSplitter.setRedundancy(Integer.parseInt(Properties.getProperty("redundancy")));
         Nubisave nubi = new Nubisave();
         nubi.initalize();
-        new CoreReader().readExistingServices();
+        //new CoreReader().readExistingServices();
         
         java.awt.EventQueue.invokeLater(new Runnable() {
 

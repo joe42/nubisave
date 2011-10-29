@@ -72,6 +72,8 @@ public class Properties {
     }
     
     public static void setProperty(String key, String value) {
+        if (properties==null) loadProperties();
+        if (properties==null) return;
         properties.setProperty(key, value);
         writeProperties();
     }

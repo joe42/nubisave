@@ -54,10 +54,10 @@ cd ..
 
 echo
 echo
-read -p "Möchten Sie Beispiel-Services mounten und Nubisave starten? [start.sh] (j/N) " antwort
+echo "Installation von CloudFusion"
+cd cloudfusion/
+sudo python setup.py install
+cd ..
 
-if [ "$antwort" == "j" ]
-then
-	bash ./start.sh
-fi
+echo "Installation abgeschlossen"
 

@@ -17,27 +17,21 @@ import com.github.joe42.splitter.vtf.*;
 
 import fuse.FuseException;
 import fuse.FuseFtype;
+import fuse.FuseStatfs;
 import fuse.compat.FuseDirEnt;
 import fuse.compat.FuseStat;
 public class ConfigurableSplitter extends Splitter{
 
-	private  String CONFIG_DIR;
+	private final String CONFIG_PATH = "/config/config";
+	private final String DATA_DIR_NAME = "data";
+	private final String DATA_DIR = "/data";
 	private VirtualFileContainer virtualFolder;
 	private VirtualFile vtSplitterConfig;
 
-	public ConfigurableSplitter(String storages, String configFileDir, String configFileName) throws IOException{
+	public ConfigurableSplitter(String storages) throws IOException{
 		super(storages, 0);
-		init(configFileDir, configFileName);
-	}
-	public ConfigurableSplitter(String storages) throws IOException {
-		super(storages, 0);
-		init("/.###config###", "config");
-	}
-
-	private void init(String configFileDir, String configFileName) {
-		CONFIG_DIR = configFileDir;
 		virtualFolder = new VirtualFileContainer();
-		vtSplitterConfig = new VirtualFile(configFileDir+"/"+configFileName);
+		vtSplitterConfig = new VirtualFile(CONFIG_PATH);
 		vtSplitterConfig.setText("[splitter]\nredundancy = 0");
 		virtualFolder.add(vtSplitterConfig);
 	}
@@ -50,20 +44,60 @@ public class ConfigurableSplitter extends Splitter{
 		if(virtualFolder.containsDir(path)){
 			return new FolderEntry().getFuseStat();
 		}
-		return super.getattr(path);
+		if(path.startsWith(DATA_DIR)){
+			path = removeDataFolderPrefix(path);
+			return super.getattr(path);
+		}
+		throw new FuseException("No Such Entry")
+		.initErrno(FuseException.ENOENT);
+	}
+	
+
+	public String removeDataFolderPrefix(String path){
+        path = path.substring(DATA_DIR.length());
+        if( ! path.startsWith("/") ){
+            path = "/";
+        }
+        return path;
 	}
 	
 	public FuseDirEnt[] getdir(String path) throws FuseException {
-		/** Additionally to the overwritten method it returns the virtual configuration files*/
-		if (path.equals(CONFIG_DIR)) {
+		/** Additionally to the overwritten method's return value it can return the virtual configuration files*/
+		if (path.equals(vtSplitterConfig.getDir())) {
 			return virtualFolder.getDir(path);
 		}
-		return super.getdir(path);
+		if(path.startsWith(DATA_DIR)){
+			path = removeDataFolderPrefix(path);
+			return super.getdir(path);
+		}
+		if(path.equals("/")){
+			FuseDirEnt[] ret = new FuseDirEnt[2];
+			FuseDirEnt dirEntry = new FuseDirEnt();
+			dirEntry.name = ".";
+			dirEntry.mode = FuseFtype.TYPE_DIR;
+			ret[0] = dirEntry;
+			dirEntry = new FuseDirEnt();
+			dirEntry.name = "..";
+			dirEntry.mode = FuseFtype.TYPE_DIR;
+			ret[1] = dirEntry;
+			dirEntry = new FuseDirEnt();
+			dirEntry.name = vtSplitterConfig.getName();
+			dirEntry.mode = FuseFtype.TYPE_DIR;
+			ret[1] = dirEntry;
+			dirEntry = new FuseDirEnt();
+			dirEntry.name = DATA_DIR_NAME; 
+			dirEntry.mode = FuseFtype.TYPE_DIR;
+			ret[1] = dirEntry;
+			return ret;
+		}
+		throw new FuseException("Invalid parameter for getdir (ConfigurableSplitter)")
+			.initErrno(FuseException.EIO);
 	}
 
 	public void write(String path, ByteBuffer buf, long offset)
 			throws FuseException {
-		if(! virtualFolder.containsFile(path) ) {
+		if(path.startsWith(DATA_DIR)){
+			path = removeDataFolderPrefix(path);
 			super.write(path, buf, offset);
 			return;
 		}
@@ -85,30 +119,32 @@ public class ConfigurableSplitter extends Splitter{
 	}
 	
 	public void read(String path, ByteBuffer buf, long offset)
-		throws FuseException {
-			if ( ! virtualFolder.containsFile(path) ) {
-				super.read(path, buf, offset);
-				return;
-			}
-			VirtualFile vtf = virtualFolder.get(path);
-			vtf.read(buf, offset);
+			throws FuseException {
+		if ( path.startsWith(DATA_DIR) ) {
+			path = removeDataFolderPrefix(path);
+			super.read(path, buf, offset);
+			return;
+		}
+		VirtualFile vtf = virtualFolder.get(path);
+		vtf.read(buf, offset);
 	}
 	
 	public void release(String path, int flags) throws FuseException {
-		if (! virtualFolder.containsFile(path)) {
+		if (path.startsWith(DATA_DIR)) {
+			path = removeDataFolderPrefix(path);
 			super.release(path, flags);
 		}
 	}
 	
-	private boolean mountCloudfusionModule(String mountpoint, String configFilePath){
+	private boolean mountCloudfusionModule(String mountpoint){
 		Runtime rt = Runtime.getRuntime();
 		boolean successful;
 		try {
-			System.out.println("python -m cloudfusion.main "+mountpoint+" /"+configFilePath);
+			System.out.println("python -m cloudfusion.main "+mountpoint);
 			rt.exec("mkdir -p "+mountpoint);
 			rt.exec("mkdir -p .cloudfusion/logs");
-			rt.exec("python -m cloudfusion.main "+mountpoint+" /"+configFilePath);
-			successful = waitUntilLoaded(mountpoint+"/"+configFilePath);
+			rt.exec("python -m cloudfusion.main "+mountpoint);
+			successful = waitUntilLoaded(mountpoint+"/config/config");
 		} catch (IOException e) {
 			e.printStackTrace();
 			successful =  false;
@@ -139,21 +175,27 @@ public class ConfigurableSplitter extends Splitter{
 		 * */
 		Boolean makeNewStorage = false;
 		makeNewStorage = ! virtualFolder.containsFile(path);
-		makeNewStorage &= CONFIG_DIR.equals(new File(path).getParent());
+		makeNewStorage &= vtSplitterConfig.getDir().equals(new File(path).getParent());
 		if (makeNewStorage) {
 			String configFileName = new File(path).getName();
-			String configFilePath = configFileName;
 			//TODO: move mount logic to write and only create stub here to be recognized by getattr. Then also allow to mount other "Modules".
-			boolean mounted = mountCloudfusionModule(storages+"/"+configFileName, configFilePath);
+			boolean mounted = mountCloudfusionModule(storages+"/"+configFileName);
 			if (mounted) {
-					virtualFolder.add(new VirtualRealFile(path, storages+"/"+configFileName+"/"+configFileName));
+					virtualFolder.add(new VirtualRealFile(path, storages+"/"+configFileName+CONFIG_PATH));
 			} else {
 				throw new FuseException("IO Exception on creating CloudFusion store.")
 				.initErrno(FuseException.EIO);
             }
             return;
 		}
-		super.mknod(path, mode, rdev);
+		if(path.equals(DATA_DIR) || virtualFolder.containsFile(path)){
+			throw new FuseException("Entity"+path+" already exists.")
+				.initErrno(FuseException.EEXIST);
+		}
+		if(path.startsWith(DATA_DIR)){
+			path = removeDataFolderPrefix(path);
+			super.mknod(path, mode, rdev);
+		}
 	}
 	
 	public void truncate(String path, long size) throws FuseException {
@@ -162,13 +204,62 @@ public class ConfigurableSplitter extends Splitter{
 				vtf.truncate();
 				return;
 			}
+			if(path.startsWith(DATA_DIR)){
+				path = removeDataFolderPrefix(path);
+			}
 			super.truncate(path, size);
 	}
 
 	public void unlink(String path) throws FuseException {
 		/**Don't remove virtual files*/
-		if ( !virtualFolder.containsFile(path) ) {
+		if(! path.startsWith(DATA_DIR)){
+			throw new FuseException("Cannot unlink "+path)
+				.initErrno(FuseException.EACCES);
+		} else{
+			path = removeDataFolderPrefix(path);
 			super.unlink(path);
 		}
+	}
+	
+	public FuseStatfs statfs() throws FuseException {
+		FuseStatfs ret = super.statfs();
+		ret.files += 2 + virtualFolder.getFileNames(vtSplitterConfig.getDir()).size(); //data and config directory + virtual configuration files
+		return ret;
+	}	
+	
+	public void rmdir(String path) throws FuseException {
+		//TODO: unmount storage module if removing config file
+		if(! path.startsWith(DATA_DIR) || path.equals(DATA_DIR)){
+			throw new FuseException("Cannot remove "+path)
+				.initErrno(FuseException.EACCES);
+		} else{
+			path = removeDataFolderPrefix(path);
+			super.rmdir(path);
+		}
+	}	
+	
+	public void rename(String from, String to) throws FuseException {
+		if(from.equals(DATA_DIR) || to.equals(DATA_DIR)){
+			throw new FuseException("Cannot rename "+from+" to "+to)
+				.initErrno(FuseException.EACCES);
+		} 
+		if(from.startsWith(DATA_DIR) && to.startsWith(DATA_DIR)){
+			from = removeDataFolderPrefix(from);
+			to = removeDataFolderPrefix(to);
+			super.rename(from, to);
+			return;
+		}
+		throw new FuseException("Cannot rename "+from+" to "+to)
+			.initErrno(FuseException.EACCES);
+	}	
+		
+		public void mkdir(String path, int mode) throws FuseException {
+			if(path.startsWith(DATA_DIR) && ! path.equals(DATA_DIR)){
+				path = removeDataFolderPrefix(path);
+				super.mkdir(path, mode);
+				return;
+			}
+			throw new FuseException("Cannot mkdir "+path)
+				.initErrno(FuseException.EACCES);
 	}
 }
