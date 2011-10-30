@@ -1,8 +1,8 @@
 
 include build.conf
 
-JAVAC := ${JDK_HOME}/bin/javac
-JAVA := ${JDK_HOME}/bin/java
+JAVAC := javac
+JAVA := java
 
 BUILD_CLASSPATH := ./build:./lib/*:../jigdfs/lib/*:../fusej/lib/*
 

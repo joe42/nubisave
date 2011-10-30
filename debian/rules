@@ -2,21 +2,25 @@
 # -*- makefile -*-
 
 %:
-	dh $@ 
+	dh $@
 
 build-indep:
 	cd splitter && make
 	cd cloudfusion && python setup.py build
-	# + install
 
 clean:
 	cd splitter && make clean
 	cd cloudfusion && python setup.py clean
 
 install-indep:
+	mkdir -p debian/nubisave/usr/share/nubisave
+	cp -r bin splitter start.sh debian/nubisave/usr/share/nubisave
+	mkdir -p debian/nubisave/usr/bin
+	cp debian/data/nubisave debian/nubisave/usr/bin
 	mkdir -p debian/nubisave/var/lib/tomcat6/webapps/Matchmaker/ontologies/
 	cp services/CloudQoS.wsml debian/nubisave/var/lib/tomcat6/webapps/Matchmaker/ontologies/
-	# FIXME: In wheezy, this becomes the 'python-poster' dependency
 	mkdir -p debian/nubisave/lib/python2.7/site-packages
+	cd cloudfusion && PYTHONPATH="../debian/nubisave/lib/python2.7/site-packages" python setup.py install --prefix ../debian/nubisave
+	# FIXME: In wheezy, this becomes the 'python-poster' dependency
 	PYTHONPATH="debian/nubisave/lib/python2.7/site-packages" easy_install --prefix debian/nubisave 'http://pypi.python.org/packages/2.6/p/poster/poster-0.4-py2.6.egg#md5=f69a6be30737ad5d652a602f3af005ac'
 
