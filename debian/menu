@@ -1,0 +1,2 @@
+?package(nubisave):needs="X11" section="Applications/Network/File Transfer"\
+  title="nubisave" command="/usr/bin/nubisave"
