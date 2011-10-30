@@ -1,22 +1,22 @@
 #!/usr/bin/make -f
 # -*- makefile -*-
+#export DH_VERBOSE=1
 
 %:
 	dh $@
 
-build: build-indep
-binary: binary-indep
+override_dh_auto_configure override_dh_auto_test:
 
-build-indep:
+override_dh_auto_build:
 	cd splitter && make
 	cd cloudfusion && python setup.py build
 
-clean:
+override_dh_auto_clean:
 	cd splitter && make clean
 	cd cloudfusion && python setup.py clean
 	rm -f debian/files
 
-binary-indep:
+override_dh_auto_install:
 	mkdir -p debian/nubisave/usr/share/nubisave
 	cp -r bin splitter start.sh debian/nubisave/usr/share/nubisave
 	mkdir -p debian/nubisave/usr/bin

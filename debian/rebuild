@@ -2,5 +2,6 @@
 
 stamp=`date +%Y%m%d`
 
+rm -rf debian/nubisave
 echo y | dh_make -i --createorig -p nubisave_0.0~git$stamp
 debuild
