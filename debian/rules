@@ -4,6 +4,9 @@
 %:
 	dh $@
 
+build: build-indep
+binary: binary-indep
+
 build-indep:
 	cd splitter && make
 	cd cloudfusion && python setup.py build
@@ -11,8 +14,9 @@ build-indep:
 clean:
 	cd splitter && make clean
 	cd cloudfusion && python setup.py clean
+	rm -f debian/files
 
-install-indep:
+binary-indep:
 	mkdir -p debian/nubisave/usr/share/nubisave
 	cp -r bin splitter start.sh debian/nubisave/usr/share/nubisave
 	mkdir -p debian/nubisave/usr/bin
