@@ -25,6 +25,8 @@ case "$1" in
 		echo "registering storage provider $servicename"
 		conqotool -u nubisave register $service
 	done
+	chmod 666 /usr/share/nubisave/splitter/splitter.db
+	chmod 666 /usr/share/nubisave/splitter/splitter.lg
 	# FIXME: auto-add users/primary user or debconf query?
 	#usermod -a -G fuse demo
     ;;
