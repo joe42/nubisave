@@ -146,11 +146,14 @@ class ConfigurablePyFuseBox(FlushingPyFuseBox):
         self.logger.debug("initialized store")
         if cache_time > 0 and metadata_cache_time > 0:
             store = MetadataCachingStore( CachingStore( MetadataCachingStore( store, metadata_cache_time ), cache_time ), metadata_cache_time )
+            self.set_cache_expiration_time(cache_time)
         elif cache_time > 0:
             store = CachingStore(store, cache_time)
+            self.set_cache_expiration_time(cache_time)
         elif metadata_cache_time > 0:
             store = MetadataCachingStore( store, metadata_cache_time )
         self.store = store
+        super( ConfigurablePyFuseBox, self ).start_cyclic_flushing()
         self.logger.debug("initialized service")
         self.store_initialized = True
         
