@@ -18,13 +18,20 @@ override_dh_auto_clean:
 
 override_dh_auto_install:
 	mkdir -p debian/nubisave/usr/share/nubisave
-	cp -r bin splitter jigdfs fusej services start.sh debian/nubisave/usr/share/nubisave
+	cp -r bin splitter jigdfs fusej services start.sh debian/nubisave/usr/share/nubisave/
 	rm -rf debian/nubisave/usr/share/nubisave/jigdfs/src
 	rm -rf debian/nubisave/usr/share/nubisave/fusej/src
 	rm -rf debian/nubisave/usr/share/nubisave/splitter/src
+	cp -r cloudfusion/cloudfusion/config debian/nubisave/usr/share/nubisave/
+	touch debian/nubisave/usr/share/nubisave/splitter/splitter.db
+	touch debian/nubisave/usr/share/nubisave/splitter/splitter.lg
+	chmod 666 debian/nubisave/usr/share/nubisave/splitter/splitter.db
+	chmod 666 debian/nubisave/usr/share/nubisave/splitter/splitter.lg
+	sed -i -e 's/R.File=log/R.File=\${user.home}\/.nubisave\/log/' debian/nubisave/usr/share/nubisave/splitter/log4j.properties
+	sed -i -e 's/CHAINSAW.File=log/CHAINSAW.File=${user.home}\/.nubisave\/log/' debian/nubisave/usr/share/nubisave/splitter/log4j.properties
 	mkdir -p debian/nubisave/usr/bin
-	cp debian/data/nubisave debian/nubisave/usr/bin
-	mkdir -p debian/nubisave/var/lib/tomcat6/webapps/Matchmaker/ontologies/
+	cp debian/data/nubisave debian/nubisave/usr/bin/
+	mkdir -p debian/nubisave/var/lib/tomcat6/webapps/Matchmaker/ontologies
 	cp services/CloudQoS.wsml debian/nubisave/var/lib/tomcat6/webapps/Matchmaker/ontologies/
 	mkdir -p debian/nubisave/lib/python2.7/site-packages
 	cd cloudfusion && PYTHONPATH="../debian/nubisave/lib/python2.7/site-packages" python setup.py install --prefix ../debian/nubisave
