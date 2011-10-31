@@ -1,3 +1,9 @@
+nubisave (0.0~git20111031-1) unstable; urgency=low
+
+  * Updated package with today's sources from the 'packaging' branch.
+
+ -- Josef Spillner <josef@rumba>  Mon, 31 Oct 2011 12:01:04 +0100
+
 nubisave (0.0~git20111030-1) unstable; urgency=low
 
   * Initial release.
