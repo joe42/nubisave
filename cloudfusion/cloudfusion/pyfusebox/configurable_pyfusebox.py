@@ -64,7 +64,7 @@ class ConfigurablePyFuseBox(FlushingPyFuseBox):
             raise FuseOSError(EACCES)             
         if self.store_initialized and path.startswith(self.DATA_FOLDER_PATH):
             path = self.remove_data_folder_prefix(path)
-            super( ConfigurablePyFuseBox, self ).rmdir(path)
+            return super( ConfigurablePyFuseBox, self ).rmdir(path)
         raise FuseOSError(ENOENT)
         
     def mkdir(self, path, mode):
@@ -73,7 +73,7 @@ class ConfigurablePyFuseBox(FlushingPyFuseBox):
             raise FuseOSError(EEXIST) 
         if self.store_initialized and path.startswith(self.DATA_FOLDER_PATH):
             path = self.remove_data_folder_prefix(path)
-            super( ConfigurablePyFuseBox, self ).mkdir(path, mode)
+            return super( ConfigurablePyFuseBox, self ).mkdir(path, mode)
         raise FuseOSError(EACCES) 
             
     def remove_data_folder_prefix(self, path):

@@ -106,6 +106,7 @@ class PyFuseBox(Operations):
             raise FuseOSError(EIO)
         except StoreAutorizationError:
             raise FuseOSError(EACCES) 
+        return 0
         
     def mkdir(self, path, mode):
         #raise FuseOSError(EACCES)#keine berechtigung
@@ -121,6 +122,7 @@ class PyFuseBox(Operations):
             raise FuseOSError(EIO)
         except StoreAutorizationError:
             raise FuseOSError(EACCES) #keine Berechtigung
+        return 0
 
     def statfs(self, path):
         """ This implementation should be looked at by a linux guru, since I have little experience concerning filesystems. """

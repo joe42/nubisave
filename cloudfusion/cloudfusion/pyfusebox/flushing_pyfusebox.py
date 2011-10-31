@@ -64,11 +64,11 @@ class FlushingPyFuseBox(PyFuseBox):
     
     def rmdir(self, path):
         with self.fileoperation_is_pending:
-            super( FlushingPyFuseBox, self ).rmdir(path)
+            return super( FlushingPyFuseBox, self ).rmdir(path)
         
     def mkdir(self, path, mode):
         with self.fileoperation_is_pending:
-            super( FlushingPyFuseBox, self ).mkdir(path, mode)
+            return super( FlushingPyFuseBox, self ).mkdir(path, mode)
     
     def statfs(self, path):#add size of vtf
         with self.fileoperation_is_pending:
