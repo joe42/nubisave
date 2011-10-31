@@ -18,7 +18,10 @@ override_dh_auto_clean:
 
 override_dh_auto_install:
 	mkdir -p debian/nubisave/usr/share/nubisave
-	cp -r bin splitter fusej services start.sh debian/nubisave/usr/share/nubisave
+	cp -r bin splitter jigdfs fusej services start.sh debian/nubisave/usr/share/nubisave
+	rm -rf debian/nubisave/usr/share/nubisave/jigdfs/src
+	rm -rf debian/nubisave/usr/share/nubisave/fusej/src
+	rm -rf debian/nubisave/usr/share/nubisave/splitter/src
 	mkdir -p debian/nubisave/usr/bin
 	cp debian/data/nubisave debian/nubisave/usr/bin
 	mkdir -p debian/nubisave/var/lib/tomcat6/webapps/Matchmaker/ontologies/

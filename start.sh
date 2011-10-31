@@ -5,10 +5,10 @@ scriptloc=`dirname $scriptpath`
 cd $scriptloc
 
 echo "Start des Splitter Modules"
-mountpoint=`pwd`/mount
-storages=`pwd`/storages
+mountpoint=$HOME/nubisavemount
+storages=$HOME/.nubisave/storages
 
-mkdir $mountpoint $storages
+mkdir -p $mountpoint $storages
 cd splitter
 ./mount.sh $mountpoint $storages &
 cd ..
