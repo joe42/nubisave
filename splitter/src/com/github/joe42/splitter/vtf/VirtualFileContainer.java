@@ -14,6 +14,14 @@ public class VirtualFileContainer {
 	public void remove(VirtualFile virtualFile) {
 		vtf.remove(virtualFile);
 	}
+	public void remove(String path) {
+		for(VirtualFile file: vtf){
+			if(file.getPath().equals(path)){
+				vtf.remove(file);
+				return;
+			}
+		}
+	}
 
 	public boolean containsFile(String path){
 		for(VirtualFile file: vtf){
@@ -91,6 +99,9 @@ public class VirtualFileContainer {
 	}
 	
 	public VirtualFile get(String path){
+		/**
+		 * @return the first virtual File with the path path or null if it does not exist
+		 */
 		for(VirtualFile file: vtf){
 			if(file.getPath().equals(path)){
 				return file;

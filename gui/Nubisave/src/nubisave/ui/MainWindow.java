@@ -33,11 +33,13 @@ public class MainWindow extends javax.swing.JFrame {
         tableModel = new NubiTableModel();
         initComponents();
         providerTable.setDefaultRenderer(String.class, new ShowSupportedCellRenderer());
-        providerTable.getColumn("Edit").setCellRenderer(new ButtonRenderer());
-        providerTable.getColumn("Edit").setCellEditor(new ButtonEditor(new JCheckBox(), this));
+        providerTable.getColumn("Password").setCellRenderer(new ButtonRenderer());
+        providerTable.getColumn("Password").setCellEditor(new ButtonEditor(new JCheckBox(), this));
         providerTable.getColumn("Remove").setCellRenderer(new ButtonRenderer());
         providerTable.getColumn("Remove").setCellEditor(new ButtonEditor(new JCheckBox(), this));
-        providerTable.getColumn("Remove").setCellEditor(new ButtonEditor(new JCheckBox(), this));
+        providerTable.getColumn("Backend").setCellRenderer(new ButtonRenderer());
+        providerTable.getColumn("Backend").setCellEditor(new ButtonEditor(new JCheckBox(), this));
+
         
         String mntPoint = Properties.getProperty("splitter_mountpoint");
 
@@ -65,6 +67,8 @@ public class MainWindow extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        customStorageserviceChooser = new javax.swing.JFileChooser();
+        jOptionPane1 = new javax.swing.JOptionPane();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         providerPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -79,6 +83,10 @@ public class MainWindow extends javax.swing.JFrame {
         redundancySlider = new javax.swing.JSlider();
         jLabel3 = new javax.swing.JLabel();
         jButton5 = new javax.swing.JButton();
+
+        customStorageserviceChooser.setCurrentDirectory(new java.io.File("../splitter/mountscripts"));
+        customStorageserviceChooser.setDialogTitle("Custom Service");
+        customStorageserviceChooser.setFileFilter(new IniFileFilter());
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Nubisave");
@@ -105,7 +113,6 @@ public class MainWindow extends javax.swing.JFrame {
         });
 
         jButton3.setText("custom");
-        jButton3.setEnabled(false);
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
@@ -232,9 +239,13 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
-        AddCustomDialog addCstmDlg = new AddCustomDialog(this, true);
-        addCstmDlg.setVisible(true);
+        int returnVal = customStorageserviceChooser.showOpenDialog(null);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File file = customStorageserviceChooser.getSelectedFile();
+            StorageService newService = new StorageService(file);
+            Nubisave.services.getMmServices().add(newService);
+        }
+        tableModel.fireTableDataChanged();
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void mntDirTxtFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mntDirTxtFieldActionPerformed
@@ -256,8 +267,8 @@ public class MainWindow extends javax.swing.JFrame {
         Nubisave.mainSplitter.setRedundancy(redundancySlider.getValue());
     }//GEN-LAST:event_redundancySliderStateChanged
     public NubiTableModel tableModel;
-    private Mounter mounter = new Mounter();
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JFileChooser customStorageserviceChooser;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
@@ -265,6 +276,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JOptionPane jOptionPane1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextField mntDirTxtField;
@@ -273,4 +285,19 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JTable providerTable;
     private javax.swing.JSlider redundancySlider;
     // End of variables declaration//GEN-END:variables
+
+    class IniFileFilter extends javax.swing.filechooser.FileFilter {
+        @Override
+        public boolean accept(File file) {
+            // Allow only directories, or files with ".ini" extension
+            return file.isDirectory() || file.getAbsolutePath().endsWith(".ini");
+        }
+        @Override
+        public String getDescription() {
+            // This description will be displayed in the dialog,
+            // hard-coded = ugly, should be done via I18N
+            return "*.ini";
+        }
+    }
+
 }

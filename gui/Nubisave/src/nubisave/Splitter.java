@@ -49,16 +49,23 @@ public class Splitter {
     public void mountStorageModule(StorageService service){
         String path = configurationDirPath + "/" + service.getUniqName();
         try{
-            Ini serviceIni = new Ini(new File(service.getName()+".ini"));
+            Ini serviceIni = new Ini(new File("../splitter/mountscripts/"+service.getName()+".ini"));
             serviceIni.put("auth", "user", service.getUser());
             serviceIni.put("auth", "password", service.getPass());
+            int serviceIndex = 1;
+            for(StorageService s: service.getBackendServices()){
+                serviceIni.put("parameter", "backendservice"+serviceIndex++, s.getUniqName());
+            }
+            if(service.isBackendModule()){
+                serviceIni.put("splitter", "isbackendmodule", true);
+            }
             serviceIni.store(new File(path));
         } catch(Exception e){
             e.printStackTrace();
             return;
         }
     }
-    public void unmountStorageModule(MatchmakerService service){
+    public void unmountStorageModule(StorageService service){
         String path = configurationDirPath + "/" + service.getUniqName();
         new File(path).delete();
     }

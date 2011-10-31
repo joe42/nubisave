@@ -23,6 +23,8 @@ class Entry(object):
     def set_modified(self, modified=None):
         if not modified:
             self.modified= time.time()
+        else:
+            self.modified = modified
     def add_to_listing(self, path):
         if self.listing == None:
             return
@@ -221,8 +223,10 @@ class MetadataCachingStore(Store):
         self.logger.debug("meta cache _get_metadata %s" % path)
         if self.entries.exists(path):
             entry = self.entries.get_value(path)
+            self.logger.debug("entry exists")
             if not None in [entry.is_dir, entry.modified, entry.size]:
                 return {'is_dir': entry.is_dir, 'modified': entry.modified, 'bytes': entry.size}
+        self.logger.debug("meta cache _get_metadata entry does not exist")
         metadata = self.store._get_metadata(path)
         if not self.entries.exists(path):
             self.entries.write(path, Entry())
@@ -233,7 +237,6 @@ class MetadataCachingStore(Store):
             entry.set_is_file()
         entry.modified = metadata['modified']
         entry.size = metadata['bytes']
-        entry = self.entries.get_value(path)#dbg
         return {'is_dir': entry.is_dir, 'modified': entry.modified, 'bytes': entry.size}
 
     def is_dir(self, path):
@@ -253,13 +256,5 @@ class MetadataCachingStore(Store):
     def get_logging_handler(self):
         return self.store.get_logging_handler()
     
-    """def flush(self):
-        for path in self.entries:
-            self.entries.update(path)
-            if self.entries.is_dirty(path):
-                actual_modified_date = self._get_metadata(path)['modified']
-                cached_modified_date = self.entries[path]['modified']
-                if actual_modified_date < cached_modified_date:
-                    file = DataFileWrapper(self.entries.get_data(path))
-                    self.store.store_fileobject(file, path)
-"""
+    def flush(self):
+        self.store.flush()
