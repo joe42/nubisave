@@ -20,11 +20,17 @@ set -e
 
 case "$1" in
     configure)
-	for service in /usr/share/nubisave/services/CloudServices/*.wsml; do
-		servicename=$(basename "$service")
-		echo "registering storage provider $servicename"
-		conqotool -u nubisave register $service
-	done
+	which conqotool >/dev/null
+	if [ $? -eq 0 ]; then
+		echo "Performing cloud storage provider registration."
+		for service in /usr/share/nubisave/services/CloudServices/*.wsml; do
+			servicename=$(basename "$service")
+			echo "- registering provider $servicename"
+			conqotool -u nubisave register $service
+		done
+	else
+		echo "Skipping cloud storage provider registration."
+	fi
 	chmod 666 /usr/share/nubisave/splitter/splitter.db
 	chmod 666 /usr/share/nubisave/splitter/splitter.lg
 	# FIXME: auto-add users/primary user or debconf query?
