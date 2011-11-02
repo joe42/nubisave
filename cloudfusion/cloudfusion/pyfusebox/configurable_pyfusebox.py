@@ -5,7 +5,9 @@ Created on 23.08.2011
 
 This FUSE module initializes the store at runtime when the user accesses the virtual file /.config/.###config### and writes the appropriate parameters to the file.
 '''
+
 from cloudfusion.pyfusebox.pyfusebox import *
+from cloudfusion.pyfusebox.flushing_pyfusebox import FlushingPyFuseBox
 from cloudfusion.pyfusebox.virtualconfigfile import VirtualConfigFile
 from cloudfusion.store.dropbox.dropbox_store import DropboxStore
 from cloudfusion.store.sugarsync.sugarsync_store import SugarsyncStore
@@ -13,7 +15,7 @@ from cloudfusion.store.caching_store import CachingStore
 from cloudfusion.store.metadata_caching_store import MetadataCachingStore
 
 
-class ConfigurablePyFuseBox(PyFuseBox):
+class ConfigurablePyFuseBox(FlushingPyFuseBox):
     VIRTUAL_CONFIG_FILE = '/config/config'
     DATA_FOLDER_PATH = "/data"
     def __init__(self, root):
@@ -50,9 +52,10 @@ class ConfigurablePyFuseBox(PyFuseBox):
         self.logger.debug("truncate %s to %s" % (path, length))
         if path == self.virtual_file.get_path():
             self.virtual_file.truncate()
+            return 0
         if self.store_initialized and path.startswith(self.DATA_FOLDER_PATH):
             path = self.remove_data_folder_prefix(path)
-            super( ConfigurablePyFuseBox, self ).truncate(path, length, fh)
+            return super( ConfigurablePyFuseBox, self ).truncate(path, length, fh)
         raise FuseOSError(ENOENT)
     
     def rmdir(self, path):
@@ -61,7 +64,7 @@ class ConfigurablePyFuseBox(PyFuseBox):
             raise FuseOSError(EACCES)             
         if self.store_initialized and path.startswith(self.DATA_FOLDER_PATH):
             path = self.remove_data_folder_prefix(path)
-            super( ConfigurablePyFuseBox, self ).rmdir(path)
+            return super( ConfigurablePyFuseBox, self ).rmdir(path)
         raise FuseOSError(ENOENT)
         
     def mkdir(self, path, mode):
@@ -70,7 +73,7 @@ class ConfigurablePyFuseBox(PyFuseBox):
             raise FuseOSError(EEXIST) 
         if self.store_initialized and path.startswith(self.DATA_FOLDER_PATH):
             path = self.remove_data_folder_prefix(path)
-            super( ConfigurablePyFuseBox, self ).mkdir(path, mode)
+            return super( ConfigurablePyFuseBox, self ).mkdir(path, mode)
         raise FuseOSError(EACCES) 
             
     def remove_data_folder_prefix(self, path):
@@ -81,10 +84,12 @@ class ConfigurablePyFuseBox(PyFuseBox):
     
     def statfs(self, path):#add size of vtf
         self.logger.debug("statfs %s" % (path))
-        super( ConfigurablePyFuseBox, self ).statfs(path)
+        if self.store_initialized:
+            path = self.remove_data_folder_prefix(path)
+            return super( ConfigurablePyFuseBox, self ).statfs(path)
     
     def rename(self, old, new):
-        self.logger.debug("rename %s" % (old, new))
+        self.logger.debug("rename %s to %s" % (old, new))
         """if new == self.virtual_file.get_path():
             buf = 
             written_bytes =  self.virtual_file.write(buf, offset)
@@ -116,7 +121,7 @@ class ConfigurablePyFuseBox(PyFuseBox):
             super( ConfigurablePyFuseBox, self ).unlink(path)
 
     def read(self, path, size, offset, fh):
-        self.logger.debug("unlink %s" % path)
+        self.logger.debug("read %s" % path)
         if path == self.virtual_file.get_path():
             return self.virtual_file.read(size, offset)
         if self.store_initialized and path.startswith(self.DATA_FOLDER_PATH):
@@ -131,9 +136,9 @@ class ConfigurablePyFuseBox(PyFuseBox):
         cache_time = 0
         metadata_cache_time = 0
         if 'cache' in conf:
-            cache_time = conf['cache'] 
+            cache_time = int(conf['cache']) 
         if 'metadata_cache' in conf:
-            metadata_cache_time = conf['metadata_cache'] 
+            metadata_cache_time = int(conf['metadata_cache']) 
         self.logger.debug("got cache parameter")
         auth = self.virtual_file.get_service_auth_data()
         self.logger.debug("got auth data: "+str(auth))
@@ -141,11 +146,14 @@ class ConfigurablePyFuseBox(PyFuseBox):
         self.logger.debug("initialized store")
         if cache_time > 0 and metadata_cache_time > 0:
             store = MetadataCachingStore( CachingStore( MetadataCachingStore( store, metadata_cache_time ), cache_time ), metadata_cache_time )
+            self.set_cache_expiration_time(cache_time)
         elif cache_time > 0:
             store = CachingStore(store, cache_time)
+            self.set_cache_expiration_time(cache_time)
         elif metadata_cache_time > 0:
             store = MetadataCachingStore( store, metadata_cache_time )
         self.store = store
+        super( ConfigurablePyFuseBox, self ).start_cyclic_flushing()
         self.logger.debug("initialized service")
         self.store_initialized = True
         
@@ -182,7 +190,7 @@ class ConfigurablePyFuseBox(PyFuseBox):
             return 0
         if self.store_initialized and path.startswith(self.DATA_FOLDER_PATH):
             path = self.remove_data_folder_prefix(path)
-            super( ConfigurablePyFuseBox, self ).flush(path, fh)
+            return super( ConfigurablePyFuseBox, self ).flush(path, fh)
     
     def release(self, path, fh):
         self.logger.debug("release %s - fh: %s" % (path, fh))
@@ -190,7 +198,7 @@ class ConfigurablePyFuseBox(PyFuseBox):
             return 0
         if self.store_initialized and path.startswith(self.DATA_FOLDER_PATH):
             path = self.remove_data_folder_prefix(path)
-            super( ConfigurablePyFuseBox, self ).release(path, fh) 
+            return super( ConfigurablePyFuseBox, self ).release(path, fh) 
        
     def readdir(self, path, fh):
         self.logger.debug("readdir "+path+"")

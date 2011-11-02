@@ -17,6 +17,7 @@ public class VirtualFile {
 	private FileEntry entry;
 	public VirtualFile(String path) {
 		this.path = path;
+		this.text = "";
 		entry = new FileEntry();
 	}
 	protected FileEntry getFileEntry(){
@@ -45,6 +46,9 @@ public class VirtualFile {
 	}
 
 	public String getPath() {
+		/**
+		 * @return the full path to this virtual file
+		 **/
 		return path;
 	}
 

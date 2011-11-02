@@ -38,4 +38,20 @@ public class IniUtil {
 		}
 		return null;
 	}
+
+	public static <T> T get(Ini ini, String sectionname, String optionname, Class<T> c) {
+		try{
+			return ini.get(sectionname, optionname, c);
+		} catch(NullPointerException e){
+		}
+		return null;
+	}
+	
+	public static String get(Ini ini, String sectionname, String optionname) {
+		try{
+			return ini.get(sectionname, optionname, String.class);
+		} catch(NullPointerException e){
+		}
+		return null;
+	}
 }

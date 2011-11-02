@@ -13,12 +13,12 @@ import java.util.List;
  */
 public class Services {
 
-    private List<MatchmakerService> mmServices;
+    private List<StorageService> mmServices;
     private List<AgreementService> aServices;
     private List<CustomMntPoint> cstmMntPnts;
 
     public Services() {
-        mmServices = new LinkedList<MatchmakerService>();
+        mmServices = new LinkedList<StorageService>();
         aServices = new LinkedList<AgreementService>();
         cstmMntPnts = new LinkedList<CustomMntPoint>();
     }
@@ -31,12 +31,12 @@ public class Services {
         return cstmMntPnts;
     }
 
-    public List<MatchmakerService> getMmServices() {
+    public List<StorageService> getMmServices() {
         return mmServices;
     }
 
-    public MatchmakerService getMmService(String name) {
-        for(MatchmakerService s: mmServices){
+    public StorageService getMmService(String name) {
+        for(StorageService s: mmServices){
             if(s.getName().equals(name)){
                 return s;
             }

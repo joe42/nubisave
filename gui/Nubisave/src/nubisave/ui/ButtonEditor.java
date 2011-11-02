@@ -64,23 +64,17 @@ public class ButtonEditor extends DefaultCellEditor {
         if (isPushed) {
 
             switch (column) {
-                case 3:
-                    String type = (String) owner.tableModel.getValueAt(row, 1);
-                    if ("Service".equals(type)) {
-                        MatchmakerService service = Nubisave.services.getMmServices().get(row);
-                        ServiceEditDialog editDialog = new ServiceEditDialog(owner, true, service);
+                case 2:
+                    String type = (String) owner.tableModel.getValueAt(row, NubiTableModel.Headers.TYPE.ordinal());
+                    if ("Service".equals(type) || "Custom".equals(type)) {
+                        StorageService service = Nubisave.services.getMmServices().get(row);
+                        ServicePasswordDialog editDialog = new ServicePasswordDialog(owner, true, service);
                         editDialog.setTitle(service.getName());
                         editDialog.setVisible(true);
-                    } else if ("Custom".equals(type)) {
-                        row -= Nubisave.services.getMmServices().size();
-                        CustomMntPoint service = Nubisave.services.getCstmMntPnts().get(row);
-                        CustomEditDialog editDialog = new CustomEditDialog(owner, true, service);
-                        editDialog.setTitle(service.getName());
-                        editDialog.setVisible(true);
-                    }
+                    } 
                     break;
-                case 4:
-                    String desc = (String) owner.tableModel.getValueAt(row, 2);
+                case 3:
+                    String desc = (String) owner.tableModel.getValueAt(row, NubiTableModel.Headers.DESCRIPTION.ordinal());
                     String[] options = {"No", "Remove"};
                     int n = JOptionPane.showOptionDialog(owner,
                             "Remove and umount " + desc + "?",
@@ -91,17 +85,24 @@ public class ButtonEditor extends DefaultCellEditor {
                             options,
                             options[1]);
                     if (n == 1) {
-                        //new Mounter().umountService(Nubisave.services.get(row));
+                        Nubisave.mainSplitter.unmountStorageModule(Nubisave.services.get(row));
                         Nubisave.services.remove(row);
                         
                     }
-                    
+                    break;
+                case 5:
+                    //type = (String) owner.tableModel.getValueAt(row, NubiTableModel.Headers.TYPE.ordinal());
+                    StorageService service = Nubisave.services.getMmServices().get(row);
+                    BackendConfigurationDialog editDialog = new BackendConfigurationDialog(owner, true, service);
+                    editDialog.setTitle(service.getName());
+                    editDialog.setVisible(true);
+                    break;
             }
         }
         isPushed = false;
 
 
-        return new String(label);
+        return label;
     }
 
     @Override
