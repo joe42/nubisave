@@ -112,7 +112,7 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
-        jButton3.setText("custom");
+        jButton3.setText("Custom");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
@@ -174,7 +174,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         jLabel3.setText("Redundancy");
 
-        jButton5.setText("open");
+        jButton5.setText("Open");
         jButton5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton5ActionPerformed(evt);
@@ -192,7 +192,7 @@ public class MainWindow extends javax.swing.JFrame {
                     .addComponent(jLabel2)
                     .addComponent(jLabel3)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, optionPanelLayout.createSequentialGroup()
-                        .addComponent(mntDirTxtField, javax.swing.GroupLayout.DEFAULT_SIZE, 603, Short.MAX_VALUE)
+                        .addComponent(mntDirTxtField, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE)
                         .addGap(36, 36, 36)
                         .addComponent(jButton5)))
                 .addContainerGap())
