@@ -33,12 +33,12 @@ public class MainWindow extends javax.swing.JFrame {
         tableModel = new NubiTableModel();
         initComponents();
         providerTable.setDefaultRenderer(String.class, new ShowSupportedCellRenderer());
-        providerTable.getColumn("Password").setCellRenderer(new ButtonRenderer());
-        providerTable.getColumn("Password").setCellEditor(new ButtonEditor(new JCheckBox(), this));
-        providerTable.getColumn("Remove").setCellRenderer(new ButtonRenderer());
-        providerTable.getColumn("Remove").setCellEditor(new ButtonEditor(new JCheckBox(), this));
-        providerTable.getColumn("Backend").setCellRenderer(new ButtonRenderer());
-        providerTable.getColumn("Backend").setCellEditor(new ButtonEditor(new JCheckBox(), this));
+        providerTable.getColumn(tableModel.headers[NubiTableModel.Headers.OPTIONS.ordinal()]).setCellRenderer(new ButtonRenderer());
+        providerTable.getColumn(tableModel.headers[NubiTableModel.Headers.OPTIONS.ordinal()]).setCellEditor(new ButtonEditor(new JCheckBox(), this));
+        providerTable.getColumn(tableModel.headers[NubiTableModel.Headers.REMOVE.ordinal()]).setCellRenderer(new ButtonRenderer());
+        providerTable.getColumn(tableModel.headers[NubiTableModel.Headers.REMOVE.ordinal()]).setCellEditor(new ButtonEditor(new JCheckBox(), this));
+        providerTable.getColumn(tableModel.headers[NubiTableModel.Headers.CONNECT.ordinal()]).setCellRenderer(new ButtonRenderer());
+        providerTable.getColumn(tableModel.headers[NubiTableModel.Headers.CONNECT.ordinal()]).setCellEditor(new ButtonEditor(new JCheckBox(), this));
 
         
         String mntPoint = Properties.getProperty("splitter_mountpoint");
