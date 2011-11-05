@@ -49,7 +49,7 @@ import fuse.compat.FuseStat;
 //<1238
 //overwrite existing files
 
-public class Splitter implements Filesystem1 {
+public class FuseBox implements Filesystem1 {
 	private static final Logger  log = Logger.getLogger("Splitter");
 
 	private static final int blockSize = 512;
@@ -74,7 +74,7 @@ public class Splitter implements Filesystem1 {
 
 	private VirtualFileContainer virtualFileContainer;
 
-	public Splitter(String storages, int redundancy) throws IOException {
+	public FuseBox(String storages, int redundancy) throws IOException {
 		// .config###/
 		// aufruf splitter_mount.sh mountordner ordner_mit_storage_ordner
 		// "redundancy level in percent 0-100"
@@ -629,7 +629,7 @@ public class Splitter implements Filesystem1 {
 		System.arraycopy(args, 0, fuseArgs, 0, fuseArgs.length);
 		// System.out.println(fuseArgs[0]);
 		try {
-			FuseMount.mount(fuseArgs, new ConfigurableSplitter(args[3]));
+			FuseMount.mount(fuseArgs, new ConfigurableFuseBox(args[3]));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

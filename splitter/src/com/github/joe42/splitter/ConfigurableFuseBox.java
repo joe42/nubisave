@@ -22,12 +22,12 @@ import fuse.FuseFtype;
 import fuse.FuseStatfs;
 import fuse.compat.FuseDirEnt;
 import fuse.compat.FuseStat;
-public class ConfigurableSplitter extends Splitter  implements StorageService{
+public class ConfigurableFuseBox extends FuseBox  implements StorageService{
 
 	private VirtualFileContainer virtualFolder;
 	private VirtualFile vtSplitterConfig;
 	private Mounter mounter;
-	public ConfigurableSplitter(String storages) throws IOException{
+	public ConfigurableFuseBox(String storages) throws IOException{
 		super(storages, 0);
 		virtualFolder = new VirtualFileContainer();
 		vtSplitterConfig = new VirtualFile(CONFIG_PATH);
