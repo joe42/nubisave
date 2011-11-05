@@ -27,8 +27,8 @@ public class ConfigurableFuseBox extends FuseBox  implements StorageService{
 	private VirtualFileContainer virtualFolder;
 	private VirtualFile vtSplitterConfig;
 	private Mounter mounter;
-	public ConfigurableFuseBox(String storages) throws IOException{
-		super(storages, 0);
+	public ConfigurableFuseBox(Splitter splitter) throws IOException{
+		super(splitter);
 		virtualFolder = new VirtualFileContainer();
 		vtSplitterConfig = new VirtualFile(CONFIG_PATH);
 		vtSplitterConfig.setText("[splitter]\nredundancy = 0");

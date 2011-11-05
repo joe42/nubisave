@@ -50,13 +50,10 @@ import fuse.compat.FuseStat;
 //overwrite existing files
 
 public class FuseBox implements Filesystem1 {
-	private static final Logger  log = Logger.getLogger("Splitter");
+	private static final Logger  log = Logger.getLogger("FuseBox");
 
 	private static final int blockSize = 512;
 
-	private static int MAX_FILE_FRAGMENTS;
-
-	private static int MAX_FILE_FRAGMENTS_NEEDED;
 	private RecordManager recman;
 	private HTree filemap;
 	private HTree dirmap;
@@ -73,16 +70,15 @@ public class FuseBox implements Filesystem1 {
 	private RandomAccessTemporaryFileChannel tempReadChannel;
 
 	private VirtualFileContainer virtualFileContainer;
+	private Splitter splitter;
 
-	public FuseBox(String storages, int redundancy) throws IOException {
+	public FuseBox(Splitter splitter) throws IOException {
 		// .config###/
 		// aufruf splitter_mount.sh mountordner ordner_mit_storage_ordner
 		// "redundancy level in percent 0-100"
 		PropertyConfigurator.configure("log4j.properties");
 		
-		this.storages = storages;
-		this.redundancy = redundancy;
-		multi_file_handler = new ConcurrentMultipleFileHandler();
+		this.splitter = splitter;
 
 		Properties props = new Properties();
 		recman = RecordManagerFactory.createRecordManager("splitter", props);
@@ -234,15 +230,28 @@ public class FuseBox implements Filesystem1 {
 
 	public void mknod(String path, int mode, int rdev) throws FuseException {
 
+		FileEntry fileEntry;
 		try {
 			tempFiles.putNewFileChannel(path);
-			filemap.put(path, new FileEntry());
+			fileEntry = new FileEntry();
+			filemap.put(path, fileEntry);
 			recman.commit();
 		} catch (IOException e) {
 			throw new FuseException("IO Exception on accessing metadata")
 					.initErrno(FuseException.EIO);
 		}
-		splitFile(path); //kann man nicht rausnehmen (vielleicht doch; Dropbox 400 Error bei leeren Dateien ist gefixed)
+		if (tempFiles.getFileChannel(path) == null) {
+			throw new FuseException("IO Exception - nothing to split")
+					.initErrno(FuseException.EIO);
+		}
+		splitter.splitFile(fileEntry, tempFiles.getFileChannel(path)); //kann man nicht rausnehmen (vielleicht doch; Dropbox 400 Error bei leeren Dateien ist gefixed)
+		try {
+			recman.commit();
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new FuseException("IO Exception on accessing metadata")
+					.initErrno(FuseException.EIO);
+		}
 	}
 
 	public void open(String path, int flags) throws FuseException {
@@ -341,7 +350,14 @@ public class FuseBox implements Filesystem1 {
 	public void truncate(String path, long size) throws FuseException {
 		try {
 			if (filemap.get(path) != null) {
-				tempFiles.put(path, glueFilesTogether(path));
+				FileEntry fileEntry;
+				try {
+					fileEntry = (FileEntry) filemap.get(path);
+				} catch (IOException e1) {
+					throw new FuseException("IO Exception on accessing metadata")
+							.initErrno(FuseException.EIO);
+				}
+				tempFiles.put(path, splitter.glueFilesTogether(fileEntry));
 				try {
 					tempFiles.getFileChannel(path).truncate(size);
 				} catch (FileNotFoundException e) {
@@ -362,13 +378,13 @@ public class FuseBox implements Filesystem1 {
 		try {
 			FileEntry entry = (FileEntry) filemap.get(path);
 			int del_cnt = 0;
-			for (String fragmentName : entry.fragment_names) {
+			for (String fragmentName : splitter.getFragmentNames(path)) {
 				if (new File(fragmentName).delete()) {
 					del_cnt++;
 				}
 			}
-			int possibly_existing_filenr = MAX_FILE_FRAGMENTS - del_cnt;
-			if (possibly_existing_filenr >= MAX_FILE_FRAGMENTS_NEEDED) {
+			int possibly_existing_filenr = splitter.getNrOfFragments(path) - del_cnt;
+			if (possibly_existing_filenr >= splitter.getNrOfRequiredFragments(path)) {
 				throw new FuseException("IO Exception on deleting file")
 						.initErrno(FuseException.EACCES);
 			}
@@ -393,7 +409,8 @@ public class FuseBox implements Filesystem1 {
 		try {
 			if (tempFiles.getFileChannel(path) == null) {
 				System.out.println("glue? ");
-				tempFiles.put(path, glueFilesTogether(path));
+				FileEntry entry = (FileEntry) filemap.get(path);
+				tempFiles.put(path, splitter.glueFilesTogether(entry));
 				System.out.println("glued! ");
 			}
 			FileChannel wChannel = tempFiles.getFileChannel(path);
@@ -405,194 +422,16 @@ public class FuseBox implements Filesystem1 {
 		}
 	}
 
-	private List<String> getFragmentStores() {
-		log.debug("getting fragment stores");
-		List<String> ret = new ArrayList<String>();
-		File storageFolder = new File(storages);
-		File dataStorages;
-		String[] folders = storageFolder.list();
-		String[] dataFolders;
-		ret.clear();
-		if (folders == null) {
-			log.debug(storages + " is not a directory!");
-		} else {
-			for (int i = 0; i < folders.length; i++) {
-				log.debug("checking "+storageFolder.getAbsolutePath()+"/"+folders[i]);
-				dataStorages = new File(storageFolder.getAbsolutePath()+"/"+folders[i]);
-				dataFolders = dataStorages.list();
-				if (dataStorages == null) {
-					log.debug(storageFolder.getAbsolutePath()+"/"+folders[i] + " has no data directory!");
-				} else {
-					for (int j = 0; j < dataFolders.length;j++) {
-						if(dataFolders[j].equals("data")){
-							log.debug(dataStorages.getAbsolutePath()+"/data"+ " added");
-							ret.add(dataStorages.getAbsolutePath()+"/data");
-						}
-					}
-				}
-			}
-		}
-		return ret;
-	}
 
-	private void splitFile(String path) throws FuseException {
-		if (tempFiles.getFileChannel(path) == null) {
-			throw new FuseException("IO Exception - nothing to split")
-					.initErrno(FuseException.EIO);
-		}
-		int nr_of_file_parts_successfully_stored = 0;
-		HashMap<String, byte[]> fileParts = new HashMap<String, byte[]>();
-		List<String> fragmentStores = getFragmentStores();
-		MAX_FILE_FRAGMENTS = fragmentStores.size();
-		log.debug("MAX_FILE_FRAGMENTS:" + MAX_FILE_FRAGMENTS);
-		MAX_FILE_FRAGMENTS_NEEDED = (int) (MAX_FILE_FRAGMENTS *(100-redundancy) /100f); //100% redundancy -> only one file is enough to restore everything
-		if(MAX_FILE_FRAGMENTS_NEEDED <1){
-			MAX_FILE_FRAGMENTS_NEEDED=1;
-		}
-		FileChannel temp = tempFiles.getFileChannel(path);
-		FileEntry fileEntry = null;
-		try {
-			fileEntry = (FileEntry) filemap.get(path);
-		} catch (IOException e1) {
-			throw new FuseException("IO Exception on accessing metadata")
-					.initErrno(FuseException.EIO);
-		}
-		String fragment_name;
-		String uniquePath;
-		if (fileEntry.fragment_names.isEmpty()) {
-			uniquePath = StringUtil.getUniqueAsciiString(path);
-			for (int fragment_nr = 0; fragment_nr < MAX_FILE_FRAGMENTS; fragment_nr++) {
-				fragment_name = fragmentStores.get(fragment_nr) + uniquePath
-						+ '#' + fragment_nr;
-				fileEntry.fragment_names.add(fragment_name);
-			}
-		}
-		Digest digestFunc = new SHA256Digest();
-		byte[] digestByteArray = new byte[digestFunc.getDigestSize()];
-		String hexString = null;
-		InformationDispersalCodec crsidacodec;
-		InformationDispersalEncoder encoder;
-		try {
-			crsidacodec = new CauchyInformationDispersalCodec(
-					MAX_FILE_FRAGMENTS, MAX_FILE_FRAGMENTS_NEEDED, 1);
-			encoder = crsidacodec.getEncoder();
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new FuseException("IDA could not be initialized")
-					.initErrno(FuseException.EACCES);
-		}
-		try {
-			byte[] arr = new byte[(int) temp.size()];
-			temp.read(ByteBuffer.wrap(arr));
-			digestFunc.update(arr, 0, arr.length);
-			digestFunc.doFinal(digestByteArray, 0);
-			List<byte[]> result = encoder.process(arr);
 
-			for (int fragment_nr = 0; fragment_nr < MAX_FILE_FRAGMENTS; fragment_nr++) {
-
-				fragment_name = fileEntry.fragment_names.get(fragment_nr);
-				log.debug("write: " + fragment_name);
-				fileEntry.fragment_names.add(fragment_name);
-				byte[] b = result.get(fragment_nr);
-				digestFunc.reset();
-				digestFunc.update(b, 0, b.length);
-				digestFunc.doFinal(digestByteArray, 0);
-
-				hexString = new String(Hex.encode(digestByteArray));
-				fileParts.put(fragment_name, b);
-			}
-			nr_of_file_parts_successfully_stored = multi_file_handler.writeFilesAsByteArrays(fileParts);
-			fileEntry.size = (int) temp.size();
-
-			filemap.put(path, fileEntry);
-			recman.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new FuseException("IO error: " + e.toString(), e)
-					.initErrno(FuseException.EIO);
-		}
-
-		//if (log.isDebugEnabled())
-		  log.debug("nr_of_file_parts_successfully_stored: "+nr_of_file_parts_successfully_stored+" - MAX_FILE_FRAGMENTS_NEEDED "+MAX_FILE_FRAGMENTS_NEEDED);
-		if (nr_of_file_parts_successfully_stored < MAX_FILE_FRAGMENTS_NEEDED) {
-			throw new FuseException(
-					"IO error: Not enough file parts could be stored.")
-					.initErrno(FuseException.EIO);
-		}
-	}
-
-	private RandomAccessTemporaryFileChannel glueFilesTogether(String path) throws FuseException {
-		RandomAccessTemporaryFileChannel ret = null;
-		List<byte[]> receivedFileSegments = new ArrayList<byte[]>();
-		Digest digestFunc = new SHA256Digest();
-		byte[] digestByteArray = new byte[digestFunc.getDigestSize()];
-		InformationDispersalCodec crsidacodec;
-		InformationDispersalDecoder decoder;
-		try {
-			crsidacodec = new CauchyInformationDispersalCodec(
-					MAX_FILE_FRAGMENTS, MAX_FILE_FRAGMENTS_NEEDED, 1);
-			decoder = crsidacodec.getDecoder();
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new FuseException("IDA could not be initialized")
-					.initErrno(FuseException.EACCES);
-		}
-		String hexString = null;
-		log.info("glue ");
-		int readBytes;
-		try {
-			ret = new RandomAccessTemporaryFileChannel();
-			int validSegment = 0;
-			List<String> fragmentNames = ((FileEntry) filemap.get(path)).fragment_names;
-
-			List<byte[]> segmentBuffers = multi_file_handler
-					.getFilesAsByteArrays(fragmentNames.toArray(new String[0]), MAX_FILE_FRAGMENTS_NEEDED);
-			for (byte[] segmentBuffer : segmentBuffers) {
-				//log.info("glue " + new String(segmentBuffer));
-
-				digestFunc.reset();
-
-				digestFunc.update(segmentBuffer, 0, segmentBuffer.length);
-
-				digestFunc.doFinal(digestByteArray, 0);
-
-				hexString = new String(Hex.encode(digestByteArray));
-
-				/*
-				 * if (!hexString.equals(file_fragment.getName())) {
-				 * log.error("this file segment is invalid! " +
-				 * file_fragment.getName() + " <> " + hexString); } else {
-				 */
-				receivedFileSegments.add(segmentBuffer);
-				validSegment++;
-
-				if (validSegment >= MAX_FILE_FRAGMENTS_NEEDED) {
-					break;
-				}
-				// }
-			}
-			byte[] recoveredFile = decoder.process(receivedFileSegments);
-
-			digestFunc.reset();
-
-			digestFunc.update(recoveredFile, 0, recoveredFile.length);
-
-			digestFunc.doFinal(digestByteArray, 0);
-
-			ret.getChannel().write(ByteBuffer.wrap(recoveredFile));
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new FuseException("IO error", e).initErrno(FuseException.EIO);
-		}
-		return ret;
-	}
+	
 
 	public void read(String path, ByteBuffer buf, long offset)
 			throws FuseException {
 		try {
 			if (tempReadChannel == null) {
-				tempReadChannel = glueFilesTogether(path);
+				FileEntry entry = (FileEntry) filemap.get(path);
+				tempReadChannel = splitter.glueFilesTogether(entry);
 			}
 		tempReadChannel.getChannel().read(buf, offset);
 		} catch (IOException e) {
@@ -606,7 +445,14 @@ public class FuseBox implements Filesystem1 {
 
 	public void release(String path, int flags) throws FuseException {
 		if (tempFiles.getFileChannel(path) != null) {
-			splitFile(path);
+			FileEntry fileEntry;
+			try {
+				fileEntry = (FileEntry) filemap.get(path);
+			} catch (IOException e1) {
+				throw new FuseException("IO Exception on accessing metadata")
+						.initErrno(FuseException.EIO);
+			}
+			splitter.splitFile(fileEntry, tempFiles.getFileChannel(path)); //kann man nicht rausnehmen (vielleicht doch; Dropbox 400 Error bei leeren Dateien ist gefixed)
 			tempFiles.delete(path);
 		}
 		if (tempReadChannel != null) {
@@ -629,7 +475,8 @@ public class FuseBox implements Filesystem1 {
 		System.arraycopy(args, 0, fuseArgs, 0, fuseArgs.length);
 		// System.out.println(fuseArgs[0]);
 		try {
-			FuseMount.mount(fuseArgs, new ConfigurableFuseBox(args[3]));
+			Splitter splitter = new Splitter(args[3]);
+			FuseMount.mount(fuseArgs, new ConfigurableFuseBox(splitter));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
