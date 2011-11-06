@@ -150,7 +150,7 @@ public class ServiceParameterDialog extends javax.swing.JDialog {
             String name, value;
             int sectionCnt = 0;
             for(int i=0; i< jTextFields.size();i++ ){
-                if(sectionNames.contains(jLabels.get(i+sectionCnt))){ //ignore section labels which have no textfiled value
+                if(sectionNames.contains(jLabels.get(i+sectionCnt).getText())){ //ignore section labels which have no textfield value
                     sectionCnt++;
                 }
                 name = jLabels.get(i+sectionCnt).getText();
