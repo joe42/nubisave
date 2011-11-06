@@ -99,6 +99,10 @@ public class Splitter {
 		String fragment_name;
 		String uniquePath;
 		List<String> fileFragments = pathToFragmentNamesMap.get(fileEntry.path);
+		if(fileFragments == null) {
+			fileFragments = new ArrayList<String>();
+			pathToFragmentNamesMap.put(fileEntry.path, fileFragments);
+		}
 		if (fileFragments.isEmpty()) {
 			uniquePath = StringUtil.getUniqueAsciiString(fileEntry.path);
 			for (int fragment_nr = 0; fragment_nr < MAX_FILE_FRAGMENTS; fragment_nr++) {

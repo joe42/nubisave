@@ -212,7 +212,7 @@ public class FuseBox implements Filesystem1 {
 		FileEntry fileEntry;
 		try {
 			tempFiles.putNewFileChannel(path);
-			fileEntry = new FileEntry();
+			fileEntry = new FileEntry(path);
 			filemap.put(path, fileEntry);
 			recman.commit();
 		} catch (IOException e) {
@@ -223,7 +223,7 @@ public class FuseBox implements Filesystem1 {
 			throw new FuseException("IO Exception - nothing to split")
 					.initErrno(FuseException.EIO);
 		}
-		splitter.splitFile(fileEntry, tempFiles.getFileChannel(path)); //kann man nicht rausnehmen (vielleicht doch; Dropbox 400 Error bei leeren Dateien ist gefixed)
+		splitter.splitFile(fileEntry, tempFiles.getFileChannel(path)); //TODO: throw exception if not successful and remove filemap entry //kann man nicht rausnehmen (vielleicht doch; Dropbox 400 Error bei leeren Dateien ist gefixed)
 		try {
 			recman.commit();
 		} catch (IOException e) {
