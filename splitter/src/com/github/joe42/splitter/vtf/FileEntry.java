@@ -1,7 +1,5 @@
 package com.github.joe42.splitter.vtf;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import fuse.FuseFtype;
 

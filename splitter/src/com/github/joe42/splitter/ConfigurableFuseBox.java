@@ -1,21 +1,18 @@
 package com.github.joe42.splitter;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.ini4j.Ini;
-
-import jdbm.helper.FastIterator;
 
 import com.github.joe42.splitter.backend.Mounter;
 import com.github.joe42.splitter.backend.StorageService;
 import com.github.joe42.splitter.util.file.IniUtil;
-import com.github.joe42.splitter.vtf.*;
+import com.github.joe42.splitter.vtf.FolderEntry;
+import com.github.joe42.splitter.vtf.VirtualFile;
+import com.github.joe42.splitter.vtf.VirtualFileContainer;
+import com.github.joe42.splitter.vtf.VirtualRealFile;
 
 import fuse.FuseException;
 import fuse.FuseFtype;

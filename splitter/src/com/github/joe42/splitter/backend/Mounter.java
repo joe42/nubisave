@@ -2,9 +2,7 @@ package com.github.joe42.splitter.backend;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import org.ini4j.Ini;
 

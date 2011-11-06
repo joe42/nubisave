@@ -1,6 +1,5 @@
 package com.github.joe42.splitter.vtf;
 
-import fuse.FuseFtype;
 import fuse.compat.FuseStat;
 
 public abstract class Entry {

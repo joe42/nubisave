@@ -5,10 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 import jdbm.RecordManager;
 import jdbm.RecordManagerFactory;
@@ -17,16 +14,7 @@ import jdbm.htree.HTree;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-import org.bouncycastle.crypto.Digest;
-import org.bouncycastle.crypto.digests.SHA256Digest;
-import org.bouncycastle.util.encoders.Hex;
-import org.jigdfs.ida.base.InformationDispersalCodec;
-import org.jigdfs.ida.base.InformationDispersalDecoder;
-import org.jigdfs.ida.base.InformationDispersalEncoder;
-import org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalCodec;
 
-import com.github.joe42.splitter.util.StringUtil;
-import com.github.joe42.splitter.util.file.ConcurrentMultipleFileHandler;
 import com.github.joe42.splitter.util.file.MultipleFileHandler;
 import com.github.joe42.splitter.util.file.RandomAccessTemporaryFileChannel;
 import com.github.joe42.splitter.util.file.RandomAccessTemporaryFileChannels;
