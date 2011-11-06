@@ -49,7 +49,7 @@ public class Splitter {
     public void mountStorageModule(StorageService service){
         String path = configurationDirPath + "/" + service.getUniqName();
         try{
-            Ini serviceIni = new Ini(new File("../splitter/mountscripts/"+service.getName()+".ini"));
+            Ini serviceIni = service.getConfig();
             int serviceIndex = 1;
             for(StorageService s: service.getBackendServices()){
                     serviceIni.put("parameter", "backendservice"+serviceIndex++, s.getUniqName());
@@ -57,6 +57,7 @@ public class Splitter {
                 if(service.isBackendModule()){
                     serviceIni.put("splitter", "isbackendmodule", true);
             }
+
             serviceIni.store(new File(path));
         } catch(Exception e){
             e.printStackTrace();
