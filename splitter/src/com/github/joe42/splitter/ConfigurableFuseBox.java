@@ -30,7 +30,7 @@ public class ConfigurableFuseBox extends FuseBox  implements StorageService{
 		vtSplitterConfig = new VirtualFile(CONFIG_PATH);
 		vtSplitterConfig.setText("[splitter]\nredundancy = 0");
 		virtualFolder.add(vtSplitterConfig);
-		mounter = new Mounter(storages);
+		mounter = new Mounter(splitter.getStorages());
 	}
 	
 	public FuseStat getattr(String path) throws FuseException {

@@ -46,18 +46,9 @@ public class FuseBox implements Filesystem1 {
 	private HTree filemap;
 	private HTree dirmap;
 	private RandomAccessTemporaryFileChannels tempFiles = new RandomAccessTemporaryFileChannels();
-
-	private MultipleFileHandler multi_file_handler;
-
 	private FuseStatfs statfs;
-
-	protected String storages;
-
 	protected int redundancy;
-
 	private RandomAccessTemporaryFileChannel tempReadChannel;
-
-	private VirtualFileContainer virtualFileContainer;
 	private Splitter splitter;
 
 	public FuseBox(Splitter splitter) throws IOException {

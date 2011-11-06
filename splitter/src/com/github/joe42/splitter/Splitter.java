@@ -40,6 +40,9 @@ public class Splitter {
 		this(storages, 0);
 	}
 
+	public String getStorages(){
+		return storages;
+	}
 	public List<String> getFragmentNames(String path){
 		return pathToFragmentNamesMap.get(path);
 	}
