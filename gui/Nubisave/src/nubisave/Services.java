@@ -73,7 +73,6 @@ public class Services {
             return;
         }
         
-        new CoreWriter().removeCloudStorageFile(get(i));
 
         if (i < mmServices.size()) {
             mmServices.remove(i);
