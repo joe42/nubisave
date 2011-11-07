@@ -260,7 +260,7 @@ public class FuseBox implements Filesystem1 {
 			map.put(to, entry);
 			map.remove(from);
 			recman.commit();
-			splitter.moveFragmentNames(from, to);
+			splitter.getFragmentStore().moveFragments(from, to);
 		} catch (IOException e) {
 			throw new FuseException("IO Exception on reading metadata")
 					.initErrno(FuseException.EIO);
@@ -356,9 +356,8 @@ public class FuseBox implements Filesystem1 {
 
 	public void unlink(String path) throws FuseException {
 		try {
-			FileEntry entry = (FileEntry) filemap.get(path);
 			int del_cnt = 0;
-			for (String fragmentName : splitter.getFragmentNames(path)) {
+			for (String fragmentName : splitter.getFragmentStore().getFragments(path)) {
 				if (new File(fragmentName).delete()) {
 					del_cnt++;
 				}
