@@ -14,7 +14,7 @@ public class RandomAccessTemporaryFileChannels {
 	public FileChannel getFileChannel(String key){
 		if(tempMap.get(key) == null)
 			return null;
-		return tempMap.get(key).getChannel();
+		return tempMap.get(key).getChannel(0);
 	}
 	public FileChannel getFileChannel(String key, long position){
 		if(tempMap.get(key) == null)
