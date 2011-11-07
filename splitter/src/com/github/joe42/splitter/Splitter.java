@@ -47,6 +47,19 @@ public class Splitter {
 		return pathToFragmentNamesMap.get(path);
 	}
 
+	public void setFragmentNames(String path, List<String> fragmentPaths){
+		pathToFragmentNamesMap.put(path, fragmentPaths);
+	}
+
+	public void removeFragmentNames(String path){
+		pathToFragmentNamesMap.put(path, null);
+	}
+	
+	public void moveFragmentNames(String from, String to){
+		pathToFragmentNamesMap.put(to, pathToFragmentNamesMap.get(from));
+		pathToFragmentNamesMap.put(from, null);
+	}
+
 	public int getNrOfFragments(String path){
 		return MAX_FILE_FRAGMENTS;
 	}

@@ -260,6 +260,7 @@ public class FuseBox implements Filesystem1 {
 			map.put(to, entry);
 			map.remove(from);
 			recman.commit();
+			splitter.moveFragmentNames(from, to);
 		} catch (IOException e) {
 			throw new FuseException("IO Exception on reading metadata")
 					.initErrno(FuseException.EIO);
