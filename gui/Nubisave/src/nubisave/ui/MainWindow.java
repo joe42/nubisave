@@ -40,10 +40,7 @@ public class MainWindow extends javax.swing.JFrame {
         providerTable.getColumn(tableModel.headers[NubiTableModel.Headers.CONNECT.ordinal()]).setCellRenderer(new ButtonRenderer());
         providerTable.getColumn(tableModel.headers[NubiTableModel.Headers.CONNECT.ordinal()]).setCellEditor(new ButtonEditor(new JCheckBox(), this));
 
-        
-        String mntPoint = Properties.getProperty("splitter_mountpoint");
-
-        mntDirTxtField.setText(mntPoint);
+        mntDirTxtField.setText(Nubisave.mainSplitter.getMountpoint());
 
         String redundancyStr = Properties.getProperty("redundancy");
         if (redundancyStr == null) {
