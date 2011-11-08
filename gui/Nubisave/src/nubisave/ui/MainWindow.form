@@ -263,7 +263,7 @@
               <Properties>
                 <Property name="editable" type="boolean" value="false"/>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="matchmakerURIField.setText(Properties.getProperty(&quot;matchmakerURI&quot;));" type="code"/>
+                  <Connection code="Properties.getProperty(&quot;matchmakerURL&quot;)" type="code"/>
                 </Property>
               </Properties>
               <Events>

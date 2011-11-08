@@ -187,7 +187,7 @@ public class MainWindow extends javax.swing.JFrame {
         matchMakerLabel.setText("MatchMaker ");
 
         matchMakerURLField.setEditable(false);
-        matchMakerURLField.setText(matchmakerURIField.setText(Properties.getProperty("matchmakerURI")););
+        matchMakerURLField.setText(Properties.getProperty("matchmakerURL"));
         matchMakerURLField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 matchMakerURLFieldActionPerformed(evt);
