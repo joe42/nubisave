@@ -15,12 +15,13 @@
 <body>
 <div id="body">
 	<div id="head">
-		<h1>NubiSave - Cloud Storage Dispersal Controller</h1>
+		<h1>NubiSave - Cloud Storage Controller</h1>
 		<h2>Distributed secure data storage over optimal clouds for desktop users</h2>
 	</div>
 	<div id="menu">
 		<a href='index.html'>Home</a>
 		<a href='install.html'>Install</a>
+		<a href='integrate.html'>Integrate</a>
 		<a href='learn.html'>Learn</a>
 		<a href='verify.html'>Verify</a>
 		<a href='join.html'>Join</a>
@@ -53,6 +54,17 @@
 			Data dispersal (RAIC-n for n &gt;= 1) is the concept of ensuring that each provider only gets a part of the data, while at the same time
 			reaching higher long-term availability and access performance. NubiSave introduces RAOC-n for optimally selected storage providers
 			over which a RAIC-n is constructed.
+		</div>
+		<div class="section">
+			<h2>Architecture</h2>
+			NubiSave allows for flexible chaining of splitter (1:n) and modifier (1:1) modules.
+			This makes it possible to send parts of the data unmodified to one provider, encrypt for a
+			second provider and compress for a third provider.
+			One possible setup consisting of three storage providers is shown in the diagram below:
+			<p>
+			<br/>
+			<a href="screenshots/encr_and_compr.png"><img src="screenshots/encr_and_compr.small.png" border="0"></a>
+			</p>
 		</div>
 	</div>
 	<div id="foot">
