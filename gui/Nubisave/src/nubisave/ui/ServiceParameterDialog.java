@@ -28,10 +28,6 @@ public class ServiceParameterDialog extends javax.swing.JDialog {
 
     private StorageService service;
     private ArrayList<JLabel> jLabels;
-    private JLabel usernameLabel;
-    private JLabel usernameTextField;
-    private JLabel passwdLabel;
-    private javax.swing.JPasswordField passwdField;
     private ArrayList<JTextField> jTextFields;
     private javax.swing.JButton applyBtn;
     private javax.swing.JButton cancelBtn;
@@ -47,12 +43,15 @@ public class ServiceParameterDialog extends javax.swing.JDialog {
 
         jLabels = new ArrayList<JLabel>();
         jTextFields = new ArrayList<JTextField>();
-        Container pane = getContentPane();
-        pane.setLayout(new GridBagLayout());
+        JPanel mainGrid = new JPanel();
+        setContentPane(mainGrid);
+        mainGrid.setLayout(new GridBagLayout());
+        mainGrid.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
         GridBagConstraints c;
         JLabel label;
+        JPanel groupBox;
         JTextField textfield;
-        int line = 0;
+        int cntMainGridLine = 0;
         config = service.getConfig();
         Set<String> sectionNames = config.keySet(); // get all section names
         String comment;
@@ -62,18 +61,22 @@ public class ServiceParameterDialog extends javax.swing.JDialog {
                 continue;
             }
             //add section name
-            label = new JLabel(section);
-            label.setFont(new Font("Courier New", Font.BOLD, 16));
-            jLabels.add(label);
+            groupBox = new JPanel();
+            groupBox.setBorder(BorderFactory.createTitledBorder(section));
+            groupBox.setLayout(new GridBagLayout());
+            //label.setFont(new Font("Courier New", Font.BOLD, 16));
             c = new GridBagConstraints();
             c.fill = GridBagConstraints.HORIZONTAL;
-            c.gridwidth = 2;
-            c.weightx = 0.5;
+            c.gridwidth = 4;
+            c.weightx = 1;
             c.gridx = 0;
-            c.gridy = line;
-            pane.add(label, c);
-                
-            line++;
+            c.gridy = cntMainGridLine;
+            mainGrid.add(groupBox, c);
+
+
+            cntMainGridLine++;
+
+            int cntGroupBoxLine = 0;
             for (Map.Entry<String, String> parameter : config.get(section).entrySet()){
                 if(parameter.getKey().equals("backendservice") || parameter.getKey().equals("isbackendmodule")){
                     continue;
@@ -86,10 +89,10 @@ public class ServiceParameterDialog extends javax.swing.JDialog {
                 jLabels.add(label);
                 c = new GridBagConstraints();
                 c.fill = GridBagConstraints.HORIZONTAL;
-                c.weightx = 0.5;
+                c.weightx = 1;
                 c.gridx = 0;
-                c.gridy = line;
-                pane.add(label, c);
+                c.gridy = cntGroupBoxLine;
+                groupBox.add(label, c);
 
                 if(parameter.getKey().equals("password")){
                     textfield = new JPasswordField(parameter.getValue());
@@ -99,12 +102,12 @@ public class ServiceParameterDialog extends javax.swing.JDialog {
                 jTextFields.add(textfield);
                 c = new GridBagConstraints();
                 c.fill = GridBagConstraints.HORIZONTAL;
-                c.weightx = 0.5;
+                c.weightx = 1;
                 c.gridx = 1;
-                c.gridy = line;
-                pane.add(textfield, c);
+                c.gridy = cntGroupBoxLine;
+                groupBox.add(textfield, c);
 
-                line++;
+                cntGroupBoxLine++;
 
             }
         }
@@ -124,19 +127,17 @@ public class ServiceParameterDialog extends javax.swing.JDialog {
             }
         });
 
-        c = new GridBagConstraints();
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 0.5;
-        c.gridx = 0;
-        c.gridy = line;
-        pane.add(applyBtn, c);
-
-        c = new GridBagConstraints();
-        c.fill = GridBagConstraints.HORIZONTAL;
+        c = new GridBagConstraints(); 
         c.weightx = 0.5;
         c.gridx = 1;
-        c.gridy = line;
-        pane.add(cancelBtn, c);
+        c.gridy = cntMainGridLine;
+        mainGrid.add(applyBtn, c);
+
+        c = new GridBagConstraints();
+        c.weightx = 0.5;
+        c.gridx = 2;
+        c.gridy = cntMainGridLine;
+        mainGrid.add(cancelBtn, c);
         pack();
         //usernameField.setText(service.getUser());
         //passwdField.setText(service.getPass());

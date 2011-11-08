@@ -83,6 +83,8 @@ public class MainWindow extends javax.swing.JFrame {
         redundancySlider = new javax.swing.JSlider();
         jLabel3 = new javax.swing.JLabel();
         jButton5 = new javax.swing.JButton();
+        matchMakerLabel = new javax.swing.JLabel();
+        matchMakerField = new javax.swing.JTextField();
 
         customStorageserviceChooser.setCurrentDirectory(new java.io.File("../splitter/mountscripts"));
         customStorageserviceChooser.setDialogTitle("Custom Service");
@@ -181,6 +183,16 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
+        matchMakerLabel.setText("MatchMaker ");
+
+        matchMakerField.setEditable(false);
+        matchMakerField.setText("MatchMaker URL");
+        matchMakerField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                matchMakerFieldActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout optionPanelLayout = new javax.swing.GroupLayout(optionPanel);
         optionPanel.setLayout(optionPanelLayout);
         optionPanelLayout.setHorizontalGroup(
@@ -188,14 +200,21 @@ public class MainWindow extends javax.swing.JFrame {
             .addGroup(optionPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(redundancySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 687, Short.MAX_VALUE)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, optionPanelLayout.createSequentialGroup()
-                        .addComponent(mntDirTxtField, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE)
-                        .addGap(36, 36, 36)
-                        .addComponent(jButton5)))
-                .addContainerGap())
+                    .addGroup(optionPanelLayout.createSequentialGroup()
+                        .addGroup(optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(redundancySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 687, Short.MAX_VALUE)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, optionPanelLayout.createSequentialGroup()
+                                .addComponent(mntDirTxtField, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE)
+                                .addGap(36, 36, 36)
+                                .addComponent(jButton5)))
+                        .addContainerGap())
+                    .addGroup(optionPanelLayout.createSequentialGroup()
+                        .addGroup(optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(matchMakerLabel)
+                            .addComponent(matchMakerField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE))
+                        .addGap(99, 99, 99))))
         );
         optionPanelLayout.setVerticalGroup(
             optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -210,7 +229,11 @@ public class MainWindow extends javax.swing.JFrame {
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(redundancySlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(245, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
+                .addComponent(matchMakerLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(matchMakerField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(176, 176, 176))
         );
 
         jTabbedPane1.addTab("Options", optionPanel);
@@ -266,6 +289,10 @@ public class MainWindow extends javax.swing.JFrame {
         Properties.setProperty("redundancy", String.valueOf(redundancySlider.getValue()));
         Nubisave.mainSplitter.setRedundancy(redundancySlider.getValue());
     }//GEN-LAST:event_redundancySliderStateChanged
+
+    private void matchMakerFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_matchMakerFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_matchMakerFieldActionPerformed
     public NubiTableModel tableModel;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JFileChooser customStorageserviceChooser;
@@ -279,6 +306,8 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JOptionPane jOptionPane1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JTextField matchMakerField;
+    private javax.swing.JLabel matchMakerLabel;
     private javax.swing.JTextField mntDirTxtField;
     private javax.swing.JPanel optionPanel;
     private javax.swing.JPanel providerPanel;
