@@ -60,7 +60,7 @@ public class FuseBox implements Filesystem1 {
 		this.splitter = splitter;
 
 		Properties props = new Properties();
-		recman = RecordManagerFactory.createRecordManager("splitter", props);
+		recman = RecordManagerFactory.createRecordManager(System.getProperty("user.home")+"/.splitter/db/splitter", props);
 		// create or load
 		filemap = loadPersistentMap(recman, "filemap");
 		dirmap = loadPersistentMap(recman, "dirmap");
