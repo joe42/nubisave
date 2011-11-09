@@ -306,6 +306,9 @@ public class FuseBox implements Filesystem1 {
 			if (map == null)
 				throw new FuseException("No Such Entry")
 						.initErrno(FuseException.ENOENT);
+
+			if (tempFiles .getFileChannel(from) != null) //gedit
+				release(from, 0);
 			entry = (Entry) map.get(from);
 			map.put(to, entry);
 			map.remove(from);
