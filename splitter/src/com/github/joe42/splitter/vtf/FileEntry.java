@@ -12,7 +12,7 @@ public class FileEntry extends Entry implements Serializable{
 	public FileEntry(){
 		nlink = 1;
 		size = 0;
-		mode = FuseFtype.TYPE_FILE | 755;
+		mode = FuseFtype.TYPE_FILE | 664;
 		this.blocksize = 512;
 	}
 	public FileEntry(int blocksize){
