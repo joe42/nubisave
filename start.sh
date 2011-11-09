@@ -1,12 +1,12 @@
 #!/bin/bash
 
-scriptpath=`readlink -f $0`
-scriptloc=`dirname $scriptpath`
-cd $scriptloc
-
 echo "Start des Splitter Modules"
 mountpoint=`pwd`/mount
 storages=`pwd`/storages
+
+scriptpath=`readlink -f $0`
+scriptloc=`dirname $scriptpath`
+cd $scriptloc
 
 mkdir $mountpoint $storages
 cd splitter

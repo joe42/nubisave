@@ -3,6 +3,7 @@ package com.github.joe42.splitter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.*;
@@ -51,6 +52,10 @@ public class FuseBox implements Filesystem1 {
 	private RandomAccessTemporaryFileChannel tempReadChannel;
 	private Splitter splitter;
 
+	private int UID;
+
+	private int GID;
+
 	public FuseBox(Splitter splitter) throws IOException {
 		// .config###/
 		// aufruf splitter_mount.sh mountordner ordner_mit_storage_ordner
@@ -60,7 +65,7 @@ public class FuseBox implements Filesystem1 {
 		this.splitter = splitter;
 
 		Properties props = new Properties();
-		recman = RecordManagerFactory.createRecordManager("splitter", props);
+		recman = RecordManagerFactory.createRecordManager(System.getProperty("user.home")+"/.splitter/db/splitter", props);
 		// create or load
 		filemap = loadPersistentMap(recman, "filemap");
 		dirmap = loadPersistentMap(recman, "dirmap");
@@ -73,6 +78,49 @@ public class FuseBox implements Filesystem1 {
 		}
 
 		log.debug("dirmap size:" + ((Entry) dirmap.get("/")).size);
+
+		UID = getUID();
+		GID = getGID();
+	}
+
+	private int getUID() {
+		String uid = null;
+		try {
+		    String userName = System.getProperty("user.name");
+		    String command = "id -u "+userName;
+		    Process child = Runtime.getRuntime().exec(command);
+
+		    // Get the input stream and read from it
+		    InputStream in = child.getInputStream();
+		    int c;
+		    uid = "";
+		    while ((c = in.read()) != -1) {
+		        uid += ((char)c);
+		    }
+		    in.close();
+		} catch (IOException e) {
+		}
+		return Integer.parseInt(uid.trim());
+	}
+
+	private int getGID() {
+		String gid = null;
+		try {
+		    String userName = System.getProperty("user.name");
+		    String command = "id -g "+userName;
+		    Process child = Runtime.getRuntime().exec(command);
+
+		    // Get the input stream and read from it
+		    InputStream in = child.getInputStream();
+		    int c;
+		    gid = "";
+		    while ((c = in.read()) != -1) {
+		        gid += ((char)c);
+		    }
+		    in.close();
+		} catch (IOException e) {
+		}
+		return Integer.parseInt(gid.trim());
 	}
 
 	private HTree loadPersistentMap(RecordManager recman, String mapName)
@@ -213,6 +261,8 @@ public class FuseBox implements Filesystem1 {
 		try {
 			tempFiles.putNewFileChannel(path);
 			fileEntry = new FileEntry(path);
+			fileEntry.uid = UID;
+			fileEntry.gid = GID;
 			filemap.put(path, fileEntry);
 			recman.commit();
 		} catch (IOException e) {
@@ -259,8 +309,8 @@ public class FuseBox implements Filesystem1 {
 			entry = (Entry) map.get(from);
 			map.put(to, entry);
 			map.remove(from);
-			recman.commit();
 			splitter.getFragmentStore().moveFragments(from, to);
+			recman.commit();
 		} catch (IOException e) {
 			throw new FuseException("IO Exception on reading metadata")
 					.initErrno(FuseException.EIO);

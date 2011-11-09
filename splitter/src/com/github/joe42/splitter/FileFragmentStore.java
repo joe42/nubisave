@@ -41,7 +41,7 @@ public class FileFragmentStore {
 	 * @param to the new path of a whole file*/
 	public void moveFragments(String from, String to){
 		fileFragmentsMap.put(to, fileFragmentsMap.get(from));
-		fileFragmentsMap.put(from, null);
+		fileFragmentsMap.remove(from);
 	}
 
 	/**Sets a list of fragment paths for a whole file
