@@ -28,7 +28,7 @@ public class FileFragments {
 	}
 	
 	public int getNrOfFragments(){
-		return requiredFragments;
+		return fileFragmentPaths.size();
 	}
 
 	public ArrayList<String> getPaths(){
