@@ -307,12 +307,20 @@ public class FuseBox implements Filesystem1 {
 				throw new FuseException("No Such Entry")
 						.initErrno(FuseException.ENOENT);
 
-			if (tempFiles .getFileChannel(from) != null) //gedit
-				release(from, 0);
+			if (tempFiles.getFileChannel(from) != null) {
+				FileEntry fileEntry;
+				try {
+					fileEntry = (FileEntry) filemap.get(from);
+				} catch (IOException e1) {
+					throw new FuseException("IO Exception on accessing metadata")
+							.initErrno(FuseException.EIO);
+				}
+				splitter.splitFile(fileEntry, tempFiles.getFileChannel(from)); //kann man nicht rausnehmen (vielleicht doch; Dropbox 400 Error bei leeren Dateien ist gefixed)
+				tempFiles.delete(from);
+			}
 			entry = (Entry) map.get(from);
 			map.put(to, entry);
 			map.remove(from);
-			splitter.getFragmentStore().moveFragments(from, to);
 			recman.commit();
 		} catch (IOException e) {
 			throw new FuseException("IO Exception on reading metadata")
