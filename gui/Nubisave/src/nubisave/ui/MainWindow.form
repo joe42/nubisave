@@ -260,14 +260,10 @@
             </Component>
             <Component class="javax.swing.JTextField" name="matchMakerURLField">
               <Properties>
-                <Property name="editable" type="boolean" value="false"/>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                   <Connection code="Properties.getProperty(&quot;matchmakerURL&quot;)" type="code"/>
                 </Property>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="matchMakerURLFieldActionPerformed"/>
-              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="changeMatchMakerURLBtn">
               <Properties>

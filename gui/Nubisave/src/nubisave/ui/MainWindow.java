@@ -183,13 +183,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         matchMakerLabel.setText("MatchMaker ");
 
-        matchMakerURLField.setEditable(false);
         matchMakerURLField.setText(Properties.getProperty("matchmakerURL"));
-        matchMakerURLField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                matchMakerURLFieldActionPerformed(evt);
-            }
-        });
 
         changeMatchMakerURLBtn.setText("Apply");
         changeMatchMakerURLBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -305,10 +299,6 @@ public class MainWindow extends javax.swing.JFrame {
         Properties.setProperty("redundancy", String.valueOf(redundancySlider.getValue()));
         Nubisave.mainSplitter.setRedundancy(redundancySlider.getValue());
     }//GEN-LAST:event_redundancySliderStateChanged
-
-    private void matchMakerURLFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_matchMakerURLFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_matchMakerURLFieldActionPerformed
 
     private void changeMatchMakerURLBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changeMatchMakerURLBtnActionPerformed
         Properties.setProperty("matchmakerURI", matchMakerURLField.getText());
