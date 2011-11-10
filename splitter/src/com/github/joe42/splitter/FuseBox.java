@@ -156,7 +156,7 @@ public class FuseBox implements Filesystem1 {
 		try {
 			if (filemap.get(path) != null) {
 				entry = (Entry) filemap.get(path);
-				stat.mode = FuseFtype.TYPE_FILE | 0755;
+				stat.mode = FuseFtype.TYPE_FILE | 0644;
 			} else if (dirmap.get(path) != null) {
 				entry = (Entry) dirmap.get(path);
 				stat.mode = FuseFtype.TYPE_DIR | 0755;
