@@ -83,6 +83,8 @@ public class MainWindow extends javax.swing.JFrame {
         matchMakerLabel = new javax.swing.JLabel();
         matchMakerURLField = new javax.swing.JTextField();
         changeMatchMakerURLBtn = new javax.swing.JButton();
+        matchMakerLabel1 = new javax.swing.JLabel();
+        matchMakerField = new javax.swing.JTextField();
 
         customStorageserviceChooser.setCurrentDirectory(new java.io.File("../splitter/mountscripts"));
         customStorageserviceChooser.setDialogTitle("Custom Service");
@@ -183,12 +185,22 @@ public class MainWindow extends javax.swing.JFrame {
 
         matchMakerLabel.setText("MatchMaker ");
 
-        matchMakerURLField.setText(Properties.getProperty("matchmakerURL"));
+        matchMakerURLField.setText(Properties.getProperty("matchmakerURI"));
 
         changeMatchMakerURLBtn.setText("Apply");
         changeMatchMakerURLBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 changeMatchMakerURLBtnActionPerformed(evt);
+            }
+        });
+
+        matchMakerLabel1.setText("MatchMaker ");
+
+        matchMakerField.setEditable(false);
+        matchMakerField.setText("MatchMaker URL");
+        matchMakerField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                matchMakerFieldActionPerformed(evt);
             }
         });
 
@@ -199,20 +211,19 @@ public class MainWindow extends javax.swing.JFrame {
             .addGroup(optionPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(redundancySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 687, Short.MAX_VALUE)
+                    .addComponent(redundancySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 699, Short.MAX_VALUE)
                     .addComponent(jLabel2)
                     .addComponent(jLabel3)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, optionPanelLayout.createSequentialGroup()
-                        .addComponent(mntDirTxtField, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE)
+                        .addComponent(mntDirTxtField, javax.swing.GroupLayout.DEFAULT_SIZE, 612, Short.MAX_VALUE)
                         .addGap(36, 36, 36)
                         .addComponent(openMntDirBtn))
                     .addGroup(optionPanelLayout.createSequentialGroup()
                         .addGroup(optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(matchMakerLabel)
-                            .addComponent(matchMakerURLField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 601, Short.MAX_VALUE))
+                            .addComponent(matchMakerURLField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 613, Short.MAX_VALUE))
                         .addGap(36, 36, 36)
-                        .addComponent(changeMatchMakerURLBtn)))
-                .addContainerGap())
+                        .addComponent(changeMatchMakerURLBtn))))
         );
         optionPanelLayout.setVerticalGroup(
             optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -271,6 +282,10 @@ public class MainWindow extends javax.swing.JFrame {
         tableModel.fireTableDataChanged();
     }//GEN-LAST:event_jButton3ActionPerformed
 
+    private void matchMakerFieldActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
+    }
+
     private void mntDirTxtFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mntDirTxtFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_mntDirTxtFieldActionPerformed
@@ -306,7 +321,9 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JOptionPane jOptionPane1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JTextField matchMakerField;
     private javax.swing.JLabel matchMakerLabel;
+    private javax.swing.JLabel matchMakerLabel1;
     private javax.swing.JTextField matchMakerURLField;
     private javax.swing.JTextField mntDirTxtField;
     private javax.swing.JButton openMntDirBtn;
