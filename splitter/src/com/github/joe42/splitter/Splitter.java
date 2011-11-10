@@ -95,7 +95,6 @@ public class Splitter {
 
 				fragment_name = fragmentFileNames.get(fragment_nr);
 				log.debug("write: " + fragment_name);
-				fragmentFileNames.add(fragment_name);
 				byte[] b = result.get(fragment_nr);
 				digestFunc.reset();
 				digestFunc.update(b, 0, b.length);
