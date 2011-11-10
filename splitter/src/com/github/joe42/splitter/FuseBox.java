@@ -295,7 +295,7 @@ public class FuseBox implements Filesystem1 {
 		if (from.equals(to)) // only if from is dir and to is file 
 			throw new FuseException("Entity"+to+" already exists.")
 				.initErrno(FuseException.EEXIST);
-		Entry entry = null;
+		Entry fromEntry = null;
 		HTree map = null;
 		try {
 			if (filemap.get(from) != null) {
@@ -318,8 +318,10 @@ public class FuseBox implements Filesystem1 {
 				splitter.splitFile(fileEntry, tempFiles.getFileChannel(from)); //kann man nicht rausnehmen (vielleicht doch; Dropbox 400 Error bei leeren Dateien ist gefixed)
 				tempFiles.delete(from);
 			}
-			entry = (Entry) map.get(from);
-			map.put(to, entry);
+			fromEntry = (Entry) map.get(from);
+			map.put(to, fromEntry);
+			fromEntry.path = to;
+			splitter.getFragmentStore().moveFragments(from, to);
 			map.remove(from);
 			recman.commit();
 		} catch (IOException e) {
