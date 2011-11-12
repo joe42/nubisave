@@ -62,11 +62,12 @@ public class Splitter {
 			nr_of_file_fragments_required=1;
 		}
 		String fragment_name;
-		String uniquePath;
+		String uniquePath, uniqueFileName;
 		uniquePath = StringUtil.getUniqueAsciiString(fileEntry.path);
+		uniqueFileName = uniquePath.replaceAll("/", "_");
 		ArrayList<String> fragmentFileNames = new ArrayList<String>();
 		for (int fragment_nr = 0; fragment_nr < nr_of_file_fragments; fragment_nr++) {
-			fragment_name = fragmentStores.get(fragment_nr) + uniquePath 
+			fragment_name = fragmentStores.get(fragment_nr) + uniqueFileName 
 					+ '#' + fragment_nr;
 			fragmentFileNames.add(fragment_name);
 		}

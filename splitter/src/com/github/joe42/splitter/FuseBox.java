@@ -184,10 +184,7 @@ public class FuseBox implements Filesystem1 {
 	public FuseDirEnt[] getdir(String path) throws FuseException {
 		//TODO: tidy up
 		FastIterator pathes;
-		try {/*//should not occur
-			if (filemap.get(path) != null)
-				throw new FuseException("Not A Directory")
-						.initErrno(FuseException.ENOTDIR);*/
+		try {
 			if (dirmap.get(path) == null)
 				throw new FuseException("No Such Entry")
 						.initErrno(FuseException.ENOENT);
@@ -200,10 +197,9 @@ public class FuseBox implements Filesystem1 {
 		List<FuseDirEnt> dirEntries = new ArrayList<FuseDirEnt>();
 		while ((fileName = (String) pathes.next()) != null) {
 			if (fileName.startsWith(path)
-					&& fileName.indexOf("/", path.length() - 1) == path
-							.length() - 1) {
+					&& path.equals( new File(fileName).getParent() )) {
 				FuseDirEnt dirEntry = new FuseDirEnt();
-				dirEntry.name = fileName.substring(path.length());
+				dirEntry.name = new File(fileName).getName();
 				dirEntry.mode = FuseFtype.TYPE_FILE;
 				dirEntries.add(dirEntry);
 			}
@@ -216,10 +212,10 @@ public class FuseBox implements Filesystem1 {
 		}
 		while ((dirName = (String) pathes.next()) != null) {
 			if (dirName.startsWith(path)
-					&& dirName.indexOf("/", path.length() - 1) == path.length() - 1
+					&& path.equals( new File(dirName).getParent() )
 					&& !dirName.equals(path)) {
 				FuseDirEnt dirEntry = new FuseDirEnt();
-				dirEntry.name = dirName.substring(path.length());
+				dirEntry.name = new File(dirName).getName();
 				dirEntry.mode = FuseFtype.TYPE_DIR;
 				dirEntries.add(dirEntry);
 			}
