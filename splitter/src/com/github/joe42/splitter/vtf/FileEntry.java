@@ -1,17 +1,18 @@
 package com.github.joe42.splitter.vtf;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import fuse.FuseFtype;
 
 public class FileEntry extends Entry implements Serializable{
 	private static final long serialVersionUID = 1L;
-	public List<String> fragment_names = new ArrayList<String>();
+	public FileEntry(String path){
+		this();
+		this.path = path;
+	}
 	public FileEntry(){
 		nlink = 1;
 		size = 0;
-		mode = FuseFtype.TYPE_FILE | 755;
+		mode = FuseFtype.TYPE_FILE | 664;
 		this.blocksize = 512;
 	}
 	public FileEntry(int blocksize){

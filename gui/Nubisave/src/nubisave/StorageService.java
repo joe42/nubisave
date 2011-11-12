@@ -7,8 +7,10 @@ package nubisave;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import org.ini4j.Ini;
 
@@ -20,14 +22,14 @@ public class StorageService {
     private boolean supported;
 
 
-    private String user;
-    private String pass;
     private String name;
     private String uniqName;
     private StorageType type;
     private int nrOfBackends;
     private boolean isBackendModule;
     private LinkedList<StorageService> backendServices;
+    private Map<String, String> parameterMap = new HashMap<String, String>();
+    private Ini config = null;
     
     public StorageService(String name) {
         this.name = name;
@@ -39,6 +41,13 @@ public class StorageService {
             if (s.equalsIgnoreCase(name)) {
                 supported = true;
                 break;
+            }
+        }
+        if(new File("../splitter/mountscripts/"+name+".ini").exists()){
+            try{
+                setConfig(new Ini(new File("../splitter/mountscripts/"+name+".ini")));
+            } catch(IOException e){
+                e.printStackTrace();
             }
         }
     }
@@ -54,30 +63,32 @@ public class StorageService {
             nrOfBackends = 0;
             backendServices = new LinkedList<StorageService>();
             try{
-                Ini config = new Ini(file);
-                nrOfBackends = config.get("gui", "nrofbackends", Integer.class);
-                isBackendModule = config.get("splitter", "isbackendmodule", Boolean.class);
+                setConfig(new Ini(file));
             } catch(IOException e){
-                e.printStackTrace();
-            }catch(NullPointerException e){
                 e.printStackTrace();
             }
     }
 
-    public String getPass() {
-        return pass;
+    public Ini getConfig(){
+        /**@return the configuration file for this service*/
+        return config;
     }
 
-    public void setPass(String pass) {
-        this.pass = pass;
-    }
-
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
+    public void setConfig(Ini config){
+        /**Sets the configuration file for this service*/
+        this.config = config;
+        if(config != null){
+            try{
+                nrOfBackends = config.get("gui", "nrofbackends", Integer.class);
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
+            try{
+                isBackendModule = config.get("splitter", "isbackendmodule", Boolean.class);
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void setSupported(boolean supported) {

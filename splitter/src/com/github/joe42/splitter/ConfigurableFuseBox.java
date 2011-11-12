@@ -1,39 +1,36 @@
 package com.github.joe42.splitter;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.ini4j.Ini;
-
-import jdbm.helper.FastIterator;
 
 import com.github.joe42.splitter.backend.Mounter;
 import com.github.joe42.splitter.backend.StorageService;
 import com.github.joe42.splitter.util.file.IniUtil;
-import com.github.joe42.splitter.vtf.*;
+import com.github.joe42.splitter.vtf.FolderEntry;
+import com.github.joe42.splitter.vtf.VirtualFile;
+import com.github.joe42.splitter.vtf.VirtualFileContainer;
+import com.github.joe42.splitter.vtf.VirtualRealFile;
 
 import fuse.FuseException;
 import fuse.FuseFtype;
 import fuse.FuseStatfs;
 import fuse.compat.FuseDirEnt;
 import fuse.compat.FuseStat;
-public class ConfigurableSplitter extends Splitter  implements StorageService{
+public class ConfigurableFuseBox extends FuseBox  implements StorageService{
 
 	private VirtualFileContainer virtualFolder;
 	private VirtualFile vtSplitterConfig;
 	private Mounter mounter;
-	public ConfigurableSplitter(String storages) throws IOException{
-		super(storages, 0);
+	public ConfigurableFuseBox(Splitter splitter) throws IOException{
+		super(splitter);
 		virtualFolder = new VirtualFileContainer();
 		vtSplitterConfig = new VirtualFile(CONFIG_PATH);
 		vtSplitterConfig.setText("[splitter]\nredundancy = 0");
 		virtualFolder.add(vtSplitterConfig);
-		mounter = new Mounter(storages);
+		mounter = new Mounter(splitter.getStorages());
 	}
 	
 	public FuseStat getattr(String path) throws FuseException {

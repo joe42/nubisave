@@ -33,17 +33,14 @@ public class MainWindow extends javax.swing.JFrame {
         tableModel = new NubiTableModel();
         initComponents();
         providerTable.setDefaultRenderer(String.class, new ShowSupportedCellRenderer());
-        providerTable.getColumn("Password").setCellRenderer(new ButtonRenderer());
-        providerTable.getColumn("Password").setCellEditor(new ButtonEditor(new JCheckBox(), this));
-        providerTable.getColumn("Remove").setCellRenderer(new ButtonRenderer());
-        providerTable.getColumn("Remove").setCellEditor(new ButtonEditor(new JCheckBox(), this));
-        providerTable.getColumn("Backend").setCellRenderer(new ButtonRenderer());
-        providerTable.getColumn("Backend").setCellEditor(new ButtonEditor(new JCheckBox(), this));
+        providerTable.getColumn(tableModel.headers[NubiTableModel.Headers.OPTIONS.ordinal()]).setCellRenderer(new ButtonRenderer());
+        providerTable.getColumn(tableModel.headers[NubiTableModel.Headers.OPTIONS.ordinal()]).setCellEditor(new ButtonEditor(new JCheckBox(), this));
+        providerTable.getColumn(tableModel.headers[NubiTableModel.Headers.REMOVE.ordinal()]).setCellRenderer(new ButtonRenderer());
+        providerTable.getColumn(tableModel.headers[NubiTableModel.Headers.REMOVE.ordinal()]).setCellEditor(new ButtonEditor(new JCheckBox(), this));
+        providerTable.getColumn(tableModel.headers[NubiTableModel.Headers.CONNECT.ordinal()]).setCellRenderer(new ButtonRenderer());
+        providerTable.getColumn(tableModel.headers[NubiTableModel.Headers.CONNECT.ordinal()]).setCellEditor(new ButtonEditor(new JCheckBox(), this));
 
-        
-        String mntPoint = Properties.getProperty("splitter_mountpoint");
-
-        mntDirTxtField.setText(mntPoint);
+        mntDirTxtField.setText(Nubisave.mainSplitter.getMountpoint());
 
         String redundancyStr = Properties.getProperty("redundancy");
         if (redundancyStr == null) {
@@ -51,7 +48,7 @@ public class MainWindow extends javax.swing.JFrame {
         }
         int redundancy = Integer.parseInt(redundancyStr);
         redundancySlider.setValue(redundancy);
-        //matchmakerURIField.setText(Properties.getProperty("matchmakerURI"));
+        //
 
         if (!Nubisave.mainSplitter.isMounted()) {
             JOptionPane.showMessageDialog(null, "Nubisave is not mounted.", "Mount Error", JOptionPane.ERROR_MESSAGE);
@@ -82,7 +79,12 @@ public class MainWindow extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         redundancySlider = new javax.swing.JSlider();
         jLabel3 = new javax.swing.JLabel();
-        jButton5 = new javax.swing.JButton();
+        openMntDirBtn = new javax.swing.JButton();
+        matchMakerLabel = new javax.swing.JLabel();
+        matchMakerURLField = new javax.swing.JTextField();
+        changeMatchMakerURLBtn = new javax.swing.JButton();
+        matchMakerLabel1 = new javax.swing.JLabel();
+        matchMakerField = new javax.swing.JTextField();
 
         customStorageserviceChooser.setCurrentDirectory(new java.io.File("../splitter/mountscripts"));
         customStorageserviceChooser.setDialogTitle("Custom Service");
@@ -112,7 +114,7 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
-        jButton3.setText("custom");
+        jButton3.setText("Custom");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
@@ -174,10 +176,31 @@ public class MainWindow extends javax.swing.JFrame {
 
         jLabel3.setText("Redundancy");
 
-        jButton5.setText("open");
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
+        openMntDirBtn.setText("Open");
+        openMntDirBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
+                openMntDirBtnActionPerformed(evt);
+            }
+        });
+
+        matchMakerLabel.setText("MatchMaker ");
+
+        matchMakerURLField.setText(Properties.getProperty("matchmakerURI"));
+
+        changeMatchMakerURLBtn.setText("Apply");
+        changeMatchMakerURLBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                changeMatchMakerURLBtnActionPerformed(evt);
+            }
+        });
+
+        matchMakerLabel1.setText("MatchMaker ");
+
+        matchMakerField.setEditable(false);
+        matchMakerField.setText("MatchMaker URL");
+        matchMakerField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                matchMakerFieldActionPerformed(evt);
             }
         });
 
@@ -188,14 +211,19 @@ public class MainWindow extends javax.swing.JFrame {
             .addGroup(optionPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(redundancySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 687, Short.MAX_VALUE)
+                    .addComponent(redundancySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 699, Short.MAX_VALUE)
                     .addComponent(jLabel2)
                     .addComponent(jLabel3)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, optionPanelLayout.createSequentialGroup()
-                        .addComponent(mntDirTxtField, javax.swing.GroupLayout.DEFAULT_SIZE, 603, Short.MAX_VALUE)
+                        .addComponent(mntDirTxtField, javax.swing.GroupLayout.DEFAULT_SIZE, 612, Short.MAX_VALUE)
                         .addGap(36, 36, 36)
-                        .addComponent(jButton5)))
-                .addContainerGap())
+                        .addComponent(openMntDirBtn))
+                    .addGroup(optionPanelLayout.createSequentialGroup()
+                        .addGroup(optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(matchMakerLabel)
+                            .addComponent(matchMakerURLField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 613, Short.MAX_VALUE))
+                        .addGap(36, 36, 36)
+                        .addComponent(changeMatchMakerURLBtn))))
         );
         optionPanelLayout.setVerticalGroup(
             optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -205,12 +233,18 @@ public class MainWindow extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(mntDirTxtField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton5))
+                    .addComponent(openMntDirBtn))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(redundancySlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(245, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
+                .addComponent(matchMakerLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(matchMakerURLField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(changeMatchMakerURLBtn))
+                .addGap(176, 176, 176))
         );
 
         jTabbedPane1.addTab("Options", optionPanel);
@@ -248,11 +282,15 @@ public class MainWindow extends javax.swing.JFrame {
         tableModel.fireTableDataChanged();
     }//GEN-LAST:event_jButton3ActionPerformed
 
+    private void matchMakerFieldActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
+    }
+
     private void mntDirTxtFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mntDirTxtFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_mntDirTxtFieldActionPerformed
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+    private void openMntDirBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openMntDirBtnActionPerformed
         if (Desktop.isDesktopSupported()) {
             try {
                 Desktop.getDesktop().open(new File(Nubisave.mainSplitter.getDataDir()));
@@ -260,26 +298,35 @@ public class MainWindow extends javax.swing.JFrame {
                 Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-    }//GEN-LAST:event_jButton5ActionPerformed
+    }//GEN-LAST:event_openMntDirBtnActionPerformed
 
     private void redundancySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_redundancySliderStateChanged
         Properties.setProperty("redundancy", String.valueOf(redundancySlider.getValue()));
         Nubisave.mainSplitter.setRedundancy(redundancySlider.getValue());
     }//GEN-LAST:event_redundancySliderStateChanged
+
+    private void changeMatchMakerURLBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changeMatchMakerURLBtnActionPerformed
+        Properties.setProperty("matchmakerURI", matchMakerURLField.getText());
+    }//GEN-LAST:event_changeMatchMakerURLBtnActionPerformed
     public NubiTableModel tableModel;
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton changeMatchMakerURLBtn;
     private javax.swing.JFileChooser customStorageserviceChooser;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JOptionPane jOptionPane1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JTextField matchMakerField;
+    private javax.swing.JLabel matchMakerLabel;
+    private javax.swing.JLabel matchMakerLabel1;
+    private javax.swing.JTextField matchMakerURLField;
     private javax.swing.JTextField mntDirTxtField;
+    private javax.swing.JButton openMntDirBtn;
     private javax.swing.JPanel optionPanel;
     private javax.swing.JPanel providerPanel;
     private javax.swing.JTable providerTable;

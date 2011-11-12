@@ -1,9 +1,6 @@
 package com.github.joe42.splitter.util.file;
 
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public interface MultipleFileHandler {
 	public List<byte[]> getFilesAsByteArrays(String[] file_names);

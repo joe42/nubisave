@@ -13,8 +13,8 @@ import nubisave.*;
  */
 public class NubiTableModel extends AbstractTableModel {
 
-    private final String headers[] = {"Type", "Description", "Password", "Remove", "Mounted", "Backend"};
-    public enum Headers { TYPE, DESCRIPTION, PASSWORD, REMOVE, MOUNTED, CONNECT };
+    public final String headers[] = {"Type", "Description", "Parameters", "Remove", "Mounted", "Backend"};
+    public enum Headers { TYPE, DESCRIPTION, OPTIONS, REMOVE, MOUNTED, CONNECT };
     private Class[] types = new Class[]{
         java.lang.String.class, java.lang.String.class, javax.swing.JButton.class,javax.swing.JButton.class, java.lang.Boolean.class
     };
@@ -27,7 +27,6 @@ public class NubiTableModel extends AbstractTableModel {
         int rows = 0;
         rows += Nubisave.services.getMmServices().size();
         rows += Nubisave.services.getAServices().size();
-        rows += Nubisave.services.getCstmMntPnts().size();
         return rows;
     }
 
@@ -48,7 +47,7 @@ public class NubiTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        if (columnIndex == Headers.PASSWORD.ordinal()) {
+        if (columnIndex == Headers.OPTIONS.ordinal()) {
             return true;
         }
         return Nubisave.services.get(rowIndex).isSupported() && canEdit[columnIndex];
@@ -59,9 +58,6 @@ public class NubiTableModel extends AbstractTableModel {
         if (i < 0 || i > getRowCount()) {
             return null;
         }
-
-        int mmServicesSize = Nubisave.services.getMmServices().size();
-        int aServicesSize = Nubisave.services.getAServices().size();
 
         StorageService service = Nubisave.services.get(i);
 
@@ -80,24 +76,17 @@ public class NubiTableModel extends AbstractTableModel {
             case 2:
                 switch (service.getType()) {
                     case MATCHMAKER:
-                        String label = "User/Passwd";
-                        StorageService mmService = (StorageService)service;
-                        if (mmService.getUser() != null) {
-                            if (mmService.getUser().length() > 0) {
-                                return label;
-                            }
-                        }
-                        return label + "*";
+                        return "Configure";
                     case AGREEMENT:
                     case CUSTOM:
-                        return "User/Passwd";
+                        return "Configure";
                 }
             case 3:
-                return "remove";
+                return "Remove";
             case 4:
                 return Nubisave.mainSplitter.isModuleMounted(Nubisave.services.get(i));
             case 5:
-                return "configure";
+                return "Configure";
         }
 
         return null;

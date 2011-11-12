@@ -15,20 +15,14 @@ public class Services {
 
     private List<StorageService> mmServices;
     private List<AgreementService> aServices;
-    private List<CustomMntPoint> cstmMntPnts;
 
     public Services() {
         mmServices = new LinkedList<StorageService>();
         aServices = new LinkedList<AgreementService>();
-        cstmMntPnts = new LinkedList<CustomMntPoint>();
     }
 
     public List<AgreementService> getAServices() {
         return aServices;
-    }
-
-    public List<CustomMntPoint> getCstmMntPnts() {
-        return cstmMntPnts;
     }
 
     public List<StorageService> getMmServices() {
@@ -48,43 +42,34 @@ public class Services {
         if (i < 0) {
             return null;
         }
-        int size = aServices.size() + cstmMntPnts.size() + mmServices.size();
+        int size = aServices.size() + mmServices.size();
         if (i >= size) {
             return null;
         }
         if (i < mmServices.size()) {
             return mmServices.get(i);
-        } else if (i < mmServices.size() + aServices.size() - 1) { // Object is AgreementService
+        } else { // Object is AgreementService
             i -= mmServices.size() - 1;
             return aServices.get(i);
-        } else { // Object is CustomMntPoint
-            i -= mmServices.size();
-            i -= aServices.size();
-            return cstmMntPnts.get(i);
-        }
+        } 
     }
 
     public void remove(int i) {
         if (i < 0) {
             return;
         }
-        int size = aServices.size() + cstmMntPnts.size() + mmServices.size();
+        int size = aServices.size() + mmServices.size();
         if (i >= size) {
             return;
         }
         
-        new CoreWriter().removeCloudStorageFile(get(i));
 
         if (i < mmServices.size()) {
             mmServices.remove(i);
-        } else if (i < mmServices.size() + aServices.size() - 1) { // Object is AgreementService
+        } else { // Object is AgreementService
             i -= mmServices.size() - 1;
             aServices.remove(i);
-        } else { // Object is CustomMntPoint
-            i -= mmServices.size();
-            i -= aServices.size();
-            cstmMntPnts.remove(i);
-        }
+        } 
 
     }
 }

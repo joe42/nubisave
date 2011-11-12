@@ -1,14 +1,14 @@
 #!/bin/bash
 
-scriptpath=`readlink -f $0`
-scriptloc=`dirname $scriptpath`
-cd $scriptloc
-
 echo "Start des Splitter Modules"
 mountpoint=$HOME/nubisavemount
 storages=$HOME/.nubisave/storages
 
 mkdir -p $mountpoint $storages
+scriptpath=`readlink -f $0`
+scriptloc=`dirname $scriptpath`
+cd $scriptloc
+
 cd splitter
 ./mount.sh $mountpoint $storages &
 cd ..

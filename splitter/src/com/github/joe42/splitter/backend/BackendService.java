@@ -1,8 +1,8 @@
 package com.github.joe42.splitter.backend;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+
 import org.ini4j.Ini;
 
 import com.github.joe42.splitter.util.file.IniUtil;

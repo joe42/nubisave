@@ -2,14 +2,10 @@ package com.github.joe42.splitter.vtf;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
+import java.nio.*;
 
 import com.github.joe42.splitter.util.StringUtil;
 
-import fuse.FuseFtype;
 import fuse.compat.FuseStat;
 
 public class VirtualFile {
