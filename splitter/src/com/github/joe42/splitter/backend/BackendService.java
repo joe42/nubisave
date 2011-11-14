@@ -60,7 +60,7 @@ To this end the mountpoint parameter is substituted by store+"/"+HIDDEN_DIR_NAME
 			} else if(substitutions != null){
 				if( substitutions.containsKey(word) ){
 					if(word.startsWith("backendservice")){
-						word = store+"/"+HIDDEN_DIR_NAME+"/"+substitutions.get(word)+DATA_DIR;
+						word = store+"/"+HIDDEN_DIR_NAME+"/"+substitutions.get(word);
 					} else {
 						word = substitutions.get(word);
 					}
