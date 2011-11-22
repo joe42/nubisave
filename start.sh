@@ -13,11 +13,18 @@ cd splitter
 ./mount.sh $mountpoint $storages &
 cd ..
 
-# FIXME: This should be solved by some event detection
-sleep 2;
+if [ "$1" != "headless" ]
+then
+    # FIXME: This should be solved by some event detection
+    sleep 2;
 
-echo "Start von NubiSave"
+    echo "Start von NubiSave"
 
-cd bin/
-java -jar Nubisave.jar $mountpoint
+    cd bin/
+    java -jar Nubisave.jar $mountpoint
+fi
+
+
+
+
 
