@@ -19,6 +19,7 @@ import org.apache.log4j.PropertyConfigurator;
 import com.github.joe42.splitter.util.file.MultipleFileHandler;
 import com.github.joe42.splitter.util.file.RandomAccessTemporaryFileChannel;
 import com.github.joe42.splitter.util.file.RandomAccessTemporaryFileChannels;
+import com.github.joe42.splitter.util.file.PropertiesUtil;
 import com.github.joe42.splitter.vtf.Entry;
 import com.github.joe42.splitter.vtf.FileEntry;
 import com.github.joe42.splitter.vtf.FolderEntry;
@@ -64,8 +65,8 @@ public class FuseBox implements Filesystem1 {
 		
 		this.splitter = splitter;
 
-		Properties props = new Properties();
-		recman = RecordManagerFactory.createRecordManager(System.getProperty("user.home")+"/.splitter/db/splitter", props);
+		PropertiesUtil props = new PropertiesUtil("../bin/nubi.properties");
+		recman = RecordManagerFactory.createRecordManager(props.getProperty("splitter_database_location"), props.getProperties());
 		// create or load
 		filemap = loadPersistentMap(recman, "filemap");
 		dirmap = loadPersistentMap(recman, "dirmap");

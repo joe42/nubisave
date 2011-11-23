@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,13 +23,19 @@ public class PropertiesUtil {
     private String file;
 
     /**
-     * Creates a Properties object
+     * Creates a PropertiesUtil object
      * @param file the property file to operate on
      */
     public PropertiesUtil(String file) {
         this.file = file;
     }
-
+    /**
+     * 
+     * @return the Property instance, which this object is representing 
+     */
+    public Properties getProperties(){
+    	return properties;
+    }
 
     private boolean loadProperties() {
         properties = new java.util.Properties();
