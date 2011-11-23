@@ -10,6 +10,7 @@
  */
 package nubisave.ui;
 
+import nubisave.Nubisave;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
@@ -42,7 +43,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         mntDirTxtField.setText(Nubisave.mainSplitter.getMountpoint());
 
-        String redundancyStr = Properties.getProperty("redundancy");
+        String redundancyStr = Nubisave.properties.getProperty("redundancy");
         if (redundancyStr == null) {
             redundancyStr = "100";
         }
@@ -185,7 +186,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         matchMakerLabel.setText("MatchMaker ");
 
-        matchMakerURLField.setText(Properties.getProperty("matchmakerURI"));
+        matchMakerURLField.setText(Nubisave.properties.getProperty("matchmakerURI"));
 
         changeMatchMakerURLBtn.setText("Apply");
         changeMatchMakerURLBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -301,12 +302,12 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_openMntDirBtnActionPerformed
 
     private void redundancySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_redundancySliderStateChanged
-        Properties.setProperty("redundancy", String.valueOf(redundancySlider.getValue()));
+        Nubisave.properties.setProperty("redundancy", String.valueOf(redundancySlider.getValue()));
         Nubisave.mainSplitter.setRedundancy(redundancySlider.getValue());
     }//GEN-LAST:event_redundancySliderStateChanged
 
     private void changeMatchMakerURLBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changeMatchMakerURLBtnActionPerformed
-        Properties.setProperty("matchmakerURI", matchMakerURLField.getText());
+        Nubisave.properties.setProperty("matchmakerURI", matchMakerURLField.getText());
     }//GEN-LAST:event_changeMatchMakerURLBtnActionPerformed
     public NubiTableModel tableModel;
     // Variables declaration - do not modify//GEN-BEGIN:variables

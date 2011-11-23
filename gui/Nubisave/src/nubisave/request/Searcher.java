@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import javax.xml.ws.BindingProvider;
 import nubisave.MatchmakerService;
 import nubisave.ui.AddServiceDialog;
+import nubisave.Nubisave;
 
 /**
  *
@@ -38,7 +39,7 @@ public class Searcher {
         nubisave.client.ClientAccessService service = new nubisave.client.ClientAccessService();
         nubisave.client.ClientAccess port = service.getClientAccess();
 
-        String endpoint = nubisave.Properties.getProperty("matchmakerURI");
+        String endpoint = Nubisave.properties.getProperty("matchmakerURI");
         BindingProvider binding = (BindingProvider) port;
         binding.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpoint);
 
