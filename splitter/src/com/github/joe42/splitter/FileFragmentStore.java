@@ -13,13 +13,11 @@ import org.apache.log4j.Logger;
  * It is used to keep track of the files which are dispersed into fragments or glued together in the class Splitter.*/
 public class FileFragmentStore {
 	private Map<String, FileFragments> fileFragmentsMap;
-	private String storages;
 	private static final Logger  log = Logger.getLogger("FileFragmentStore");
 
 	/**Create a new FileFragmentStore instance
 	 * @param storages */
-	public FileFragmentStore(String storages) {
-		this.storages = storages;
+	public FileFragmentStore() {
 		this.fileFragmentsMap = new HashMap<String, FileFragments>();
 	}
 
@@ -34,6 +32,13 @@ public class FileFragmentStore {
 	 * @return the paths to all fragments of the file*/
 	public ArrayList<String> getFragments(String fileName){
 		return fileFragmentsMap.get(fileName).getPaths();
+	}
+	
+	/** Check if the store has fragments of the file fileName
+	 * @param fileName the path to the whole file 
+	 * @return true iff the store contains fragments of the file*/
+	public boolean hasFragments(String fileName){
+		return fileFragmentsMap.get(fileName) != null;
 	}
 
 	/** Rename the file
@@ -82,35 +87,5 @@ public class FileFragmentStore {
 	 */
 	public void setNrOfRequiredFragments(String fileName, int requiredFragments) {
 		fileFragmentsMap.get(fileName).setNrOfRequiredFragments(requiredFragments);		
-	}
-
-	public List<String> getFragmentStores() {
-		log.debug("getting fragment stores");
-		List<String> ret = new ArrayList<String>();
-		File storageFolder = new File(storages);
-		File dataStorages;
-		String[] folders = storageFolder.list();
-		String[] dataFolders;
-		ret.clear();
-		if (folders == null) {
-			log.debug(storages + " is not a directory!");
-		} else {
-			for (int i = 0; i < folders.length; i++) {
-				log.debug("checking "+storageFolder.getAbsolutePath()+"/"+folders[i]);
-				dataStorages = new File(storageFolder.getAbsolutePath()+"/"+folders[i]);
-				dataFolders = dataStorages.list();
-				if (dataStorages == null) {
-					log.debug(storageFolder.getAbsolutePath()+"/"+folders[i] + " has no data directory!");
-				} else {
-					for (int j = 0; j < dataFolders.length;j++) {
-						if(dataFolders[j].equals("data")){
-							log.debug(dataStorages.getAbsolutePath()+"/data"+ " added");
-							ret.add(dataStorages.getAbsolutePath()+"/data");
-						}
-					}
-				}
-			}
-		}
-		return ret;
 	}
 }

@@ -416,16 +416,8 @@ public class FuseBox implements Filesystem1 {
 
 	public void unlink(String path) throws FuseException {
 		try {
-			int del_cnt = 0;
 			for (String fragmentName : splitter.getFragmentStore().getFragments(path)) {
-				if (new File(fragmentName).delete()) {
-					del_cnt++;
-				}
-			}
-			int possibly_existing_filenr = splitter.getNrOfFragments(path) - del_cnt;
-			if (possibly_existing_filenr >= splitter.getNrOfRequiredFragments(path)) {
-				throw new FuseException("IO Exception on deleting file")
-						.initErrno(FuseException.EACCES);
+				new File(fragmentName).delete();
 			}
 			filemap.remove(path);
 			recman.commit();

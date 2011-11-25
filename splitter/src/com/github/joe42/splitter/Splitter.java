@@ -13,6 +13,10 @@ import org.jigdfs.ida.base.InformationDispersalDecoder;
 import org.jigdfs.ida.base.InformationDispersalEncoder;
 import org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalCodec;
 
+import com.github.joe42.splitter.backend.BackendService;
+import com.github.joe42.splitter.backend.BackendServices;
+import com.github.joe42.splitter.storagestrategies.StorageStrategy;
+import com.github.joe42.splitter.storagestrategies.StorageStrategyFactory;
 import com.github.joe42.splitter.util.StringUtil;
 import com.github.joe42.splitter.util.file.ConcurrentMultipleFileHandler;
 import com.github.joe42.splitter.util.file.MultipleFileHandler;
@@ -21,27 +25,25 @@ import com.github.joe42.splitter.vtf.FileEntry;
 
 import fuse.FuseException;
 
-public class Splitter {
+public class Splitter { //Rename to CauchyReedSolomonSplitter and abstract interface
 	private static final int CAUCHY_WORD_LENGTH = 1;
 	private FileFragmentStore fileFragmentStore;
-	private String storages;
 	private int redundancy;
 	private static final Logger  log = Logger.getLogger("Splitter");
 	private MultipleFileHandler multi_file_handler;
+	private StorageStrategy storageStrategy;
+	private StorageStrategyFactory storageStrategyFactory;
 	
-	public Splitter(String storages, int redundancy){
-		fileFragmentStore = new FileFragmentStore(storages);
-		this.storages = storages;
+	public Splitter(BackendServices services, int redundancy){
+		storageStrategyFactory = new StorageStrategyFactory(services);
+		fileFragmentStore = new FileFragmentStore();
 		this.redundancy = redundancy;
 		multi_file_handler = new ConcurrentMultipleFileHandler();
 	}
-	public Splitter(String storages){
-		this(storages, 0);
+	public Splitter(BackendServices services){
+		this(services, 0);
 	}
 
-	public String getStorages(){
-		return storages;
-	}
 	public int getNrOfFragments(String path){
 		return  fileFragmentStore.getNrOfFragments(path);
 	}
@@ -54,23 +56,32 @@ public class Splitter {
 		
 		int nr_of_file_parts_successfully_stored = 0;
 		HashMap<String, byte[]> fileParts = new HashMap<String, byte[]>();
-		List<String> fragmentStores = fileFragmentStore.getFragmentStores();
-		int nr_of_file_fragments = fragmentStores.size();
+		ArrayList<String> fragmentFileNames = new ArrayList<String>();
+		int nr_of_file_fragments;
+		String fragment_name;
+		if(! fileFragmentStore.hasFragments(fileEntry.path) || storageStrategyFactory.changeToCurrentStrategy()){
+			List<String> fragmentDirectories;
+			storageStrategy = storageStrategyFactory.createStrategy("RoundRobin", redundancy);
+			 fragmentDirectories = storageStrategy.getFragmentDirectories();
+			 nr_of_file_fragments = fragmentDirectories.size();
+			String uniquePath, uniqueFileName;
+			uniquePath = StringUtil.getUniqueAsciiString(fileEntry.path);
+			uniqueFileName = uniquePath.replaceAll("/", "_");
+			for (int fragment_nr = 0; fragment_nr < nr_of_file_fragments; fragment_nr++) {
+				fragment_name = fragmentDirectories.get(fragment_nr) +"/"+ uniqueFileName 
+						+ '#' + fragment_nr;
+				fragmentFileNames.add(fragment_name);
+			}
+		} else {
+			fragmentFileNames = fileFragmentStore.getFragments(fileEntry.path);
+			nr_of_file_fragments = fragmentFileNames.size();
+		}
 		log.debug("nr_of_stores:" + nr_of_file_fragments);
-		int nr_of_file_fragments_required = (int) (nr_of_file_fragments *(100-redundancy) /100f); //100% redundancy -> only one file is enough to restore everything
+		int nr_of_file_fragments_required =  nr_of_file_fragments - storageStrategy.getNrOfRedundantFragments();
 		if(nr_of_file_fragments_required <1){
 			nr_of_file_fragments_required=1;
 		}
-		String fragment_name;
-		String uniquePath, uniqueFileName;
-		uniquePath = StringUtil.getUniqueAsciiString(fileEntry.path);
-		uniqueFileName = uniquePath.replaceAll("/", "_");
-		ArrayList<String> fragmentFileNames = new ArrayList<String>();
-		for (int fragment_nr = 0; fragment_nr < nr_of_file_fragments; fragment_nr++) {
-			fragment_name = fragmentStores.get(fragment_nr) + uniqueFileName 
-					+ '#' + fragment_nr;
-			fragmentFileNames.add(fragment_name);
-		}
+		
 		Digest digestFunc = new SHA256Digest();
 		byte[] digestByteArray = new byte[digestFunc.getDigestSize()];
 		String hexString = null;

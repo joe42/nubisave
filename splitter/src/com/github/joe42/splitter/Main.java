@@ -1,5 +1,7 @@
 package com.github.joe42.splitter;
 
+import com.github.joe42.splitter.backend.Mounter;
+
 import fuse.FuseMount;
 
 public class Main {
@@ -14,8 +16,9 @@ public class Main {
 		System.arraycopy(args, 0, fuseArgs, 0, fuseArgs.length);
 		// System.out.println(fuseArgs[0]);
 		try {
-			Splitter splitter = new Splitter(args[3]); 
-			FuseMount.mount(fuseArgs, new ConfigurableFuseBox(splitter));
+			Mounter mounter = new Mounter(args[3]);
+			Splitter splitter = new Splitter(mounter.getServices()); 
+			FuseMount.mount(fuseArgs, new ConfigurableFuseBox(splitter, mounter));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

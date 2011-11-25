@@ -9,19 +9,19 @@ import org.ini4j.Ini;
 
 public class Mounter {
 	private String storages;
-	private Map<String, BackendService> services;
+	private BackendServices services;
 	/**
 	 * For mounting the FUSE modules.
 	 * */
 	public Mounter(String storages){
 		this.storages = storages;
-		services = new HashMap<String, BackendService>();
+		services = new BackendServices();
 	}
 	/**
-	 * Get the current map of services
-	 * @return a Map object mapping the service's names to the BackendService objects
+	 * Get the current services
+	 * @return the Services object 
 	 */
-	public Map<String, BackendService> getServices(){
+	public BackendServices getServices(){
 		return services;
 	}
 	
@@ -57,7 +57,7 @@ public class Mounter {
 			e.printStackTrace();
 			return null;
 		}
-		services.put(uniqueServiceName, service);
+		services.add(uniqueServiceName, service);
 		return service.getPath();
 	}
 	
