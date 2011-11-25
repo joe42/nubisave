@@ -12,8 +12,9 @@ import com.github.joe42.splitter.util.file.IniUtil;
 public class BackendService implements StorageService{
 	private String path, name, mountCommand;
 	private String store;
+	private Boolean isBackendModule;
 
-	public BackendService(String store, String name){
+	private BackendService(String store, String name){
 		/**
 		 * Creates a backend service.
 		 * @param storages the directory where this services should be mounted as a subfolder
@@ -38,8 +39,11 @@ To this end the mountpoint parameter is substituted by store+"/"+HIDDEN_DIR_NAME
 		 * 					
 		 */
 		this(store,name);
-		Boolean isBackendModule = IniUtil.get(options, "splitter", "isbackendmodule", Boolean.class);
-		if(isBackendModule != null && isBackendModule){
+		isBackendModule = IniUtil.get(options, "splitter", "isbackendmodule", Boolean.class);
+		if(isBackendModule == null){
+			isBackendModule = false;
+		}
+		if(isBackendModule){
 			path += "/"+HIDDEN_DIR_NAME;	
 		}
 		path += "/"+name;
@@ -71,6 +75,13 @@ To this end the mountpoint parameter is substituted by store+"/"+HIDDEN_DIR_NAME
 		return substitutedCommand;
 	}
 
+	/**
+	 * @return true iff this service is a backend of another preprocessing service
+	 */
+	public boolean isBackendModule(){
+		return isBackendModule;
+	}
+	
 	public String getPath(){
 		/** @return the path where this service is mounted */
 		return path;
