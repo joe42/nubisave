@@ -52,6 +52,7 @@ public class FuseBox implements Filesystem1 {
 	protected int redundancy;
 	private RandomAccessTemporaryFileChannel tempReadChannel;
 	private CauchyReedSolomonSplitter splitter;
+	private FileFragmentStore fileFragmentStore;
 
 	private int UID;
 
@@ -64,7 +65,7 @@ public class FuseBox implements Filesystem1 {
 		PropertyConfigurator.configure("log4j.properties");
 		
 		this.splitter = splitter;
-
+		fileFragmentStore = new FileFragmentStore();
 		PropertiesUtil props = new PropertiesUtil("../bin/nubi.properties");
 		recman = RecordManagerFactory.createRecordManager(props.getProperty("splitter_database_location"), props.getProperties());
 		// create or load
@@ -270,7 +271,7 @@ public class FuseBox implements Filesystem1 {
 			throw new FuseException("IO Exception - nothing to split")
 					.initErrno(FuseException.EIO);
 		}
-		splitter.splitFile(fileEntry, tempFiles.getFileChannel(path)); //TODO: throw exception if not successful and remove filemap entry //kann man nicht rausnehmen (vielleicht doch; Dropbox 400 Error bei leeren Dateien ist gefixed)
+		splitter.splitFile(fileFragmentStore, fileEntry, tempFiles.getFileChannel(path)); //TODO: throw exception if not successful and remove filemap entry //kann man nicht rausnehmen (vielleicht doch; Dropbox 400 Error bei leeren Dateien ist gefixed)
 		try {
 			recman.commit();
 		} catch (IOException e) {
@@ -312,13 +313,13 @@ public class FuseBox implements Filesystem1 {
 					throw new FuseException("IO Exception on accessing metadata")
 							.initErrno(FuseException.EIO);
 				}
-				splitter.splitFile(fileEntry, tempFiles.getFileChannel(from)); //kann man nicht rausnehmen (vielleicht doch; Dropbox 400 Error bei leeren Dateien ist gefixed)
+				splitter.splitFile(fileFragmentStore, fileEntry, tempFiles.getFileChannel(from)); //kann man nicht rausnehmen (vielleicht doch; Dropbox 400 Error bei leeren Dateien ist gefixed)
 				tempFiles.delete(from);
 			}
 			fromEntry = (Entry) map.get(from);
 			map.put(to, fromEntry);
 			fromEntry.path = to;
-			splitter.getFragmentStore().moveFragments(from, to);
+			fileFragmentStore.moveFragments(from, to);
 			map.remove(from);
 			recman.commit();
 		} catch (IOException e) {
@@ -397,7 +398,7 @@ public class FuseBox implements Filesystem1 {
 					throw new FuseException("IO Exception on accessing metadata")
 							.initErrno(FuseException.EIO);
 				}
-				tempFiles.put(path, splitter.glueFilesTogether(fileEntry));
+				tempFiles.put(path, splitter.glueFilesTogether(fileFragmentStore, fileEntry));
 				try {
 					tempFiles.getFileChannel(path).truncate(size);
 				} catch (FileNotFoundException e) {
@@ -416,7 +417,7 @@ public class FuseBox implements Filesystem1 {
 
 	public void unlink(String path) throws FuseException {
 		try {
-			for (String fragmentName : splitter.getFragmentStore().getFragments(path)) {
+			for (String fragmentName : fileFragmentStore.getFragments(path)) {
 				new File(fragmentName).delete();
 			}
 			filemap.remove(path);
@@ -441,7 +442,7 @@ public class FuseBox implements Filesystem1 {
 			if (tempFiles.getFileChannel(path) == null) {
 				System.out.println("glue? ");
 				FileEntry entry = (FileEntry) filemap.get(path);
-				tempFiles.put(path, splitter.glueFilesTogether(entry));
+				tempFiles.put(path, splitter.glueFilesTogether(fileFragmentStore, entry));
 				System.out.println("glued! ");
 			}
 			FileChannel wChannel = tempFiles.getFileChannel(path);
@@ -462,7 +463,7 @@ public class FuseBox implements Filesystem1 {
 		try {
 			if (tempReadChannel == null) {
 				FileEntry entry = (FileEntry) filemap.get(path);
-				tempReadChannel = splitter.glueFilesTogether(entry);
+				tempReadChannel = splitter.glueFilesTogether(fileFragmentStore, entry);
 			}
 		tempReadChannel.getChannel().read(buf, offset);
 		} catch (IOException e) {
@@ -483,7 +484,7 @@ public class FuseBox implements Filesystem1 {
 				throw new FuseException("IO Exception on accessing metadata")
 						.initErrno(FuseException.EIO);
 			}
-			splitter.splitFile(fileEntry, tempFiles.getFileChannel(path)); //kann man nicht rausnehmen (vielleicht doch; Dropbox 400 Error bei leeren Dateien ist gefixed)
+			splitter.splitFile(fileFragmentStore, fileEntry, tempFiles.getFileChannel(path)); //kann man nicht rausnehmen (vielleicht doch; Dropbox 400 Error bei leeren Dateien ist gefixed)
 			tempFiles.delete(path);
 		}
 		if (tempReadChannel != null) {

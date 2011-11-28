@@ -27,7 +27,6 @@ import fuse.FuseException;
 
 public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter and abstract interface
 	private static final int CAUCHY_WORD_LENGTH = 1;
-	private FileFragmentStore fileFragmentStore;
 	private int redundancy;
 	private static final Logger  log = Logger.getLogger("Splitter");
 	private MultipleFileHandler multi_file_handler;
@@ -36,23 +35,15 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 	
 	public CauchyReedSolomonSplitter(BackendServices services, int redundancy){
 		storageStrategyFactory = new StorageStrategyFactory(services);
-		fileFragmentStore = new FileFragmentStore();
 		this.redundancy = redundancy;
 		multi_file_handler = new ConcurrentMultipleFileHandler();
 	}
 	public CauchyReedSolomonSplitter(BackendServices services){
 		this(services, 0);
 	}
-
-	public int getNrOfFragments(String path){
-		return  fileFragmentStore.getNrOfFragments(path);
-	}
 	
-	public int getNrOfRequiredFragments(String path){
-		return  fileFragmentStore.getNrOfRequiredFragments(path);
-	}
 	
-	public void splitFile(FileEntry fileEntry, FileChannel temp) throws FuseException {
+	public void splitFile(FileFragmentStore fileFragmentStore, FileEntry fileEntry, FileChannel temp) throws FuseException {
 		
 		int nr_of_file_parts_successfully_stored = 0;
 		HashMap<String, byte[]> fileParts = new HashMap<String, byte[]>();
@@ -135,7 +126,7 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 		}
 	}
 
-	public RandomAccessTemporaryFileChannel glueFilesTogether(FileEntry fileEntry) throws FuseException {
+	public RandomAccessTemporaryFileChannel glueFilesTogether(FileFragmentStore fileFragmentStore, FileEntry fileEntry) throws FuseException {
 		RandomAccessTemporaryFileChannel ret = null;
 		List<byte[]> receivedFileSegments = new ArrayList<byte[]>();
 		Digest digestFunc = new SHA256Digest();
@@ -202,7 +193,4 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 		return ret;
 	}
 
-	public FileFragmentStore getFragmentStore() {
-		return fileFragmentStore;
-	}
 }
