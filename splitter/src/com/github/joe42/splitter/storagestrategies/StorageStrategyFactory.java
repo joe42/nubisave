@@ -11,6 +11,7 @@ import com.github.joe42.splitter.backend.BackendServices;
  * Responsible for creating, configuring and pooling StorageStrategies.
  */
 public class StorageStrategyFactory {
+	public static enum AvailableStorageStrategies {Roundrobin};
 	private RoundRobinStorageStrategy roundRobin = null;
 	private BackendServices services;
 	private boolean changeToCurrentStrategy = true;
