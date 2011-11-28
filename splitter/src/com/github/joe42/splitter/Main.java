@@ -17,7 +17,7 @@ public class Main {
 		// System.out.println(fuseArgs[0]);
 		try {
 			Mounter mounter = new Mounter(args[3]);
-			Splitter splitter = new Splitter(mounter.getServices()); 
+			CauchyReedSolomonSplitter splitter = new CauchyReedSolomonSplitter(mounter.getServices()); 
 			FuseMount.mount(fuseArgs, new ConfigurableFuseBox(splitter, mounter));
 		} catch (Exception e) {
 			e.printStackTrace();

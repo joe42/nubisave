@@ -25,7 +25,7 @@ import com.github.joe42.splitter.vtf.FileEntry;
 
 import fuse.FuseException;
 
-public class Splitter { //Rename to CauchyReedSolomonSplitter and abstract interface
+public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter and abstract interface
 	private static final int CAUCHY_WORD_LENGTH = 1;
 	private FileFragmentStore fileFragmentStore;
 	private int redundancy;
@@ -34,13 +34,13 @@ public class Splitter { //Rename to CauchyReedSolomonSplitter and abstract inter
 	private StorageStrategy storageStrategy;
 	private StorageStrategyFactory storageStrategyFactory;
 	
-	public Splitter(BackendServices services, int redundancy){
+	public CauchyReedSolomonSplitter(BackendServices services, int redundancy){
 		storageStrategyFactory = new StorageStrategyFactory(services);
 		fileFragmentStore = new FileFragmentStore();
 		this.redundancy = redundancy;
 		multi_file_handler = new ConcurrentMultipleFileHandler();
 	}
-	public Splitter(BackendServices services){
+	public CauchyReedSolomonSplitter(BackendServices services){
 		this(services, 0);
 	}
 

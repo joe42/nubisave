@@ -51,13 +51,13 @@ public class FuseBox implements Filesystem1 {
 	private FuseStatfs statfs;
 	protected int redundancy;
 	private RandomAccessTemporaryFileChannel tempReadChannel;
-	private Splitter splitter;
+	private CauchyReedSolomonSplitter splitter;
 
 	private int UID;
 
 	private int GID;
 
-	public FuseBox(Splitter splitter) throws IOException {
+	public FuseBox(CauchyReedSolomonSplitter splitter) throws IOException {
 		// .config###/
 		// aufruf splitter_mount.sh mountordner ordner_mit_storage_ordner
 		// "redundancy level in percent 0-100"

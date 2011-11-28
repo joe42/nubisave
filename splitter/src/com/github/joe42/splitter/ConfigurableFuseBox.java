@@ -24,7 +24,7 @@ public class ConfigurableFuseBox extends FuseBox  implements StorageService{
 	private VirtualFileContainer virtualFolder;
 	private VirtualFile vtSplitterConfig;
 	private Mounter mounter;
-	public ConfigurableFuseBox(Splitter splitter, Mounter mounter) throws IOException{
+	public ConfigurableFuseBox(CauchyReedSolomonSplitter splitter, Mounter mounter) throws IOException{
 		super(splitter);
 		this.mounter = mounter;
 		virtualFolder = new VirtualFileContainer();
