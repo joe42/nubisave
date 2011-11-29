@@ -44,43 +44,22 @@ public class FuseBox implements Filesystem1 {
 
 	private static final int blockSize = 512;
 
-	private RecordManager recman;
-	private HTree filemap;
-	private HTree dirmap;
 	private RandomAccessTemporaryFileChannels tempFiles = new RandomAccessTemporaryFileChannels();
 	private FuseStatfs statfs;
 	protected int redundancy;
 	private RandomAccessTemporaryFileChannel tempReadChannel;
 	private CauchyReedSolomonSplitter splitter;
-	private FileFragmentStore fileFragmentStore;
+	private MetaDataStore metaDataStore;
 
 	private int UID;
 
 	private int GID;
 
 	public FuseBox(CauchyReedSolomonSplitter splitter) throws IOException {
-		// .config###/
-		// aufruf splitter_mount.sh mountordner ordner_mit_storage_ordner
-		// "redundancy level in percent 0-100"
 		PropertyConfigurator.configure("log4j.properties");
 		
 		this.splitter = splitter;
-		fileFragmentStore = new FileFragmentStore();
-		PropertiesUtil props = new PropertiesUtil("../bin/nubi.properties");
-		recman = RecordManagerFactory.createRecordManager(props.getProperty("splitter_database_location"), props.getProperties());
-		// create or load
-		filemap = loadPersistentMap(recman, "filemap");
-		dirmap = loadPersistentMap(recman, "dirmap");
-
-		try {
-			dirmap.put("/", new FolderEntry());
-			recman.commit();
-		} catch (IOException e) {
-			throw new IOException("IO Exception on accessing metadata");
-		}
-
-		log.debug("dirmap size:" + ((Entry) dirmap.get("/")).size);
-
+		metaDataStore = new MetaDataStore();
 		UID = getUID();
 		GID = getGID();
 	}
@@ -125,19 +104,6 @@ public class FuseBox implements Filesystem1 {
 		return Integer.parseInt(gid.trim());
 	}
 
-	private HTree loadPersistentMap(RecordManager recman, String mapName)
-			throws IOException {
-		long recid = recman.getNamedObject(mapName);
-		HTree ret;
-		if (recid != 0) {
-			ret = HTree.load(recman, recid);
-		} else {
-			ret = HTree.createInstance(recman);
-			recman.setNamedObject(mapName, ret.getRecid());
-		}
-		return ret;
-	}
-
 	public void chmod(String path, int mode) throws FuseException {
 		throw new FuseException("Read Only").initErrno(FuseException.EACCES);
 	}
@@ -156,11 +122,10 @@ public class FuseBox implements Filesystem1 {
 		 * if() }
 		 */
 		try {
-			if (filemap.get(path) != null) {
-				entry = (Entry) filemap.get(path);
+			entry = metaDataStore.getEntry(path);
+			if (entry instanceof FileEntry) {
 				stat.mode = FuseFtype.TYPE_FILE | 0644;
-			} else if (dirmap.get(path) != null) {
-				entry = (Entry) dirmap.get(path);
+			} else {
 				stat.mode = FuseFtype.TYPE_DIR | 0755;
 			}
 		} catch (IOException e) {
@@ -185,19 +150,19 @@ public class FuseBox implements Filesystem1 {
 
 	public FuseDirEnt[] getdir(String path) throws FuseException {
 		//TODO: tidy up
-		FastIterator pathes;
+		FastIterator paths;
 		try {
-			if (dirmap.get(path) == null)
+			if (metaDataStore.getFolderEntry(path) == null)
 				throw new FuseException("No Such Entry")
 						.initErrno(FuseException.ENOENT);
-			pathes = filemap.keys();
+			paths = metaDataStore.getFileEntryPaths();
 		} catch (IOException e) {
 			throw new FuseException("IO Exception on accessing metadata")
 					.initErrno(FuseException.EIO);
 		}
 		String fileName, dirName;
 		List<FuseDirEnt> dirEntries = new ArrayList<FuseDirEnt>();
-		while ((fileName = (String) pathes.next()) != null) {
+		while ((fileName = (String) paths.next()) != null) {
 			if (fileName.startsWith(path)
 					&& path.equals( new File(fileName).getParent() )) {
 				FuseDirEnt dirEntry = new FuseDirEnt();
@@ -207,12 +172,12 @@ public class FuseBox implements Filesystem1 {
 			}
 		}
 		try {
-			pathes = dirmap.keys();
+			paths = metaDataStore.getFolderEntryPaths();
 		} catch (IOException e) {
 			throw new FuseException("IO Exception on accessing metadata")
 					.initErrno(FuseException.EIO);
 		}
-		while ((dirName = (String) pathes.next()) != null) {
+		while ((dirName = (String) paths.next()) != null) {
 			if (dirName.startsWith(path)
 					&& path.equals( new File(dirName).getParent() )
 					&& !dirName.equals(path)) {
@@ -245,8 +210,8 @@ public class FuseBox implements Filesystem1 {
 
 	public void mkdir(String path, int mode) throws FuseException {
 		try {
-			dirmap.put(path, new FolderEntry());
-			recman.commit();
+			metaDataStore.makeFolderEntry(path);
+			metaDataStore.commit();
 		} catch (IOException e) {
 			throw new FuseException("IO Exception on accessing metadata")
 					.initErrno(FuseException.EIO);
@@ -258,11 +223,9 @@ public class FuseBox implements Filesystem1 {
 		FileEntry fileEntry;
 		try {
 			tempFiles.putNewFileChannel(path);
-			fileEntry = new FileEntry(path);
+			fileEntry = metaDataStore.makeFileEntry(path);
 			fileEntry.uid = UID;
 			fileEntry.gid = GID;
-			filemap.put(path, fileEntry);
-			recman.commit();
 		} catch (IOException e) {
 			throw new FuseException("IO Exception on accessing metadata")
 					.initErrno(FuseException.EIO);
@@ -271,9 +234,11 @@ public class FuseBox implements Filesystem1 {
 			throw new FuseException("IO Exception - nothing to split")
 					.initErrno(FuseException.EIO);
 		}
-		splitter.splitFile(fileFragmentStore, fileEntry, tempFiles.getFileChannel(path)); //TODO: throw exception if not successful and remove filemap entry //kann man nicht rausnehmen (vielleicht doch; Dropbox 400 Error bei leeren Dateien ist gefixed)
 		try {
-			recman.commit();
+			FileChannel temp = tempFiles.getFileChannel(path);
+			splitter.splitFile(metaDataStore, path, tempFiles.getFileChannel(path)); //kann man nicht rausnehmen (vielleicht doch; Dropbox 400 Error bei leeren Dateien ist gefixed)
+			fileEntry.size = (int) temp.size();
+			metaDataStore.commit();
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new FuseException("IO Exception on accessing metadata")
@@ -290,38 +255,31 @@ public class FuseBox implements Filesystem1 {
 	}
 
 	public void rename(String from, String to) throws FuseException {
-		if (from.equals(to)) // only if from is dir and to is file 
+		if (from.equals(to)) 
 			throw new FuseException("Entity"+to+" already exists.")
 				.initErrno(FuseException.EEXIST);
-		Entry fromEntry = null;
-		HTree map = null;
 		try {
-			if (filemap.get(from) != null) {
-				map = filemap;
-			} else if (dirmap.get(from) != null) {
-				map = dirmap;
-			}
-			if (map == null)
-				throw new FuseException("No Such Entry")
-						.initErrno(FuseException.ENOENT);
-
 			if (tempFiles.getFileChannel(from) != null) {
 				FileEntry fileEntry;
 				try {
-					fileEntry = (FileEntry) filemap.get(from);
+					fileEntry = (FileEntry) metaDataStore.getFileEntry(from);
 				} catch (IOException e1) {
 					throw new FuseException("IO Exception on accessing metadata")
 							.initErrno(FuseException.EIO);
 				}
-				splitter.splitFile(fileFragmentStore, fileEntry, tempFiles.getFileChannel(from)); //kann man nicht rausnehmen (vielleicht doch; Dropbox 400 Error bei leeren Dateien ist gefixed)
+				FileChannel temp = tempFiles.getFileChannel(from);
+				splitter.splitFile(metaDataStore, from, tempFiles.getFileChannel(from)); //kann man nicht rausnehmen (vielleicht doch; Dropbox 400 Error bei leeren Dateien ist gefixed)
+				fileEntry.size = (int) temp.size();
 				tempFiles.delete(from);
+				if (tempFiles.getFileChannel(to) != null){
+					tempFiles.delete(to);
+				}
 			}
-			fromEntry = (Entry) map.get(from);
-			map.put(to, fromEntry);
-			fromEntry.path = to;
-			fileFragmentStore.moveFragments(from, to);
-			map.remove(from);
-			recman.commit();
+			if(metaDataStore.hasFragments(to)){
+				removeFile(to);
+			}
+			metaDataStore.rename(from, to);
+			metaDataStore.commit();
 		} catch (IOException e) {
 			throw new FuseException("IO Exception on reading metadata")
 					.initErrno(FuseException.EIO);
@@ -331,13 +289,13 @@ public class FuseBox implements Filesystem1 {
 	public void rmdir(String path) throws FuseException {
 		Entry dirEntry = null;
 		try {
-			dirEntry = (FolderEntry) dirmap.get(path);
+			dirEntry = (FolderEntry) metaDataStore.getFolderEntry(path);
 			if (dirEntry == null)
 				throw new FuseException("No Such Entry")
 						.initErrno(FuseException.ENOENT);
 			new File(path).delete();
-			dirmap.remove(path);
-			recman.commit();
+			metaDataStore.remove(path);
+			metaDataStore.commit();
 		} catch (IOException e) {
 			throw new FuseException("IO Exception on accessing metadata")
 					.initErrno(FuseException.EIO);
@@ -350,19 +308,19 @@ public class FuseBox implements Filesystem1 {
 		int blocks = 0;
 		FastIterator iter;
 		try {
-			iter = filemap.keys();
+			iter = metaDataStore.getFileEntryPaths();
 			String path = (String) iter.next();
 			while (path != null) {
 				files++;
-				blocks += (((Entry) filemap.get(path)).size + blockSize - 1)
+				blocks += (((Entry) metaDataStore.getFileEntry(path)).size + blockSize - 1)
 						/ blockSize;
 				path = (String) iter.next();
 			}
-			iter = dirmap.keys();
+			iter = metaDataStore.getFolderEntryPaths();
 			path = (String) iter.next();
 			while (path != null) {
 				dirs++;
-				blocks += (((Entry) dirmap.get(path)).size + blockSize - 1)
+				blocks += (((Entry) metaDataStore.getFolderEntry(path)).size + blockSize - 1)
 						/ blockSize;
 				path = (String) iter.next();
 			}
@@ -390,15 +348,8 @@ public class FuseBox implements Filesystem1 {
 
 	public void truncate(String path, long size) throws FuseException {
 		try {
-			if (filemap.get(path) != null) {
-				FileEntry fileEntry;
-				try {
-					fileEntry = (FileEntry) filemap.get(path);
-				} catch (IOException e1) {
-					throw new FuseException("IO Exception on accessing metadata")
-							.initErrno(FuseException.EIO);
-				}
-				tempFiles.put(path, splitter.glueFilesTogether(fileFragmentStore, fileEntry));
+			if (metaDataStore.getFileEntry(path) != null) {
+				tempFiles.put(path, splitter.glueFilesTogether(metaDataStore, path));
 				try {
 					tempFiles.getFileChannel(path).truncate(size);
 				} catch (FileNotFoundException e) {
@@ -416,12 +367,16 @@ public class FuseBox implements Filesystem1 {
 	}
 
 	public void unlink(String path) throws FuseException {
+		removeFile(path);
+	}
+
+	private void removeFile(String path) throws FuseException {
 		try {
-			for (String fragmentName : fileFragmentStore.getFragments(path)) {
+			for (String fragmentName : metaDataStore.getFragments(path)) {
 				new File(fragmentName).delete();
 			}
-			filemap.remove(path);
-			recman.commit();
+			metaDataStore.remove(path);
+			metaDataStore.commit();
 		} catch (IOException e) {
 			throw new FuseException("IO Exception on reading metadata")
 					.initErrno(FuseException.EIO);
@@ -441,8 +396,7 @@ public class FuseBox implements Filesystem1 {
 		try {
 			if (tempFiles.getFileChannel(path) == null) {
 				System.out.println("glue? ");
-				FileEntry entry = (FileEntry) filemap.get(path);
-				tempFiles.put(path, splitter.glueFilesTogether(fileFragmentStore, entry));
+				tempFiles.put(path, splitter.glueFilesTogether(metaDataStore, path));
 				System.out.println("glued! ");
 			}
 			FileChannel wChannel = tempFiles.getFileChannel(path);
@@ -462,8 +416,7 @@ public class FuseBox implements Filesystem1 {
 			throws FuseException {
 		try {
 			if (tempReadChannel == null) {
-				FileEntry entry = (FileEntry) filemap.get(path);
-				tempReadChannel = splitter.glueFilesTogether(fileFragmentStore, entry);
+				tempReadChannel = splitter.glueFilesTogether(metaDataStore, path);
 			}
 		tempReadChannel.getChannel().read(buf, offset);
 		} catch (IOException e) {
@@ -479,12 +432,14 @@ public class FuseBox implements Filesystem1 {
 		if (tempFiles.getFileChannel(path) != null) {
 			FileEntry fileEntry;
 			try {
-				fileEntry = (FileEntry) filemap.get(path);
+				fileEntry = (FileEntry) metaDataStore.getFileEntry(path);
+				FileChannel temp = tempFiles.getFileChannel(path);
+				splitter.splitFile(metaDataStore, path, tempFiles.getFileChannel(path)); //kann man nicht rausnehmen (vielleicht doch; Dropbox 400 Error bei leeren Dateien ist gefixed)
+				fileEntry.size = (int) temp.size();
 			} catch (IOException e1) {
 				throw new FuseException("IO Exception on accessing metadata")
 						.initErrno(FuseException.EIO);
 			}
-			splitter.splitFile(fileFragmentStore, fileEntry, tempFiles.getFileChannel(path)); //kann man nicht rausnehmen (vielleicht doch; Dropbox 400 Error bei leeren Dateien ist gefixed)
 			tempFiles.delete(path);
 		}
 		if (tempReadChannel != null) {

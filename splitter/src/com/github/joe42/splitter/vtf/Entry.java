@@ -3,7 +3,6 @@ package com.github.joe42.splitter.vtf;
 import fuse.compat.FuseStat;
 
 public abstract class Entry {
-	public String path;
 	public int nlink;
 	public int uid;
 	public int gid;
