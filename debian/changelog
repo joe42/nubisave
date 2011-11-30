@@ -1,3 +1,10 @@
+nubisave (0.0~git20111115-1) unstable; urgency=low
+
+  * Today's snapshot after some further work in practically all areas.
+  * Fix conditional conqotool invocation due to set -e being in use.
+
+ -- Josef Spillner <josef@rumba>  Tue, 30 Nov 2011 13:31:03 +0100
+
 nubisave (0.0~git20111102-1) unstable; urgency=low
 
   * Today's snapshot after merging the 'packaging' and 'mountcustommodule*' branches into master.

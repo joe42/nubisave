@@ -20,8 +20,8 @@ set -e
 
 case "$1" in
     configure)
-	which conqotool >/dev/null
-	if [ $? -eq 0 ]; then
+	tool=`which conqotool` || true
+	if [ ! -z $tool ]; then
 		echo "Performing cloud storage provider registration."
 		for service in /usr/share/nubisave/services/CloudServices/*.wsml; do
 			servicename=$(basename "$service")
