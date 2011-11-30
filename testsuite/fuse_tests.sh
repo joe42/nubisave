@@ -206,6 +206,7 @@ then
 	echo "is: ""`cat "$path 2"`"
 fi
 rm "$path 2"
+exit
 
 
 ##########################################################
@@ -281,6 +282,44 @@ then
 fi
 rm "$path 1"
 rm "$path 2"
+
+
+##########################################################
+echo "Create Folder"
+##########################################################
+mkdir "$path"
+if [ ! -d "$path" ]
+then
+    echo "Error: Directory does not exists."
+fi
+
+
+##########################################################
+echo "Remove Folder"
+##########################################################
+rm -r "$path"
+if [ -d "$path" ]
+then
+    echo "Error: Directory does still exists."
+fi
+
+##########################################################
+echo "Create Nested Folder"
+##########################################################
+mkdir -p "$path/nested"
+if [ ! -d "$path/nested" ]
+then
+    echo "Error: Nested directory does not exists."
+fi
+
+##########################################################
+echo "Remove Nested Folder"
+##########################################################
+rm -r "$path"
+if [ -d "$path" ]
+then
+    echo "Error: Directory does still exists."
+fi
 
 ##########################################################
 echo "Listing directory?"

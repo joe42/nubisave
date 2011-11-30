@@ -1,5 +1,6 @@
 package com.github.joe42.splitter;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.*;
@@ -13,6 +14,10 @@ import org.jigdfs.ida.base.InformationDispersalDecoder;
 import org.jigdfs.ida.base.InformationDispersalEncoder;
 import org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalCodec;
 
+import com.github.joe42.splitter.backend.BackendService;
+import com.github.joe42.splitter.backend.BackendServices;
+import com.github.joe42.splitter.storagestrategies.StorageStrategy;
+import com.github.joe42.splitter.storagestrategies.StorageStrategyFactory;
 import com.github.joe42.splitter.util.StringUtil;
 import com.github.joe42.splitter.util.file.ConcurrentMultipleFileHandler;
 import com.github.joe42.splitter.util.file.MultipleFileHandler;
@@ -21,55 +26,54 @@ import com.github.joe42.splitter.vtf.FileEntry;
 
 import fuse.FuseException;
 
-public class Splitter {
+public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter and abstract interface
 	private static final int CAUCHY_WORD_LENGTH = 1;
-	private FileFragmentStore fileFragmentStore;
-	private String storages;
 	private int redundancy;
 	private static final Logger  log = Logger.getLogger("Splitter");
 	private MultipleFileHandler multi_file_handler;
+	private StorageStrategy storageStrategy;
+	private StorageStrategyFactory storageStrategyFactory;
 	
-	public Splitter(String storages, int redundancy){
-		fileFragmentStore = new FileFragmentStore(storages);
-		this.storages = storages;
+	public CauchyReedSolomonSplitter(BackendServices services, int redundancy){
+		storageStrategyFactory = new StorageStrategyFactory(services);
 		this.redundancy = redundancy;
 		multi_file_handler = new ConcurrentMultipleFileHandler();
 	}
-	public Splitter(String storages){
-		this(storages, 0);
-	}
-
-	public String getStorages(){
-		return storages;
-	}
-	public int getNrOfFragments(String path){
-		return  fileFragmentStore.getNrOfFragments(path);
+	public CauchyReedSolomonSplitter(BackendServices services){
+		this(services, 0);
 	}
 	
-	public int getNrOfRequiredFragments(String path){
-		return  fileFragmentStore.getNrOfRequiredFragments(path);
-	}
 	
-	public void splitFile(FileEntry fileEntry, FileChannel temp) throws FuseException {
+	public void splitFile(MetaDataStore fileFragmentStore, String path, FileChannel temp) throws FuseException, IOException {
 		
 		int nr_of_file_parts_successfully_stored = 0;
 		HashMap<String, byte[]> fileParts = new HashMap<String, byte[]>();
-		List<String> fragmentStores = fileFragmentStore.getFragmentStores();
-		int nr_of_file_fragments = fragmentStores.size();
+		ArrayList<String> fragmentFileNames = new ArrayList<String>();
+		int nr_of_file_fragments;
+		String fragment_name;
+		if(! fileFragmentStore.hasFragments(path) || storageStrategyFactory.changeToCurrentStrategy()){
+			List<String> fragmentDirectories;
+			storageStrategy = storageStrategyFactory.createStrategy("RoundRobin", redundancy);
+			 fragmentDirectories = storageStrategy.getFragmentDirectories();
+			 nr_of_file_fragments = fragmentDirectories.size();
+			String uniquePath, uniqueFileName;
+			uniquePath = StringUtil.getUniqueAsciiString(path);
+			uniqueFileName = uniquePath.replaceAll("/", "_");
+			for (int fragment_nr = 0; fragment_nr < nr_of_file_fragments; fragment_nr++) {
+				fragment_name = fragmentDirectories.get(fragment_nr) +"/"+ uniqueFileName 
+						+ '#' + fragment_nr;
+				fragmentFileNames.add(fragment_name);
+			}
+		} else {
+			fragmentFileNames = fileFragmentStore.getFragments(path);
+			nr_of_file_fragments = fragmentFileNames.size();
+		}
 		log.debug("nr_of_stores:" + nr_of_file_fragments);
-		int nr_of_file_fragments_required = (int) (nr_of_file_fragments *(100-redundancy) /100f); //100% redundancy -> only one file is enough to restore everything
+		int nr_of_file_fragments_required =  nr_of_file_fragments - storageStrategy.getNrOfRedundantFragments();
 		if(nr_of_file_fragments_required <1){
 			nr_of_file_fragments_required=1;
 		}
-		String fragment_name;
-		String uniquePath;
-		uniquePath = StringUtil.getUniqueAsciiString(fileEntry.path);
-		ArrayList<String> fragmentFileNames = new ArrayList<String>();
-		for (int fragment_nr = 0; fragment_nr < nr_of_file_fragments; fragment_nr++) {
-			fragment_name = fragmentStores.get(fragment_nr) + uniquePath 
-					+ '#' + fragment_nr;
-			fragmentFileNames.add(fragment_name);
-		}
+		
 		Digest digestFunc = new SHA256Digest();
 		byte[] digestByteArray = new byte[digestFunc.getDigestSize()];
 		String hexString = null;
@@ -104,7 +108,6 @@ public class Splitter {
 				fileParts.put(fragment_name, b);
 			}
 			nr_of_file_parts_successfully_stored = multi_file_handler.writeFilesAsByteArrays(fileParts);
-			fileEntry.size = (int) temp.size();
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new FuseException("IO error: " + e.toString(), e)
@@ -119,11 +122,11 @@ public class Splitter {
 					.initErrno(FuseException.EIO);
 		} else {
 			//TODO: delete previous Fragments
-			fileFragmentStore.setFragment(fileEntry.path, fragmentFileNames, nr_of_file_fragments_required);
+			fileFragmentStore.setFragment(path, fragmentFileNames, nr_of_file_fragments_required);
 		}
 	}
 
-	public RandomAccessTemporaryFileChannel glueFilesTogether(FileEntry fileEntry) throws FuseException {
+	public RandomAccessTemporaryFileChannel glueFilesTogether(MetaDataStore fileFragmentStore, String path) throws FuseException {
 		RandomAccessTemporaryFileChannel ret = null;
 		List<byte[]> receivedFileSegments = new ArrayList<byte[]>();
 		Digest digestFunc = new SHA256Digest();
@@ -132,7 +135,8 @@ public class Splitter {
 		InformationDispersalDecoder decoder;
 		try {
 			crsidacodec = new CauchyInformationDispersalCodec(
-					fileFragmentStore.getNrOfFragments(fileEntry.path), fileFragmentStore.getNrOfRequiredFragments(fileEntry.path), CAUCHY_WORD_LENGTH);
+					fileFragmentStore.getNrOfFragments(path), fileFragmentStore.getNrOfRequiredFragments(path), CAUCHY_WORD_LENGTH);
+			System.out.println(fileFragmentStore.getNrOfFragments(path)+" "+fileFragmentStore.getNrOfRequiredFragments(path));
 			decoder = crsidacodec.getDecoder();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -145,10 +149,10 @@ public class Splitter {
 		try {
 			ret = new RandomAccessTemporaryFileChannel();
 			int validSegment = 0;
-			List<String> fragmentNames = fileFragmentStore.getFragments(fileEntry.path);
+			List<String> fragmentNames = fileFragmentStore.getFragments(path);
 
 			List<byte[]> segmentBuffers = multi_file_handler
-					.getFilesAsByteArrays(fragmentNames.toArray(new String[0]), fileFragmentStore.getNrOfRequiredFragments(fileEntry.path));
+					.getFilesAsByteArrays(fragmentNames.toArray(new String[0]), fileFragmentStore.getNrOfRequiredFragments(path));
 			for (byte[] segmentBuffer : segmentBuffers) {
 				//log.info("glue " + new String(segmentBuffer));
 
@@ -168,7 +172,7 @@ public class Splitter {
 				receivedFileSegments.add(segmentBuffer);
 				validSegment++;
 
-				if (validSegment >= fileFragmentStore.getNrOfRequiredFragments(fileEntry.path)) {
+				if (validSegment >= fileFragmentStore.getNrOfRequiredFragments(path)) {
 					break;
 				}
 				// }
@@ -190,7 +194,4 @@ public class Splitter {
 		return ret;
 	}
 
-	public FileFragmentStore getFragmentStore() {
-		return fileFragmentStore;
-	}
 }

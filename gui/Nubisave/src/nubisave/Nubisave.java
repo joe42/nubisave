@@ -4,6 +4,7 @@
  */
 package nubisave;
 
+import com.github.joe42.splitter.util.file.PropertiesUtil;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.UIManager;
@@ -20,6 +21,7 @@ public class Nubisave {
     public static String[] supportedProvider = {"Dropbox","Sugarsync"};
 
     public static Splitter mainSplitter;
+    public static PropertiesUtil properties;
     
     private void initalize() {
         // look like a native app
@@ -44,9 +46,10 @@ public class Nubisave {
             System.out.println("Must specify mountpoint of splitter module");
             System.exit(-1);
         }
+        properties = new PropertiesUtil("nubi.properties");
         String splitterMountpoint = args[0];
         Nubisave.mainSplitter = new Splitter(splitterMountpoint);
-        Nubisave.mainSplitter.setRedundancy(Integer.parseInt(Properties.getProperty("redundancy")));
+        Nubisave.mainSplitter.setRedundancy(Integer.parseInt(properties.getProperty("redundancy")));
         Nubisave nubi = new Nubisave();
         nubi.initalize();
         //new CoreReader().readExistingServices();

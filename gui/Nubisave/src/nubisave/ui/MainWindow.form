@@ -261,7 +261,7 @@
             <Component class="javax.swing.JTextField" name="matchMakerURLField">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="Properties.getProperty(&quot;matchmakerURI&quot;)" type="code"/>
+                  <Connection code="Nubisave.properties.getProperty(&quot;matchmakerURI&quot;)" type="code"/>
                 </Property>
               </Properties>
             </Component>
