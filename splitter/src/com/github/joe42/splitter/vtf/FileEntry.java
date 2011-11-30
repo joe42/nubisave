@@ -5,10 +5,6 @@ import fuse.FuseFtype;
 
 public class FileEntry extends Entry implements Serializable{
 	private static final long serialVersionUID = 1L;
-	public FileEntry(String path){
-		this();
-		this.path = path;
-	}
 	public FileEntry(){
 		nlink = 1;
 		size = 0;

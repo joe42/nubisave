@@ -1,12 +1,14 @@
 package com.github.joe42.splitter;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
 
 /**
  *Stores the paths to the fragments of a single file along with the required number of fragments to reconstruct this file.
  */
-public class FileFragments {
+public class FileFragments implements Serializable {
+	private static final long serialVersionUID = 1L;
 	private ArrayList<String> fileFragmentPaths;
 	private int requiredFragments;
 	
