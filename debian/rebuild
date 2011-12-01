@@ -1,5 +1,10 @@
 #!/bin/sh
 
+if [ "$1" = "--force" ]; then
+	rm -f ../nubisave_*
+	git clean -df
+fi
+
 stamp=`date +%Y%m%d`
 
 rm -rf debian/nubisave
