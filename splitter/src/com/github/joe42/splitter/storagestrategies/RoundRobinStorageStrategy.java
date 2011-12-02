@@ -22,7 +22,7 @@ public class RoundRobinStorageStrategy implements StorageStrategy {
 	public RoundRobinStorageStrategy(List<String> potentialStorageDirectories){
 		this.potentialStorageDirectories = potentialStorageDirectories;
 		round = 0;
-		redundancy = 0;
+		redundancy = 50;
 	}
 
 	public void setPotentialStorageDirectories(List<String> potentialStorageDirectories){
@@ -92,7 +92,7 @@ public class RoundRobinStorageStrategy implements StorageStrategy {
 	 */
 	@Override
 	public int getNrOfRequiredSuccessfullyStoredFragments() {
-		return 1 +  getNrOfRedundantFragments();
+		return 1;// +  getNrOfRedundantFragments();
 	}
 
 }
