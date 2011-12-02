@@ -1,6 +1,9 @@
 #!/bin/sh
 #usage: sh mount_directory.sh mountpoint directory
 
+if [ ! -d "$2" ]; then
+    mkdir -p $2
+fi
 #make directory at mountpoint if it does not yet exist
 mkdir -p $1
 #link to directory

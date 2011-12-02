@@ -1,8 +1,8 @@
 
 include build.conf
 
-JAVAC := ${JDK_HOME}/bin/javac
-JAVA := ${JDK_HOME}/bin/java
+JAVAC := javac
+JAVA := java
 
 BUILD_CLASSPATH := ./build:./lib/*:../jigdfs/lib/*:../fusej/lib/*
 
@@ -47,6 +47,8 @@ ${JNI_BINDINGS_H} ${JNI_BINDINGS_C}: ${JAVASRC}
 	${JAVA} -classpath build java2c.DumpJVMLdPath > ../fusej/jvm_ldpath.def
 
 jni_clean:
+	# FIXME: workaround for suboptimal makefile clean rule's file dependency
+	touch ../fusej/jvm_ldpath.def
 	${MAKE} -C ../fusej/jni clean
 	rm -f ${JNI_BINDINGS_H} ${JNI_BINDINGS_C}
 	rm -f ../fusej/jvm_ldpath.def

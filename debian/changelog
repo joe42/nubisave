@@ -1,0 +1,24 @@
+nubisave (0.0~git20111130-1) unstable; urgency=low
+
+  * Today's snapshot after some further work in practically all areas.
+  * Fix conditional conqotool invocation due to set -e being in use.
+
+ -- Josef Spillner <josef@rumba>  Tue, 30 Nov 2011 13:31:03 +0100
+
+nubisave (0.0~git20111102-1) unstable; urgency=low
+
+  * Today's snapshot after merging the 'packaging' and 'mountcustommodule*' branches into master.
+
+ -- Josef Spillner <josef@rumba>  Wed, 02 Nov 2011 19:18:20 +0100
+
+nubisave (0.0~git20111031-1) unstable; urgency=low
+
+  * Updated package with today's sources from the 'packaging' branch.
+
+ -- Josef Spillner <josef@rumba>  Mon, 31 Oct 2011 12:01:04 +0100
+
+nubisave (0.0~git20111030-1) unstable; urgency=low
+
+  * Initial release.
+
+ -- Josef Spillner <josef@rumba>  Sun, 30 Oct 2011 15:40:04 +0100
