@@ -69,7 +69,8 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 			nr_of_file_fragments = fragmentFileNames.size();
 		}
 		log.debug("nr_of_stores:" + nr_of_file_fragments);
-		int nr_of_file_fragments_required =  nr_of_file_fragments - storageStrategy.getNrOfRedundantFragments();
+		int nr_of_redundant_fragments =  storageStrategy.getNrOfRedundantFragments();
+		int nr_of_file_fragments_required =  nr_of_file_fragments - nr_of_redundant_fragments;
 		if(nr_of_file_fragments_required <1){
 			nr_of_file_fragments_required=1;
 		}
@@ -81,7 +82,7 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 		InformationDispersalEncoder encoder;
 		try {
 			crsidacodec = new CauchyInformationDispersalCodec(
-					nr_of_file_fragments, nr_of_file_fragments_required, 1);
+					nr_of_file_fragments, nr_of_redundant_fragments, 1);
 			encoder = crsidacodec.getEncoder();
 		} catch (Exception e) {
 			e.printStackTrace();
