@@ -33,6 +33,7 @@ public class StorageStrategyFactory {
 			if(roundRobin == null){
 				roundRobin = new RoundRobinStorageStrategy(services.getDataDirPaths());
 			}
+			roundRobin.setRedundancy(redundancy);
 			changeToCurrentStrategy = roundRobin.changeToCurrentStrategy(previousStorageStrategy);
 			previousStorageStrategy = roundRobin;
 			ret = roundRobin;

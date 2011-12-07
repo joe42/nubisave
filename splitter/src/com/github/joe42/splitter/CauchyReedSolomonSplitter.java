@@ -28,23 +28,17 @@ import fuse.FuseException;
 
 public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter and abstract interface
 	private static final int CAUCHY_WORD_LENGTH = 1;
-	private int redundancy;
 	private static final Logger  log = Logger.getLogger("Splitter");
 	private MultipleFileHandler multi_file_handler;
 	private StorageStrategy storageStrategy;
 	private StorageStrategyFactory storageStrategyFactory;
 	
-	public CauchyReedSolomonSplitter(BackendServices services, int redundancy){
+	public CauchyReedSolomonSplitter(BackendServices services){
 		storageStrategyFactory = new StorageStrategyFactory(services);
-		this.redundancy = redundancy;
 		multi_file_handler = new ConcurrentMultipleFileHandler();
 	}
-	public CauchyReedSolomonSplitter(BackendServices services){
-		this(services, 0);
-	}
 	
-	
-	public void splitFile(MetaDataStore fileFragmentStore, String path, FileChannel temp) throws FuseException, IOException {
+	public void splitFile(MetaDataStore fileFragmentStore, String path, FileChannel temp, int redundancy) throws FuseException, IOException {
 		
 		int nr_of_file_parts_successfully_stored = 0;
 		HashMap<String, byte[]> fileParts = new HashMap<String, byte[]>();
