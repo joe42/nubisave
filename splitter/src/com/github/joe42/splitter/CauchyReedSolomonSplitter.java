@@ -75,9 +75,6 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 			nrOfRequiredSuccessfullyStoredFragments = fileFragmentStore.getNrOfRequiredSuccessfullyStoredFragments(path);
 		}
 		logStoreProperties(nr_of_file_fragments, nr_of_file_fragments_required, nr_of_redundant_fragments, nrOfRequiredSuccessfullyStoredFragments);
-		if(nr_of_file_fragments_required <1){
-			nr_of_file_fragments_required=1;
-		}
 		if(nr_of_file_fragments_required == 1){
 			fileParts = replicateFile( temp, path, fragmentFileNames);
 		} else {
