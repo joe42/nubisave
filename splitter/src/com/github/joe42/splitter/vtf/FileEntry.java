@@ -13,6 +13,7 @@ public class FileEntry extends Entry{
 	public FileEntry(int blocksize){
 		nlink = 1;
 		size = 0;
+		mode = FuseFtype.TYPE_FILE | 664;
 		this.blocksize = blocksize;
 	}
 	public void setMode(int mode){
