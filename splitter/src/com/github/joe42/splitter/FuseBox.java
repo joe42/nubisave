@@ -238,6 +238,7 @@ public class FuseBox implements Filesystem1 {
 			FileChannel temp = tempFiles.getFileChannel(path);
 			splitter.splitFile(metaDataStore, path, tempFiles.getFileChannel(path), redundancy); //kann man nicht rausnehmen (vielleicht doch; Dropbox 400 Error bei leeren Dateien ist gefixed)
 			fileEntry.size = (int) temp.size();
+			metaDataStore.putFileEntry(path, fileEntry);
 			metaDataStore.commit();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -436,6 +437,8 @@ public class FuseBox implements Filesystem1 {
 				FileChannel temp = tempFiles.getFileChannel(path);
 				splitter.splitFile(metaDataStore, path, tempFiles.getFileChannel(path), redundancy); //kann man nicht rausnehmen (vielleicht doch; Dropbox 400 Error bei leeren Dateien ist gefixed)
 				fileEntry.size = (int) temp.size();
+				metaDataStore.putFileEntry(path, fileEntry);
+				metaDataStore.commit();
 			} catch (IOException e1) {
 				throw new FuseException("IO Exception on accessing metadata")
 						.initErrno(FuseException.EIO);

@@ -172,25 +172,80 @@ public class MetaDataStore {
 		return fragments.getNrOfRequiredSuccessfullyStoredFragments();
 	}
 	
+	/**
+	 * Store a new FileEntry instance under path
+	 * Before committing any changes of the returned FileEntry instance fileEntry, {@link #putFileEntry(String, FileEntry) putFileEntry(path, fileEntry)} needs to be called.
+	 * @param path the path under which the FileEntry instance is stored
+	 * @return the new FileEntry
+	 * @throws IOException
+	 */
 	public FileEntry makeFileEntry(String path) throws IOException {
 		FileEntry entry = new FileEntry();
 		fileMap.put(path, entry);
 		return entry;
 	}
+	/**
+	 * Store a new FolderEntry instance under path
+	 * Before committing any changes of the returned FolderEntry instance folderEntry, {@link #putFolderEntry(String, FolderEntry) putFolderEntry(path, folderEntry)} needs to be called.
+	 * @param path the path under which the FolderEntry instance is stored
+	 * @return the new FolderEntry
+	 * @throws IOException
+	 */
 	public FolderEntry makeFolderEntry(String path) throws IOException {
 		FolderEntry entry = new FolderEntry();
 		dirMap.put(path, entry);
 		return entry;
 	}
 
+	/**
+	 * Store fileEntry under path
+	 * This method must be called before committing changes made to entry.
+	 * @param path the path of the FileEntry instance to store
+	 * @param fileEntry the FileEntry instance to store
+	 * @throws IOException
+	 */
+	public void putFileEntry(String path, FileEntry fileEntry) throws IOException{
+		fileMap.put(path, fileEntry);
+	}
+
+	/**
+	 * Store folderEntry under path
+	 * This method must be called before committing changes made to entry.
+	 * @param path the path of the FolderEntry instance to store
+	 * @param folderEntry the FolderEntry instance to store
+	 * @throws IOException
+	 */
+	public void putFolderEntry(String path, FolderEntry folderEntry) throws IOException{
+		dirMap.put(path, folderEntry);
+	}
+	
+	/**
+	 * Commit the entries added by the put*Entry and make*Entry methods
+	 * Any changes made to the entries after calling those methods are ignored. To commit further changes, call the respective put*Entry method again, after the changes, and then call commit.
+	 * @throws IOException
+	 */
 	public void commit() throws IOException {
 		recman.commit();
 	}
 
+	/**
+	 * Get the FileEntry instance stored under path
+	 * Before committing any changes of the returned FileEntry instance fileEntry, {@link #putFileEntry(String, FileEntry) putFileEntry(path, fileEntry)} needs to be called.
+	 * @param path
+	 * @return the FileEntry instance stored under path or null if path is no FileEntry instance is stored under path
+	 * @throws IOException
+	 */
 	public FileEntry getFileEntry(String path) throws IOException {
 		return (FileEntry) fileMap.get(path);
 	}
 
+	/**
+	 * Get the FolderEntry instance stored under path
+	 * Before committing any changes of the returned FolderEntry instance folderEntry, {@link #putFolderEntry(String, FolderEntry) putFolderEntry(path, folderEntry)} needs to be called.
+	 * @param path
+	 * @return the FolderEntry instance stored under path or null if path is no FolderEntry instance is stored under path
+	 * @throws IOException
+	 */
 	public FolderEntry getFolderEntry(String path) throws IOException {
 		return (FolderEntry) dirMap.get(path);
 	}
