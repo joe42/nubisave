@@ -3,8 +3,7 @@ import java.io.Serializable;
 
 import fuse.FuseFtype;
 
-public class FileEntry extends Entry implements Serializable{
-	private static final long serialVersionUID = 1L;
+public class FileEntry extends Entry{
 	public FileEntry(){
 		nlink = 1;
 		size = 0;
