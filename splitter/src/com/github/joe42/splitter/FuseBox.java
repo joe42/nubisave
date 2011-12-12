@@ -268,7 +268,7 @@ public class FuseBox implements Filesystem1 {
 							.initErrno(FuseException.EIO);
 				}
 				FileChannel temp = tempFiles.getFileChannel(from);
-				splitter.splitFile(metaDataStore, from, tempFiles.getFileChannel(from), redundancy); //kann man nicht rausnehmen (vielleicht doch; Dropbox 400 Error bei leeren Dateien ist gefixed)
+				splitter.splitFile(metaDataStore, from, tempFiles.getFileChannel(from), redundancy); 
 				fileEntry.size = (int) temp.size();
 				tempFiles.delete(from);
 				if (tempFiles.getFileChannel(to) != null){
