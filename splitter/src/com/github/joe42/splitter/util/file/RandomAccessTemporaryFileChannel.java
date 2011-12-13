@@ -8,9 +8,16 @@ import java.security.SecureRandom;
 import java.math.BigInteger;
 
 
+/**
+ * Provides a simple interface to create and randomly access temporary files. The file is automatically removed when the JVM is terminated normally.
+ */
 public class RandomAccessTemporaryFileChannel {
 	private File temp;
 	private RandomAccessFile ramFile;
+	
+	/**
+	 * Create a new temporary file for random access.
+	 */
 	public RandomAccessTemporaryFileChannel(){
 		try {
 			temp = File.createTempFile(new BigInteger(130, new SecureRandom()).toString(32), ".splitter.tmp");
@@ -20,9 +27,20 @@ public class RandomAccessTemporaryFileChannel {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * Get a FileChannel instance of the temporary file
+	 * @return a FileChannel instance of the temporary file
+	 */
 	public FileChannel getChannel(){
 		return ramFile.getChannel();
 	}
+	
+	/**
+	 * Get a FileChannel instance of the temporary file starting at the offset given by position
+	 * @param position the offset of the FileChannel instance
+	 * @return a FileChannel instance of the temporary file
+	 */
 	public FileChannel getChannel(long position){
 		try {
 			ramFile.seek(position);
@@ -32,6 +50,10 @@ public class RandomAccessTemporaryFileChannel {
 		}
 		return ramFile.getChannel();
 	}
+	
+	/**
+	 * Remove the temporary file to free resources
+	 */
 	public void delete(){
 		temp.delete();
 		try {
