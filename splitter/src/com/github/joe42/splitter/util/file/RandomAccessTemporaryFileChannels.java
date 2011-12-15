@@ -32,8 +32,10 @@ public class RandomAccessTemporaryFileChannels {
 	 * @return  the FileChannel instance associated with key or null if no instance is stored under key
 	 */
 	public FileChannel getFileChannel(String key){
+		System.out.println("is null?");
 		if(tempMap.get(key) == null)
 			return null;
+		System.out.println("no");
 		return tempMap.get(key).getChannel(0);
 	}
 	
@@ -54,7 +56,9 @@ public class RandomAccessTemporaryFileChannels {
 	 * @param key the key referencing the instance to remove
 	 */
 	public void delete(String key){
-		tempMap.get(key).delete();
+		if(tempMap.get(key) != null){
+			tempMap.get(key).delete();
+		}
 		tempMap.remove(key);
 		assert tempMap.get(key) == null;
 	}
