@@ -42,6 +42,7 @@ public class FileFragmentMetaDataStore {
 	public void moveFragments(String from, String to) throws IOException{
 		fileFragmentsMap.put(to, fileFragmentsMap.get(from));
 		fileFragmentsMap.remove(from);
+		commit();
 	}
 
 	/**Sets a list of fragment paths for a whole file
@@ -55,6 +56,7 @@ public class FileFragmentMetaDataStore {
 	 */
 	public void setFragment(String fileName, ArrayList<String> fragmentPaths, int requiredFragments, int nrOfRequiredSuccessfullyStoredFragments, String checksum, long filesize, long offset) throws IOException{
 		fileFragmentsMap.put(fileName, new FileFragments(fragmentPaths, requiredFragments, nrOfRequiredSuccessfullyStoredFragments, checksum, filesize, offset));
+		commit();
 	}
 
 	/**Sets a list of fragment paths for a whole file
@@ -116,6 +118,7 @@ public class FileFragmentMetaDataStore {
 	 */
 	public void setNrOfRequiredFragments(String fileName, int requiredFragments) throws IOException {
 		((FileFragments) fileFragmentsMap.get(fileName)).setNrOfRequiredFragments(requiredFragments);		
+		commit();
 	}
 	
 	/**Get the minimal number of fragments of the complete file that should certainly have been stored 
