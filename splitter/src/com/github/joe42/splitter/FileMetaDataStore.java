@@ -24,7 +24,7 @@ import fuse.FuseFtype;
 /**Manages file fragments of complete files.
  * Complete files are refered to by the pathname path, whereas their fragments are lists of pathnames to each file fragment.
  * It is used to keep track of the files which are dispersed into fragments or glued together in the class Splitter.*/
-public class MetaDataStore {
+public class FileMetaDataStore {
 	private static final Logger  log = Logger.getLogger("FileFragmentStore");
 	private HTree fileMap;
 	private HTree dirMap;
@@ -32,7 +32,7 @@ public class MetaDataStore {
 
 	/**Create a new FileFragmentStore instance
 	 * @param storages */
-	public MetaDataStore() throws IOException { //
+	public FileMetaDataStore() throws IOException { //
 		PropertiesUtil props = new PropertiesUtil("../bin/nubi.properties");
 		recman = RecordManagerFactory.createRecordManager(props.getProperty("splitter_database_location"), props.getProperties());
 		// create or load

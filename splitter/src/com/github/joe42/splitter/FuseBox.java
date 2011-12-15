@@ -46,7 +46,7 @@ public class FuseBox implements Filesystem1 {
 	protected FileStore fileStore;
 
 	private FuseStatfs statfs;
-	private MetaDataStore metaDataStore;
+	private FileMetaDataStore metaDataStore;
 
 	private int UID;
 
@@ -55,7 +55,7 @@ public class FuseBox implements Filesystem1 {
 	public FuseBox(CauchyReedSolomonSplitter splitter) throws IOException {
 		PropertyConfigurator.configure("log4j.properties");
 		
-		metaDataStore = new MetaDataStore();
+		metaDataStore = new FileMetaDataStore();
 		fileStore = new FileStore(splitter, metaDataStore);
 		UID = getUID();
 		GID = getGID();

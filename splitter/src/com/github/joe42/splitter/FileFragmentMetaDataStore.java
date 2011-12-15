@@ -24,7 +24,7 @@ public class FileFragmentMetaDataStore {
 	public FileFragmentMetaDataStore() throws IOException{
 		PropertiesUtil props = new PropertiesUtil("../bin/nubi.properties");
 		recman = RecordManagerFactory.createRecordManager(props.getProperty("splitter_database_location"), props.getProperties());
-		fileFragmentsMap = MetaDataStore.loadPersistentMap(recman, "fileFragmentsMap"); 
+		fileFragmentsMap = FileMetaDataStore.loadPersistentMap(recman, "fileFragmentsMap"); 
 	}
 	
 	/** Check if the store has fragments of the file fileName

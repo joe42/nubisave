@@ -14,11 +14,11 @@ public class FileStore {
 	protected RandomAccessTemporaryFileChannels tempFiles;
 	protected RandomAccessTemporaryFileChannel tempReadChannel;
 	protected CauchyReedSolomonSplitter splitter;
-	protected MetaDataStore metaDataStore;
+	protected FileMetaDataStore metaDataStore;
 	private int redundancy;
 	private FileFragmentMetaDataStore fileFragmentMetaDataStore;
 
-	public FileStore(CauchyReedSolomonSplitter splitter, MetaDataStore metaDataStore) throws IOException {
+	public FileStore(CauchyReedSolomonSplitter splitter, FileMetaDataStore metaDataStore) throws IOException {
 		tempFiles = new RandomAccessTemporaryFileChannels();
 		this.splitter = splitter;
 		this.metaDataStore = metaDataStore;
