@@ -246,8 +246,7 @@ public class FuseBox implements Filesystem1 {
 			throw new FuseException("Entity"+to+" already exists.")
 				.initErrno(FuseException.EEXIST);
 		try {
-			fileStore.remove(to);
-			fileStore.flushCache(from);
+			fileStore.rename(from, to);
 			metaDataStore.rename(from, to);
 			metaDataStore.commit();
 		} catch (IOException e) {

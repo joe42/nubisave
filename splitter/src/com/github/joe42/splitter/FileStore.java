@@ -16,11 +16,13 @@ public class FileStore {
 	protected CauchyReedSolomonSplitter splitter;
 	protected MetaDataStore metaDataStore;
 	private int redundancy;
+	private FileFragmentMetaDataStore fileFragmentMetaDataStore;
 
 	public FileStore(CauchyReedSolomonSplitter splitter, MetaDataStore metaDataStore) throws IOException {
 		tempFiles = new RandomAccessTemporaryFileChannels();
 		this.splitter = splitter;
 		this.metaDataStore = metaDataStore;
+		this.fileFragmentMetaDataStore = new FileFragmentMetaDataStore();
 	}
 
 	public void setRedundancy(int redundancy){
@@ -33,10 +35,10 @@ public class FileStore {
 
 	public void write(String path, ByteBuffer buf, long offset) throws IOException, FuseException {
 		if (tempFiles.getFileChannel(path) == null) {
-			if( ! metaDataStore.hasFragments(path) ){
+			if( ! fileFragmentMetaDataStore.hasFragments(path) ){
 				tempFiles.putNewFileChannel(path);
 			} else {
-				tempFiles.put(path, splitter.glueFilesTogether(metaDataStore, path));
+				tempFiles.put(path, splitter.glueFilesTogether(fileFragmentMetaDataStore, path));
 			}
 		}
 		FileChannel wChannel = tempFiles.getFileChannel(path);
@@ -49,10 +51,10 @@ public class FileStore {
 
 	public void read(String path, ByteBuffer buf, long offset) throws FuseException, IOException {
 		if (tempReadChannel == null) {
-			if( ! metaDataStore.hasFragments(path) ) {
+			if( ! fileFragmentMetaDataStore.hasFragments(path) ) {
 				return;
 			}
-			tempReadChannel = splitter.glueFilesTogether(metaDataStore, path);
+			tempReadChannel = splitter.glueFilesTogether(fileFragmentMetaDataStore, path);
 		}
 		tempReadChannel.getChannel().read(buf, offset);
 	}
@@ -74,10 +76,10 @@ public class FileStore {
 	}
 
 	public void remove(String path) throws IOException {
-		if( ! metaDataStore.hasFragments(path) ) {
+		if( ! fileFragmentMetaDataStore.hasFragments(path) ) {
 			return;
 		}
-		for (String fragmentName : metaDataStore.getFragments(path)) {
+		for (String fragmentName : fileFragmentMetaDataStore.getFragments(path)) {
 			new File(fragmentName).delete();
 		}
 	}
@@ -85,7 +87,7 @@ public class FileStore {
 	public void flushCache(String path) throws FuseException, IOException {
 		if ( ! hasFlushed(path) ) {
 			FileChannel temp = tempFiles.getFileChannel(path);
-			splitter.splitFile(metaDataStore, path, temp, redundancy);
+			splitter.splitFile(fileFragmentMetaDataStore, path, temp, redundancy);
 			FileEntry fileEntry = (FileEntry) metaDataStore.getFileEntry(path);
 			fileEntry.size = (int) temp.size();
 			metaDataStore.commit();
@@ -99,8 +101,14 @@ public class FileStore {
 	}
 
 	public void truncate(String path, long size) throws FuseException, IOException {
-		tempFiles.put(path, splitter.glueFilesTogether(metaDataStore, path));
+		tempFiles.put(path, splitter.glueFilesTogether(fileFragmentMetaDataStore, path));
 		tempFiles.getFileChannel(path).truncate(size);
+	}
+
+	public void rename(String from, String to) throws IOException, FuseException {
+		remove(to);
+		flushCache(from);
+		fileFragmentMetaDataStore.moveFragments(from, to);		
 	}
 	
 }

@@ -41,7 +41,7 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 		serial_multi_file_handler = new SerialMultipleFileHandler();
 	}
 	
-	public void splitFile(MetaDataStore fileFragmentStore, String path, FileChannel temp, int redundancy) throws FuseException, IOException {
+	public void splitFile(FileFragmentMetaDataStore fileFragmentMetaDataStore, String path, FileChannel temp, int redundancy) throws FuseException, IOException {
 		
 		int nr_of_file_parts_successfully_stored = 0;
 		HashMap<String, byte[]> fileParts = new HashMap<String, byte[]>();
@@ -51,7 +51,7 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 		int nr_of_file_fragments_required;
 		int nrOfRequiredSuccessfullyStoredFragments;
 		String fragment_name;
-		if(! fileFragmentStore.hasFragments(path) || storageStrategyFactory.changeToCurrentStrategy()){
+		if(! fileFragmentMetaDataStore.hasFragments(path) || storageStrategyFactory.changeToCurrentStrategy()){
 			List<String> fragmentDirectories;
 			storageStrategy = storageStrategyFactory.createStrategy("RoundRobin", redundancy);
 			 fragmentDirectories = storageStrategy.getFragmentDirectories();
@@ -68,11 +68,11 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 			nr_of_file_fragments_required =  nr_of_file_fragments - nr_of_redundant_fragments;
 			nrOfRequiredSuccessfullyStoredFragments = storageStrategy.getNrOfRequiredSuccessfullyStoredFragments();
 		} else {
-			fragmentFileNames = fileFragmentStore.getFragments(path);
+			fragmentFileNames = fileFragmentMetaDataStore.getFragments(path);
 			nr_of_file_fragments = fragmentFileNames.size();
-			nr_of_file_fragments_required = fileFragmentStore.getNrOfRequiredFragments(path);
+			nr_of_file_fragments_required = fileFragmentMetaDataStore.getNrOfRequiredFragments(path);
 			nr_of_redundant_fragments = nr_of_file_fragments - nr_of_file_fragments_required;
-			nrOfRequiredSuccessfullyStoredFragments = fileFragmentStore.getNrOfRequiredSuccessfullyStoredFragments(path);
+			nrOfRequiredSuccessfullyStoredFragments = fileFragmentMetaDataStore.getNrOfRequiredSuccessfullyStoredFragments(path);
 		}
 		logStoreProperties(nr_of_file_fragments, nr_of_file_fragments_required, nr_of_redundant_fragments, nrOfRequiredSuccessfullyStoredFragments);
 		if(nr_of_file_fragments_required == 1){
@@ -129,7 +129,7 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 					.initErrno(FuseException.EIO);
 		} else {
 			//TODO: delete previous Fragments
-			fileFragmentStore.setFragment(path, fragmentFileNames, nr_of_file_fragments_required, nrOfRequiredSuccessfullyStoredFragments, "");
+			fileFragmentMetaDataStore.setFragment(path, fragmentFileNames, nr_of_file_fragments_required, nrOfRequiredSuccessfullyStoredFragments, "");
 		}
 	}
 
@@ -157,7 +157,7 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 		return fileParts;
 	}
 
-	public RandomAccessTemporaryFileChannel glueFilesTogether(MetaDataStore fileFragmentStore, String path) throws FuseException {
+	public RandomAccessTemporaryFileChannel glueFilesTogether(FileFragmentMetaDataStore fileFragmentMetaDataStore, String path) throws FuseException {
 		RandomAccessTemporaryFileChannel ret = null;
 		List<byte[]> receivedFileSegments = new ArrayList<byte[]>();
 		Digest digestFunc = new SHA256Digest();
@@ -165,23 +165,23 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 		InformationDispersalCodec crsidacodec;
 		InformationDispersalDecoder decoder;
 		try {
-			int nr_of_file_fragments_required = fileFragmentStore.getNrOfRequiredFragments(path);
-			List<String> fragmentNames = fileFragmentStore.getFragments(path);
+			int nr_of_file_fragments_required = fileFragmentMetaDataStore.getNrOfRequiredFragments(path);
+			List<String> fragmentNames = fileFragmentMetaDataStore.getFragments(path);
 			int nr_of_redundant_fragments = fragmentNames.size() - nr_of_file_fragments_required;
-			logStoreProperties(fileFragmentStore.getNrOfFragments(path), nr_of_file_fragments_required, nr_of_redundant_fragments, fileFragmentStore.getNrOfRequiredSuccessfullyStoredFragments(path));
+			logStoreProperties(fileFragmentMetaDataStore.getNrOfFragments(path), nr_of_file_fragments_required, nr_of_redundant_fragments, fileFragmentMetaDataStore.getNrOfRequiredSuccessfullyStoredFragments(path));
 			if(nr_of_file_fragments_required == 1){
 				ret = new RandomAccessTemporaryFileChannel();
 				List<byte[]> segmentBuffers = serial_multi_file_handler
 						.getFilesAsByteArrays(fragmentNames.toArray(new String[0]), nr_of_redundant_fragments);
-				System.out.println(fileFragmentStore.getNrOfFragments(path)+" "+fileFragmentStore.getNrOfRequiredFragments(path));
+				System.out.println(fileFragmentMetaDataStore.getNrOfFragments(path)+" "+fileFragmentMetaDataStore.getNrOfRequiredFragments(path));
 				ret.getChannel().write(ByteBuffer.wrap(segmentBuffers.get(0)));
 				return ret;
 			} else {
 				
 				try {
 					crsidacodec = new CauchyInformationDispersalCodec(
-							fileFragmentStore.getNrOfFragments(path), nr_of_file_fragments_required, CAUCHY_WORD_LENGTH);
-					System.out.println(fileFragmentStore.getNrOfFragments(path)+" "+fileFragmentStore.getNrOfRequiredFragments(path));
+							fileFragmentMetaDataStore.getNrOfFragments(path), nr_of_file_fragments_required, CAUCHY_WORD_LENGTH);
+					System.out.println(fileFragmentMetaDataStore.getNrOfFragments(path)+" "+fileFragmentMetaDataStore.getNrOfRequiredFragments(path));
 					decoder = crsidacodec.getDecoder();
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -195,7 +195,7 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 				int validSegment = 0;
 	
 				List<byte[]> segmentBuffers = concurrent_multi_file_handler
-						.getFilesAsByteArrays(fragmentNames.toArray(new String[0]), fileFragmentStore.getNrOfRequiredFragments(path));
+						.getFilesAsByteArrays(fragmentNames.toArray(new String[0]), fileFragmentMetaDataStore.getNrOfRequiredFragments(path));
 				for (byte[] segmentBuffer : segmentBuffers) {
 					//log.info("glue " + new String(segmentBuffer));
 	
@@ -215,7 +215,7 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 					receivedFileSegments.add(segmentBuffer);
 					validSegment++;
 	
-					if (validSegment >= fileFragmentStore.getNrOfRequiredFragments(path)) {
+					if (validSegment >= fileFragmentMetaDataStore.getNrOfRequiredFragments(path)) {
 						break;
 					}
 					// }
