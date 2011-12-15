@@ -80,6 +80,7 @@ public class MetaDataStore {
 	public FolderEntry makeFolderEntry(String path) throws IOException {
 		FolderEntry entry = new FolderEntry();
 		dirMap.put(path, entry);
+		commit();
 		return entry;
 	}
 
@@ -92,6 +93,7 @@ public class MetaDataStore {
 	 */
 	public void putFileEntry(String path, FileEntry fileEntry) throws IOException{
 		fileMap.put(path, fileEntry);
+		commit();
 	}
 
 	/**
@@ -159,6 +161,7 @@ public class MetaDataStore {
 	public void remove(String path) throws IOException {
 		dirMap.remove(path);
 		fileMap.remove(path);
+		commit();
 	}
 
 	public void rename(String from, String to) throws IOException { 
@@ -169,6 +172,7 @@ public class MetaDataStore {
 			fileMap.put(to, fromEntry);
 		}
 		remove(from);
+		commit();
 	}
 
 

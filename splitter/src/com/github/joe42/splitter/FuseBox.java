@@ -209,7 +209,6 @@ public class FuseBox implements Filesystem1 {
 	public void mkdir(String path, int mode) throws FuseException {
 		try {
 			metaDataStore.makeFolderEntry(path);
-			metaDataStore.commit();
 		} catch (IOException e) {
 			throw new FuseException("IO Exception on accessing metadata")
 					.initErrno(FuseException.EIO);
@@ -225,7 +224,6 @@ public class FuseBox implements Filesystem1 {
 			fileEntry.gid = GID;
 			metaDataStore.putFileEntry(path, fileEntry);
 			fileStore.mknod(path);
-			metaDataStore.commit();
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new FuseException("IO Exception on accessing metadata")
@@ -248,7 +246,6 @@ public class FuseBox implements Filesystem1 {
 		try {
 			fileStore.rename(from, to);
 			metaDataStore.rename(from, to);
-			metaDataStore.commit();
 		} catch (IOException e) {
 			throw new FuseException("IO Exception on reading metadata")
 					.initErrno(FuseException.EIO);
@@ -264,7 +261,6 @@ public class FuseBox implements Filesystem1 {
 						.initErrno(FuseException.ENOENT);
 			new File(path).delete();
 			metaDataStore.remove(path);
-			metaDataStore.commit();
 		} catch (IOException e) {
 			throw new FuseException("IO Exception on accessing metadata")
 					.initErrno(FuseException.EIO);
@@ -331,7 +327,6 @@ public class FuseBox implements Filesystem1 {
 		try {
 			fileStore.remove(path);
 			metaDataStore.remove(path);
-			metaDataStore.commit();
 		} catch (IOException e) {
 			throw new FuseException("IO Exception on reading metadata")
 					.initErrno(FuseException.EIO);
