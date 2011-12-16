@@ -28,13 +28,19 @@ public class FileMetaDataStore {
 	private static final Logger  log = Logger.getLogger("FileFragmentStore");
 	private HTree fileMap;
 	private HTree dirMap;
-	private RecordManager recman;
-
+	private static final PropertiesUtil props;
+	private static RecordManager recman;
+	static {
+		props = new PropertiesUtil("../bin/nubi.properties");
+		try {
+			recman = RecordManagerFactory.createRecordManager(props.getProperty("splitter_database_location"), props.getProperties());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	/**Create a new FileFragmentStore instance
 	 * @param storages */
 	public FileMetaDataStore() throws IOException { //
-		PropertiesUtil props = new PropertiesUtil("../bin/nubi.properties");
-		recman = RecordManagerFactory.createRecordManager(props.getProperty("splitter_database_location"), props.getProperties());
 		// create or load
 		dirMap = loadPersistentMap(recman, "dirmap");
 		try {
@@ -173,6 +179,10 @@ public class FileMetaDataStore {
 		}
 		remove(from);
 		commit();
+	}
+
+	public static RecordManager getRecordManager() {
+		return recman;
 	}
 
 

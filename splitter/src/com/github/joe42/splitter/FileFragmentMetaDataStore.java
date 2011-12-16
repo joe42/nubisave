@@ -23,7 +23,7 @@ public class FileFragmentMetaDataStore {
 	
 	public FileFragmentMetaDataStore() throws IOException{
 		PropertiesUtil props = new PropertiesUtil("../bin/nubi.properties");
-		recman = RecordManagerFactory.createRecordManager(props.getProperty("splitter_database_location"), props.getProperties());
+		recman = FileMetaDataStore.getRecordManager();
 		fileFragmentsMap = FileMetaDataStore.loadPersistentMap(recman, "fileFragmentsMap"); 
 	}
 	
@@ -134,6 +134,10 @@ public class FileFragmentMetaDataStore {
 	}
 	
 	public long getFragmentsSize(String filePath) throws IOException{
-		return ((FileFragments)fileFragmentsMap.get(filePath)).getFilesize();
+		FileFragments fragments = ((FileFragments)fileFragmentsMap.get(filePath));
+		if(fragments == null){
+			return 0;
+		}
+		return fragments.getFilesize();
 	}
 }
