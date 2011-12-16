@@ -14,7 +14,6 @@ public class FileFragments implements Serializable {
 	private int nrOfRequiredSuccessfullyStoredFragments;
 	private String checksum;
 	private long filesize;
-	private long offset;
 	
 	/**
 	 * @param fileFragmentPaths the paths of the fragments belonging to one file
@@ -24,23 +23,14 @@ public class FileFragments implements Serializable {
 	 * @param filesize the complete file's size 
 	 * @param offset the offset of the complete file, if it is yet just another fragment of a greater complete file and 0 otherwise
 	 */
-	public FileFragments(ArrayList<String> fileFragmentPaths, int requiredFragments, int nrOfRequiredSuccessfullyStoredFragments, String checksum, long filesize, long offset){
+	public FileFragments(ArrayList<String> fileFragmentPaths, int requiredFragments, int nrOfRequiredSuccessfullyStoredFragments, String checksum, long filesize){
 		this.fileFragmentPaths = fileFragmentPaths;
 		this.requiredFragments = requiredFragments;
 		this.nrOfRequiredSuccessfullyStoredFragments = nrOfRequiredSuccessfullyStoredFragments;
 		this.checksum = checksum;
 		this.filesize = filesize;
-		this.offset = offset;
 	}
 
-	public void setOffset(long offset){
-		this.offset= offset;
-	}
-
-	public long getOffset(){
-		return offset;
-	}
-	
 	public void setFilesize(long filesize){
 		this.filesize= filesize;
 	}

@@ -129,7 +129,7 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 					.initErrno(FuseException.EIO);
 		} else {
 			//TODO: delete previous Fragments
-			fileFragmentMetaDataStore.setFragment(path, fragmentFileNames, nr_of_file_fragments_required, nrOfRequiredSuccessfullyStoredFragments, "");
+			fileFragmentMetaDataStore.setFragment(path, fragmentFileNames, nr_of_file_fragments_required, nrOfRequiredSuccessfullyStoredFragments, "", temp.size());
 		}
 	}
 

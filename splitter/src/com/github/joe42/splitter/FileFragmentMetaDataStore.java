@@ -16,9 +16,9 @@ import jdbm.htree.HTree;
  * Stores the location of fragments of a file split by a Splitter with information on how to reconstruct the original file.
  */
 public class FileFragmentMetaDataStore {
-	private HTree fileFragmentsMap;
+	protected HTree fileFragmentsMap;
 	private HTree filePartsMap;
-	private RecordManager recman;
+	protected RecordManager recman;
 	
 	
 	public FileFragmentMetaDataStore() throws IOException{
@@ -51,38 +51,10 @@ public class FileFragmentMetaDataStore {
 	 * @param nrOfRequiredSuccessfullyStoredFragments the number of file fragments that must be stored successfully
 	 * @param checksum the complete file's checksum 
 	 * @param filesize the complete file's size 
-	 * @param offset the offset of the complete file, if it is yet just another fragment of a greater complete file and 0 otherwise
-	 * @throws IOException 
-	 */
-	public void setFragment(String fileName, ArrayList<String> fragmentPaths, int requiredFragments, int nrOfRequiredSuccessfullyStoredFragments, String checksum, long filesize, long offset) throws IOException{
-		fileFragmentsMap.put(fileName, new FileFragments(fragmentPaths, requiredFragments, nrOfRequiredSuccessfullyStoredFragments, checksum, filesize, offset));
-		commit();
-	}
-
-	/**Sets a list of fragment paths for a whole file
-	 * The offset defaults to 0.
-	 * @param fileName the whole file
-	 * @param fragmentPaths the fragments of the file 
-	 * @param nrOfRequiredSuccessfullyStoredFragments the number of file fragments that must be stored successfully
-	 * @param checksum the complete file's checksum 
-	 * @param filesize the complete file's size 
-	 * @throws IOException 
-	 */
-	public void setFragment(String fileName, ArrayList<String> fragmentPaths, int requiredFragments, int nrOfRequiredSuccessfullyStoredFragments, String checksum) throws IOException{
-		setFragment(fileName, fragmentPaths, requiredFragments, nrOfRequiredSuccessfullyStoredFragments, checksum, 0, 0);
-	}
-	
-	/**Sets a list of fragment paths for a whole file
-	 * The offset and the checksum default to 0.
-	 * @param fileName the whole file
-	 * @param fragmentPaths the fragments of the file 
-	 * @param nrOfRequiredSuccessfullyStoredFragments the number of file fragments that must be stored successfully
-	 * @param checksum the complete file's checksum 
-	 * @param filesize the complete file's size 
 	 * @throws IOException 
 	 */
 	public void setFragment(String fileName, ArrayList<String> fragmentPaths, int requiredFragments, int nrOfRequiredSuccessfullyStoredFragments, String checksum, long filesize) throws IOException{
-		setFragment(fileName, fragmentPaths, requiredFragments, nrOfRequiredSuccessfullyStoredFragments, checksum, filesize, 0);
+		fileFragmentsMap.put(fileName, new FileFragments(fragmentPaths, requiredFragments, nrOfRequiredSuccessfullyStoredFragments, checksum, filesize));
 	}
 
 	/**Get the number of fragments required to reconstruct the file
@@ -149,5 +121,19 @@ public class FileFragmentMetaDataStore {
 	 */
 	public void commit() throws IOException {
 		recman.commit();
+	}
+	
+	/**
+	 * Remove the mapping from the complete file filePath to any fragments.
+	 * @param filePath
+	 * @throws IOException
+	 */
+	public void remove(String filePath) throws IOException{
+		fileFragmentsMap.remove(filePath);
+		recman.commit();
+	}
+	
+	public long getFragmentsSize(String filePath) throws IOException{
+		return ((FileFragments)fileFragmentsMap.get(filePath)).getFilesize();
 	}
 }
