@@ -22,34 +22,34 @@ import com.github.joe42.splitter.util.StringUtil;
 import com.github.joe42.splitter.util.file.ConcurrentMultipleFileHandler;
 import com.github.joe42.splitter.util.file.MultipleFileHandler;
 import com.github.joe42.splitter.util.file.RandomAccessTemporaryFileChannel;
+import com.github.joe42.splitter.util.file.SerialMultipleFileHandler;
 import com.github.joe42.splitter.vtf.FileEntry;
 
 import fuse.FuseException;
 
 public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter and abstract interface
 	private static final int CAUCHY_WORD_LENGTH = 1;
-	private int redundancy;
 	private static final Logger  log = Logger.getLogger("Splitter");
-	private MultipleFileHandler multi_file_handler;
+	private MultipleFileHandler concurrent_multi_file_handler;
+	private MultipleFileHandler serial_multi_file_handler;
 	private StorageStrategy storageStrategy;
 	private StorageStrategyFactory storageStrategyFactory;
 	
-	public CauchyReedSolomonSplitter(BackendServices services, int redundancy){
-		storageStrategyFactory = new StorageStrategyFactory(services);
-		this.redundancy = redundancy;
-		multi_file_handler = new ConcurrentMultipleFileHandler();
-	}
 	public CauchyReedSolomonSplitter(BackendServices services){
-		this(services, 0);
+		storageStrategyFactory = new StorageStrategyFactory(services);
+		concurrent_multi_file_handler = new ConcurrentMultipleFileHandler();
+		serial_multi_file_handler = new SerialMultipleFileHandler();
 	}
 	
-	
-	public void splitFile(MetaDataStore fileFragmentStore, String path, FileChannel temp) throws FuseException, IOException {
+	public void splitFile(MetaDataStore fileFragmentStore, String path, FileChannel temp, int redundancy) throws FuseException, IOException {
 		
 		int nr_of_file_parts_successfully_stored = 0;
 		HashMap<String, byte[]> fileParts = new HashMap<String, byte[]>();
 		ArrayList<String> fragmentFileNames = new ArrayList<String>();
 		int nr_of_file_fragments;
+		int nr_of_redundant_fragments;
+		int nr_of_file_fragments_required;
+		int nrOfRequiredSuccessfullyStoredFragments;
 		String fragment_name;
 		if(! fileFragmentStore.hasFragments(path) || storageStrategyFactory.changeToCurrentStrategy()){
 			List<String> fragmentDirectories;
@@ -64,67 +64,100 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 						+ '#' + fragment_nr;
 				fragmentFileNames.add(fragment_name);
 			}
+			nr_of_redundant_fragments =  storageStrategy.getNrOfRedundantFragments();
+			nr_of_file_fragments_required =  nr_of_file_fragments - nr_of_redundant_fragments;
+			nrOfRequiredSuccessfullyStoredFragments = storageStrategy.getNrOfRequiredSuccessfullyStoredFragments();
 		} else {
 			fragmentFileNames = fileFragmentStore.getFragments(path);
 			nr_of_file_fragments = fragmentFileNames.size();
+			nr_of_file_fragments_required = fileFragmentStore.getNrOfRequiredFragments(path);
+			nr_of_redundant_fragments = nr_of_file_fragments - nr_of_file_fragments_required;
+			nrOfRequiredSuccessfullyStoredFragments = fileFragmentStore.getNrOfRequiredSuccessfullyStoredFragments(path);
 		}
-		log.debug("nr_of_stores:" + nr_of_file_fragments);
-		int nr_of_redundant_fragments =  storageStrategy.getNrOfRedundantFragments();
-		int nr_of_file_fragments_required =  nr_of_file_fragments - nr_of_redundant_fragments;
+		logStoreProperties(nr_of_file_fragments, nr_of_file_fragments_required, nr_of_redundant_fragments, nrOfRequiredSuccessfullyStoredFragments);
 		if(nr_of_file_fragments_required <1){
 			nr_of_file_fragments_required=1;
 		}
-		
-		Digest digestFunc = new SHA256Digest();
-		byte[] digestByteArray = new byte[digestFunc.getDigestSize()];
-		String hexString = null;
-		InformationDispersalCodec crsidacodec;
-		InformationDispersalEncoder encoder;
-		try {
-			crsidacodec = new CauchyInformationDispersalCodec(
-					nr_of_file_fragments, nr_of_redundant_fragments, 1);
-			encoder = crsidacodec.getEncoder();
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new FuseException("IDA could not be initialized")
-					.initErrno(FuseException.EACCES);
-		}
-		try {
-			byte[] arr = new byte[(int) temp.size()];
-			temp.read(ByteBuffer.wrap(arr));
-			digestFunc.update(arr, 0, arr.length);
-			digestFunc.doFinal(digestByteArray, 0);
-			List<byte[]> result = encoder.process(arr);
-
-			for (int fragment_nr = 0; fragment_nr < nr_of_file_fragments; fragment_nr++) {
-
-				fragment_name = fragmentFileNames.get(fragment_nr);
-				log.debug("write: " + fragment_name);
-				byte[] b = result.get(fragment_nr);
-				digestFunc.reset();
-				digestFunc.update(b, 0, b.length);
-				digestFunc.doFinal(digestByteArray, 0);
-
-				hexString = new String(Hex.encode(digestByteArray));
-				fileParts.put(fragment_name, b);
+		if(nr_of_file_fragments_required == 1){
+			fileParts = replicateFile( temp, path, fragmentFileNames);
+		} else {
+			
+			Digest digestFunc = new SHA256Digest();
+			byte[] digestByteArray = new byte[digestFunc.getDigestSize()];
+			String hexString = null;
+			InformationDispersalCodec crsidacodec;
+			InformationDispersalEncoder encoder;
+			try {
+				crsidacodec = new CauchyInformationDispersalCodec(
+						nr_of_file_fragments, nr_of_redundant_fragments, 1);
+				encoder = crsidacodec.getEncoder();
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new FuseException("IDA could not be initialized")
+						.initErrno(FuseException.EACCES);
 			}
-			nr_of_file_parts_successfully_stored = multi_file_handler.writeFilesAsByteArrays(fileParts);
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new FuseException("IO error: " + e.toString(), e)
-					.initErrno(FuseException.EIO);
+			try {
+				byte[] arr = new byte[(int) temp.size()];
+				temp.read(ByteBuffer.wrap(arr));
+				digestFunc.update(arr, 0, arr.length);
+				digestFunc.doFinal(digestByteArray, 0);
+				List<byte[]> result = encoder.process(arr);
+	
+				for (int fragment_nr = 0; fragment_nr < nr_of_file_fragments; fragment_nr++) {
+	
+					fragment_name = fragmentFileNames.get(fragment_nr);
+					log.debug("write: " + fragment_name);
+					byte[] b = result.get(fragment_nr);
+					digestFunc.reset();
+					digestFunc.update(b, 0, b.length);
+					digestFunc.doFinal(digestByteArray, 0);
+	
+					hexString = new String(Hex.encode(digestByteArray));
+					fileParts.put(fragment_name, b);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new FuseException("IO error: " + e.toString(), e)
+						.initErrno(FuseException.EIO);
+			}
 		}
+		nr_of_file_parts_successfully_stored = concurrent_multi_file_handler.writeFilesAsByteArrays(fileParts);
 
 		//if (log.isDebugEnabled())
 		  log.debug("nr_of_file_parts_successfully_stored: "+nr_of_file_parts_successfully_stored+" - MAX_FILE_FRAGMENTS_NEEDED "+nr_of_file_fragments_required);
+		//TODO: replace with nrOfRequiredSuccessfullyStoredFragments
 		if (nr_of_file_parts_successfully_stored < nr_of_file_fragments_required) {
 			throw new FuseException(
 					"IO error: Not enough file parts could be stored.")
 					.initErrno(FuseException.EIO);
 		} else {
 			//TODO: delete previous Fragments
-			fileFragmentStore.setFragment(path, fragmentFileNames, nr_of_file_fragments_required);
+			fileFragmentStore.setFragment(path, fragmentFileNames, nr_of_file_fragments_required, nrOfRequiredSuccessfullyStoredFragments, "");
 		}
+	}
+
+	private void logStoreProperties(int nrOfFileFragments,
+			int nrOfFileFragmentsRequired,
+			int nrOfRedundantFragments,
+			int nrOfRequiredSuccessfullyStoredFragments) {
+		log.debug("nrOfFileFragments:" + nrOfFileFragments);
+		log.debug("nrOfFileFragmentsRequired:" + nrOfFileFragmentsRequired);
+		log.debug("nrOfRedundantFragments:" + nrOfRedundantFragments);
+		log.debug("nrOfRequiredSuccessfullyStoredFragments:" + nrOfRequiredSuccessfullyStoredFragments);
+		
+	}
+
+	private HashMap<String, byte[]> replicateFile(FileChannel temp, String path,
+			ArrayList<String> fragmentFileNames) throws IOException {
+		byte[] arr;
+		HashMap<String, byte[]> fileParts = new HashMap<String, byte[]>();
+		for (String fragmentFileName: fragmentFileNames) {
+			log.debug("write: " + fragmentFileName);
+			arr = new byte[(int) temp.size()];
+			temp.read(ByteBuffer.wrap(arr));
+			fileParts.put(fragmentFileName, arr);
+		}
+		return fileParts;
 	}
 
 	public RandomAccessTemporaryFileChannel glueFilesTogether(MetaDataStore fileFragmentStore, String path) throws FuseException {
@@ -135,64 +168,77 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 		InformationDispersalCodec crsidacodec;
 		InformationDispersalDecoder decoder;
 		try {
-			crsidacodec = new CauchyInformationDispersalCodec(
-					fileFragmentStore.getNrOfFragments(path), fileFragmentStore.getNrOfRequiredFragments(path), CAUCHY_WORD_LENGTH);
-			System.out.println(fileFragmentStore.getNrOfFragments(path)+" "+fileFragmentStore.getNrOfRequiredFragments(path));
-			decoder = crsidacodec.getDecoder();
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new FuseException("IDA could not be initialized")
-					.initErrno(FuseException.EACCES);
-		}
-		String hexString = null;
-		log.info("glue ");
-		int readBytes;
-		try {
-			ret = new RandomAccessTemporaryFileChannel();
-			int validSegment = 0;
+			int nr_of_file_fragments_required = fileFragmentStore.getNrOfRequiredFragments(path);
 			List<String> fragmentNames = fileFragmentStore.getFragments(path);
-
-			List<byte[]> segmentBuffers = multi_file_handler
-					.getFilesAsByteArrays(fragmentNames.toArray(new String[0]), fileFragmentStore.getNrOfRequiredFragments(path));
-			for (byte[] segmentBuffer : segmentBuffers) {
-				//log.info("glue " + new String(segmentBuffer));
-
-				digestFunc.reset();
-
-				digestFunc.update(segmentBuffer, 0, segmentBuffer.length);
-
-				digestFunc.doFinal(digestByteArray, 0);
-
-				hexString = new String(Hex.encode(digestByteArray));
-
-				/*
-				 * if (!hexString.equals(file_fragment.getName())) {
-				 * log.error("this file segment is invalid! " +
-				 * file_fragment.getName() + " <> " + hexString); } else {
-				 */
-				receivedFileSegments.add(segmentBuffer);
-				validSegment++;
-
-				if (validSegment >= fileFragmentStore.getNrOfRequiredFragments(path)) {
-					break;
+			int nr_of_redundant_fragments = fragmentNames.size() - nr_of_file_fragments_required;
+			logStoreProperties(fileFragmentStore.getNrOfFragments(path), nr_of_file_fragments_required, nr_of_redundant_fragments, fileFragmentStore.getNrOfRequiredSuccessfullyStoredFragments(path));
+			if(nr_of_file_fragments_required == 1){
+				ret = new RandomAccessTemporaryFileChannel();
+				List<byte[]> segmentBuffers = serial_multi_file_handler
+						.getFilesAsByteArrays(fragmentNames.toArray(new String[0]), nr_of_redundant_fragments);
+				System.out.println(fileFragmentStore.getNrOfFragments(path)+" "+fileFragmentStore.getNrOfRequiredFragments(path));
+				ret.getChannel().write(ByteBuffer.wrap(segmentBuffers.get(0)));
+				return ret;
+			} else {
+				
+				try {
+					crsidacodec = new CauchyInformationDispersalCodec(
+							fileFragmentStore.getNrOfFragments(path), nr_of_file_fragments_required, CAUCHY_WORD_LENGTH);
+					System.out.println(fileFragmentStore.getNrOfFragments(path)+" "+fileFragmentStore.getNrOfRequiredFragments(path));
+					decoder = crsidacodec.getDecoder();
+				} catch (Exception e) {
+					e.printStackTrace();
+					throw new FuseException("IDA could not be initialized")
+							.initErrno(FuseException.EACCES);
 				}
-				// }
+				String hexString = null;
+				log.info("glue ");
+				int readBytes;
+				ret = new RandomAccessTemporaryFileChannel();
+				int validSegment = 0;
+	
+				List<byte[]> segmentBuffers = concurrent_multi_file_handler
+						.getFilesAsByteArrays(fragmentNames.toArray(new String[0]), fileFragmentStore.getNrOfRequiredFragments(path));
+				for (byte[] segmentBuffer : segmentBuffers) {
+					//log.info("glue " + new String(segmentBuffer));
+	
+					digestFunc.reset();
+	
+					digestFunc.update(segmentBuffer, 0, segmentBuffer.length);
+	
+					digestFunc.doFinal(digestByteArray, 0);
+	
+					hexString = new String(Hex.encode(digestByteArray));
+	
+					/*
+					 * if (!hexString.equals(file_fragment.getName())) {
+					 * log.error("this file segment is invalid! " +
+					 * file_fragment.getName() + " <> " + hexString); } else {
+					 */
+					receivedFileSegments.add(segmentBuffer);
+					validSegment++;
+	
+					if (validSegment >= fileFragmentStore.getNrOfRequiredFragments(path)) {
+						break;
+					}
+					// }
+				}
+				byte[] recoveredFile = decoder.process(receivedFileSegments);
+	
+				digestFunc.reset();
+	
+				digestFunc.update(recoveredFile, 0, recoveredFile.length);
+	
+				digestFunc.doFinal(digestByteArray, 0);
+	
+				ret.getChannel().write(ByteBuffer.wrap(recoveredFile));
+	
+				return ret;
 			}
-			byte[] recoveredFile = decoder.process(receivedFileSegments);
-
-			digestFunc.reset();
-
-			digestFunc.update(recoveredFile, 0, recoveredFile.length);
-
-			digestFunc.doFinal(digestByteArray, 0);
-
-			ret.getChannel().write(ByteBuffer.wrap(recoveredFile));
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new FuseException("IO error", e).initErrno(FuseException.EIO);
 		}
-		return ret;
 	}
 
 }
