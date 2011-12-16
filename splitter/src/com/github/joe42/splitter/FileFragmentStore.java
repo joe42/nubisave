@@ -10,14 +10,14 @@ import com.github.joe42.splitter.vtf.FileEntry;
 
 import fuse.FuseException;
 
-public class FileStore {
+public class FileFragmentStore {
 	protected RandomAccessTemporaryFileChannels tempFiles;
 	protected RandomAccessTemporaryFileChannel tempReadChannel;
 	protected CauchyReedSolomonSplitter splitter;
 	private int redundancy;
 	protected FileFragmentMetaDataStore fileFragmentMetaDataStore;
 
-	public FileStore(CauchyReedSolomonSplitter splitter) throws IOException {
+	public FileFragmentStore(CauchyReedSolomonSplitter splitter) throws IOException {
 		tempFiles = new RandomAccessTemporaryFileChannels();
 		this.splitter = splitter;
 		this.fileFragmentMetaDataStore = new FileFragmentMetaDataStore();

@@ -43,7 +43,7 @@ public class FuseBox implements Filesystem1 {
 
 	private static final int blockSize = 512;
 
-	protected FileStore fileStore;
+	protected FileFragmentStore fileStore;
 
 	private FuseStatfs statfs;
 	private FileMetaDataStore metaDataStore;
@@ -56,7 +56,7 @@ public class FuseBox implements Filesystem1 {
 		PropertyConfigurator.configure("log4j.properties");
 		
 		metaDataStore = new FileMetaDataStore();
-		fileStore = new FileStore(splitter);
+		fileStore = new FileFragmentStore(splitter);
 		UID = getUID();
 		GID = getGID();
 	}
