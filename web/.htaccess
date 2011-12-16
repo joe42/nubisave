@@ -1,7 +1,0 @@
-<Limit GET POST>
-	AuthType Basic
-	AuthName "NubiSave Review Phase"
-	AuthUserFile /var/www/nubisave.org/.htpasswd
-	require valid-user
-</Limit>
-
