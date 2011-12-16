@@ -16,7 +16,7 @@ public class FileStore {
 	protected CauchyReedSolomonSplitter splitter;
 	protected FileMetaDataStore metaDataStore;
 	private int redundancy;
-	private FileFragmentMetaDataStore fileFragmentMetaDataStore;
+	protected FileFragmentMetaDataStore fileFragmentMetaDataStore;
 
 	public FileStore(CauchyReedSolomonSplitter splitter, FileMetaDataStore metaDataStore) throws IOException {
 		tempFiles = new RandomAccessTemporaryFileChannels();
@@ -64,7 +64,7 @@ public class FileStore {
 	 * @param path path to the file
 	 * @return true iff the file has been stored completely
 	 */
-	public boolean hasFlushed(String path) {
+	public boolean hasFlushed(String path)  throws IOException {
 		System.out.println("tempFiles: "+tempFiles);
 		System.out.println("tempFiles: "+tempFiles.getFileChannel(path));
 		return tempFiles.getFileChannel(path) == null;
@@ -82,6 +82,7 @@ public class FileStore {
 		for (String fragmentName : fileFragmentMetaDataStore.getFragments(path)) {
 			new File(fragmentName).delete();
 		}
+		fileFragmentMetaDataStore.remove(path);
 	}
 
 	public void flushCache(String path) throws FuseException, IOException {
@@ -95,7 +96,7 @@ public class FileStore {
 		removeCache(path);
 	}
 
-	public void removeCache(String path) {
+	protected void removeCache(String path) {
 		tempFiles.delete(path);
 		tempReadChannel = null;
 	}
