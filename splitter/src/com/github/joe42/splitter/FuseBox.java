@@ -56,7 +56,7 @@ public class FuseBox implements Filesystem1 {
 		PropertyConfigurator.configure("log4j.properties");
 		
 		metaDataStore = new FileMetaDataStore();
-		fileStore = new FileFragmentStore(splitter);
+		fileStore = new FilePartFragmentStore(splitter);
 		UID = getUID();
 		GID = getGID();
 	}
@@ -312,6 +312,7 @@ public class FuseBox implements Filesystem1 {
 
 	public void truncate(String path, long size) throws FuseException {
 		try {
+			fileStore.flushCache(path);
 			fileStore.truncate(path, size);
 		} catch (IOException e) {
 			throw new FuseException("IO Exception on truncating file")

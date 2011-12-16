@@ -43,15 +43,16 @@ public class FileFragmentStore {
 		wChannel.write(buf,offset);		
 	}
 	
-	public void mknod(String path){
+	public void mknod(String path) throws IOException, FuseException {
 		tempFiles.putNewFileChannel(path);
 	}
 
 	public void read(String path, ByteBuffer buf, long offset) throws FuseException, IOException {
+		System.out.println("buf.limit(): "+buf.limit()+" buf.position(): "+buf.position()+" "+"file size: "+fileFragmentMetaDataStore.getFragmentsSize(path)+" offset: "+offset+" end of read: "+(offset+buf.limit()));
 		if (tempReadChannel == null) {
 			if( ! fileFragmentMetaDataStore.hasFragments(path) ) {
 				return;
-			}
+			} 
 			tempReadChannel = splitter.glueFilesTogether(fileFragmentMetaDataStore, path);
 		}
 		tempReadChannel.getChannel().read(buf, offset);
