@@ -14,14 +14,12 @@ public class FileStore {
 	protected RandomAccessTemporaryFileChannels tempFiles;
 	protected RandomAccessTemporaryFileChannel tempReadChannel;
 	protected CauchyReedSolomonSplitter splitter;
-	protected FileMetaDataStore metaDataStore;
 	private int redundancy;
 	protected FileFragmentMetaDataStore fileFragmentMetaDataStore;
 
-	public FileStore(CauchyReedSolomonSplitter splitter, FileMetaDataStore metaDataStore) throws IOException {
+	public FileStore(CauchyReedSolomonSplitter splitter) throws IOException {
 		tempFiles = new RandomAccessTemporaryFileChannels();
 		this.splitter = splitter;
-		this.metaDataStore = metaDataStore;
 		this.fileFragmentMetaDataStore = new FileFragmentMetaDataStore();
 	}
 
@@ -71,8 +69,7 @@ public class FileStore {
 	}
 
 	public long getSize(String path) throws IOException {
-		FileEntry fileEntry = metaDataStore.getFileEntry(path);
-		return fileEntry.size;
+		return fileFragmentMetaDataStore.getFragmentsSize(path);
 	}
 
 	public void remove(String path) throws IOException {
@@ -89,9 +86,6 @@ public class FileStore {
 		if ( ! hasFlushed(path) ) {
 			FileChannel temp = tempFiles.getFileChannel(path);
 			splitter.splitFile(fileFragmentMetaDataStore, path, temp, redundancy);
-			FileEntry fileEntry = (FileEntry) metaDataStore.getFileEntry(path);
-			fileEntry.size = (int) temp.size();
-			metaDataStore.commit();
 		}
 		removeCache(path);
 	}

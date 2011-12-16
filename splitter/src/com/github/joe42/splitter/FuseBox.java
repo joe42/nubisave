@@ -56,7 +56,7 @@ public class FuseBox implements Filesystem1 {
 		PropertyConfigurator.configure("log4j.properties");
 		
 		metaDataStore = new FileMetaDataStore();
-		fileStore = new FileStore(splitter, metaDataStore);
+		fileStore = new FileStore(splitter);
 		UID = getUID();
 		GID = getGID();
 	}
