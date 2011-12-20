@@ -1,3 +1,10 @@
+nubisave (0.0~git20111220-1) unstable; urgency=low
+
+  * Today's snapshot with initial replication support.
+  * Inclusion of application icon and metadata in the .desktop file.
+
+ -- Josef Spillner <josef@rumba>  Fri, 16 Dec 2011 16:45:51 +0100
+
 nubisave (0.0~git20111203-1) unstable; urgency=low
 
   * Today's snapshot after some further work in practically all areas.
