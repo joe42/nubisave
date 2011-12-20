@@ -1,5 +1,6 @@
 *.tar.*
 *.deb
+*.asc
 *.pdf
 
 dispersal-raoc-nubisave.pdf

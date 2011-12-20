@@ -49,32 +49,28 @@
 		</div>
 		<div class="section">
 			<h2>Packages</h2>
-			<blockquote>
-			<i>TODO: A package for Debian/Ubuntu/SPACEflight will be added soon...
-			Until then, you may use the script fill-demonstrator-nubisave.sh from the π-Box live demonstrator
-			<a href="http://serviceplatform.org/cgi-bin/gitweb.cgi?p=pibox;a=tree;f=scripts;hb=HEAD">build scripts</a>.</i>
-			</blockquote>
-<!--
-			For the time being, we offer a generic Debian package which works well
+			For the time being, we offer an experimental generic Debian package which works well enough
 			for <a href="http://www.debian.org/">Debian</a> stable (squeeze), recent <a href="http://ubuntu.com/">Ubuntu</a>s
 			(lucid, maverick, natty) and <a href="http://spaceflight.serviceplatform.org/">SPACEflight</a> (1.0 beta5/6).
+			Install with <i>dpkg -i nubisave_*_all.deb</i> followed by <i>apt-get -f install</i> to resolve all dependencies.
 			<ul>
-			<li>Package for x86: <a href="downloads/nubisave_0.1_x86.deb">download</a></li>
-			<li>Package for x86_64: <a href="downloads/nubisave_0.1_x86_64.deb">download</a></li>
+			<li>Package for all architectures: <a href="downloads/nubisave_0.0~git20111216-1_all.deb">download</a> snapshot 16.12.2011, <a href="downloads/nubisave_0.0~git20111216-1_all.deb.asc">signature</a></li>
 			<li>Signature key fingerprint: <i>5FE5 4798 19A6 7579 D5B3  52A6 3D29 91A5 CCF0 E02E</i> (OpenPGP key <a href="downloads/nubisave.key">download</a>)</li>
 			</ul>
 			On SPACEflight, SPACE is obviously pre-installed already; for the other distributions,
-			you'll need to activate the SPACE package repository first.
+			you'll need to activate the SPACE package repository first if you want NubiSave to find storage
+			providers automatically.
 			<ul>
 			<li><a href="http://serviceplatform.org/wiki/Package_Repository">SPACE package repository</a></li>
 			</ul>
--->
 		</div>
 		<div class="section">
 			<h2>Live Demonstrator</h2>
 			NubiSave ships as part of the »π-Box«, the research demonstrator system for community-connected personal secure clouds.
 			This system does not require network access and just simulates cloud storage providers with local directories.
 			Information and download links can be found on the <a href="http://flexcloud.eu/?p=1714">π-Box page</a>.
+			NubiSave is added by the script fill-demonstrator-nubisave.sh from the π-Box live demonstrator
+			<a href="http://serviceplatform.org/cgi-bin/gitweb.cgi?p=pibox;a=tree;f=scripts;hb=HEAD">build scripts</a>.</i>
 		</div>
 	</div>
 	<div id="foot">
