@@ -100,7 +100,7 @@ public class GuiTest {
 		screen.wait(CUSTOM_SERVICE_DIALOG,10);
 		screen.click(CUSTOM_SERVICE_DIALOG_FILENAME_FIELD, 0);
 		screen.type(null, "\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b", 0);
-		screen.type(null, serviceConfigurationFilePath, 0);
+		screen.paste(serviceConfigurationFilePath);
 		screen.click(CUSTOM_SERVICE_DIALOG_OK_BTN, 0);
 		screen.wait(CUSTOM_SERVICE_BTN,10);
 	}
