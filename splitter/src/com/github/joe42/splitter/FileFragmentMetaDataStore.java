@@ -55,6 +55,7 @@ public class FileFragmentMetaDataStore {
 	 */
 	public void setFragment(String fileName, ArrayList<String> fragmentPaths, int requiredFragments, int nrOfRequiredSuccessfullyStoredFragments, String checksum, long filesize) throws IOException{
 		fileFragmentsMap.put(fileName, new FileFragments(fragmentPaths, requiredFragments, nrOfRequiredSuccessfullyStoredFragments, checksum, filesize));
+		commit();
 	}
 
 	/**Get the number of fragments required to reconstruct the file
