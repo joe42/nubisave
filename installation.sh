@@ -49,7 +49,7 @@ echo
 echo "Kompilieren des Core-Moduls"
 
 cd splitter/
-sudo make
+make
 cd ..
 
 echo
@@ -57,6 +57,7 @@ echo
 echo "Installation von CloudFusion"
 
 cd cloudfusion/
+python setup.py build
 sudo python setup.py install
 cd ..
 
