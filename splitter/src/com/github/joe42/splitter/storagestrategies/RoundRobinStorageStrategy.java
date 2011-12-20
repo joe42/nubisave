@@ -74,8 +74,8 @@ public class RoundRobinStorageStrategy implements StorageStrategy {
 
 	/**
 	 * Get the number of fragments that can be lost or corrupted before the file cannot be restored. 
-	 * Returns the number of potential stores minus one multiplied by the redundancy. If  the resulting number has a fractional part, the next higher integer is returned. 
-	 * For instance, 9 stores and a redundancy of 50% (x = (9-1)*0.5 = 3.5) result in a return value of 4 redundant stores.  
+	 * Returns the number of potential stores minus one multiplied by the redundancy. If  the resulting number has a fractional part, the next lower integer is returned. 
+	 * For instance, 8 stores and a redundancy of 50% (x = (8-1)*0.5 = 3.5) result in a return value of 3 redundant fragments.  
 	 * @return the number of redundant fragments 
 	 */
 	@Override
