@@ -169,6 +169,7 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 			List<String> fragmentNames = fileFragmentMetaDataStore.getFragments(path);
 			int nr_of_redundant_fragments = fragmentNames.size() - nr_of_file_fragments_required;
 			logStoreProperties(fileFragmentMetaDataStore.getNrOfFragments(path), nr_of_file_fragments_required, nr_of_redundant_fragments, fileFragmentMetaDataStore.getNrOfRequiredSuccessfullyStoredFragments(path));
+			log.debug("read: " + fragmentNames);
 			if(nr_of_file_fragments_required == 1){
 				ret = new RandomAccessTemporaryFileChannel();
 				List<byte[]> segmentBuffers = serial_multi_file_handler
