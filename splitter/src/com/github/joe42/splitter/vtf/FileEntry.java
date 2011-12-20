@@ -3,8 +3,7 @@ import java.io.Serializable;
 
 import fuse.FuseFtype;
 
-public class FileEntry extends Entry implements Serializable{
-	private static final long serialVersionUID = 1L;
+public class FileEntry extends Entry{
 	public FileEntry(){
 		nlink = 1;
 		size = 0;
@@ -14,6 +13,7 @@ public class FileEntry extends Entry implements Serializable{
 	public FileEntry(int blocksize){
 		nlink = 1;
 		size = 0;
+		mode = FuseFtype.TYPE_FILE | 664;
 		this.blocksize = blocksize;
 	}
 	public void setMode(int mode){

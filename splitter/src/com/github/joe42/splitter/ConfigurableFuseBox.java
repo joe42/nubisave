@@ -128,7 +128,7 @@ public class ConfigurableFuseBox extends FuseBox  implements StorageService{
 
 	private void configureSplitter() {
 		Ini config = IniUtil.getIni(vtSplitterConfig.getText());
-		redundancy = config.fetch("splitter", "redundancy", Integer.class);
+		setRedundancy(config.fetch("splitter", "redundancy", Integer.class));
 	}
 	
 	public void read(String path, ByteBuffer buf, long offset)

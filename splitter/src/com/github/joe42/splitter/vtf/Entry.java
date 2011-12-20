@@ -1,8 +1,11 @@
 package com.github.joe42.splitter.vtf;
 
+import java.io.Serializable;
+
 import fuse.compat.FuseStat;
 
-public abstract class Entry {
+public abstract class Entry implements Serializable{
+	protected static final long serialVersionUID = 1L;
 	public int nlink;
 	public int uid;
 	public int gid;
