@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Start des Splitter Modules"
+echo "Start von NubiSave"
 mountpoint=$HOME/nubisavemount
 storages=$HOME/.nubisave/storages
 
@@ -9,22 +9,26 @@ scriptpath=`readlink -f $0`
 scriptloc=`dirname $scriptpath`
 cd $scriptloc
 
+#groups | grep -q fuse
+fusermount 2>/dev/null
+if [ $? == 126 ]
+then
+	echo "Error: Benutzer muss zur Gruppe 'fuse' hinzugefügt werden." >&2
+	exit 1
+fi
+
+echo "- Start des Splitter-Moduls"
 cd splitter
 ./mount.sh $mountpoint $storages &
 cd ..
 
 if [ "$1" != "headless" ]
 then
-    # FIXME: This should be solved by some event detection
-    sleep 2;
+	# FIXME: This should be solved by some event detection
+	sleep 2;
 
-    echo "Start von NubiSave"
+	echo "- Start der NubiSave-Konfigurations-GUI"
 
-    cd bin/
-    java -jar Nubisave.jar $mountpoint
+	cd bin/
+	java -jar Nubisave.jar $mountpoint
 fi
-
-
-
-
-
