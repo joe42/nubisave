@@ -29,6 +29,8 @@ override_dh_auto_install:
 	cp -r cloudfusion/cloudfusion/config debian/nubisave/usr/share/nubisave/
 	touch debian/nubisave/usr/share/nubisave/splitter/splitter.db
 	touch debian/nubisave/usr/share/nubisave/splitter/splitter.lg
+	# FIXME: interpret ${user.home} values in nubi.properties
+	sed -i -e 's/splitter_database_location=database_of_splitter/splitter_database_location=\/usr\/share\/nubisave\/splitter\/splitter/' debian/nubisave/usr/share/nubisave/bin/nubi.properties
 	sed -i -e 's/R.File=log/R.File=$${user.home}\/.nubisave\/log/' debian/nubisave/usr/share/nubisave/splitter/log4j.properties
 	sed -i -e 's/CHAINSAW.File=log/CHAINSAW.File=$${user.home}\/.nubisave\/log/' debian/nubisave/usr/share/nubisave/splitter/log4j.properties
 	mkdir -p debian/nubisave/usr/bin
