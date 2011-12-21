@@ -1,3 +1,9 @@
+nubisave (0.0~git20111221-1) unstable; urgency=low
+
+  * Pending snapshot.
+
+ -- Josef Spillner <josef@rumba>  Wed, 21 Dec 2011 17:59:29 +0100
+
 nubisave (0.0~git20111220-1) unstable; urgency=low
 
   * Today's snapshot with initial replication support.
