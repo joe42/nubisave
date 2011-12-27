@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=NubiSave
+GenericName=Cloud Storage Controller Configuration
+Comment=Setup backup space dispersed across devices and resources
+Exec=nubisave
+StartupNotify=true
+Terminal=false
+Type=Application
+Icon=nubilogo
+Categories=Network;

@@ -1,7 +1,15 @@
-nubisave (0.0~git20111130-1) unstable; urgency=low
+nubisave (0.0~git20111220-1) unstable; urgency=low
+
+  * Today's snapshot with initial replication support.
+  * Inclusion of application icon and metadata in the .desktop file.
+
+ -- Josef Spillner <josef@rumba>  Fri, 16 Dec 2011 16:45:51 +0100
+
+nubisave (0.0~git20111203-1) unstable; urgency=low
 
   * Today's snapshot after some further work in practically all areas.
   * Fix conditional conqotool invocation due to set -e being in use.
+  * Extend package dependencies to be more versatile: ssh-askpass, encfs
 
  -- Josef Spillner <josef@rumba>  Tue, 30 Nov 2011 13:31:03 +0100
 

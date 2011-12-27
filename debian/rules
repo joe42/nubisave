@@ -17,6 +17,10 @@ override_dh_auto_clean:
 	rm -f debian/files
 
 override_dh_auto_install:
+	mkdir -p debian/nubisave/usr/share/applications
+	cp debian/data/nubisave.desktop debian/nubisave/usr/share/applications/
+	mkdir -p debian/nubisave/usr/share/pixmaps
+	cp debian/data/nubilogo.png debian/nubisave/usr/share/pixmaps/
 	mkdir -p debian/nubisave/usr/share/nubisave
 	cp -r bin splitter jigdfs fusej services start.sh debian/nubisave/usr/share/nubisave/
 	rm -rf debian/nubisave/usr/share/nubisave/jigdfs/src
