@@ -1,0 +1,4 @@
+set terminal svg enhanced size 1000 1000 fname "Times" fsize 36
+set output "times.svg"
+
+plot 'times.dat' using 1:2 title 'total' , 'times.dat' using 1:3 title 'user' , 'times.dat' using 1:3 title 'sys'

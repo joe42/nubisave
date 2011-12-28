@@ -1,0 +1,42 @@
+#
+# $Id: 3D plot of performance
+#
+
+set terminal x11
+set title "Nubisave performance"
+set grid lt 2 lw 1
+set surface
+set parametric
+set xtics
+set ytics
+set logscale x 2
+set logscale y 2
+set autoscale z
+set xlabel "Size KB"
+set ylabel "Run"
+set zlabel "KB/s"
+set style data lines
+set dgrid3d ,,8
+set terminal svg
+
+set output "write.svg"
+splot 'write.gnuplot' using 1:2:3 title "Write" with lines
+
+set output "rewrite.svg"
+splot 'rewrite.gnuplot' using 1:2:3 title "ReWrite" with lines
+
+set output "read.svg"
+splot 'read.gnuplot' using 1:2:3 title "Read" with lines
+
+set output "reread.svg"
+splot 'reread.gnuplot' using 1:2:3 title "Reread" with lines
+#splot 'randread.gnuplot' using 1:2:3 title "Random read" with lines
+#splot 'randwrite.gnuplot' using 1:2:3 title "Random write" with lines
+#splot 'bkwdread.gnuplot' using 1:2:3 title "Read Backwards" with lines
+#splot 'recrewrite.gnuplot' using 1:2:3 title "Record rewrite" with lines
+#splot 'strideread.gnuplot' using 1:2:3 title "Stride read" with lines
+#splot 'fwrite.gnuplot' using 1:2:3 title "Fwrite" with lines
+#splot 'frewrite.gnuplot' using 1:2:3 title "Frewrite" with lines
+#splot 'fread.gnuplot' using 1:2:3 title "Fread" with lines
+#splot 'freread.gnuplot' using 1:2:3 title "Freread" with lines
+
