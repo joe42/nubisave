@@ -21,10 +21,8 @@ public class GuiTest {
 	private static final String CUSTOM_SERVICE_BTN = "img/custom.png";
 	private static final String MOUNTED_CHECKBOX = "img/mounted_checkbox.png";
 	private static final String MOUNTED_CHECKBOX_CHECKED = "img/mounted_checkbox_checked.png";
-	private static final String HOME_DIR = System.getProperty("user.home");
-	private static final String MOUNTPOINT = HOME_DIR+"/nubisavemount";
-	private static final String STORAGES_DIR = HOME_DIR+"/.nubisave/storages";
-	private static final String NUBISAVE_DIR = new File(System.getProperty("user.dir")).getParentFile().getParent();
+	private static final String NUBISAVE_MENU_BAR = "img/nubisave_menu_bar.png";
+	private static final String MENU_BAR_CLOSE = "img/menu_bar_close.png";
 	
 	Screen screen;
 	public GuiTest(){
@@ -37,8 +35,6 @@ public class GuiTest {
 
 	public void run() throws IOException, InterruptedException {
 		try {
-			Runtime rt =  Runtime.getRuntime();
-			rt.exec(new String[]{"/bin/bash", "-c", NUBISAVE_DIR+"/start.sh  &> /tmp/nubisave_log"});
 			//chooseCustomService(SUGARSYNC_INI_PATH);
 			//chooseCustomService(DROPBOX_INI_PATH);
 			chooseCustomService(DIRECTORY_INI_PATH1);
@@ -60,16 +56,8 @@ public class GuiTest {
 			Thread.sleep(1000);
 			screen.click(OPEN_MOUNT_DIRECTORY_BTN,0);
 			Thread.sleep(5000);
-			
-			rt.exec(new String[]{"/bin/bash", "-c", NUBISAVE_DIR+"/testsuite/fuse_tests.sh "+MOUNTPOINT+"/data/ mytestfile > /tmp/nubisave_systemtest_log"});
-			
-			Thread.sleep(15000);
-			rt.exec(new String[]{"/bin/bash", "-c", "fusermount -zu "+MOUNTPOINT+"; " +
-					NUBISAVE_DIR+"/start.sh"});
-			Thread.sleep(5000);
-			rt.exec(new String[]{"/bin/bash", "-c", "fusermount -zu "+MOUNTPOINT+"; "});
-			Thread.sleep(5000);
-			rt.exec(new String[]{"/bin/bash", "-c", "rm -r "+STORAGES_DIR+"/*; rm splitter/database_of_splitter.*"});
+			screen.find(NUBISAVE_MENU_BAR).click(MENU_BAR_CLOSE);
+			/**
 			Iterator<Match> matches = screen.findAll(MOUNTED_CHECKBOX_CHECKED);
 			int waitXTimes = 10;
 			while(getNrOfMatches(matches) != 2 && waitXTimes > 0){
@@ -78,7 +66,8 @@ public class GuiTest {
 			}
 			if(getNrOfMatches(matches) != 2){
 				throw new NoSuchElementException("At least one store is not mounted successfully."+getNrOfMatches(matches));
-			}
+			}*/
+			
 		} catch (FindFailed e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
