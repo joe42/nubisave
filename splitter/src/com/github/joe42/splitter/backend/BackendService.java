@@ -116,8 +116,7 @@ To this end the mountpoint parameter is substituted by store+"/"+HIDDEN_DIR_NAME
 		 * and a file this.getPath()+CONFIG_PATH advertising the success of mounting the service 
 		 * and providing a place to write the configuration file to.
 		 * */
-		Runtime rt =  Runtime.getRuntime();
-		rt.exec(mountCommand);
+		new ProcessBuilder( "/bin/bash", "-c", mountCommand ).start();
 	}
 	public void unmount() throws IOException {
 		/** Executes fusermount -uz to unmount the service at this.getPath() and this.getPah()+"/data" */
