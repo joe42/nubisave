@@ -25,7 +25,7 @@ public class NubiTableModel extends AbstractTableModel {
     @Override
     public int getRowCount() {
         int rows = 0;
-        rows += Nubisave.services.getMmServices().size();
+        rows += Nubisave.services.size();
         return rows;
     }
 

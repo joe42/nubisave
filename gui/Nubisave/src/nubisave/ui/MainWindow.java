@@ -302,7 +302,7 @@ public class MainWindow extends javax.swing.JFrame {
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File file = customStorageserviceChooser.getSelectedFile();
             StorageService newService = new StorageService(file);
-            Nubisave.services.getMmServices().add(newService);
+            Nubisave.services.add(newService);
         }
         tableModel.fireTableDataChanged();
     }//GEN-LAST:event_jButton3ActionPerformed
