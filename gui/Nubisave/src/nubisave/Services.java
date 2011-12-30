@@ -14,15 +14,9 @@ import java.util.List;
 public class Services {
 
     private List<StorageService> mmServices;
-    private List<AgreementService> aServices;
 
     public Services() {
         mmServices = new LinkedList<StorageService>();
-        aServices = new LinkedList<AgreementService>();
-    }
-
-    public List<AgreementService> getAServices() {
-        return aServices;
     }
 
     public List<StorageService> getMmServices() {
@@ -38,38 +32,26 @@ public class Services {
         return null;
     }
 
+    /**
+     * Get the StorageService instance at position i
+     * @param i index
+     * @return the StorageService instance at index i or null if there is no such instance at this position
+     */
     public StorageService get(int i) {
-        if (i < 0) {
+        if (i < 0 || i >= mmServices.size()) {
             return null;
         }
-        int size = aServices.size() + mmServices.size();
-        if (i >= size) {
-            return null;
-        }
-        if (i < mmServices.size()) {
-            return mmServices.get(i);
-        } else { // Object is AgreementService
-            i -= mmServices.size() - 1;
-            return aServices.get(i);
-        } 
+        return mmServices.get(i);
     }
 
+    /**
+     * Remove the StorageService instance at position i
+     * @param i index
+     */
     public void remove(int i) {
-        if (i < 0) {
+        if (i < 0 || i >= mmServices.size()) {
             return;
         }
-        int size = aServices.size() + mmServices.size();
-        if (i >= size) {
-            return;
-        }
-        
-
-        if (i < mmServices.size()) {
-            mmServices.remove(i);
-        } else { // Object is AgreementService
-            i -= mmServices.size() - 1;
-            aServices.remove(i);
-        } 
-
+        mmServices.remove(i);
     }
 }
