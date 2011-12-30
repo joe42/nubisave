@@ -4,9 +4,12 @@
  */
 package nubisave;
 
+import com.github.joe42.splitter.util.file.PropertiesUtil;
+import java.io.File;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import org.ini4j.Ini;
 
 /**
  * Persistently manages the current list of StorageServices. They can be added, removed, iterated over and retrieved by index or name.
@@ -14,9 +17,24 @@ import java.util.List;
 public class Services implements Iterable<StorageService>{
 
     private List<StorageService> mmServices;
+    private String database_directory;
 
     public Services() {
         mmServices = new LinkedList<StorageService>();
+        database_directory = new PropertiesUtil("nubi.properties").getProperty("splitter_configuration_directory");
+        File dir = new File(database_directory);
+        dir.mkdir();
+        if(dir.isDirectory()){
+            String service_name, unique_name_of_service;
+            for(String file: dir.list()){
+                unique_name_of_service = file;
+                service_name = unique_name_of_service.split("[0-9]")[0]; // remove number
+                StorageService newService = new StorageService(new File(dir.getPath()+"/"+file));
+                newService.setName(service_name);
+                newService.setUniqName(unique_name_of_service);
+                mmServices.add(newService);
+            }
+        }
     }
 
     /**
@@ -25,6 +43,20 @@ public class Services implements Iterable<StorageService>{
      */
     public void add(StorageService newService){
         mmServices.add(newService);
+        try{
+            Ini serviceIni = newService.getConfig();
+            int serviceIndex = 1;
+            for(StorageService s: newService.getBackendServices()){
+                    serviceIni.put("parameter", "backendservice"+serviceIndex++, s.getUniqName());
+                }
+                if(newService.isBackendModule()){
+                    serviceIni.put("splitter", "isbackendmodule", true);
+            }
+            serviceIni.store(new File(database_directory+"/"+newService.getUniqName()));
+        } catch(Exception e){
+            e.printStackTrace();
+            return;
+        }
     }
 
     /**
