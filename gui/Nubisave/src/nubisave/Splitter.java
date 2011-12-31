@@ -60,7 +60,7 @@ public class Splitter {
 
             serviceIni.store(new File(path));
         } catch(Exception e){
-            e.printStackTrace();
+            System.err.println("Splitter.mountStorageModule(StorageService service): Error writing configuration for StorageService instance "+service.getUniqName()+" - "+e.getMessage()==null?e.getMessage():"");
             return;
         }
     }
@@ -75,8 +75,7 @@ public class Splitter {
             splitterConfig.put("splitter", "redundancy", redundancy);
             splitterConfig.store();
         } catch(Exception e){
-            System.out.println("failed to configure Splitter:");
-            e.printStackTrace();
+            System.err.println("Splitter.setRedundancy(int redundancy): Failed to configure Splitter "+" - "+e.getMessage()==null?e.getMessage():"");
         }
     }
     public int getRedundancy() throws IOException{

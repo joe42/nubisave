@@ -54,7 +54,7 @@ public class Services implements Iterable<StorageService>{
             }
             serviceIni.store(new File(database_directory+"/"+newService.getUniqName()));
         } catch(Exception e){
-            e.printStackTrace();
+            System.err.println("Services instance add(StorageService newService): Error storing configuration for StorageService instance "+newService.getUniqName()+" - "+e.getMessage()==null?e.getMessage():"");
             return;
         }
     }
