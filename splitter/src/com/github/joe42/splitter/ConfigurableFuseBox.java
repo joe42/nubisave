@@ -68,7 +68,7 @@ public class ConfigurableFuseBox extends FuseBox  implements StorageService{
 			return super.getdir(path);
 		}
 		if(path.equals("/")){
-			FuseDirEnt[] ret = new FuseDirEnt[2];
+			FuseDirEnt[] ret = new FuseDirEnt[4];
 			FuseDirEnt dirEntry = new FuseDirEnt();
 			dirEntry.name = ".";
 			dirEntry.mode = FuseFtype.TYPE_DIR;
@@ -80,11 +80,11 @@ public class ConfigurableFuseBox extends FuseBox  implements StorageService{
 			dirEntry = new FuseDirEnt();
 			dirEntry.name = vtSplitterConfig.getName();
 			dirEntry.mode = FuseFtype.TYPE_DIR;
-			ret[1] = dirEntry;
+			ret[2] = dirEntry;
 			dirEntry = new FuseDirEnt();
 			dirEntry.name = DATA_DIR_NAME; 
 			dirEntry.mode = FuseFtype.TYPE_DIR;
-			ret[1] = dirEntry;
+			ret[3] = dirEntry;
 			return ret;
 		}
 		throw new FuseException("Invalid parameter for getdir (ConfigurableSplitter)")
