@@ -1,0 +1,98 @@
+/*
+ * WSMO4CloudStorage: WSML base and domain ontologies for cloud storage services
+ */
+
+wsmlVariant _"http://www.wsmo.org/wsml/wsml-syntax/wsml-flight"
+
+namespace { _"http://localhost:8080/Matchmaker/ontologies/CloudStorage.wsml#",
+	    qos _"http://localhost:8080/Matchmaker/ontologies/QoSBase.wsml#",
+	    dc _"http://purl.org/dc/elements/1.1#",
+            wsml _"http://www.wsmo.org/wsml/wsml-syntax#" }
+
+ontology CloudStorage
+ importsOntology { _"http://localhost:8080/Matchmaker/ontologies/QoSBase.wsml#"}
+ nonFunctionalProperties
+  wsml#version hasValue "1.0"
+  dc#creator hasValue "Gerd Bombach, Josef Spillner"
+  dc#title hasValue "WSMO4CloudStorage"
+  dc#description hasValue "WSML base and domain ontologies for cloud storage services"
+  dc#publisher hasValue "Technische Universität Dresden"
+  dc#date hasValue "2012-01-02"
+  qosdefinition hasValue "Cloud Storage"
+ endNonFunctionalProperties
+
+/* -------------- */
+/* QoS properties */
+/* -------------- */
+
+// Availability
+concept Availability subConceptOf {qos#Quality, qos#HigherBetter}
+	qos#unit impliesType qos#PercentageUnit
+
+instance AvailabilityRange memberOf qos#QualityRange
+	qos#item hasValue Availability
+	qos#min hasValue 0
+        qos#max hasValue 100
+
+// MaxDownTime
+concept MaxDownTime subConceptOf {qos#Quality, qos#LowerBetter}
+	qos#unit impliesType qos#TimeUnit
+
+instance MaxDownTimeRange memberOf qos#QualityRange
+	qos#item hasValue MaxDownTime
+	qos#min hasValue 0
+
+// ResponseTime
+concept ResponseTime subConceptOf {qos#Quality, qos#LowerBetter}
+	qos#unit impliesType qos#TimeUnit
+
+instance ResponseTimeRange memberOf qos#QualityRange
+	qos#item hasValue ResponseTime
+	qos#min hasValue 0
+
+// NetworkBandwith
+concept NetworkBandwidth subConceptOf {qos#Quality, qos#HigherBetter}
+	qos#unit impliesType qos#NetworkSpeedUnit
+
+instance NetworkBandwidthRange memberOf qos#QualityRange
+	qos#item hasValue NetworkBandwidth
+	qos#min hasValue 0
+
+// TODO: capacity
+
+/* ------------------- */
+/* Business properties */
+/* ------------------- */
+
+// PricePerMonth
+concept PricePerMonth subConceptOf {qos#Quality, qos#LowerBetter}
+	qos#unit impliesType qos#CurrencyUnit
+
+instance PricePerMonthRange memberOf qos#QualityRange
+	qos#item hasValue PricePerMonth
+	qos#min hasValue 0
+
+// PricePerData
+concept PricePerData subConceptOf {qos#Quality, qos#LowerBetter}
+	qos#unit impliesType qos#CurrencyUnit
+
+instance PricePerDataRange memberOf qos#QualityRange
+	qos#item hasValue PricePerData
+	qos#min hasValue 0
+
+/* ----------------------- */
+/* Main concept definition */
+/* ----------------------- */
+
+concept CloudStorage
+	hasName ofType _string
+	hasWebsite ofType _string
+	hasSignupForm ofType _string
+
+// TODO: link all other concepts into CloudStorage?
+// TODO: access protocols
+// TODO: specific xsd#foo types where applicable
+
+// TODO: CloudStorage subConceptOf CloudService
+//       instance XCloud memberOf {CloudStorage, OnlineAccount}
+

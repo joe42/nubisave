@@ -1,50 +1,62 @@
 /*
- * WSML service description for the GoogleStorage  service
+ * WSML service description for the GoogleStorage cloud storage service
  */
 
 wsmlVariant _"http://www.wsmo.org/wsml/wsml-syntax/wsml-flight"
 
-namespace {_"http://localhost:8080/Matchmaker/ontologies/CloudQos/googlestorage.wsml#",
+namespace {_"http://localhost:8080/Matchmaker/ontologies/CloudStorage/googlestorage.wsml#",
 	qos _"http://localhost:8080/Matchmaker/ontologies/QoSBase.wsml#",
-        cloud _"http://localhost:8080/Matchmaker/ontologies/CloudQoS.wsml#",
-        context _"http://localhost:8080/Matchmaker/ontologies/ContextBase.wsml#",
+	cloud _"http://localhost:8080/Matchmaker/ontologies/CloudStorage.wsml#",
+	context _"http://localhost:8080/Matchmaker/ontologies/ContextBase.wsml#",
 	dc _"http://purl.org/dc/elements/1.1#",
 	wsml _"http://www.wsmo.org/wsml/wsml-syntax#" }
 
 webService GoogleStorage
-importsOntology { _"http://localhost:8080/Matchmaker/ontologies/CloudQoS.wsml#" }
+ importsOntology { _"http://localhost:8080/Matchmaker/ontologies/CloudStorage.wsml#" }
 
 /* Define Service Class */
 capability ServiceCapability
  postcondition definedBy ?serviceType memberOf cloud#CloudStorage .
 
 interface GoogleStorageInterface
- importsOntology { Google }
+ importsOntology { GoogleStorageOntology }
 
-ontology Google
- importsOntology { _"http://localhost:8080/Matchmaker/ontologies/CloudQoS.wsml#"}
+ontology GoogleStorageOntology
+ importsOntology { _"http://localhost:8080/Matchmaker/ontologies/CloudStorage.wsml#"}
+
+instance GoogleStorage memberOf { cloud#CloudStorage }
+	hasName hasValue "Google Storage"
+	hasWebsite hasValue ""
+	hasSignupForm hasValue ""
+
+/* -------------- */
+/* QoS properties */
+/* -------------- */
 
 instance Availability memberOf { cloud#Availability , qos#ServiceSpec}
-  qos#value hasValue 99.5
-  qos#unit hasValue qos#Percentage
+	qos#value hasValue 99.5
+	qos#unit hasValue qos#Percentage
 
 instance MaxDownTime memberOf { cloud#MaxDownTime , qos#ServiceSpec}
-  qos#value hasValue 10
-  qos#unit hasValue qos#MilliSecond
+	qos#value hasValue 10
+	qos#unit hasValue qos#MilliSecond
 
 instance ResponseTime memberOf { cloud#ResponseTime , qos#ServiceSpec}
-  qos#value hasValue 20
-  qos#unit hasValue qos#MilliSecond
-
-instance PricePerMonth memberOf { cloud#PricePerMonth , qos#ServiceSpec}
-  qos#value hasValue 0
-  qos#unit hasValue qos#Euro
-
-instance PricePerData memberOf { cloud#PricePerData , qos#ServiceSpec}
-  qos#value hasValue 0.17
-  qos#unit hasValue qos#Euro
+	qos#value hasValue 20
+	qos#unit hasValue qos#MilliSecond
 
 instance NetworkBandwidth memberOf { cloud#NetworkBandwidth , qos#ServiceSpec}
-  qos#value hasValue 1000
-  qos#unit hasValue qos#Mbps
+	qos#value hasValue 1000
+	qos#unit hasValue qos#Mbps
 
+/* ------------------- */
+/* Business properties */
+/* ------------------- */
+
+instance PricePerMonth memberOf { cloud#PricePerMonth , qos#ServiceSpec}
+	qos#value hasValue 0
+	qos#unit hasValue qos#Euro
+
+instance PricePerData memberOf { cloud#PricePerData , qos#ServiceSpec}
+	qos#value hasValue 0.17
+	qos#unit hasValue qos#Euro
