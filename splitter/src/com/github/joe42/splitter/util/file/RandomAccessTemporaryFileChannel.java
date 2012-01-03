@@ -62,4 +62,21 @@ public class RandomAccessTemporaryFileChannel {
 			e.printStackTrace();
 		}
 	}
+
+	/**
+	 * Sets the length of this file.
+	 * 	Can be used as a simple means to create a sparse file.
+	 * If the present length of the file as returned by the length method is greater than the newLength argument then the file will be truncated. In this case, if the file offset as returned by the getFilePointer method is greater than newLength then after this method returns the offset will be equal to newLength.
+	 * If the present length of the file as returned by the length method is smaller than the newLength argument then the file will be extended. In this case, the contents of the extended portion of the file are not defined.
+	 * @param newLength The desired length of the file 
+	 */
+	public void setLength(long newLength) {
+		try {
+			ramFile.setLength(newLength);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 }
