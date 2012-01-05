@@ -383,4 +383,8 @@ public class FuseBox implements Filesystem1 {
 	protected int getRedundancy() {
 		return fileStore.getRedundancy();
 	}
+	
+	protected FileFragmentStore getFileFragmentStore(){
+		return fileStore;
+	}
 }

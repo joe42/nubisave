@@ -124,5 +124,16 @@ public class FileFragmentStore {
 		flushCache(from);
 		fileFragmentMetaDataStore.moveFragments(from, to);		
 	}
+
+	/**
+	 * Rename a fragment of a file.
+	 * This is used to move fragments to different locations, i.e. another file system.
+	 * @param from the fragment path to be moved
+	 * @param to the destination fragment path
+	 * @throws IOException when the operation did not succeed 
+	 */
+	public void renameFragment(String from, String to) throws IOException {
+		fileFragmentMetaDataStore.moveFragment(from, to);		
+	}
 	
 }
