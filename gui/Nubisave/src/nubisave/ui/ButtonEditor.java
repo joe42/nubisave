@@ -67,7 +67,7 @@ public class ButtonEditor extends DefaultCellEditor {
                 case 2:
                     String type = (String) owner.tableModel.getValueAt(row, NubiTableModel.Headers.TYPE.ordinal());
                     if ("Service".equals(type) || "Custom".equals(type)) {
-                        StorageService service = Nubisave.services.getMmServices().get(row);
+                        StorageService service = Nubisave.services.get(row);
                         ServiceParameterDialog editDialog = new ServiceParameterDialog(owner, true, service);
                         editDialog.setTitle(service.getName());
                         editDialog.setVisible(true);
@@ -92,7 +92,7 @@ public class ButtonEditor extends DefaultCellEditor {
                     break;
                 case 5:
                     //type = (String) owner.tableModel.getValueAt(row, NubiTableModel.Headers.TYPE.ordinal());
-                    StorageService service = Nubisave.services.getMmServices().get(row);
+                    StorageService service = Nubisave.services.get(row);
                     BackendConfigurationDialog editDialog = new BackendConfigurationDialog(owner, true, service);
                     editDialog.setTitle(service.getName());
                     editDialog.setVisible(true);

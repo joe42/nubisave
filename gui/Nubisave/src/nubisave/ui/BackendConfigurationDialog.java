@@ -33,12 +33,11 @@ public class BackendConfigurationDialog extends javax.swing.JDialog {
         super(parent, modal);
         this.service = service;
         initComponents();
-        List <StorageService> services = nubisave.Nubisave.services.getMmServices();
         this.listModel = new DefaultListModel();
         availableBackendServicesListSelectionListener = new AvailableBackendServicesListSelectionListener();
         availableBackendServices.setModel(listModel);
         availableBackendServices.addListSelectionListener(availableBackendServicesListSelectionListener);
-        for(StorageService s: services){
+        for(StorageService s: nubisave.Nubisave.services){
             if(! s.getName().equals(service.getName())){
                 listModel.addElement(s.getName());
             }
@@ -53,7 +52,7 @@ public class BackendConfigurationDialog extends javax.swing.JDialog {
                 values.add((String)o);
             }
             for(String serviceName: values){
-                StorageService selectedService = nubisave.Nubisave.services.getMmService(serviceName);
+                StorageService selectedService = nubisave.Nubisave.services.get(serviceName);
                 service.addBackendService(selectedService);
             }
             //set current selection
@@ -62,9 +61,9 @@ public class BackendConfigurationDialog extends javax.swing.JDialog {
                 availableBackendServices.setSelectedValue(s.getName(), false);
             }
             //mark services which are used as backend service
-            for(StorageService s1: nubisave.Nubisave.services.getMmServices()){
+            for(StorageService s1: nubisave.Nubisave.services){
                 s1.setBackendModule(false);
-                for(StorageService s2: nubisave.Nubisave.services.getMmServices()){
+                for(StorageService s2: nubisave.Nubisave.services){
                     if(s2.getBackendServices().contains(s1)){
                         s1.setBackendModule(true);
                     }

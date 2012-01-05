@@ -441,7 +441,7 @@ public class AddServiceDialog extends javax.swing.JDialog {
     private void addBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBtnActionPerformed
         for (int i : searchResultTable.getSelectedRows()) {
             MatchmakerService newService = new MatchmakerService((String) searchResultTable.getModel().getValueAt(i, 0));
-            Nubisave.services.getMmServices().add(newService);
+            Nubisave.services.add(newService);
         }
         ((MainWindow) getParent()).tableModel.fireTableDataChanged();
         dispose();

@@ -16,13 +16,17 @@ import javax.swing.UnsupportedLookAndFeelException;
  */
 public class Nubisave {
 
-    public static final Services services = new Services();
+    public static Services services;
     
     public static String[] supportedProvider = {"Dropbox","Sugarsync"};
 
     public static Splitter mainSplitter;
     public static PropertiesUtil properties;
-    
+
+    public Nubisave(){
+        services = new Services();
+    }
+
     private void initalize() {
         // look like a native app
         try {
