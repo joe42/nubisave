@@ -34,11 +34,17 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 	private MultipleFileHandler serial_multi_file_handler;
 	private StorageStrategy storageStrategy;
 	private StorageStrategyFactory storageStrategyFactory;
+	private BackendServices services;
 	
 	public CauchyReedSolomonSplitter(BackendServices services){
+		this.services = services;
 		storageStrategyFactory = new StorageStrategyFactory(services);
 		concurrent_multi_file_handler = new ConcurrentMultipleFileHandler();
 		serial_multi_file_handler = new SerialMultipleFileHandler();
+	}
+	
+	public BackendServices getBackendServices(){
+		return services;
 	}
 	
 	public void splitFile(FileFragmentMetaDataStore fileFragmentMetaDataStore, String path, FileChannel temp, int redundancy) throws FuseException, IOException {

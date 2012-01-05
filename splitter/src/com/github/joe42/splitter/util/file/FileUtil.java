@@ -2,10 +2,13 @@ package com.github.joe42.splitter.util.file;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -67,6 +70,25 @@ public class FileUtil {
 			e.printStackTrace();
 		}
 		return false;
+	}
+	
+	/**
+	 * Copy src file to dst file.
+	 * If the dst file does not exist, it is created.	
+	 * @param src
+	 * @param dst
+	 * @throws IOException
+	 */
+	public static void copy(File src, File dst) throws IOException {
+	    InputStream in = new FileInputStream(src);
+	    OutputStream out = new FileOutputStream(dst);
+	    byte[] buf = new byte[1024];
+	    int len;
+	    while ((len = in.read(buf)) > 0) {
+	        out.write(buf, 0, len);
+	    }
+	    in.close();
+	    out.close();
 	}
 
 }

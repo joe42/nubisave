@@ -11,16 +11,18 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
+import org.apache.commons.configuration.*;
 /**
  * A utility class to simplify access to property files
  * 
  */
 public class PropertiesUtil {
 
-    private java.util.Properties properties;
+    private  PropertiesConfiguration config = null;
 
     private String file;
+
+	private Properties properties;
 
     /**
      * Creates a PropertiesUtil object
@@ -29,20 +31,27 @@ public class PropertiesUtil {
     public PropertiesUtil(String file) {
         this.file = file;
     }
-    /**
-     * 
-     * @return the Property instance, which this object is representing 
-     */
-    public Properties getProperties(){
-    	return properties;
-    }
+    
+	/**
+	 * 
+	 * @return the Property instance, which this object is representing
+	 */
+	public Properties getProperties() {
+		return properties;
+	}
 
     private boolean loadProperties() {
         properties = new java.util.Properties();
         FileInputStream fis = null;
-
         try {
-            fis = new FileInputStream(file);
+        	config = new PropertiesConfiguration(file);
+        } catch (ConfigurationException ex) {
+            Logger.getLogger(PropertiesUtil.class.getName()).log(Level.SEVERE, "Could not load property file: "+file, ex);
+            return false;
+		}
+        
+        try {
+            fis = new FileInputStream(config.getFile());
         } catch (FileNotFoundException ex) {
             Logger.getLogger(PropertiesUtil.class.getName()).log(Level.SEVERE, null, ex);
             return false;
@@ -54,7 +63,7 @@ public class PropertiesUtil {
             Logger.getLogger(PropertiesUtil.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
-
+        
         return true;
     }
 
@@ -64,21 +73,12 @@ public class PropertiesUtil {
      */
     private boolean writeProperties() {
         FileOutputStream fos = null;
-        
         try {
-            fos = new FileOutputStream(file);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(PropertiesUtil.class.getName()).log(Level.SEVERE, null, ex);
+        	config.save();
+        } catch (ConfigurationException ex) {
+            Logger.getLogger(PropertiesUtil.class.getName()).log(Level.SEVERE, "Could not save property file: "+file, ex);
             return false;
         }
-        
-        try {
-            properties.store(fos, null);
-        } catch (IOException ex) {
-            Logger.getLogger(PropertiesUtil.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
-        }
-        
         return true;
     }
 
@@ -88,9 +88,9 @@ public class PropertiesUtil {
      * @return the value of the property
      */
     public String getProperty(String key) {
-        if (properties==null) loadProperties();
-        if (properties==null) return null;
-        return properties.getProperty(key);
+        if (config==null) loadProperties();
+        if (config==null) return null;
+        return config.getString(key);
     }
 
     /**
@@ -101,6 +101,8 @@ public class PropertiesUtil {
     public void setProperty(String key, String value) {
         if (properties==null) loadProperties();
         if (properties==null) return;
+        if (config==null) return;
+        config.setProperty(key, value);
         properties.setProperty(key, value);
         writeProperties();
     }

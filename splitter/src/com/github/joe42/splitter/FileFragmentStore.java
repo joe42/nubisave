@@ -1,5 +1,6 @@
 package com.github.joe42.splitter;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -7,6 +8,7 @@ import java.nio.channels.FileChannel;
 import com.github.joe42.splitter.util.file.RandomAccessTemporaryFileChannel;
 import com.github.joe42.splitter.util.file.RandomAccessTemporaryFileChannels;
 import com.github.joe42.splitter.vtf.FileEntry;
+import com.github.joe42.splitter.util.*;
 
 import fuse.FuseException;
 
@@ -72,6 +74,22 @@ public class FileFragmentStore {
 	public long getSize(String path) throws IOException {
 		return fileFragmentMetaDataStore.getFragmentsSize(path);
 	}
+	
+	public long getFreeBytes() {
+		long freeBytes = 0;
+		for( String fileSystemPath: splitter.getBackendServices().getDataDirPaths() ){
+		    freeBytes += LinuxUtil.getFreeBytes(fileSystemPath);
+		}
+		return freeBytes;
+	}	
+	
+	public long getUsedBytes() {
+		long usedBytes = 0;
+		for( String fileSystemPath: splitter.getBackendServices().getDataDirPaths() ){
+		    usedBytes += LinuxUtil.getUsedBytes(fileSystemPath);
+		}
+		return usedBytes;
+	}
 
 	public void remove(String path) throws IOException {
 		if( ! fileFragmentMetaDataStore.hasFragments(path) ) {
@@ -105,6 +123,17 @@ public class FileFragmentStore {
 		remove(to);
 		flushCache(from);
 		fileFragmentMetaDataStore.moveFragments(from, to);		
+	}
+
+	/**
+	 * Rename a fragment of a file.
+	 * This is used to move fragments to different locations, i.e. another file system.
+	 * @param from the fragment path to be moved
+	 * @param to the destination fragment path
+	 * @throws IOException when the operation did not succeed 
+	 */
+	public void renameFragment(String from, String to) throws IOException {
+		fileFragmentMetaDataStore.moveFragment(from, to);		
 	}
 	
 }
