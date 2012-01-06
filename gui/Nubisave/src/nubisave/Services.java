@@ -23,7 +23,7 @@ public class Services implements Iterable<StorageService>{
         mmServices = new LinkedList<StorageService>();
         database_directory = new PropertiesUtil("nubi.properties").getProperty("splitter_configuration_directory");
         File dir = new File(database_directory);
-        dir.mkdir();
+        dir.mkdirs();
         if(dir.isDirectory()){
             String service_name, unique_name_of_service;
             for(String file: dir.list()){
