@@ -6,57 +6,34 @@ wsmlVariant _"http://www.wsmo.org/wsml/wsml-syntax/wsml-flight"
 
 namespace { _"http://localhost:8080/Matchmaker/ontologies/CloudStorage.wsml#",
 	    qos _"http://localhost:8080/Matchmaker/ontologies/QoSBase.wsml#",
+	    rqos _"http://localhost:8080/Matchmaker/ontologies/RemoteQoSBase.wsml#",
+	    biz _"http://localhost:8080/Matchmaker/ontologies/BusinessBase.wsml#",
 	    dc _"http://purl.org/dc/elements/1.1#",
             wsml _"http://www.wsmo.org/wsml/wsml-syntax#" }
 
 ontology CloudStorage
- importsOntology { _"http://localhost:8080/Matchmaker/ontologies/QoSBase.wsml#" }
+ importsOntology { _"http://localhost:8080/Matchmaker/ontologies/RemoteQoSBase.wsml#" }
  nonFunctionalProperties
   wsml#version hasValue "1.0"
   dc#creator hasValue "Gerd Bombach, Josef Spillner"
   dc#title hasValue "WSMO4CloudStorage"
   dc#description hasValue "WSML base and domain ontologies for cloud storage services"
   dc#publisher hasValue "Technische Universität Dresden"
-  dc#date hasValue "2012-01-02"
-  qosdefinition hasValue "Cloud Storage"
+  dc#date hasValue "2012-01-17"
+  qosdefinition hasValue "Cloud Storage domain ontology"
  endNonFunctionalProperties
 
 /* ---------------------- */
 /* Generic QoS properties */
 /* ---------------------- */
 
-// Availability
-concept Availability subConceptOf {qos#Quality, qos#HigherBetter}
-	qos#unit impliesType qos#PercentageUnit
+// These are now all imported from RemoteQoSBase!
 
-instance AvailabilityRange memberOf qos#QualityRange
-	qos#item hasValue Availability
-	qos#min hasValue 0
-        qos#max hasValue 100
+/* ------------------- */
+/* Business properties */
+/* ------------------- */
 
-// MaxDownTime
-concept MaxDownTime subConceptOf {qos#Quality, qos#LowerBetter}
-	qos#unit impliesType qos#TimeUnit
-
-instance MaxDownTimeRange memberOf qos#QualityRange
-	qos#item hasValue MaxDownTime
-	qos#min hasValue 0
-
-// ResponseTime
-concept ResponseTime subConceptOf {qos#Quality, qos#LowerBetter}
-	qos#unit impliesType qos#TimeUnit
-
-instance ResponseTimeRange memberOf qos#QualityRange
-	qos#item hasValue ResponseTime
-	qos#min hasValue 0
-
-// NetworkBandwith
-concept NetworkBandwidth subConceptOf {qos#Quality, qos#HigherBetter}
-	qos#unit impliesType qos#NetworkSpeedUnit
-
-instance NetworkBandwidthRange memberOf qos#QualityRange
-	qos#item hasValue NetworkBandwidth
-	qos#min hasValue 0
+// These are now all imported from BusinessBase!
 
 /* ------------------------- */
 /* Online account properties */
@@ -83,35 +60,6 @@ instance CapacityRange memberOf qos#QualityRange
 	qos#item hasValue Capacity
 	qos#min hasValue 0
 
-/* ------------------- */
-/* Business properties */
-/* ------------------- */
-
-// PricePerMonth
-concept PricePerMonth subConceptOf {qos#Quality, qos#LowerBetter}
-	qos#unit impliesType qos#CurrencyUnit
-
-instance PricePerMonthRange memberOf qos#QualityRange
-	qos#item hasValue PricePerMonth
-	qos#min hasValue 0
-
-// PricePerData
-concept PricePerData subConceptOf {qos#Quality, qos#LowerBetter}
-	qos#unit impliesType qos#CurrencyUnit
-
-instance PricePerDataRange memberOf qos#QualityRange
-	qos#item hasValue PricePerData
-	qos#min hasValue 0
-
-// FreePeriod
-concept FreePeriod subConceptOf {qos#Quality, qos#HigherBetter}
-	qos#unit impliesType qos#TimeUnit
-
-instance FreePeriodDataRange memberOf qos#QualityRange
-	qos#item hasValue FreePeriod
-	qos#min hasValue 0
-	qos#defaultUnit hasValue Day
-
 /* ----------------------- */
 /* Main concept definition */
 /* ----------------------- */
@@ -120,21 +68,19 @@ concept Protocol
 	hasType ofType (1) _string
 	hasUrl ofType (1) _string
 
-concept CloudStoragePlan
+concept CloudStoragePlan subConceptOf biz#BusinessService
 	hasSignupForm ofType (1) _string
 	hasProtocol ofType (0 *) Protocol
-	hasProperty ofType (0 *) qos#Quality
+	hasCapacity ofType (1) Capacity
 
-concept CloudStorage
+concept CloudStorage subConceptOf rqos#RemoteQoS
 	hasName ofType (1) _string
 	hasIcon ofType (1) _string
 	hasWebsite ofType (1) _string
 	hasCountry ofType (1) _string
 	hasStoragePlan ofType (1 *) CloudStoragePlan
-	hasProperty ofType (0 *) qos#Quality
 
 // TODO: specific xsd#foo types where applicable
-// TODO: re-use RemoteQoS ontology
 // TODO: hasCountry should be something like context#LocationContext
 
 // TODO: CloudStorage subConceptOf CloudService
