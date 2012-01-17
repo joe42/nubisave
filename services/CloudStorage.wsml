@@ -60,6 +60,14 @@ instance CapacityRange memberOf qos#QualityRange
 	qos#item hasValue Capacity
 	qos#min hasValue 0
 
+concept Redundancy subConceptOf {Qos#Quality, qos#HigherBetter}
+	qos#unit impliesType qos#PercentageUnit
+
+instance RedundancyRange memberOf qos#QualityRange
+	qos#item hasValue Redundancy
+	qos#min hasValue 0
+	qos#max hasValue 200
+
 /* ----------------------- */
 /* Main concept definition */
 /* ----------------------- */

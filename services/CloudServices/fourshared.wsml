@@ -6,6 +6,8 @@ wsmlVariant _"http://www.wsmo.org/wsml/wsml-syntax/wsml-flight"
 
 namespace {_"http://localhost:8080/Matchmaker/ontologies/CloudStorage/fourshared.wsml#",
 	qos _"http://localhost:8080/Matchmaker/ontologies/QoSBase.wsml#",
+	rqos _"http://localhost:8080/Matchmaker/ontologies/RemoteQoSBase.wsml#",
+	biz _"http://localhost:8080/Matchmaker/ontologies/BusinessBase.wsml#",
 	cloud _"http://localhost:8080/Matchmaker/ontologies/CloudStorage.wsml#",
 	context _"http://localhost:8080/Matchmaker/ontologies/ContextBase.wsml#",
 	dc _"http://purl.org/dc/elements/1.1#",
