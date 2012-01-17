@@ -10,7 +10,7 @@ namespace { _"http://localhost:8080/Matchmaker/ontologies/CloudStorage.wsml#",
             wsml _"http://www.wsmo.org/wsml/wsml-syntax#" }
 
 ontology CloudStorage
- importsOntology { _"http://localhost:8080/Matchmaker/ontologies/QoSBase.wsml#"}
+ importsOntology { _"http://localhost:8080/Matchmaker/ontologies/QoSBase.wsml#" }
  nonFunctionalProperties
   wsml#version hasValue "1.0"
   dc#creator hasValue "Gerd Bombach, Josef Spillner"
@@ -21,9 +21,9 @@ ontology CloudStorage
   qosdefinition hasValue "Cloud Storage"
  endNonFunctionalProperties
 
-/* -------------- */
-/* QoS properties */
-/* -------------- */
+/* ---------------------- */
+/* Generic QoS properties */
+/* ---------------------- */
 
 // Availability
 concept Availability subConceptOf {qos#Quality, qos#HigherBetter}
@@ -58,7 +58,30 @@ instance NetworkBandwidthRange memberOf qos#QualityRange
 	qos#item hasValue NetworkBandwidth
 	qos#min hasValue 0
 
-// TODO: capacity
+/* ------------------------- */
+/* Online account properties */
+/* ------------------------- */
+
+// SignupPrivacy
+concept SignupPrivacy subConceptOf {qos#Quality, qos#HigherBetter}
+	qos#unit impliesType qos#PercentageUnit
+
+instance SignuPrivacyRange memberOf qos#QualityRange
+	qos#item hasValue SignupPrivacy
+	qos#min hasValue 0
+        qos#max hasValue 100
+
+/* ------------------ */
+/* Storage properties */
+/* ------------------ */
+
+// Capacity
+concept Capacity subConceptOf {qos#Quality, qos#HigherBetter}
+	qos#unit impliesType qos#SpaceUnit
+
+instance CapacityRange memberOf qos#QualityRange
+	qos#item hasValue Capacity
+	qos#min hasValue 0
 
 /* ------------------- */
 /* Business properties */
@@ -80,18 +103,39 @@ instance PricePerDataRange memberOf qos#QualityRange
 	qos#item hasValue PricePerData
 	qos#min hasValue 0
 
+// FreePeriod
+concept FreePeriod subConceptOf {qos#Quality, qos#HigherBetter}
+	qos#unit impliesType qos#TimeUnit
+
+instance FreePeriodDataRange memberOf qos#QualityRange
+	qos#item hasValue FreePeriod
+	qos#min hasValue 0
+	qos#defaultUnit hasValue Day
+
 /* ----------------------- */
 /* Main concept definition */
 /* ----------------------- */
 
-concept CloudStorage
-	hasName ofType _string
-	hasWebsite ofType _string
-	hasSignupForm ofType _string
+concept Protocol
+	hasType ofType (1) _string
+	hasUrl ofType (1) _string
 
-// TODO: link all other concepts into CloudStorage?
-// TODO: access protocols
+concept CloudStoragePlan
+	hasSignupForm ofType (1) _string
+	hasProtocol ofType (0 *) Protocol
+	hasProperty ofType (0 *) qos#Quality
+
+concept CloudStorage
+	hasName ofType (1) _string
+	hasIcon ofType (1) _string
+	hasWebsite ofType (1) _string
+	hasCountry ofType (1) _string
+	hasStoragePlan ofType (1 *) CloudStoragePlan
+	hasProperty ofType (0 *) qos#Quality
+
 // TODO: specific xsd#foo types where applicable
+// TODO: re-use RemoteQoS ontology
+// TODO: hasCountry should be something like context#LocationContext
 
 // TODO: CloudStorage subConceptOf CloudService
 //       instance XCloud memberOf {CloudStorage, OnlineAccount}

@@ -22,41 +22,78 @@ interface FourSharedInterface
  importsOntology { FourSharedOntology }
 
 ontology FourSharedOntology
- importsOntology { _"http://localhost:8080/Matchmaker/ontologies/CloudStorage.wsml#"}
+ importsOntology { _"http://localhost:8080/Matchmaker/ontologies/CloudStorage.wsml#" }
 
-instance FourShared memberOf { cloud#CloudStorage }
-	hasName hasValue "4Shared"
-	hasWebsite hasValue "http://www.4shared.com/"
-	hasSignupForm hasValue "http://www.4shared.com/signup.jsp"
+/* ---------------------- */
+/* Generic QoS properties */
+/* ---------------------- */
 
-/* -------------- */
-/* QoS properties */
-/* -------------- */
-
-instance Availability memberOf { cloud#Availability , qos#ServiceSpec}
+instance Availability memberOf { cloud#Availability, qos#ServiceSpec }
 	qos#value hasValue 99
 	qos#unit hasValue qos#Percentage
 
-instance MaxDownTime memberOf { cloud#MaxDownTime , qos#ServiceSpec}
+instance MaxDownTime memberOf { cloud#MaxDownTime, qos#ServiceSpec }
 	qos#value hasValue 15
 	qos#unit hasValue qos#MilliSecond
 
-instance ResponseTime memberOf { cloud#ResponseTime , qos#ServiceSpec}
+instance ResponseTime memberOf { cloud#ResponseTime, qos#ServiceSpec }
 	qos#value hasValue 40
 	qos#unit hasValue qos#MilliSecond
 
-instance NetworkBandwidth memberOf { cloud#NetworkBandwidth , qos#ServiceSpec}
+instance NetworkBandwidth memberOf { cloud#NetworkBandwidth, qos#ServiceSpec }
 	qos#value hasValue 100
 	qos#unit hasValue qos#Mbps
+
+/* ------------------------- */
+/* Online account properties */
+/* ------------------------- */
+
+instance SignupPrivacy memberOf { cloud#SignupPrivacy, qos#ServiceSpec }
+	qos#value hasValue 0
+	qos#unit hasValue qos#Percentage
+
+/* ------------------ */
+/* Storage properties */
+/* ------------------ */
+
+instance Capacity memberOf { cloud#Capacity, qos#ServiceSpec }
+	qos#value hasValue 10
+	qos#unit hasValue GB
 
 /* ------------------- */
 /* Business properties */
 /* ------------------- */
 
-instance PricePerMonth memberOf { cloud#PricePerMonth , qos#ServiceSpec}
+instance PricePerMonth memberOf { cloud#PricePerMonth, qos#ServiceSpec }
 	qos#value hasValue 0
 	qos#unit hasValue qos#Euro
 
-instance PricePerData memberOf { cloud#PricePerData , qos#ServiceSpec}
+instance PricePerData memberOf { cloud#PricePerData, qos#ServiceSpec }
 	qos#value hasValue 0
 	qos#unit hasValue qos#Euro
+
+instance FreePeriod memberOf { cloud#FreePeriod, qos#ServiceSpec }
+	qos#value hasValue 0
+	qos#unit hasValue qos#Day
+
+/* ------------------------ */
+/* Main instance definition */
+/* ------------------------ */
+
+instance FourShared memberOf { cloud#CloudStorage }
+	hasName hasValue "4Shared"
+	hasIcon hasValue "???"
+	hasWebsite hasValue "http://www.4shared.com/"
+	hasCountry hasValue "???"
+	hasStoragePlan hasValue { FourSharedPlan }
+	hasProperty hasValue { Availability, ResponseTime, MaxDownTime, NetworkBandwidth, SignupPrivacy }
+
+instance FourSharedWebdavProtocol memberOf { cloud#Protocol }
+	hasType hasName "webdav"
+	hasUrl hasName "https://4shared.com/dav???"
+
+instance FourSharedPlan memberOf { cloud#CloudStoragePlan }
+	hasSignupForm hasValue "http://www.4shared.com/signup.jsp"
+	hasProtocol hasValue { FourSharedWebdavProtocol }
+	hasProperty hasValue { PricePerMonth, PricePerData, FreePeriod }
+
