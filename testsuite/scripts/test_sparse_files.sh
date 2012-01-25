@@ -1,0 +1,152 @@
+#!/bin/bash
+if [ $# -lt 5 ]; then
+   echo
+   echo "Not enough arguments."
+   echo
+   echo
+   echo "Create a directory test_directory/logs/sparse, where all logs are stored in a subdirectory with the name being the current date."
+   echo "Creates a file info in the log directory for various information on the service and system under test, "
+   echo "as well as a file diff to keep track of differences to the current revision."
+   echo "Stop the storage service and start the storage service. "
+   echo "Generate files to the directory samplefiles. Write one megabyte of data to the sparse file. Copy the sparse file to the storage service."
+   echo "Log the time for the copy operation to sparse_time_log. Log the time for reading the sparse file to sparse_time_log and check if it was read correctly." 
+   echo "If the checksum of the read file differs from the original, this is noted as an unsuccessful operation."
+   echo "Log the time for writing one megabyte of data to the sparse file on the storage service. "
+   echo "Log the time for reading one megabyte of data from the sparse file on the storage service. "
+   echo "Log the time for appending 15 characters to the sparse file on the storage service. "
+   echo "Stop the storage service."
+   echo "The log's format is as follows: "
+   echo "operation, size, time_for_operation_in_seconds, average_cpu_load, max_cpu_load, average_mem_load, max_mem_load, max_swap_load, average_net_load, total_net_load, success"
+   echo "    size  - the size in MB read or written during the operation"
+   echo "    time_for_operation_in_seconds  - how long it took to perform the operation in seconds"
+   echo "    average_cpu_load  - the average CPU load of the process measured during the operation"
+   echo "    max_cpu_load  - the maximum CPU load of the process measured during the operation"
+   echo "    average_mem_load  - the average proportional set size of memory allocated by the process during the operation"
+   echo "    max_mem_load  - the maximum proportional set size of memory allocated by the process during the operation"
+   echo "    max_swap_load  - the maximum swap allocated by the process during the operation"
+   echo "    average_net_load  - the average network load during the operation"
+   echo "    total_net_load  - the total network load during the operation"
+   echo
+   echo
+   echo Usage: `basename $0` storage_path process_name test_directory username password
+   echo "    storage_path  - a path to the directory to test"
+   echo "    process_name  - the process name of the storage service, so that it can be found by pgrep"
+   echo "    test_directory  - a path to the directory with start_service.sh and stop_service.sh, to start and stop the service, and info.sh to get information about the test (can be empty scripts)"
+   echo "    username  - the username, which is given to the start_service.sh script as the first parameter (can be an arbitrary string if the service does not need authentication)"
+   echo "    password  - the password, which is given to the start_service.sh script as the second parameter (can be an arbitrary string if the service does not need authentication)"
+   echo
+   echo Example: `basename $0` ~/data Wuala . joe 123456
+   echo
+   exit
+fi  
+
+PROCESS_NAME="$2"
+TEST_DIRECTORY="$3"
+LOG_DIR="$TEST_DIRECTORY/logs/sparse/`date`"
+SAMPLE_FILES_DIR=samplefiles
+TEMP_DIR="/tmp/storage_service`date +"%s"`"
+TIME_LOG="$LOG_DIR/sparse_time_log"
+STORAGE_SERVICE_PATH="$1"
+USERNAME="$4"
+PASSWORD="$5"
+mkdir -p "$LOG_DIR" "$TEMP_DIR"
+ONE_MB=$((1024*1024))
+TEN_MB=$(($ONE_MB*10))
+
+$TEST_DIRECTORY/info.sh > "$LOG_DIR/info"
+git diff > "$LOG_DIR/diff"
+
+function checksum {
+        csum=`md5sum -b "$1" | cut -d " "  -f 1`
+        sum=`md5sum -b "$2" | cut -d " "  -f 1`
+        if [ $csum != $sum ]
+        then
+                echo "ERROR checksum"
+        fi
+}
+
+function get_db_line { 
+    # get "average_cpu_load, max_cpu_load, average_mem_load, max_mem_load, max_swap_load, average_net_load, total_net_load" 
+    # from prior execution of../scripts/start_net_mem_cpu_logging.sh, between start and end point given in seconds from the epoch
+    # @param 1: start in seconds form the epoch
+    # @param 2: stop in seconds form the epoch
+    start=$1
+    end=$2
+    net_total=`gawk -v end=$end -v start=$start '($1 >= start && $1 <= end) {total+=$2+$3} END {print total}' "$TEMP_DIR"/netlog`
+    net_avg=`gawk -v end=$end -v start=$start '($1 >= start && $1 <= end) {n++; total+=$2+$3} END {print total/n}' "$TEMP_DIR"/netlog`
+    mem_max=`gawk -v end=$end -v start=$start 'BEGIN {max=0} ($1 >= start && $1 <= end && max < $3) {max=$3} END {print max}' "$TEMP_DIR"/memlog`
+    swap_max=`gawk -v end=$end -v start=$start 'BEGIN {max=0} ($1 >= start && $1 <= end && max < $4) {max=$4} END {print max}' "$TEMP_DIR"/memlog`
+    mem_avg=`gawk -v end=$end -v start=$start '($1 >= start && $1 <= end) {n++; total+=$3} END {print total/n}' "$TEMP_DIR"/memlog`
+    cpu_max=`gawk -v end=$end -v start=$start 'BEGIN {max=0} ($1 >= start && $1 <= end && max < $2) {max=$2} END {print max}' "$TEMP_DIR"/cpulog`
+    cpu_avg=`gawk -v end=$end -v start=$start '($1 >= start && $1 <= end) {n++; total+=$2} END {print total/n}' "$TEMP_DIR"/cpulog`
+    echo -n "$net_total, $net_avg, $mem_max, $mem_avg, $swap_max, $cpu_max, $cpu_avg"
+}
+
+$TEST_DIRECTORY/stop_service.sh
+$TEST_DIRECTORY/start_service.sh "$USERNAME" "$PASSWORD"
+
+if [ ! -d "$SAMPLE_FILES_DIR" ]; then
+    ../scripts/create_files.sh "$SAMPLE_FILES_DIR"
+fi
+
+
+../scripts/start_net_mem_cpu_logging.sh "$PROCESS_NAME" "$TEMP_DIR" &
+time_before_operation=`date +"%s"`
+time_of_operation=`/usr/bin/time -f "%e" cp --sparse=always samplefiles/sparse "$STORAGE_SERVICE_PATH"/ 2>&1`
+time_after_operation=`date +"%s"`
+../scripts/stop_net_mem_cpu_logging.sh
+
+#"file_size time_for_operation_in_seconds average_cpu_load max_cpu_load average_mem_load max_mem_load max_swap_load average_net_load total_net_load success_in_yes_no"
+echo "write, 1000, $time_of_operation, `get_db_line $time_before_operation $time_after_operation`, yes" >> "$TIME_LOG"
+
+
+../scripts/start_net_mem_cpu_logging.sh "$PROCESS_NAME" "$TEMP_DIR" &
+time_before_operation=`date +"%s"`
+time_of_operation=`/usr/bin/time -f "%e" cp --sparse=always "$STORAGE_SERVICE_PATH/sparse" "$TEMP_DIR/sparse" 2>&1`
+time_after_operation=`date +"%s"`
+../scripts/stop_net_mem_cpu_logging.sh
+
+error=checksum "$TEMP_DIR/sparse" samplefiles/sparse
+success=yes
+if [ "$error"!="" ];
+then
+    success=no
+fi
+
+#"file_size time_for_operation_in_seconds average_cpu_load max_cpu_load average_mem_load max_mem_load max_swap_load average_net_load total_net_load success_in_yes_no"
+echo "read, 1000, $time_of_operation, `get_db_line $time_before_operation $time_after_operation`, $success" >> "$TIME_LOG"
+
+
+../scripts/start_net_mem_cpu_logging.sh "$PROCESS_NAME" "$TEMP_DIR" &
+time_before_operation=`date +"%s"`
+time_of_operation=`/usr/bin/time -f "%e" python write.py "$STORAGE_SERVICE_PATH/sparse" $ONE_MB $TEN_MB 2>&1`
+time_after_operation=`date +"%s"`
+../scripts/stop_net_mem_cpu_logging.sh
+
+#"file_size time_for_operation_in_seconds average_cpu_load max_cpu_load average_mem_load max_mem_load max_swap_load average_net_load total_net_load success_in_yes_no"
+echo "write, 1, $time_of_operation, `get_db_line $time_before_operation $time_after_operation`, yes" >> "$TIME_LOG"
+
+
+../scripts/start_net_mem_cpu_logging.sh "$PROCESS_NAME" "$TEMP_DIR" &
+time_before_operation=`date +"%s"`
+time_of_operation=`/usr/bin/time -f "%e" python read.py "$STORAGE_SERVICE_PATH/sparse" $ONE_MB $TEN_MB 2>&1`
+time_after_operation=`date +"%s"`
+../scripts/stop_net_mem_cpu_logging.sh
+
+#"file_size time_for_operation_in_seconds average_cpu_load max_cpu_load average_mem_load max_mem_load max_swap_load average_net_load total_net_load success_in_yes_no"
+echo "read, 1, $time_of_operation, `get_db_line $time_before_operation $time_after_operation`, yes" >> "$TIME_LOG"
+
+
+../scripts/start_net_mem_cpu_logging.sh "$PROCESS_NAME" "$TEMP_DIR" &
+time_before_operation=`date +"%s"`
+time_of_operation=`/usr/bin/time -f "%e" echo "this is the end" >> "$STORAGE_SERVICE_PATH/sparse" 2>&1`
+time_after_operation=`date +"%s"`
+../scripts/stop_net_mem_cpu_logging.sh
+
+#"file_size time_for_operation_in_seconds average_cpu_load max_cpu_load average_mem_load max_mem_load max_swap_load average_net_load total_net_load success_in_yes_no"
+echo "append 15 characters, 0, $time_of_operation, `get_db_line $time_before_operation $time_after_operation`, yes" >> "$TIME_LOG"
+
+rm "$TEMP_DIR/sparse"
+rm "$STORAGE_SERVICE_PATH/sparse"
+
+$TEST_DIRECTORY/stop_service.sh
