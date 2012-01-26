@@ -84,7 +84,7 @@ function get_db_line {
     mem_avg=`gawk -v end=$end -v start=$start '($1 >= start && $1 <= end) {n++; total+=$3} END {print total/(n+1)}' "$TEMP_DIR"/memlog`
     cpu_max=`gawk -v end=$end -v start=$start 'BEGIN {max=0} ($1 >= start && $1 <= end && max < $2) {max=$2} END {print max}' "$TEMP_DIR"/cpulog`
     cpu_avg=`gawk -v end=$end -v start=$start '($1 >= start && $1 <= end) {n++; total+=$2} END {print total/(n+1)}' "$TEMP_DIR"/cpulog`
-    echo -n "$net_total, $net_avg, $mem_max, $mem_avg, $swap_max, $cpu_max, $cpu_avg"
+    echo -n "$cpu_avg, $cpu_max, $mem_avg, $mem_max, $swap_max, $net_avg, $net_total"
 }
 
 function wait_until_transfer_is_complete {
