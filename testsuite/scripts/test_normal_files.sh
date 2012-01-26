@@ -97,8 +97,8 @@ function wait_until_transfer_is_complete {
 	outgoing=`round $outgoing`
 	previous_outgoing=$outgoing
 	stagnated=0
-	while [[ $outgoing -lt $(($1*1000)) && $stagnated -lt 10 ]];
-    do
+	while [[ ($outgoing -lt $(($1*1000)) && $stagnated -lt 10) || $stagnated -lt 20 ]];
+	do
 		if [ $previous_outgoing -eq $outgoing ];
 		then
 			let stagnated=stagnated+1
@@ -111,7 +111,7 @@ function wait_until_transfer_is_complete {
 		#echo $outgoing -lt $(($size*1000));
 		#echo "waiting for network transfer to complete"
 		sleep 1
-    done
+	done
 #echo "enough kb sent"
 }
 
