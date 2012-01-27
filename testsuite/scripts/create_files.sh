@@ -4,23 +4,24 @@ if [ $# -lt 1 ]; then
    echo "Not enough arguments."
    echo
    echo
-   echo Creates the files 1MB 10MB 100MB 1000MB 2000MB with the size suggested by the name. The content is random. 
+   echo Creates the files {$size}MB for all sizes in test_file_sizes with the size suggested by the name. The content is random. 
    echo Additionally, a 1GB sparse file with the name sparse is created. The sparse file has about 1MB of sequential data.
    echo The files are stored to the specified directory. All files in directory are deleted, when starting the script.
-   echo Usage: `basename $0` directory
-   echo Example: `basename $0` generated_files
+   echo Usage: `basename $0` directory  test_file_sizes 
+   echo Example: `basename $0` generated_files "1 10 100 1000 2000"
    echo
    exit
 fi  
 #create files
 FOLDER=$1
+FILE_SIZES="$2"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ONE_MB=$((1024*1024))
 TEN_MB=$(($ONE_MB*10))
 mkdir -p "$1"
 rm -f $FOLDER/*
 
-for size in 1 10 100 1000 2000
+for size in `echo $FILE_SIZES`
 do
     dd if=/dev/urandom of=$FOLDER/${size}MB bs=${size}MB count=1
 done

@@ -153,7 +153,7 @@ echo "service started"
 
 sleep 5
 if [ ! -d "$SAMPLE_FILES_DIR" ]; then
-    ../scripts/create_files.sh "$SAMPLE_FILES_DIR"
+    ../scripts/create_files.sh "$SAMPLE_FILES_DIR" "$FILE_SIZES"
 fi
 
 echo "files created"
