@@ -27,13 +27,14 @@ if [ $# -lt 5 ]; then
    echo "    success  - yes or no, depending on whether the operation was successful or not"
    echo
    echo
-   echo Usage: `basename $0` storage_path process_name test_directory test_file_sizes username password
+   echo Usage: `basename $0` storage_path process_name test_directory test_file_sizes username password [ stop_network_monitoring_after_file_operation ]
    echo "    storage_path  - a path to the directory to test"
    echo "    process_name  - the process name of the storage service, so that it can be found by pgrep"
    echo "    test_directory  - a path to the directory with start_service.sh and stop_service.sh, to start and stop the service, and info.sh to get information about the test (can be empty scripts)"
    echo "    test_file_sizes  - a list of numbers, which gives the size in MB of the test files, as well as their sequence "
    echo "    username  - the username, which is given to the start_service.sh script as the first parameter (can be an arbitrary string if the service does not need authentication)"
    echo "    password  - the password, which is given to the start_service.sh script as the second parameter (can be an arbitrary string if the service does not need authentication)"
+   echo "    stop_network_monitoring_after_file_operation  - Optional parameter. Can be one of yes or no. The default is no. Some file systems delay transfering files over the network, nevertheless claiming the file operation to be complete. Thus to get representational network statistics in this case, the network must be monitored even after the end of an file operation. Set this parameter to no, if the file system stops network transfers with the end of a file system operation. This may lead to more accureate network statistics."
    echo
    echo Example: `basename $0` ~/data Wuala . "1 10 100 1000 2000" joe 123456
    echo
@@ -52,6 +53,7 @@ PREVIOUS_FILE_READ_TIME_LOG="$LOG_DIR/previous_file_read_time_log"
 STORAGE_SERVICE_PATH="$1"
 USERNAME="$5"
 PASSWORD="$6"
+STOP_NETWORK_MONITORING_AFTER_FILE_OPERATION="$7"
 mkdir -p "$LOG_DIR" "$TEMP_DIR"
 
 $TEST_DIRECTORY/info.sh > "$LOG_DIR/info"
@@ -73,12 +75,14 @@ function round {
 function get_db_line { 
     # get "average_cpu_load, max_cpu_load, average_mem_load, max_mem_load, max_swap_load, average_net_load, total_net_load" 
     # from prior execution of../scripts/start_net_mem_cpu_logging.sh, between start and end point given in seconds from the epoch
-    # @param 1: start in seconds form the epoch
-    # @param 2: stop in seconds form the epoch
+    # @param 1: start of file operation in seconds from the epoch
+    # @param 2: stop of file operation in seconds from the epoch
+    # @param 3: stop of network transfer in seconds from the epoch
     start=$1
     end=$2
-    net_total=`gawk -v end=$end -v start=$start '($1 >= start && $1 <= end) {total+=$2+$3} END {print total}' "$TEMP_DIR"/netlog`
-    net_avg=`gawk -v end=$end -v start=$start '($1 >= start && $1 <= end) {n++; total+=$2+$3} END {print total/(n+1)}' "$TEMP_DIR"/netlog`
+    net_end=$2
+    net_total=`gawk -v end=$net_end -v start=$start '($1 >= start && $1 <= end) {total+=$2+$3} END {print total}' "$TEMP_DIR"/netlog`
+    net_avg=`gawk -v end=$net_end -v start=$start '($1 >= start && $1 <= end) {n++; total+=$2+$3} END {print total/(n+1)}' "$TEMP_DIR"/netlog`
     mem_max=`gawk -v end=$end -v start=$start 'BEGIN {max=0} ($1 >= start && $1 <= end && max < $2) {max=$2} END {print max}' "$TEMP_DIR"/memlog`
     swap_max=`gawk -v end=$end -v start=$start 'BEGIN {max=0} ($1 >= start && $1 <= end && max < $3) {max=$3} END {print max}' "$TEMP_DIR"/memlog`
     mem_avg=`gawk -v end=$end -v start=$start '($1 >= start && $1 <= end) {n++; total+=$2} END {print total/(n+1)}' "$TEMP_DIR"/memlog`
@@ -88,11 +92,10 @@ function get_db_line {
 }
 
 function wait_until_transfer_is_complete {
-    # Wait until a transfer of size $1 is complete and the network activity stagnated
+    # Wait until a transfer of size $1 is complete and the network activity stagnates
     # @param 1: size of transfer in MB
     # @param 2: log file with ifstat output, where the first column is the time in seconds from the epoch of when the line was output by ifstat
-    # @param 3: the time in seconds from the epoch of when the download started
-	sleep 10
+    # @param 3: the time in seconds from the epoch of when the file operation started
 	outgoing=`gawk -v start=$3 '($1 >= start) {total+=$2+$3} END {print total}' $2`
 	outgoing=`round $outgoing`
 	previous_outgoing=$outgoing
@@ -112,7 +115,7 @@ function wait_until_transfer_is_complete {
 		#echo "waiting for network transfer to complete"
 		sleep 1
 	done
-#echo "enough kb sent"
+	echo $stagnated
 }
 
 function log_copy_operation {
@@ -122,12 +125,18 @@ function log_copy_operation {
     log_file="$4" #log file
     check="$5" #check copy destination with the file of the name "file_sizeMB" in $SAMPLE_FILES_DIR
     ../scripts/start_net_mem_cpu_logging.sh "$PROCESS_NAME" "$TEMP_DIR" &
+	sleep 2 # wait until logging produces some results to process
     time_before_operation=`date +"%s"`
     time_of_operation=`/usr/bin/time -f "%e" cp "$copy_source" "$copy_destination" 2>&1`
 echo time_of_operation $time_of_operation
-	sleep 1
-    time_after_operation=`date +"%s"`
-	wait_until_transfer_is_complete $file_size "$TEMP_DIR/netlog" $time_before_operation
+    time_after_operation=`date +"%s"`	
+	if [ $STOP_NETWORK_MONITORING_AFTER_FILE_OPERATION != "yes" ];
+	then
+		time_of_network_stagnation=`wait_until_transfer_is_complete $file_size "$TEMP_DIR/netlog" $time_before_operation`
+		time_after_network_transfer=$((`date +"%s"`-$time_of_network_stagnation)) #subtract the time waited to make sure the network activity stagnated
+	else
+		time_after_network_transfer=$time_after_operation
+	fi
     ../scripts/stop_net_mem_cpu_logging.sh
 
     success=yes
@@ -141,7 +150,7 @@ echo time_of_operation $time_of_operation
     fi
 
     #"file_size time_for_operation_in_seconds average_cpu_load max_cpu_load average_mem_load max_mem_load max_swap_load average_net_load total_net_load success_in_yes_no"
-    echo "$file_size, $time_of_operation, `get_db_line $time_before_operation $time_after_operation`, $success" >> "$log_file"
+    echo "$file_size, $time_of_operation, `get_db_line $time_before_operation $time_after_operation $time_after_network_transfer`, $success" >> "$log_file"
 }
 
 
