@@ -92,26 +92,26 @@ function get_db_line {
 }
 
 function wait_until_transfer_is_complete {
-    # Wait until a transfer of size $1 is complete and the network activity stagnates
+    # Wait until a transfer of size $1 is complete and the network activity stagnates. Return the seconds needed to recognize the end of the network transfer, after it had already ended.
     # @param 1: size of transfer in MB
     # @param 2: log file with ifstat output, where the first column is the time in seconds from the epoch of when the line was output by ifstat
     # @param 3: the time in seconds from the epoch of when the file operation started
-	outgoing=`gawk -v start=$3 '($1 >= start) {total+=$2+$3} END {print total}' $2`
-	outgoing=`round $outgoing`
-	previous_outgoing=$outgoing
+	transfered_KB=`gawk -v start=$3 '($1 >= start) {total+=$2+$3} END {print total}' $2`
+	transfered_KB=`round $transfered_KB`
+	previous_transfered_KB=$transfered_KB
 	stagnated=0
-	while [[ ($outgoing -lt $(($1*1000)) || $stagnated -lt 10) && $stagnated -lt 20 ]];
+	while [[ ($transfered_KB -lt $(($1*1000)) || $stagnated -lt 10) && $stagnated -lt 20 ]];
 	do
-		if [ $previous_outgoing -eq $outgoing ];
+		if [ $previous_transfered_KB -eq $transfered_KB ];
 		then
 			let stagnated=stagnated+1
 		else		
 			stagnated=0
-			previous_outgoing=$outgoing
+			previous_transfered_KB=$transfered_KB
 		fi
-		outgoing=`gawk -v start=$3 '($1 >= start) {total+=$2+$3} END {print total}' $2`
-		outgoing=`round $outgoing`
-		#echo $outgoing -lt $(($size*1000));
+		transfered_KB=`gawk -v start=$3 '($1 >= start) {total+=$2+$3} END {print total}' $2`
+		transfered_KB=`round $transfered_KB`
+		#echo $transfered_KB -lt $(($size*1000));
 		#echo "waiting for network transfer to complete"
 		sleep 1
 	done
