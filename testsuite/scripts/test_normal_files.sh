@@ -130,7 +130,7 @@ function log_copy_operation {
     time_of_operation=`/usr/bin/time -f "%e" cp "$copy_source" "$copy_destination" 2>&1`
 echo time_of_operation $time_of_operation
     time_after_operation=`date +"%s"`	
-	if [ $STOP_NETWORK_MONITORING_AFTER_FILE_OPERATION != "yes" ];
+	if [ "$STOP_NETWORK_MONITORING_AFTER_FILE_OPERATION" != "yes" ];
 	then
 		time_of_network_stagnation=`wait_until_transfer_is_complete $file_size "$TEMP_DIR/netlog" $time_before_operation`
 		time_after_network_transfer=$((`date +"%s"`-$time_of_network_stagnation)) #subtract the time waited to make sure the network activity stagnated
