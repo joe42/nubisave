@@ -97,7 +97,7 @@ function wait_until_transfer_is_complete {
 	outgoing=`round $outgoing`
 	previous_outgoing=$outgoing
 	stagnated=0
-	while [[ ($outgoing -lt $(($1*1000)) && $stagnated -lt 10) || $stagnated -lt 20 ]];
+	while [[ ($outgoing -lt $(($1*1000)) || $stagnated -lt 10) && $stagnated -lt 20 ]];
 	do
 		if [ $previous_outgoing -eq $outgoing ];
 		then
