@@ -12,7 +12,7 @@ if [ $# -lt 2 ]; then
 fi  
 
 PROCESS_NAME="$1"
-NOT_IN_PROCESS_NAME='start_net_mem_cpu_logging.sh|test_normal_files|/usr/bin/time|test_sparse_files|cp '
+NOT_IN_PROCESS_NAME='start_net_mem_cpu_logging.sh|../scripts|/usr/bin/time|cp '
 MEMORY_LOG="$2"/memlog
 NETWORK_LOG="$2"/netlog
 CPU_LOG="$2"/cpulog
@@ -27,7 +27,8 @@ do
 #echo processes: 
 #pgrep -lf "$PROCESS_NAME"| grep -Ev $NOT_IN_PROCESS_NAME
 #echo end
-   smem -c "command pss swap" | grep "^`pgrep -lf $PROCESS_NAME| grep -Ev $NOT_IN_PROCESS_NAME | cut -d' ' -f1`" | gawk '{print systime()" "$0 }'|tail -n1 >> "$MEMORY_LOG"
-   ps aux| grep `pgrep -lf "$PROCESS_NAME"| grep -Ev "$NOT_IN_PROCESS_NAME" | cut -d" " -f1` | grep -v grep | gawk '{print systime()" "$3}' >>"$CPU_LOG"
+   pid=`pgrep -lf $PROCESS_NAME| grep -Ev $NOT_IN_PROCESS_NAME | cut -d' ' -f1`
+   smem -c "pid pss swap" | gawk -v pid=$pid '(pid == $1) {print systime()" "$2" "$3 }' >> "$MEMORY_LOG"
+   ps aux| gawk -v pid=$pid '(pid == $2) {print systime()" "$3}' >>"$CPU_LOG"
    sleep 1
 done 

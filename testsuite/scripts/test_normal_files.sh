@@ -79,9 +79,9 @@ function get_db_line {
     end=$2
     net_total=`gawk -v end=$end -v start=$start '($1 >= start && $1 <= end) {total+=$2+$3} END {print total}' "$TEMP_DIR"/netlog`
     net_avg=`gawk -v end=$end -v start=$start '($1 >= start && $1 <= end) {n++; total+=$2+$3} END {print total/(n+1)}' "$TEMP_DIR"/netlog`
-    mem_max=`gawk -v end=$end -v start=$start 'BEGIN {max=0} ($1 >= start && $1 <= end && max < $3) {max=$3} END {print max}' "$TEMP_DIR"/memlog`
-    swap_max=`gawk -v end=$end -v start=$start 'BEGIN {max=0} ($1 >= start && $1 <= end && max < $4) {max=$4} END {print max}' "$TEMP_DIR"/memlog`
-    mem_avg=`gawk -v end=$end -v start=$start '($1 >= start && $1 <= end) {n++; total+=$3} END {print total/(n+1)}' "$TEMP_DIR"/memlog`
+    mem_max=`gawk -v end=$end -v start=$start 'BEGIN {max=0} ($1 >= start && $1 <= end && max < $2) {max=$2} END {print max}' "$TEMP_DIR"/memlog`
+    swap_max=`gawk -v end=$end -v start=$start 'BEGIN {max=0} ($1 >= start && $1 <= end && max < $3) {max=$3} END {print max}' "$TEMP_DIR"/memlog`
+    mem_avg=`gawk -v end=$end -v start=$start '($1 >= start && $1 <= end) {n++; total+=$2} END {print total/(n+1)}' "$TEMP_DIR"/memlog`
     cpu_max=`gawk -v end=$end -v start=$start 'BEGIN {max=0} ($1 >= start && $1 <= end && max < $2) {max=$2} END {print max}' "$TEMP_DIR"/cpulog`
     cpu_avg=`gawk -v end=$end -v start=$start '($1 >= start && $1 <= end) {n++; total+=$2} END {print total/(n+1)}' "$TEMP_DIR"/cpulog`
     echo -n "$cpu_avg, $cpu_max, $mem_avg, $mem_max, $swap_max, $net_avg, $net_total"
