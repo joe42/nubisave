@@ -30,5 +30,4 @@ do
    pid=`pgrep -lf $PROCESS_NAME| grep -Ev $NOT_IN_PROCESS_NAME | cut -d' ' -f1`
    smem -c "pid pss swap" | gawk -v pid=$pid '(pid == $1) {print systime()" "$2" "$3 }' >> "$MEMORY_LOG"
    ps aux| gawk -v pid=$pid '(pid == $2) {print systime()" "$3}' >>"$CPU_LOG"
-   sleep 1
 done 
