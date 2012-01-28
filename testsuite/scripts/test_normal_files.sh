@@ -80,7 +80,7 @@ function get_db_line {
     # @param 3: stop of network transfer in seconds from the epoch
     start=$1
     end=$2
-    net_end=$2
+    net_end=$3
     net_total=`gawk -v end=$net_end -v start=$start '(($1 >= start && $1 <= end) || ($1 >= start && first_line == 0)) {total+=$2+$3; first_line=1} END {print total}' "$TEMP_DIR"/netlog`
     net_avg=`gawk -v end=$net_end -v start=$start '(($1 >= start && $1 <= end) || ($1 >= start && n == 0)) {n++; total+=$2+$3} END {print total/n}' "$TEMP_DIR"/netlog`
     mem_max=`gawk -v end=$end -v start=$start 'BEGIN {max=0} (($1 >= start && $1 <= end && max < $2) || ($1 >= start && max == 0)) {max=$2} END {print max}' "$TEMP_DIR"/memlog`
