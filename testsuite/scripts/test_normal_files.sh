@@ -81,13 +81,13 @@ function get_db_line {
     start=$1
     end=$2
     net_end=$2
-    net_total=`gawk -v end=$net_end -v start=$start '($1 >= start && $1 <= end) {total+=$2+$3} END {print total}' "$TEMP_DIR"/netlog`
-    net_avg=`gawk -v end=$net_end -v start=$start '($1 >= start && $1 <= end) {n++; total+=$2+$3} END {print total/(n+1)}' "$TEMP_DIR"/netlog`
-    mem_max=`gawk -v end=$end -v start=$start 'BEGIN {max=0} ($1 >= start && $1 <= end && max < $2) {max=$2} END {print max}' "$TEMP_DIR"/memlog`
-    swap_max=`gawk -v end=$end -v start=$start 'BEGIN {max=0} ($1 >= start && $1 <= end && max < $3) {max=$3} END {print max}' "$TEMP_DIR"/memlog`
-    mem_avg=`gawk -v end=$end -v start=$start '($1 >= start && $1 <= end) {n++; total+=$2} END {print total/(n+1)}' "$TEMP_DIR"/memlog`
-    cpu_max=`gawk -v end=$end -v start=$start 'BEGIN {max=0} ($1 >= start && $1 <= end && max < $2) {max=$2} END {print max}' "$TEMP_DIR"/cpulog`
-    cpu_avg=`gawk -v end=$end -v start=$start '($1 >= start && $1 <= end) {n++; total+=$2} END {print total/(n+1)}' "$TEMP_DIR"/cpulog`
+    net_total=`gawk -v end=$net_end -v start=$start '(($1 >= start && $1 <= end) || ($1 >= start && first_line == 0)) {total+=$2+$3; first_line=1} END {print total}' "$TEMP_DIR"/netlog`
+    net_avg=`gawk -v end=$net_end -v start=$start '(($1 >= start && $1 <= end) || ($1 >= start && n == 0)) {n++; total+=$2+$3} END {print total/n}' "$TEMP_DIR"/netlog`
+    mem_max=`gawk -v end=$end -v start=$start 'BEGIN {max=0} (($1 >= start && $1 <= end && max < $2) || ($1 >= start && max == 0)) {max=$2} END {print max}' "$TEMP_DIR"/memlog`
+    swap_max=`gawk -v end=$end -v start=$start 'BEGIN {max=0} (($1 >= start && $1 <= end && max < $3) || ($1 >= start && first_line == 0)) {max=$3; first_line=1} END {print max}' "$TEMP_DIR"/memlog`
+    mem_avg=`gawk -v end=$end -v start=$start '(($1 >= start && $1 <= end) || ($1 >= start && n == 0)) {n++; total+=$2} END {print total/n}' "$TEMP_DIR"/memlog`
+    cpu_max=`gawk -v end=$end -v start=$start 'BEGIN {max=0} (($1 >= start && $1 <= end && max < $2) || ($1 >= start && first_line == 0)) {max=$2; first_line=1} END {print max}' "$TEMP_DIR"/cpulog`
+    cpu_avg=`gawk -v end=$end -v start=$start '(($1 >= start && $1 <= end) || ($1 >= start && n == 0)) {n++; total+=$2} END {print total/n}' "$TEMP_DIR"/cpulog`
     echo -n "$cpu_avg, $cpu_max, $mem_avg, $mem_max, $swap_max, $net_avg, $net_total"
 }
 
@@ -133,10 +133,11 @@ echo time_of_operation $time_of_operation
 	if [ "$STOP_NETWORK_MONITORING_AFTER_FILE_OPERATION" != "yes" ];
 	then
 		time_of_network_stagnation=`wait_until_transfer_is_complete $file_size "$TEMP_DIR/netlog" $time_before_operation`
-		time_after_network_transfer=$((`date +"%s"`-$time_of_network_stagnation)) #subtract the time waited to make sure the network activity stagnated
+		time_after_network_transfer=$((`date +"%s"`-$time_of_network_stagnation)) #subtract the time waited for the network activity to stagnate
 	else
 		time_after_network_transfer=$time_after_operation
 	fi
+	sleep 2 # wait until logging produces some results to process
     ../scripts/stop_net_mem_cpu_logging.sh
 
     success=yes
