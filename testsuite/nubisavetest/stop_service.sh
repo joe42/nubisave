@@ -1,4 +1,4 @@
 #!/bin/bash
-#stops nubisave
-sudo fusermount -uz "$HOME/.nubisave/nubisavemount"
+#does nothing yet
+#sudo fusermount -uz "$HOME/.nubisave/nubisavemount"
 sleep 3 
