@@ -133,7 +133,7 @@ fi
 ../scripts/start_net_mem_cpu_logging.sh "$PROCESS_NAME" "$TEMP_DIR" &
 sleep 2 # wait until logging produces some results to process
 time_before_operation=`date +"%s"`
-time_of_operation=`/usr/bin/time -f "%e" cp --sparse=always samplefiles/sparse "$STORAGE_SERVICE_PATH"/ 2>&1`
+time_of_operation=`/usr/bin/time --quiet -f "%e" cp --sparse=always samplefiles/sparse "$STORAGE_SERVICE_PATH"/ 2>&1 |tail -n1`
 time_after_operation=`date +"%s"`
 echo time_of_operation $time_of_operation
 
@@ -155,7 +155,7 @@ echo "write, 1000, $time_of_operation, `get_db_line $time_before_operation $time
 ../scripts/start_net_mem_cpu_logging.sh "$PROCESS_NAME" "$TEMP_DIR" &
 sleep 2 # wait until logging produces some results to process
 time_before_operation=`date +"%s"`
-time_of_operation=`/usr/bin/time -f "%e" cp --sparse=always "$STORAGE_SERVICE_PATH/sparse" "$TEMP_DIR/sparse" 2>&1`
+time_of_operation=`/usr/bin/time --quiet -f "%e" cp --sparse=always "$STORAGE_SERVICE_PATH/sparse" "$TEMP_DIR/sparse" 2>&1 |tail -n1`
 time_after_operation=`date +"%s"`
 echo time_of_operation $time_of_operation
 
@@ -185,7 +185,7 @@ echo "read, 1000, $time_of_operation, `get_db_line $time_before_operation $time_
 ../scripts/start_net_mem_cpu_logging.sh "$PROCESS_NAME" "$TEMP_DIR" &
 sleep 2 # wait until logging produces some results to process
 time_before_operation=`date +"%s"`
-time_of_operation=`/usr/bin/time -f "%e" python ../scripts/write.py "$STORAGE_SERVICE_PATH/sparse" $ONE_MB $TEN_MB 1>/dev/null 2>&1`
+time_of_operation=`/usr/bin/time --quiet -f "%e" python ../scripts/write.py "$STORAGE_SERVICE_PATH/sparse" $ONE_MB $TEN_MB 1>/dev/null 2>&1 |tail -n1`
 time_after_operation=`date +"%s"`
 echo time_of_operation $time_of_operation
 
@@ -208,7 +208,7 @@ echo "write, 1, $time_of_operation, `get_db_line $time_before_operation $time_af
 ../scripts/start_net_mem_cpu_logging.sh "$PROCESS_NAME" "$TEMP_DIR" &
 sleep 2 # wait until logging produces some results to process
 time_before_operation=`date +"%s"`
-time_of_operation=`/usr/bin/time -f "%e" python ../scripts/read.py "$STORAGE_SERVICE_PATH/sparse" $ONE_MB $TEN_MB 1>/dev/null 2>&1`
+time_of_operation=`/usr/bin/time --quiet -f "%e" python ../scripts/read.py "$STORAGE_SERVICE_PATH/sparse" $ONE_MB $TEN_MB 1>/dev/null 2>&1 |tail -n1`
 time_after_operation=`date +"%s"`
 echo time_of_operation $time_of_operation
 
@@ -231,7 +231,7 @@ echo "read, 1, $time_of_operation, `get_db_line $time_before_operation $time_aft
 ../scripts/start_net_mem_cpu_logging.sh "$PROCESS_NAME" "$TEMP_DIR" &
 sleep 2 # wait until logging produces some results to process
 time_before_operation=`date +"%s"`
-time_of_operation=`/usr/bin/time -f "%e" echo "this is the end" >> "$STORAGE_SERVICE_PATH/sparse" 2>&1`
+time_of_operation=`/usr/bin/time --quiet -f "%e" echo "this is the end" >> "$STORAGE_SERVICE_PATH/sparse" 2>&1 |tail -n1`
 time_after_operation=`date +"%s"`
 echo time_of_operation $time_of_operation
 
