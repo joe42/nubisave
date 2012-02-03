@@ -216,7 +216,7 @@ check=''
 log_operation "$operation" "$operation_description" "$file_size" "$log_file" "$check"
 
 ################	Test no. 4.1: read from sparse file with size 1000MB	################
-operation='/usr/bin/time --quiet -f "%e" python ../scripts/read.py "'$STORAGE_SERVICE_PATH'/sparse" '$TEN_MB' '$ONE_MB' |tail -n1'
+operation='/usr/bin/time --quiet -f "%e" python ../scripts/read.py "'$STORAGE_SERVICE_PATH'/sparse" '$TEN_MB' '$ONE_MB' 2>&1 |tail -n1'
 operation_description='read'
 file_size='1'
 log_file="$TIME_LOG_SPARSE_1GB"
@@ -224,7 +224,7 @@ check=''
 log_operation "$operation" "$operation_description" "$file_size" "$log_file" "$check"
 
 ################	Test no. 4.2: read from sparse file with size 2000MB	################
-operation='/usr/bin/time --quiet -f "%e" python ../scripts/read.py "'$STORAGE_SERVICE_PATH'/sparse2" '$TEN_MB' '$ONE_MB' |tail -n1'
+operation='/usr/bin/time --quiet -f "%e" python ../scripts/read.py "'$STORAGE_SERVICE_PATH'/sparse2" '$TEN_MB' '$ONE_MB' 2>&1 |tail -n1'
 operation_description='read'
 file_size='1'
 log_file="$TIME_LOG_SPARSE_2GB"
