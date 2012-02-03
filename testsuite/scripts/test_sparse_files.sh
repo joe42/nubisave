@@ -117,6 +117,42 @@ function wait_until_transfer_is_complete {
 	echo $stagnated
 }
 
+function log_operation {
+    operation="$1" #operation returning the time for the operation
+    operation_description="$2" #description of the operation
+    file_size="$3" #a file size in MB related to the operation
+	log_file="$4"
+    check="$5" #optional operation to check the success of the operation
+    ../scripts/start_net_mem_cpu_logging.sh "$PROCESS_NAME" "$TEMP_DIR" &
+	sleep 2 # wait until logging produces some results to process
+    time_before_operation=`date +"%s"`
+    time_of_operation=`eval $operation`
+echo time_of_operation $time_of_operation
+    time_after_operation=`date +"%s"`	
+	if [ "$STOP_NETWORK_MONITORING_AFTER_FILE_OPERATION" != "yes" ];
+	then
+		time_of_network_stagnation=`wait_until_transfer_is_complete $file_size "$TEMP_DIR/netlog" $time_before_operation`
+		time_after_network_transfer=$((`date +"%s"`-$time_of_network_stagnation)) #subtract the time waited for the network activity to stagnate
+	else
+		time_after_network_transfer=$time_after_operation
+	fi
+	sleep 2 # wait until logging produces some results to process
+    ../scripts/stop_net_mem_cpu_logging.sh
+
+    success=yes
+    if [ "$check" != "" ];
+    then
+		error=`$check`
+		if [ "$error" != "" ];
+		then
+		    success=no
+		fi
+    fi
+
+    #"file_size time_for_operation_in_seconds average_cpu_load max_cpu_load average_mem_load max_mem_load max_swap_load average_net_load total_net_load success_in_yes_no"
+    echo "$operation_description, $file_size, $time_of_operation, `get_db_line $time_before_operation $time_after_operation $time_after_network_transfer`, $success" >> "$log_file"
+}
+
 
 echo "starting tests"
 $TEST_DIRECTORY/stop_service.sh
@@ -129,124 +165,47 @@ if [ ! -d "$SAMPLE_FILES_DIR" ]; then
     ../scripts/create_files.sh "$SAMPLE_FILES_DIR"
 fi
 
-################	Test no. 1: copy sparse file to storage service	################
-../scripts/start_net_mem_cpu_logging.sh "$PROCESS_NAME" "$TEMP_DIR" &
-sleep 2 # wait until logging produces some results to process
-time_before_operation=`date +"%s"`
-time_of_operation=`/usr/bin/time --quiet -f "%e" cp --sparse=always samplefiles/sparse "$STORAGE_SERVICE_PATH"/ 2>&1 |tail -n1`
-time_after_operation=`date +"%s"`
-echo time_of_operation $time_of_operation
-
-if [ "$STOP_NETWORK_MONITORING_AFTER_FILE_OPERATION" != "yes" ];
-then
-	time_of_network_stagnation=`wait_until_transfer_is_complete 1000 "$TEMP_DIR/netlog" $time_before_operation`
-	time_after_network_transfer=$((`date +"%s"`-$time_of_network_stagnation)) #subtract the time waited for the network activity to stagnate
-else
-	time_after_network_transfer=$time_after_operation
-fi
-sleep 2 # wait until logging produces some results to process
-../scripts/stop_net_mem_cpu_logging.sh
-
-#"file_size time_for_operation_in_seconds average_cpu_load max_cpu_load average_mem_load max_mem_load max_swap_load average_net_load total_net_load success_in_yes_no"
-echo "write, 1000, $time_of_operation, `get_db_line $time_before_operation $time_after_operation $time_after_network_transfer`, yes" >> "$TIME_LOG"
+################	Test no. 1.1: copy sparse file with size 1000MB to storage service	################
+operation='/usr/bin/time --quiet -f "%e" cp --sparse=always samplefiles/sparse "'$STORAGE_SERVICE_PATH'"/ 2>&1 |tail -n1'
+operation_description='write'
+file_size='1000'
+log_file="$TIME_LOG"
+check=""
+log_operation "$operation" "$operation_description" "$file_size" "$log_file" "$check"
 
 
 ################	Test no. 2: read sparse file from storage service	################
-../scripts/start_net_mem_cpu_logging.sh "$PROCESS_NAME" "$TEMP_DIR" &
-sleep 2 # wait until logging produces some results to process
-time_before_operation=`date +"%s"`
-time_of_operation=`/usr/bin/time --quiet -f "%e" cp --sparse=always "$STORAGE_SERVICE_PATH/sparse" "$TEMP_DIR/sparse" 2>&1 |tail -n1`
-time_after_operation=`date +"%s"`
-echo time_of_operation $time_of_operation
-
-if [ "$STOP_NETWORK_MONITORING_AFTER_FILE_OPERATION" != "yes" ];
-then
-	time_of_network_stagnation=`wait_until_transfer_is_complete 1000 "$TEMP_DIR/netlog" $time_before_operation`
-	time_after_network_transfer=$((`date +"%s"`-$time_of_network_stagnation)) #subtract the time waited for the network activity to stagnate
-else
-	time_after_network_transfer=$time_after_operation
-fi
-sleep 2 # wait until logging produces some results to process
-../scripts/stop_net_mem_cpu_logging.sh
-
-error=`checksum "$TEMP_DIR/sparse" samplefiles/sparse`
-success=yes
-if [ "$error" != "" ];
-then
-    success=no
-fi
-
-#"file_size time_for_operation_in_seconds average_cpu_load max_cpu_load average_mem_load max_mem_load max_swap_load average_net_load total_net_load success_in_yes_no"
-echo "read, 1000, $time_of_operation, `get_db_line $time_before_operation $time_after_operation $time_after_network_transfer`, $success" >> "$TIME_LOG"
-
+operation='/usr/bin/time --quiet -f "%e" cp --sparse=always "'$STORAGE_SERVICE_PATH/sparse'" "'$TEMP_DIR'/sparse" 2>&1 |tail -n1'
+operation_description='read'
+file_size='1000'
+log_file="$TIME_LOG"
+check='checksum "'$TEMP_DIR'/sparse" samplefiles/sparse'
+log_operation "$operation" "$operation_description" "$file_size" "$log_file" "$check"
 
 ################	Test no. 3: write to sparse file	################
-
-../scripts/start_net_mem_cpu_logging.sh "$PROCESS_NAME" "$TEMP_DIR" &
-sleep 2 # wait until logging produces some results to process
-time_before_operation=`date +"%s"`
-time_of_operation=`/usr/bin/time --quiet -f "%e" python ../scripts/write.py "$STORAGE_SERVICE_PATH/sparse" $TEN_MB $ONE_MB 2>&1 |tail -n1`
-time_after_operation=`date +"%s"`
-echo time_of_operation $time_of_operation
-
-if [ "$STOP_NETWORK_MONITORING_AFTER_FILE_OPERATION" != "yes" ];
-then
-	time_of_network_stagnation=`wait_until_transfer_is_complete 1 "$TEMP_DIR/netlog" $time_before_operation`
-	time_after_network_transfer=$((`date +"%s"`-$time_of_network_stagnation)) #subtract the time waited for the network activity to stagnate
-else
-	time_after_network_transfer=$time_after_operation
-fi
-sleep 2 # wait until logging produces some results to process
-../scripts/stop_net_mem_cpu_logging.sh
-
-#"file_size time_for_operation_in_seconds average_cpu_load max_cpu_load average_mem_load max_mem_load max_swap_load average_net_load total_net_load success_in_yes_no"
-echo "write, 1, $time_of_operation, `get_db_line $time_before_operation $time_after_operation $time_after_network_transfer`, yes" >> "$TIME_LOG"
-
+operation='/usr/bin/time --quiet -f "%e" python ../scripts/write.py "'$STORAGE_SERVICE_PATH'/sparse" '$TEN_MB' '$ONE_MB' 2>&1 |tail -n1'
+operation_description='write'
+file_size='1'
+log_file="$TIME_LOG"
+check=''
+log_operation "$operation" "$operation_description" "$file_size" "$log_file" "$check"
 
 ################	Test no. 4: read from sparse file	################
-
-../scripts/start_net_mem_cpu_logging.sh "$PROCESS_NAME" "$TEMP_DIR" &
-sleep 2 # wait until logging produces some results to process
-time_before_operation=`date +"%s"`
-time_of_operation=`/usr/bin/time --quiet -f "%e" python ../scripts/read.py "$STORAGE_SERVICE_PATH/sparse" $TEN_MB $ONE_MB |tail -n1`
-time_after_operation=`date +"%s"`
-echo time_of_operation $time_of_operation
-
-if [ "$STOP_NETWORK_MONITORING_AFTER_FILE_OPERATION" != "yes" ];
-then
-	time_of_network_stagnation=`wait_until_transfer_is_complete 1 "$TEMP_DIR/netlog" $time_before_operation`
-	time_after_network_transfer=$((`date +"%s"`-$time_of_network_stagnation)) #subtract the time waited for the network activity to stagnate
-else
-	time_after_network_transfer=$time_after_operation
-fi
-sleep 2 # wait until logging produces some results to process
-../scripts/stop_net_mem_cpu_logging.sh
-
-#"file_size time_for_operation_in_seconds average_cpu_load max_cpu_load average_mem_load max_mem_load max_swap_load average_net_load total_net_load success_in_yes_no"
-echo "read, 1, $time_of_operation, `get_db_line $time_before_operation $time_after_operation $time_after_network_transfer`, yes" >> "$TIME_LOG"
+operation='/usr/bin/time --quiet -f "%e" python ../scripts/read.py "'$STORAGE_SERVICE_PATH'/sparse" '$TEN_MB' '$ONE_MB' |tail -n1'
+operation_description='read'
+file_size='1'
+log_file="$TIME_LOG"
+check=''
+log_operation "$operation" "$operation_description" "$file_size" "$log_file" "$check"
 
 
 ################	Test no. 5: append to sparse file	################
-
-../scripts/start_net_mem_cpu_logging.sh "$PROCESS_NAME" "$TEMP_DIR" &
-sleep 2 # wait until logging produces some results to process
-time_before_operation=`date +"%s"`
-time_of_operation=`/usr/bin/time --quiet -f "%e" echo "this is the end" >> "$STORAGE_SERVICE_PATH/sparse" |tail -n1`
-time_after_operation=`date +"%s"`
-echo time_of_operation $time_of_operation
-
-if [ "$STOP_NETWORK_MONITORING_AFTER_FILE_OPERATION" != "yes" ];
-then
-	time_of_network_stagnation=`wait_until_transfer_is_complete 0 "$TEMP_DIR/netlog" $time_before_operation`
-	time_after_network_transfer=$((`date +"%s"`-$time_of_network_stagnation)) #subtract the time waited for the network activity to stagnate
-else
-	time_after_network_transfer=$time_after_operation
-fi
-sleep 2 # wait until logging produces some results to process
-../scripts/stop_net_mem_cpu_logging.sh
-
-#"file_size time_for_operation_in_seconds average_cpu_load max_cpu_load average_mem_load max_mem_load max_swap_load average_net_load total_net_load success_in_yes_no"
-echo "append 15 characters, 0, $time_of_operation, `get_db_line $time_before_operation $time_after_operation $time_after_network_transfer`, yes" >> "$TIME_LOG"
+operation='/usr/bin/time --quiet -f "%e" echo "this is the end" >> "'$STORAGE_SERVICE_PATH'/sparse" |tail -n1'
+operation_description='append 15 characters'
+file_size='0'
+log_file="$TIME_LOG"
+check=''
+log_operation "$operation" "$operation_description" "$file_size" "$log_file" "$check"
 
 rm "$TEMP_DIR/sparse"
 rm "$STORAGE_SERVICE_PATH/sparse"
