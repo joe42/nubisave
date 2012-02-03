@@ -46,7 +46,8 @@ TEST_DIRECTORY="$3"
 LOG_DIR="$TEST_DIRECTORY/logs/sparse/`date`"
 SAMPLE_FILES_DIR=samplefiles
 TEMP_DIR="/tmp/storage_service`date +"%s"`"
-TIME_LOG="$LOG_DIR/sparse_time_log"
+TIME_LOG_SPARSE_1GB="$LOG_DIR/sparse_time_log_1gb"
+TIME_LOG_SPARSE_2GB="$LOG_DIR/sparse_time_log_2gb"
 STORAGE_SERVICE_PATH="$1"
 USERNAME="$4"
 PASSWORD="$5"
@@ -169,45 +170,87 @@ fi
 operation='/usr/bin/time --quiet -f "%e" cp --sparse=always samplefiles/sparse "'$STORAGE_SERVICE_PATH'"/ 2>&1 |tail -n1'
 operation_description='write'
 file_size='1000'
-log_file="$TIME_LOG"
+log_file="$TIME_LOG_SPARSE_1GB"
+check=""
+log_operation "$operation" "$operation_description" "$file_size" "$log_file" "$check"
+
+################	Test no. 1.2: copy sparse file with size 2000MB to storage service	################
+operation='/usr/bin/time --quiet -f "%e" cp --sparse=always samplefiles/sparse2 "'$STORAGE_SERVICE_PATH'"/ 2>&1 |tail -n1'
+operation_description='write'
+file_size='2000'
+log_file="$TIME_LOG_SPARSE_2GB"
 check=""
 log_operation "$operation" "$operation_description" "$file_size" "$log_file" "$check"
 
 
-################	Test no. 2: read sparse file from storage service	################
+################	Test no. 2.1: read sparse file with size 1000MB from storage service	################
 operation='/usr/bin/time --quiet -f "%e" cp --sparse=always "'$STORAGE_SERVICE_PATH/sparse'" "'$TEMP_DIR'/sparse" 2>&1 |tail -n1'
 operation_description='read'
 file_size='1000'
-log_file="$TIME_LOG"
+log_file="$TIME_LOG_SPARSE_1GB"
 check='checksum "'$TEMP_DIR'/sparse" samplefiles/sparse'
 log_operation "$operation" "$operation_description" "$file_size" "$log_file" "$check"
 
-################	Test no. 3: write to sparse file	################
+################	Test no. 2.2: read sparse file with size 2000MB from storage service	################
+operation='/usr/bin/time --quiet -f "%e" cp --sparse=always "'$STORAGE_SERVICE_PATH/sparse2'" "'$TEMP_DIR'/sparse2" 2>&1 |tail -n1'
+operation_description='read'
+file_size='2000'
+log_file="$TIME_LOG_SPARSE_2GB"
+check='checksum "'$TEMP_DIR'/sparse2" samplefiles/sparse2'
+log_operation "$operation" "$operation_description" "$file_size" "$log_file" "$check"
+
+################	Test no. 3.1: write to sparse file with size 1000MB	################
 operation='/usr/bin/time --quiet -f "%e" python ../scripts/write.py "'$STORAGE_SERVICE_PATH'/sparse" '$TEN_MB' '$ONE_MB' 2>&1 |tail -n1'
 operation_description='write'
 file_size='1'
-log_file="$TIME_LOG"
+log_file="$TIME_LOG_SPARSE_1GB"
 check=''
 log_operation "$operation" "$operation_description" "$file_size" "$log_file" "$check"
 
-################	Test no. 4: read from sparse file	################
+################	Test no. 3.2: write to sparse file with size 2000MB	################
+operation='/usr/bin/time --quiet -f "%e" python ../scripts/write.py "'$STORAGE_SERVICE_PATH'/sparse2" '$TEN_MB' '$ONE_MB' 2>&1 |tail -n1'
+operation_description='write'
+file_size='1'
+log_file="$TIME_LOG_SPARSE_2GB"
+check=''
+log_operation "$operation" "$operation_description" "$file_size" "$log_file" "$check"
+
+################	Test no. 4.1: read from sparse file with size 1000MB	################
 operation='/usr/bin/time --quiet -f "%e" python ../scripts/read.py "'$STORAGE_SERVICE_PATH'/sparse" '$TEN_MB' '$ONE_MB' |tail -n1'
 operation_description='read'
 file_size='1'
-log_file="$TIME_LOG"
+log_file="$TIME_LOG_SPARSE_1GB"
+check=''
+log_operation "$operation" "$operation_description" "$file_size" "$log_file" "$check"
+
+################	Test no. 4.2: read from sparse file with size 2000MB	################
+operation='/usr/bin/time --quiet -f "%e" python ../scripts/read.py "'$STORAGE_SERVICE_PATH'/sparse2" '$TEN_MB' '$ONE_MB' |tail -n1'
+operation_description='read'
+file_size='1'
+log_file="$TIME_LOG_SPARSE_2GB"
 check=''
 log_operation "$operation" "$operation_description" "$file_size" "$log_file" "$check"
 
 
-################	Test no. 5: append to sparse file	################
+################	Test no. 5.1: append to sparse file with size 1000MB	################
 operation='/usr/bin/time --quiet -f "%e" echo "this is the end" >> "'$STORAGE_SERVICE_PATH'/sparse" |tail -n1'
 operation_description='append 15 characters'
 file_size='0'
-log_file="$TIME_LOG"
+log_file="$TIME_LOG_SPARSE_1GB"
+check=''
+log_operation "$operation" "$operation_description" "$file_size" "$log_file" "$check"
+
+################	Test no. 5.2: append to sparse file with size 2000MB	################
+operation='/usr/bin/time --quiet -f "%e" echo "this is the end" >> "'$STORAGE_SERVICE_PATH'/sparse2" |tail -n1'
+operation_description='append 15 characters'
+file_size='0'
+log_file="$TIME_LOG_SPARSE_2GB"
 check=''
 log_operation "$operation" "$operation_description" "$file_size" "$log_file" "$check"
 
 rm "$TEMP_DIR/sparse"
 rm "$STORAGE_SERVICE_PATH/sparse"
+rm "$TEMP_DIR/sparse2"
+rm "$STORAGE_SERVICE_PATH/sparse2"
 
 $TEST_DIRECTORY/stop_service.sh
