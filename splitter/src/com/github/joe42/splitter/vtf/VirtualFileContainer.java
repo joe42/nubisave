@@ -84,14 +84,12 @@ public class VirtualFileContainer {
 		for (String file : getFileNames(path)) {
 			FuseDirEnt entity = new FuseDirEnt();
 			entity.name = file;
-			System.out.println("file "+ file);
 			entity.mode = FuseFtype.TYPE_FILE;
 			ret.add(entity);
 		}
 		for (String dir : getDirNames(path)) {
 			FuseDirEnt entity = new FuseDirEnt();
 			entity.name = dir;
-			System.out.println("dir "+ dir);
 			entity.mode = FuseFtype.TYPE_DIR;
 			ret.add(entity);
 		}

@@ -32,10 +32,8 @@ public class RandomAccessTemporaryFileChannels {
 	 * @return  the FileChannel instance associated with key or null if no instance is stored under key
 	 */
 	public FileChannel getFileChannel(String key){
-		System.out.println("is null?");
 		if(tempMap.get(key) == null)
 			return null;
-		System.out.println("no");
 		return tempMap.get(key).getChannel(0);
 	}
 	
