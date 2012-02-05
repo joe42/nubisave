@@ -50,7 +50,7 @@ public class FileFragmentStore {
 	}
 
 	public void read(String path, ByteBuffer buf, long offset) throws FuseException, IOException {
-		System.out.println("buf.limit(): "+buf.limit()+" buf.position(): "+buf.position()+" "+"file size: "+fileFragmentMetaDataStore.getFragmentsSize(path)+" offset: "+offset+" end of read: "+(offset+buf.limit()));
+		//System.out.println("buf.limit(): "+buf.limit()+" buf.position(): "+buf.position()+" "+"file size: "+fileFragmentMetaDataStore.getFragmentsSize(path)+" offset: "+offset+" end of read: "+(offset+buf.limit()));
 		if (tempReadChannel == null) {
 			if( ! fileFragmentMetaDataStore.hasFragments(path) ) {
 				return;
@@ -66,8 +66,8 @@ public class FileFragmentStore {
 	 * @return true iff the file has been stored completely
 	 */
 	public boolean hasFlushed(String path)  throws IOException {
-		System.out.println("tempFiles: "+tempFiles);
-		System.out.println("tempFiles: "+tempFiles.getFileChannel(path));
+		//System.out.println("tempFiles: "+tempFiles);
+		//System.out.println("tempFiles: "+tempFiles.getFileChannel(path));
 		return tempFiles.getFileChannel(path) == null;
 	}
 

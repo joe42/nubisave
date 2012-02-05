@@ -271,7 +271,7 @@ file is removed after at most 10 seconds
 		String uniqueServiceNameTo = new File(to).getName();
 		BackendService serviceFrom = mounter.getServices().get(uniqueServiceNameFrom);
 		BackendService serviceTo = mounter.getServices().get(uniqueServiceNameTo);
-		System.out.println("mv "+serviceFrom.getDataDirPath()+"/* "+serviceTo.getDataDirPath());
+		//System.out.println("mv "+serviceFrom.getDataDirPath()+"/* "+serviceTo.getDataDirPath());
 		boolean fileMoved;
 		for(File srcFileFragment: new File(serviceFrom.getDataDirPath()).listFiles()){
 			File destFileFragment = new File(serviceTo.getDataDirPath()+"/"+srcFileFragment.getName());
