@@ -141,7 +141,7 @@ echo time_of_operation $time_of_operation
     ../scripts/stop_net_mem_cpu_logging.sh
 
     success=yes
-    if [ "$check" = "check" ];
+    if [ "$check" != "" ];
     then
 		error=`checksum "$copy_destination" "$SAMPLE_FILES_DIR/${file_size}MB"`
 		if [ "$error" != "" ];
