@@ -188,7 +188,7 @@ operation='/usr/bin/time --quiet -f "%e" cp --sparse=always "'$STORAGE_SERVICE_P
 operation_description='read'
 file_size='1000'
 log_file="$TIME_LOG_SPARSE_1GB"
-check='checksum "'$TEMP_DIR'/sparse" samplefiles/sparse'
+check='checksum '$TEMP_DIR'/sparse samplefiles/sparse'
 log_operation "$operation" "$operation_description" "$file_size" "$log_file" "$check"
 
 ################	Test no. 2.2: read sparse file with size 2000MB from storage service	################
@@ -196,7 +196,7 @@ operation='/usr/bin/time --quiet -f "%e" cp --sparse=always "'$STORAGE_SERVICE_P
 operation_description='read'
 file_size='2000'
 log_file="$TIME_LOG_SPARSE_2GB"
-check='checksum "'$TEMP_DIR'/sparse2" samplefiles/sparse2'
+check='checksum '$TEMP_DIR'/sparse2 samplefiles/sparse2'
 log_operation "$operation" "$operation_description" "$file_size" "$log_file" "$check"
 
 ################	Test no. 3.1: write to sparse file with size 1000MB	################
