@@ -154,10 +154,10 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 			ArrayList<String> fragmentFileNames) throws IOException {
 		byte[] arr;
 		HashMap<String, byte[]> fileParts = new HashMap<String, byte[]>();
+		arr = new byte[(int) temp.size()];
+		temp.read(ByteBuffer.wrap(arr));
 		for (String fragmentFileName: fragmentFileNames) {
 			log.debug("write: " + fragmentFileName);
-			arr = new byte[(int) temp.size()];
-			temp.read(ByteBuffer.wrap(arr));
 			fileParts.put(fragmentFileName, arr);
 		}
 		return fileParts;
