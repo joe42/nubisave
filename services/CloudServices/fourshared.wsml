@@ -91,8 +91,8 @@ instance FourShared memberOf { cloud#CloudStorage }
 	hasProperty hasValue { Availability, ResponseTime, MaxDownTime, NetworkBandwidth, SignupPrivacy }
 
 instance FourSharedWebdavProtocol memberOf { cloud#Protocol }
-	hasType hasName "webdav"
-	hasUrl hasName "https://4shared.com/dav???"
+	hasType hasValue "webdav"
+	hasUrl hasValue "https://4shared.com/dav???"
 
 instance FourSharedPlan memberOf { cloud#CloudStoragePlan }
 	hasSignupForm hasValue "http://www.4shared.com/signup.jsp"
