@@ -96,7 +96,7 @@ function wait_until_transfer_is_complete {
     # @param 1: size of transfer in MB
     # @param 2: log file with ifstat output, where the first column is the time in seconds from the epoch of when the line was output by ifstat
     # @param 3: the time in seconds from the epoch of when the file operation started
-	transfered_KB=`gawk -v start=$3 '($1 >= start) {total+=$2+$3} END {print total}' $2`
+	transfered_KB=`gawk -v start=$3 'BEGIN {total=0} ($1 >= start) {total+=$2+$3} END {print total}' $2`
 	transfered_KB=`round $transfered_KB`
 	previous_transfered_KB=$transfered_KB
 	stagnated=0
@@ -174,7 +174,7 @@ do
     echo "Testing file size ${size}MB"
 
 
-    log_copy_operation "samplefiles/${size}MB" "$STORAGE_SERVICE_PATH/${size}MB" $size "$WRITE_TIME_LOG" "nocheck"
+    log_copy_operation "samplefiles/${size}MB" "$STORAGE_SERVICE_PATH/${size}MB" $size "$WRITE_TIME_LOG"
     log_copy_operation "$STORAGE_SERVICE_PATH/${size}MB" "$TEMP_DIR/${size}MB" $size "$READ_TIME_LOG" "check"
 
     rm "$TEMP_DIR/${size}MB"
