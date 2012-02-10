@@ -12,7 +12,8 @@ namespace { _"http://localhost:8080/Matchmaker/ontologies/CloudStorage.wsml#",
             wsml _"http://www.wsmo.org/wsml/wsml-syntax#" }
 
 ontology CloudStorage
- importsOntology { _"http://localhost:8080/Matchmaker/ontologies/RemoteQoSBase.wsml#" }
+ importsOntology { _"http://localhost:8080/Matchmaker/ontologies/RemoteQoSBase.wsml#",
+                   _"http://localhost:8080/Matchmaker/ontologies/BusinessBase.wsml#" }
  nonFunctionalProperties
   wsml#version hasValue "1.0"
   dc#creator hasValue "Gerd Bombach, Josef Spillner"
@@ -20,7 +21,7 @@ ontology CloudStorage
   dc#description hasValue "WSML base and domain ontologies for cloud storage services"
   dc#publisher hasValue "Technische Universität Dresden"
   dc#date hasValue "2012-01-17"
-  qosdefinition hasValue "Cloud Storage domain ontology"
+  qosdefinition hasValue "Cloud Storage"
  endNonFunctionalProperties
 
 /* ---------------------- */
