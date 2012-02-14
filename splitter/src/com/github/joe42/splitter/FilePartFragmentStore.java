@@ -6,11 +6,14 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.SortedSet;
 
+import org.apache.log4j.Logger;
+
 import com.github.joe42.splitter.util.file.RandomAccessTemporaryFileChannel;
 
 import fuse.FuseException;
 
 public class FilePartFragmentStore extends FileFragmentStore{
+	private static final Logger log = Logger.getLogger("FilePartFragmentStore");
 	private static final long MAX_FILESIZE = 4096*80;
 	private String lastFilePartPathWrittenTo = null;
 	private String lastFilePartPathReadFrom = null;
@@ -22,14 +25,13 @@ public class FilePartFragmentStore extends FileFragmentStore{
 
 	public void write(String path, ByteBuffer buf, long offset) throws IOException, FuseException {
 		String filePartPath = ((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).getFilePartPath(path, offset);
-		//System.out.println("filePartPath: "+filePartPath);
 		if (tempFiles.getFileChannel(filePartPath) == null) {
 			if( ! ((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).hasFilePartFragments(filePartPath) ){
-				//System.out.println("Create new filePartPath: "+filePartPath);
+				log.debug("Create new filePartPath: "+filePartPath);
 				((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).put(path, offset);
 				tempFiles.putNewFileChannel(filePartPath);
 			} else {
-				//System.out.println("Get existing filePartPath: "+filePartPath);
+				log.debug("Get existing filePartPath: "+filePartPath);
 				tempFiles.put(filePartPath, getFilePart(filePartPath));
 			}
 		}
@@ -44,7 +46,7 @@ public class FilePartFragmentStore extends FileFragmentStore{
 		} else if( ! lastFilePartPathWrittenTo.equals(currentFilePartPath) ){
 			FileChannel temp = tempFiles.getFileChannel(lastFilePartPathWrittenTo);
 			if(temp != null){
-				//System.out.println("flush lastFilePartPathWrittenTo: "+lastFilePartPathWrittenTo+" size: "+temp.size());
+				log.debug("flush lastFilePartPathWrittenTo: "+lastFilePartPathWrittenTo+" size: "+temp.size());
 				tempReadChannel = null;
 				splitter.splitFile(fileFragmentMetaDataStore, lastFilePartPathWrittenTo, temp, getRedundancy());
 				tempFiles.delete(lastFilePartPathWrittenTo);
@@ -54,7 +56,6 @@ public class FilePartFragmentStore extends FileFragmentStore{
 	}
 
 	public void read(String path, ByteBuffer buf, long offset) throws FuseException, IOException {
-		//System.out.println("begin");
 		String filePartPath = ((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).getFilePartPath(path, offset);
 		if (tempReadChannel == null || lastFilePartPathReadFrom == null || ! lastFilePartPathReadFrom.equals(filePartPath)) { 
 			if(tempReadChannel != null){
@@ -63,10 +64,10 @@ public class FilePartFragmentStore extends FileFragmentStore{
 			tempReadChannel = getFilePart(filePartPath);
 			 lastFilePartPathReadFrom = filePartPath;
 		}
-		//System.out.println("has next: "+((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).hasNextFilePart(path, offset));
-
-		 tempReadChannel.getChannel().read(buf, offset%MAX_FILESIZE);
-		 //System.out.println("buf.limit(): "+buf.limit()+" buf.position(): "+buf.position()+" "+"file size: "+((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).getSize(path)+" offset: "+offset+" end of read: "+(offset+buf.limit()));
+		log.debug("has next: "+((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).hasNextFilePart(path, offset));
+		
+		tempReadChannel.getChannel().read(buf, offset%MAX_FILESIZE);
+		log.debug("buf.limit(): "+buf.limit()+" buf.position(): "+buf.position()+" "+"file size: "+((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).getSize(path)+" offset: "+offset+" end of read: "+(offset+buf.limit()));
 		if(buf.position() != buf.limit()  //available space in buffer exceeds file part size read from offset (important for sparse files: tempReadChannel.getChannel().size() < offset%MAX_FILESIZE+buf.limit())
 				&& ((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).hasNextFilePart(path, offset)){
 			tempReadChannel.getChannel().close();
@@ -75,7 +76,7 @@ public class FilePartFragmentStore extends FileFragmentStore{
 			lastFilePartPathReadFrom = filePartPath;
 			ByteBuffer bb = ByteBuffer.allocate(buf.remaining());
 			tempReadChannel.getChannel().read(bb, 0);
-			//System.out.println("buf.position(); "+buf.position());
+			log.debug("buf.position(); "+buf.position());
 			bb.position(0);
 			buf.put(bb);
 		 }
@@ -135,7 +136,7 @@ public class FilePartFragmentStore extends FileFragmentStore{
 
 	public void flushCache(String path) throws IOException, FuseException {
 		for(String filePartPath:  ((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).getFilePartPaths(path)){
-			//System.out.println("filePartPath to flush: "+filePartPath);
+			log.debug("filePartPath to flush: "+filePartPath);
 			if(! hasFlushedFilePart(filePartPath)){
 				splitter.splitFile(fileFragmentMetaDataStore, filePartPath, tempFiles.getFileChannel(filePartPath), getRedundancy());
 				removeCache(filePartPath);

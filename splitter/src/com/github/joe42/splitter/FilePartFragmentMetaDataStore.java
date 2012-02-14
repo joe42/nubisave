@@ -8,6 +8,8 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.apache.log4j.Logger;
+
 import com.github.joe42.splitter.util.file.PropertiesUtil;
 
 import jdbm.RecordManager;
@@ -19,6 +21,7 @@ import jdbm.htree.HTree;
  * This extension is used by StreamSplittingStore, which divides complete files to file parts with a maximal size, which in turn are fragmented by a Splitter. 
  */
 public class FilePartFragmentMetaDataStore extends FileFragmentMetaDataStore{
+	private static final Logger log = Logger.getLogger("FilePartFragmentMetaDataStore");
 	private HTree filePathToFilePartNumbersMap;
 	private long maxFilePartSize;
 	
@@ -29,17 +32,17 @@ public class FilePartFragmentMetaDataStore extends FileFragmentMetaDataStore{
 	}
 	
 	/**Store a file part name along with its number persistently
-	 * @param filePartName the path of the file part
+	 * @param filePath the path of the whole file
 	 * @param offset the offset, which is automatically assigned to a file part number 
 	 * @throws IOException 
 	 */
-	public void put(String filePartName, long offset) throws IOException{
-		SortedSet<Integer> filePartNumbers = (SortedSet<Integer>) filePathToFilePartNumbersMap.get(filePartName);
+	public void put(String filePath, long offset) throws IOException{
+		SortedSet<Integer> filePartNumbers = (SortedSet<Integer>) filePathToFilePartNumbersMap.get(filePath);
 		if(filePartNumbers == null){
 			filePartNumbers = new TreeSet<Integer>();
 		}
 		filePartNumbers.add((int)(offset/maxFilePartSize));
-		filePathToFilePartNumbersMap.put(filePartName, filePartNumbers);
+		filePathToFilePartNumbersMap.put(filePath, filePartNumbers);
 		commit();
 	}
 
@@ -118,8 +121,8 @@ public class FilePartFragmentMetaDataStore extends FileFragmentMetaDataStore{
 	 */
 	public boolean hasNextFilePart(String filePath, long offset) throws IOException{
 		SortedSet<Integer> filePartNumbers = getFilePartNumbers(filePath);
-		//if(filePartNumbers.size() != 0)
-			//System.out.println("filePartNumbers.last()*maxFilePartSize:"+filePartNumbers.last()*maxFilePartSize);
+		if(filePartNumbers.size() != 0)
+			log.debug("filePartNumbers.last()*maxFilePartSize:"+filePartNumbers.last()*maxFilePartSize);
 		return filePartNumbers.size() != 0 && filePartNumbers.last()*maxFilePartSize > offset;
 	}
 	

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import org.apache.log4j.Logger;
 import org.ini4j.Ini;
 
 import com.github.joe42.splitter.backend.BackendService;
@@ -26,6 +27,8 @@ public class ConfigurableFuseBox extends FuseBox  implements StorageService{
 	private VirtualFileContainer virtualFolder;
 	private VirtualFile vtSplitterConfig;
 	private Mounter mounter;
+	private static final Logger log = Logger.getLogger("FuseBox");
+	
 	public ConfigurableFuseBox(CauchyReedSolomonSplitter splitter, Mounter mounter) throws IOException{
 		super(splitter);
 		this.mounter = mounter;
@@ -271,7 +274,7 @@ file is removed after at most 10 seconds
 		String uniqueServiceNameTo = new File(to).getName();
 		BackendService serviceFrom = mounter.getServices().get(uniqueServiceNameFrom);
 		BackendService serviceTo = mounter.getServices().get(uniqueServiceNameTo);
-		//System.out.println("mv "+serviceFrom.getDataDirPath()+"/* "+serviceTo.getDataDirPath());
+		log.debug("mv "+serviceFrom.getDataDirPath()+"/* "+serviceTo.getDataDirPath());
 		boolean fileMoved;
 		for(File srcFileFragment: new File(serviceFrom.getDataDirPath()).listFiles()){
 			File destFileFragment = new File(serviceTo.getDataDirPath()+"/"+srcFileFragment.getName());

@@ -4,12 +4,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import org.apache.log4j.Logger;
 import org.ini4j.Ini;
 
 import com.github.joe42.splitter.util.file.FileUtil;
 
 
 public class Mounter {
+	private static final Logger  log = Logger.getLogger("Mounter");
 	private String storages;
 	private BackendServices services;
 	/**
@@ -50,7 +52,7 @@ public class Mounter {
 		 * */
 		BackendService service = new BackendService(storages, uniqueServiceName, mountOptions);
 		try {
-			System.out.println("Executing: "+service.getMountcommand());
+			log.info("Executing: "+service.getMountcommand());
 			service.mount();
 			if(! isMounted(service.getConfigFilePath())){
 				return null;

@@ -5,6 +5,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+
+import org.apache.log4j.Logger;
+
 import com.github.joe42.splitter.util.file.RandomAccessTemporaryFileChannel;
 import com.github.joe42.splitter.util.file.RandomAccessTemporaryFileChannels;
 import com.github.joe42.splitter.vtf.FileEntry;
@@ -13,6 +16,7 @@ import com.github.joe42.splitter.util.*;
 import fuse.FuseException;
 
 public class FileFragmentStore {
+	private static final Logger  log = Logger.getLogger("FileFragmentStore");
 	protected RandomAccessTemporaryFileChannels tempFiles;
 	protected RandomAccessTemporaryFileChannel tempReadChannel;
 	protected CauchyReedSolomonSplitter splitter;
@@ -50,7 +54,7 @@ public class FileFragmentStore {
 	}
 
 	public void read(String path, ByteBuffer buf, long offset) throws FuseException, IOException {
-		//System.out.println("buf.limit(): "+buf.limit()+" buf.position(): "+buf.position()+" "+"file size: "+fileFragmentMetaDataStore.getFragmentsSize(path)+" offset: "+offset+" end of read: "+(offset+buf.limit()));
+		log.debug("buf.limit(): "+buf.limit()+" buf.position(): "+buf.position()+" "+"file size: "+fileFragmentMetaDataStore.getFragmentsSize(path)+" offset: "+offset+" end of read: "+(offset+buf.limit()));
 		if (tempReadChannel == null) {
 			if( ! fileFragmentMetaDataStore.hasFragments(path) ) {
 				return;
@@ -66,8 +70,6 @@ public class FileFragmentStore {
 	 * @return true iff the file has been stored completely
 	 */
 	public boolean hasFlushed(String path)  throws IOException {
-		//System.out.println("tempFiles: "+tempFiles);
-		//System.out.println("tempFiles: "+tempFiles.getFileChannel(path));
 		return tempFiles.getFileChannel(path) == null;
 	}
 
