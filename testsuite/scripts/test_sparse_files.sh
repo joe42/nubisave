@@ -177,7 +177,7 @@ log_operation "$operation" "$operation_description" "$file_size" "$log_file" "$c
 
 
 ################	Test no. 5.1: append to sparse file with size 1000MB	################
-operation='/usr/bin/time --quiet -f "%e" echo "this is the end" >> "'$STORAGE_SERVICE_PATH'/sparse" 2>&1 |tail -n1'
+operation='/usr/bin/time --output "'$TEMP_DIR'/append" --quiet -f "%e" echo "this is the end" >> "'$STORAGE_SERVICE_PATH'/sparse" ; tail -n1 "'$TEMP_DIR'/append"'
 operation_description='append 15 characters'
 file_size='0'
 log_file="$TIME_LOG_SPARSE_1GB"
@@ -185,7 +185,7 @@ check=''
 log_operation "$operation" "$operation_description" "$file_size" "$log_file" "$check"
 
 ################	Test no. 5.2: append to sparse file with size 2000MB	################
-operation='/usr/bin/time --quiet -f "%e" echo "this is the end" >> "'$STORAGE_SERVICE_PATH'/sparse2" 2>&1 |tail -n1'
+operation='/usr/bin/time --output "'$TEMP_DIR'/append" --quiet -f "%e" echo "this is the end" >> "'$STORAGE_SERVICE_PATH'/sparse2" ; tail -n1 "'$TEMP_DIR'/append"'
 operation_description='append 15 characters'
 file_size='0'
 log_file="$TIME_LOG_SPARSE_2GB"
