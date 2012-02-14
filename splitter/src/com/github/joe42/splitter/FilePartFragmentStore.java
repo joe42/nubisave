@@ -14,7 +14,7 @@ import fuse.FuseException;
 
 public class FilePartFragmentStore extends FileFragmentStore{
 	private static final Logger log = Logger.getLogger("FilePartFragmentStore");
-	private static final long MAX_FILESIZE = 4096*80;
+	private static final long MAX_FILESIZE = 4096*800;
 	private String lastFilePartPathWrittenTo = null;
 	private String lastFilePartPathReadFrom = null;
 	
