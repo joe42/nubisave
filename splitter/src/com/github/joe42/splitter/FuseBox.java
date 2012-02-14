@@ -3,7 +3,6 @@ package com.github.joe42.splitter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.*;
@@ -16,6 +15,7 @@ import jdbm.htree.HTree;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
+import com.github.joe42.splitter.util.LinuxUtil;
 import com.github.joe42.splitter.util.file.MultipleFileHandler;
 import com.github.joe42.splitter.util.file.RandomAccessTemporaryFileChannels;
 import com.github.joe42.splitter.util.file.PropertiesUtil;
@@ -57,48 +57,8 @@ public class FuseBox implements Filesystem1 {
 		
 		metaDataStore = new FileMetaDataStore();
 		fileStore = new FilePartFragmentStore(splitter);
-		UID = getUID();
-		GID = getGID();
-	}
-
-	private int getUID() {
-		String uid = null;
-		try {
-		    String userName = System.getProperty("user.name");
-		    String command = "id -u "+userName;
-		    Process child = Runtime.getRuntime().exec(command);
-
-		    // Get the input stream and read from it
-		    InputStream in = child.getInputStream();
-		    int c;
-		    uid = "";
-		    while ((c = in.read()) != -1) {
-		        uid += ((char)c);
-		    }
-		    in.close();
-		} catch (IOException e) {
-		}
-		return Integer.parseInt(uid.trim());
-	}
-
-	private int getGID() {
-		String gid = null;
-		try {
-		    String userName = System.getProperty("user.name");
-		    String command = "id -g "+userName;
-		    Process child = Runtime.getRuntime().exec(command);
-
-		    // Get the input stream and read from it
-		    InputStream in = child.getInputStream();
-		    int c;
-		    gid = "";
-		    while ((c = in.read()) != -1) {
-		        gid += ((char)c);
-		    }
-		    in.close();
-		} catch (IOException e) {
-		}
-		return Integer.parseInt(gid.trim());
+		UID = LinuxUtil.getUID();
+		GID = LinuxUtil.getGID();
 	}
 
 	public void chmod(String path, int mode) throws FuseException {
