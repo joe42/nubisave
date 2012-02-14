@@ -32,12 +32,6 @@ import fuse.compat.Filesystem1;
 import fuse.compat.FuseDirEnt;
 import fuse.compat.FuseStat;
 
-//TODO: add copyright
-//Parallel read: done
-//Fixed: write appended data; or wrote nonsence.
-//<1238
-//overwrite existing files
-
 public class FuseBox implements Filesystem1 {
 	private static final Logger  log = Logger.getLogger("FuseBox");
 
@@ -69,15 +63,9 @@ public class FuseBox implements Filesystem1 {
 		throw new FuseException("Read Only").initErrno(FuseException.EACCES);
 	}
 
-	// mknod is not called because of unsupportet op exception here
 	public FuseStat getattr(String path) throws FuseException {
 		FuseStat stat = new FuseStat();
 		Entry entry = null;
-		/*
-		 * if(path.startsWith("/.config###")){ if(path.equals("/.config###")){
-		 * entry = new FolderEntry(); stat.mode = FuseFtype.TYPE_DIR | 0755; }
-		 * if() }
-		 */
 		try {
 			entry = metaDataStore.getEntry(path);
 			if (entry instanceof FileEntry) {
@@ -94,7 +82,6 @@ public class FuseBox implements Filesystem1 {
 		if (entry == null)
 			throw new FuseException("No Such Entry")
 					.initErrno(FuseException.ENOENT);
-		//TODO: tidy up
 		stat.nlink = entry.nlink;
 		stat.uid = entry.uid;
 		stat.gid = entry.gid;
@@ -107,7 +94,6 @@ public class FuseBox implements Filesystem1 {
 	}
 
 	public FuseDirEnt[] getdir(String path) throws FuseException {
-		//TODO: tidy up
 		FastIterator paths;
 		try {
 			if (metaDataStore.getFolderEntry(path) == null)
