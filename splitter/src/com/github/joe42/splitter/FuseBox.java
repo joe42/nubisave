@@ -325,9 +325,17 @@ public class FuseBox implements Filesystem1 {
 	protected void setRedundancy(int redundancy) {
 		fileStore.setRedundancy(redundancy);
 	}
-
+	
 	protected int getRedundancy() {
 		return fileStore.getRedundancy();
+	}
+
+	protected void setStorageStrategyName(String storageStrategyName) {
+		fileStore.setStorageStrategyName(storageStrategyName);
+	}
+	
+	protected void getStorageStrategyName() {
+		fileStore.getStorageStrategyName();
 	}
 	
 	protected FileFragmentStore getFileFragmentStore(){

@@ -47,7 +47,7 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 		return services;
 	}
 	
-	public void splitFile(FileFragmentMetaDataStore fileFragmentMetaDataStore, String path, FileChannel temp, int redundancy) throws FuseException, IOException {
+	public void splitFile(FileFragmentMetaDataStore fileFragmentMetaDataStore, String path, FileChannel temp, int redundancy, String storageStrategyName) throws FuseException, IOException {
 		
 		int nr_of_file_parts_successfully_stored = 0;
 		HashMap<String, byte[]> fileParts = new HashMap<String, byte[]>();
@@ -59,7 +59,7 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 		String fragment_name;
 		if(! fileFragmentMetaDataStore.hasFragments(path) || storageStrategyFactory.changeToCurrentStrategy()){
 			List<String> fragmentDirectories;
-			storageStrategy = storageStrategyFactory.createStrategy("RoundRobin", redundancy);
+			storageStrategy = storageStrategyFactory.createStrategy(storageStrategyName, redundancy);
 			 fragmentDirectories = storageStrategy.getFragmentDirectories();
 			 nr_of_file_fragments = fragmentDirectories.size();
 			String uniquePath, uniqueFileName;

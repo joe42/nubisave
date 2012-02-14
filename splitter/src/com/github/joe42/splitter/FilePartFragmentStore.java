@@ -54,7 +54,7 @@ public class FilePartFragmentStore extends FileFragmentStore{
 			if(temp != null){
 				log.debug("flush lastFilePartPathWrittenTo: "+lastFilePartPathWrittenTo+" size: "+temp.size());
 				tempReadChannel = null;
-				splitter.splitFile(fileFragmentMetaDataStore, lastFilePartPathWrittenTo, temp, getRedundancy());
+				splitter.splitFile(fileFragmentMetaDataStore, lastFilePartPathWrittenTo, temp, getRedundancy(), storageStrategyName);
 				tempFiles.delete(lastFilePartPathWrittenTo);
 			}
 			lastFilePartPathWrittenTo = currentFilePartPath;
@@ -154,7 +154,7 @@ public class FilePartFragmentStore extends FileFragmentStore{
 		for(String filePartPath:  ((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).getFilePartPaths(path)){
 			log.debug("filePartPath to flush: "+filePartPath);
 			if(! hasFlushedFilePart(filePartPath)){
-				splitter.splitFile(fileFragmentMetaDataStore, filePartPath, tempFiles.getFileChannel(filePartPath), getRedundancy());
+				splitter.splitFile(fileFragmentMetaDataStore, filePartPath, tempFiles.getFileChannel(filePartPath), getRedundancy(), storageStrategyName);
 				removeCache(filePartPath);
 			}
 		}

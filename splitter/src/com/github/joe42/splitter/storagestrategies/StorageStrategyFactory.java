@@ -31,7 +31,8 @@ public class StorageStrategyFactory {
 	 */
 	public StorageStrategy createStrategy(String strategyName, int redundancy) {
 		StorageStrategy ret = null;
-		if(strategyName.equals("RoundRobin")){
+		if(false){//strategyName.equals("RoundRobin")
+		} else { //RoundRobin as default
 			if(roundRobin == null || ! dataDirPaths.equals(new TreeSet<String>(services.getDataDirPaths()))){
 				dataDirPaths = new TreeSet<String>(services.getDataDirPaths());
 				roundRobin = new RoundRobinStorageStrategy(services.getDataDirPaths());
