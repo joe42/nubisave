@@ -41,6 +41,7 @@ if [ $# -lt 5 ]; then
    exit
 fi  
 
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROCESS_NAME="$2"
 TEST_DIRECTORY="$3"
 FILE_SIZES="$4"
@@ -60,7 +61,7 @@ $TEST_DIRECTORY/info.sh > "$LOG_DIR/info"
 git diff > "$LOG_DIR/diff"
 
 
-source functions.sh
+source "$DIR"/functions.sh
 
 function log_copy_operation {
     copy_source="$1" #copy source
