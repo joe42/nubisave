@@ -3,24 +3,22 @@ package com.github.joe42.splitter.storagestrategies;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
- * Iterates over a list of storages by consecutive calls to {@link #getFragmentDirectories() getFragmentDirectories()}.
+ * Uses all potential storage directories. 
+ * Storing a file is only successful if all storage operations were successful.
  */
-public class RoundRobinStorageStrategy implements StorageStrategy {
-	private long round;
+public class UseAllInParallelStorageStrategy  implements StorageStrategy {
 	private List<String> potentialStorageDirectories;
 	private int redundancy;
 	private long filesize;
 	
 	
 	/**
-	 * Creates a RoundRobinStorageStrategy object with a list of storages to iterate over and with half the number of #potentialStorageDirectories - 1 as expendable stores.
+	 * Creates a UseAllInParallelStorageStrategy object using all potentialStorageDirectories in parallel with half the number of #potentialStorageDirectories - 1 as expendable stores.
 	 * @param potentialStorageDirectories
 	 */
-	public RoundRobinStorageStrategy(List<String> potentialStorageDirectories){
+	public UseAllInParallelStorageStrategy(List<String> potentialStorageDirectories){
 		this.potentialStorageDirectories = potentialStorageDirectories;
-		round = 0;
 		redundancy = 50;
 	}
 
@@ -61,21 +59,15 @@ public class RoundRobinStorageStrategy implements StorageStrategy {
 		return false;
 	}
 
+
 	/**
 	 * Get the directories to store the file fragments to
-	 * Returns the next potential storage with each call. If the number n of redundant fragments returned by  {@link #getNrOfRedundantFragments() getNrOfRedundantFragments()} is greater than 0,
-	 * the next 1+n storages are returned, each time starting at the last storage returned.
+	 * Returns all potential storages.
 	 * @return a list of directory paths 
 	 */
 	@Override
 	public List<String> getFragmentDirectories() {
-		int nrOfFragments = getNrOfRedundantFragments() +1;
-		List<String> ret = new ArrayList<String>();
-		for(long i=round; i<round+nrOfFragments;i++){
-			ret.add(potentialStorageDirectories.get((int) (i%potentialStorageDirectories.size())));
-		}
-		round++;
-		return ret;
+		return potentialStorageDirectories;
 	}
 
 	/**
@@ -93,12 +85,12 @@ public class RoundRobinStorageStrategy implements StorageStrategy {
 
 	/**
 	 * Get the number of file fragments that must be stored successfully.
-	 * Return 1 for higher speed.
+	 * The number equals one plus the number of redundant fragments returned by {@link #getNrOfRedundantFragments() getNrOfRedundantFragments()}.
 	 * @return the number of file fragments that must be stored
 	 */
 	@Override
 	public int getNrOfRequiredSuccessfullyStoredFragments() {
-		return 1;
+		return 1 +  getNrOfRedundantFragments(); 
 	}
 
 }

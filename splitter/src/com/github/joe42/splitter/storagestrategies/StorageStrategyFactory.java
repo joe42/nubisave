@@ -15,6 +15,7 @@ import com.github.joe42.splitter.backend.BackendServices;
 public class StorageStrategyFactory {
 	public static enum AvailableStorageStrategies {Roundrobin};
 	private RoundRobinStorageStrategy roundRobin = null;
+	private UseAllInParallelStorageStrategy useInParallel = null;
 	private BackendServices services;
 	private boolean changeToCurrentStrategy = true;
 	private StorageStrategy previousStorageStrategy = null;
@@ -31,7 +32,18 @@ public class StorageStrategyFactory {
 	 */
 	public StorageStrategy createStrategy(String strategyName, int redundancy) {
 		StorageStrategy ret = null;
-		if(false){//strategyName.equals("RoundRobin")
+		if(strategyName.equals("UseAllInParallel")){
+			if(useInParallel == null){
+				dataDirPaths = new TreeSet<String>(services.getDataDirPaths());
+				useInParallel = new UseAllInParallelStorageStrategy(services.getDataDirPaths());
+			}
+			if( !new TreeSet<String>(useInParallel.getPotentialStorageDirectories()).equals(new TreeSet<String>(services.getDataDirPaths())) ) {
+				useInParallel.setPotentialStorageDirectories(services.getDataDirPaths());
+			}
+			useInParallel.setRedundancy(redundancy);
+			changeToCurrentStrategy = useInParallel.changeToCurrentStrategy(previousStorageStrategy);
+			previousStorageStrategy = useInParallel;
+			ret = useInParallel;
 		} else { //RoundRobin as default
 			if(roundRobin == null || ! dataDirPaths.equals(new TreeSet<String>(services.getDataDirPaths()))){
 				dataDirPaths = new TreeSet<String>(services.getDataDirPaths());
