@@ -1,3 +1,10 @@
+nubisave (0.0~git20120216-1) unstable; urgency=low
+
+  * New year, new snapshot.
+  * Includes the extended Cloud Storage Ontology.
+
+ -- Josef Spillner <josef@rumba>  Thu, 16 Feb 2012 14:57:43 -0300
+
 nubisave (0.0~git20111221-1) unstable; urgency=low
 
   * Pending snapshot.
