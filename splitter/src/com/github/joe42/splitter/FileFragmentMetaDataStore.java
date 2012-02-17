@@ -44,6 +44,27 @@ public class FileFragmentMetaDataStore {
 		fileFragmentsMap.remove(from);
 		commit();
 	}
+	
+	/** Rename the path used to reference a file fragment
+	 * @param from a path of a file fragment
+	 * @param to the new path of the file fragment
+	 * @throws IOException */
+	public void moveFragment(String from, String to) throws IOException{
+		FastIterator iter = fileFragmentsMap.keys();
+		String key =  (String) iter.next();
+		FileFragments fragments = (FileFragments) fileFragmentsMap.get(key);
+        while ( fragments != null ) {
+        	if(fragments.containsPath(from)){
+        		fragments.rename(from, to);
+        		fileFragmentsMap.put(key, fragments);
+        		commit();
+        		return;
+        	}
+    		key =  (String) iter.next();
+    		fragments = (FileFragments) fileFragmentsMap.get(key);
+        }
+		System.out.println("None of the file parts contained the file "+from+" this should not happen.");
+	}
 
 	/**Sets a list of fragment paths for a whole file
 	 * @param fileName the whole file

@@ -10,5 +10,20 @@
 	<classpathentry kind="lib" path="/home/joe/workspace/nubisave/splitter/lib/log4j-1.2.15.jar"/>
 	<classpathentry kind="lib" path="/home/joe/workspace/nubisave/jigdfs/lib/bcprov-jdk16-141.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/JigDFS"/>
+	<classpathentry kind="lib" path="/home/joe/workspace/nubisave/splitter/lib/commons-configuration-1.7.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/home/joe/workspace/nubisave/splitter/lib/commons-configuration-1.7-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/joe/workspace/nubisave/splitter/lib/commons-collections-3.2.1.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/home/joe/workspace/nubisave/splitter/lib/commons-collections-3.2.1-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/joe/workspace/nubisave/splitter/lib/commons-lang-2.6.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/home/joe/workspace/nubisave/splitter/lib/commons-lang-2.6-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

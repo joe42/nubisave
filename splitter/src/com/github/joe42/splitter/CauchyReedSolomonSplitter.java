@@ -34,11 +34,17 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 	private MultipleFileHandler serial_multi_file_handler;
 	private StorageStrategy storageStrategy;
 	private StorageStrategyFactory storageStrategyFactory;
+	private BackendServices services;
 	
 	public CauchyReedSolomonSplitter(BackendServices services){
+		this.services = services;
 		storageStrategyFactory = new StorageStrategyFactory(services);
 		concurrent_multi_file_handler = new ConcurrentMultipleFileHandler();
 		serial_multi_file_handler = new SerialMultipleFileHandler();
+	}
+	
+	public BackendServices getBackendServices(){
+		return services;
 	}
 	
 	public void splitFile(FileFragmentMetaDataStore fileFragmentMetaDataStore, String path, FileChannel temp, int redundancy) throws FuseException, IOException {
@@ -174,7 +180,7 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 				ret = new RandomAccessTemporaryFileChannel();
 				List<byte[]> segmentBuffers = serial_multi_file_handler
 						.getFilesAsByteArrays(fragmentNames.toArray(new String[0]), nr_of_redundant_fragments);
-				System.out.println(fileFragmentMetaDataStore.getNrOfFragments(path)+" "+fileFragmentMetaDataStore.getNrOfRequiredFragments(path));
+				//System.out.println(fileFragmentMetaDataStore.getNrOfFragments(path)+" "+fileFragmentMetaDataStore.getNrOfRequiredFragments(path));
 				ret.getChannel().write(ByteBuffer.wrap(segmentBuffers.get(0)));
 				return ret;
 			} else {
@@ -182,7 +188,7 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 				try {
 					crsidacodec = new CauchyInformationDispersalCodec(
 							fileFragmentMetaDataStore.getNrOfFragments(path), nr_of_file_fragments_required, CAUCHY_WORD_LENGTH);
-					System.out.println(fileFragmentMetaDataStore.getNrOfFragments(path)+" "+fileFragmentMetaDataStore.getNrOfRequiredFragments(path));
+					//System.out.println(fileFragmentMetaDataStore.getNrOfFragments(path)+" "+fileFragmentMetaDataStore.getNrOfRequiredFragments(path));
 					decoder = crsidacodec.getDecoder();
 				} catch (Exception e) {
 					e.printStackTrace();

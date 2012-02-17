@@ -79,5 +79,14 @@ public class FileFragments implements Serializable {
 	public void setNrOfRequiredFragments(int requiredFragments) {
 		this.requiredFragments = requiredFragments;
 	}
+
+	public void rename(String from, String to) {
+		fileFragmentPaths.remove(from);
+		fileFragmentPaths.add(to);
+	}
+
+	public boolean containsPath(String fragmentPath) {
+		return fileFragmentPaths.contains(fragmentPath);
+	}
 	
 }

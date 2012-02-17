@@ -1,0 +1,7 @@
+set xlabel "time [s]";
+set ylabel "storage [MB]";
+set ytic auto;
+set terminal svg enhanced size 1000 1000 fname "Memory Usage" fsize 36
+set output "memory_usage.svg"
+plot "/tmp/nubi_mem_trace3" u 1:2 t "RAM" w lines, "/tmp/nubi_mem_trace3" u 1:3 t "Swap" w lines
+

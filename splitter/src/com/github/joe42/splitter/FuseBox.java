@@ -294,11 +294,13 @@ public class FuseBox implements Filesystem1 {
 					.initErrno(FuseException.EIO);
 		}
 		statfs = new FuseStatfs();
-		statfs.blocks = blocks;
+		long freeBytes = fileStore.getFreeBytes();
+		statfs.blocks = (int)((freeBytes+fileStore.getUsedBytes())/blockSize);
+		statfs.blocksAvail = (int)(freeBytes/blockSize);
 		statfs.blockSize = blockSize;
-		statfs.blocksFree = 0;
+		statfs.blocksFree = (int)(freeBytes/blockSize);
 		statfs.files = files + dirs;
-		statfs.filesFree = 0;
+		statfs.filesFree = 1000;
 		statfs.namelen = 2048;
 
 		log.debug(files + " files, " + dirs + " directories, " + blocks
@@ -380,5 +382,9 @@ public class FuseBox implements Filesystem1 {
 
 	protected int getRedundancy() {
 		return fileStore.getRedundancy();
+	}
+	
+	protected FileFragmentStore getFileFragmentStore(){
+		return fileStore;
 	}
 }

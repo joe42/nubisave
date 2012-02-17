@@ -12,6 +12,8 @@ package nubisave.ui;
 
 import nubisave.Nubisave;
 import java.awt.Desktop;
+import java.awt.*;
+import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,6 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import nubisave.*;
 
@@ -28,6 +31,12 @@ import nubisave.*;
  * @author demo
  */
 public class MainWindow extends javax.swing.JFrame {
+    //for tray icon
+    private Image logo;
+    private SystemTray sysTray;
+    private PopupMenu menu;
+    private MenuItem item_exit;
+    private TrayIcon trayIcon;
 
     /** Creates new form MainWindow */
     public MainWindow() {
@@ -53,6 +62,38 @@ public class MainWindow extends javax.swing.JFrame {
 
         if (!Nubisave.mainSplitter.isMounted()) {
             JOptionPane.showMessageDialog(null, "Nubisave is not mounted.", "Mount Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+
+        //check to see if system tray is supported on OS.
+        if (SystemTray.isSupported()) {
+            setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+            sysTray = SystemTray.getSystemTray();
+            java.net.URL imageURL = this.getClass().getResource("/images/logo.png");
+            logo  = Toolkit.getDefaultToolkit().getImage(imageURL);
+            menu = new PopupMenu(); //tray icon popup menu
+            item_exit = new MenuItem("Exit");
+            menu.add(item_exit);
+            item_exit.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                   System.exit(0);
+               }
+            });
+            trayIcon = new TrayIcon(logo, "Doubleclick to show. Right click to exit.", menu);
+            trayIcon.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                   setVisible(true);
+               }
+            });
+            //add the tray icon to the system tray.
+            try {
+                sysTray.add(trayIcon);
+            }
+            catch(AWTException e) {
+               System.out.println("System Tray unsupported!");
+            }
         }
     }
 
@@ -262,7 +303,7 @@ public class MainWindow extends javax.swing.JFrame {
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File file = customStorageserviceChooser.getSelectedFile();
             StorageService newService = new StorageService(file);
-            Nubisave.services.getMmServices().add(newService);
+            Nubisave.services.add(newService);
         }
         tableModel.fireTableDataChanged();
     }//GEN-LAST:event_jButton3ActionPerformed

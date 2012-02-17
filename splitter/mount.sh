@@ -19,7 +19,7 @@ fi
 LD_LIBRARY_PATH=../fusej/jni:$FUSE_HOME/lib $java \
    -classpath ./build:./lib/*:../jigdfs/lib/*:../fusej/lib/* \
    -Dorg.apache.commons.logging.Log=fuse.logging.FuseLog \
-   -Dfuse.logging.level=DEBUG \
+   -Dfuse.logging.level=INFO \
    com.github.joe42.splitter.Main -f -s $1 $2
 
 find $2 -type d -exec fusermount -u {} -z \;

@@ -118,8 +118,8 @@ public class FilePartFragmentMetaDataStore extends FileFragmentMetaDataStore{
 	 */
 	public boolean hasNextFilePart(String filePath, long offset) throws IOException{
 		SortedSet<Integer> filePartNumbers = getFilePartNumbers(filePath);
-		if(filePartNumbers.size() != 0)
-			System.out.println("filePartNumbers.last()*maxFilePartSize:"+filePartNumbers.last()*maxFilePartSize);
+		//if(filePartNumbers.size() != 0)
+			//System.out.println("filePartNumbers.last()*maxFilePartSize:"+filePartNumbers.last()*maxFilePartSize);
 		return filePartNumbers.size() != 0 && filePartNumbers.last()*maxFilePartSize > offset;
 	}
 	

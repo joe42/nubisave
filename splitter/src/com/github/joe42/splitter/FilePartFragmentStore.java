@@ -22,15 +22,15 @@ public class FilePartFragmentStore extends FileFragmentStore{
 
 	public void write(String path, ByteBuffer buf, long offset) throws IOException, FuseException {
 		String filePartPath = ((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).getFilePartPath(path, offset);
-		System.out.println("filePartPath: "+filePartPath);
+		//System.out.println("filePartPath: "+filePartPath);
 		if (tempFiles.getFileChannel(filePartPath) == null) {
 			if( ! ((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).hasFilePartFragments(filePartPath) ){
-				System.out.println("Create new filePartPath: "+filePartPath);
+				//System.out.println("Create new filePartPath: "+filePartPath);
 				((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).put(path, offset);
 				tempFiles.putNewFileChannel(filePartPath);
 			} else {
-				System.out.println("Get existing filePartPath: "+filePartPath);
-				tempFiles.put(filePartPath, splitter.glueFilesTogether(fileFragmentMetaDataStore, filePartPath));
+				//System.out.println("Get existing filePartPath: "+filePartPath);
+				tempFiles.put(filePartPath, getFilePart(filePartPath));
 			}
 		}
 		FileChannel wChannel = tempFiles.getFileChannel(filePartPath);
@@ -44,7 +44,7 @@ public class FilePartFragmentStore extends FileFragmentStore{
 		} else if( ! lastFilePartPathWrittenTo.equals(currentFilePartPath) ){
 			FileChannel temp = tempFiles.getFileChannel(lastFilePartPathWrittenTo);
 			if(temp != null){
-				System.out.println("flush lastFilePartPathWrittenTo: "+lastFilePartPathWrittenTo+" size: "+temp.size());
+				//System.out.println("flush lastFilePartPathWrittenTo: "+lastFilePartPathWrittenTo+" size: "+temp.size());
 				tempReadChannel = null;
 				splitter.splitFile(fileFragmentMetaDataStore, lastFilePartPathWrittenTo, temp, getRedundancy());
 				tempFiles.delete(lastFilePartPathWrittenTo);
@@ -54,31 +54,51 @@ public class FilePartFragmentStore extends FileFragmentStore{
 	}
 
 	public void read(String path, ByteBuffer buf, long offset) throws FuseException, IOException {
-		System.out.println("begin");
+		//System.out.println("begin");
 		String filePartPath = ((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).getFilePartPath(path, offset);
 		if (tempReadChannel == null || lastFilePartPathReadFrom == null || ! lastFilePartPathReadFrom.equals(filePartPath)) { 
 			if(tempReadChannel != null){
 				tempReadChannel.getChannel().close();
 			}
-			tempReadChannel = splitter.glueFilesTogether(fileFragmentMetaDataStore, filePartPath);
+			tempReadChannel = getFilePart(filePartPath);
 			 lastFilePartPathReadFrom = filePartPath;
 		}
-		System.out.println("has next: "+((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).hasNextFilePart(path, offset));
+		//System.out.println("has next: "+((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).hasNextFilePart(path, offset));
 
 		 tempReadChannel.getChannel().read(buf, offset%MAX_FILESIZE);
-		 System.out.println("buf.limit(): "+buf.limit()+" buf.position(): "+buf.position()+" "+"file size: "+((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).getSize(path)+" offset: "+offset+" end of read: "+(offset+buf.limit()));
+		 //System.out.println("buf.limit(): "+buf.limit()+" buf.position(): "+buf.position()+" "+"file size: "+((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).getSize(path)+" offset: "+offset+" end of read: "+(offset+buf.limit()));
 		if(buf.position() != buf.limit()  //available space in buffer exceeds file part size read from offset (important for sparse files: tempReadChannel.getChannel().size() < offset%MAX_FILESIZE+buf.limit())
 				&& ((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).hasNextFilePart(path, offset)){
 			tempReadChannel.getChannel().close();
 			filePartPath = ((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).getFilePartPath(path, offset/MAX_FILESIZE*MAX_FILESIZE+MAX_FILESIZE);
-			tempReadChannel = splitter.glueFilesTogether(fileFragmentMetaDataStore, filePartPath);
+			tempReadChannel = getFilePart(filePartPath);
 			lastFilePartPathReadFrom = filePartPath;
 			ByteBuffer bb = ByteBuffer.allocate(buf.remaining());
 			tempReadChannel.getChannel().read(bb, 0);
-			System.out.println("buf.position(); "+buf.position());
+			//System.out.println("buf.position(); "+buf.position());
 			bb.position(0);
 			buf.put(bb);
 		 }
+	}
+
+	/**
+	 * Return a RandomAccessTemporaryFileChannel instance with the content of the file part under filePartPath.
+	 * @param filePartPath the path of the file part
+	 * @return a RandomAccessTemporaryFileChannel with the content of the file part
+	 * @throws FuseException
+	 * @throws IOException 
+	 */
+	private RandomAccessTemporaryFileChannel getFilePart(String filePartPath)
+			throws FuseException, IOException {
+		RandomAccessTemporaryFileChannel ret;
+		if( ! ((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).hasFilePartFragments(filePartPath) ){
+			ret = new RandomAccessTemporaryFileChannel(); //empty (sparse) file
+			ret.setLength(MAX_FILESIZE);
+			return ret;
+		}
+		ret = splitter.glueFilesTogether(fileFragmentMetaDataStore, filePartPath);
+		ret.setLength(MAX_FILESIZE);
+		return ret;
 	}
 	
 	/**
@@ -115,7 +135,7 @@ public class FilePartFragmentStore extends FileFragmentStore{
 
 	public void flushCache(String path) throws IOException, FuseException {
 		for(String filePartPath:  ((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).getFilePartPaths(path)){
-			System.out.println("filePartPath to flush: "+filePartPath);
+			//System.out.println("filePartPath to flush: "+filePartPath);
 			if(! hasFlushedFilePart(filePartPath)){
 				splitter.splitFile(fileFragmentMetaDataStore, filePartPath, tempFiles.getFileChannel(filePartPath), getRedundancy());
 				removeCache(filePartPath);
@@ -139,7 +159,7 @@ public class FilePartFragmentStore extends FileFragmentStore{
 				}
 				((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).remove(path, filePartNumber);
 			} else { 
-				RandomAccessTemporaryFileChannel firstFilePart = splitter.glueFilesTogether(fileFragmentMetaDataStore, filePartPath);
+				RandomAccessTemporaryFileChannel firstFilePart = getFilePart(filePartPath);
 				firstFilePart.getChannel().truncate(size);
 				tempFiles.put(filePartPath, firstFilePart);
 				flushLastFilePartFromCache(filePartPath);

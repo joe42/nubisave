@@ -47,7 +47,7 @@ public class StorageService {
             try{
                 setConfig(new Ini(new File("../splitter/mountscripts/"+name+".ini")));
             } catch(IOException e){
-                e.printStackTrace();
+                System.err.println("StorageService instance "+name+".StorageService(File file): Cannot read ini file ../splitter/mountscripts/"+name+".ini"+" - "+e.getMessage()==null?e.getMessage():"");
             }
         }
     }
@@ -65,7 +65,7 @@ public class StorageService {
             try{
                 setConfig(new Ini(file));
             } catch(IOException e){
-                e.printStackTrace();
+                System.err.println("StorageService instance "+name+".StorageService(File file): Cannot read ini file "+file.getAbsolutePath()+" - "+e.getMessage()==null?e.getMessage():"");
             }
     }
 
@@ -81,12 +81,12 @@ public class StorageService {
             try{
                 nrOfBackends = config.get("gui", "nrofbackends", Integer.class);
             } catch (NullPointerException e) {
-                e.printStackTrace();
+                System.err.println("StorageService instance "+name+".setConfig(Ini config): configuration has no nrOfBackends parameter"+" - "+e.getMessage()==null?e.getMessage():"");
             }
             try{
                 isBackendModule = config.get("splitter", "isbackendmodule", Boolean.class);
             } catch (NullPointerException e) {
-                e.printStackTrace();
+                System.err.println("StorageService instance "+name+".setConfig(Ini config): configuration has no isbackendmodule parameter"+" - "+e.getMessage()==null?e.getMessage():"");
             }
         }
     }

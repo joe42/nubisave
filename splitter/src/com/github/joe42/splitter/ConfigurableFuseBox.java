@@ -6,8 +6,10 @@ import java.nio.ByteBuffer;
 
 import org.ini4j.Ini;
 
+import com.github.joe42.splitter.backend.BackendService;
 import com.github.joe42.splitter.backend.Mounter;
 import com.github.joe42.splitter.backend.StorageService;
+import com.github.joe42.splitter.util.file.FileUtil;
 import com.github.joe42.splitter.util.file.IniUtil;
 import com.github.joe42.splitter.vtf.FolderEntry;
 import com.github.joe42.splitter.vtf.VirtualFile;
@@ -68,7 +70,7 @@ public class ConfigurableFuseBox extends FuseBox  implements StorageService{
 			return super.getdir(path);
 		}
 		if(path.equals("/")){
-			FuseDirEnt[] ret = new FuseDirEnt[2];
+			FuseDirEnt[] ret = new FuseDirEnt[4];
 			FuseDirEnt dirEntry = new FuseDirEnt();
 			dirEntry.name = ".";
 			dirEntry.mode = FuseFtype.TYPE_DIR;
@@ -80,11 +82,11 @@ public class ConfigurableFuseBox extends FuseBox  implements StorageService{
 			dirEntry = new FuseDirEnt();
 			dirEntry.name = vtSplitterConfig.getName();
 			dirEntry.mode = FuseFtype.TYPE_DIR;
-			ret[1] = dirEntry;
+			ret[2] = dirEntry;
 			dirEntry = new FuseDirEnt();
 			dirEntry.name = DATA_DIR_NAME; 
 			dirEntry.mode = FuseFtype.TYPE_DIR;
-			ret[1] = dirEntry;
+			ret[3] = dirEntry;
 			return ret;
 		}
 		throw new FuseException("Invalid parameter for getdir (ConfigurableSplitter)")
@@ -233,37 +235,71 @@ file is removed after at most 10 seconds
 	}	
 	
 	public void rename(String from, String to) throws FuseException {
-		//FIX: success depends on targets beeing files or directories
-		if(from.startsWith(CONFIG_DIR) && to.startsWith(CONFIG_DIR)){
+		// FIX: success depends on targets beeing files or directories
+		if (from.startsWith(CONFIG_DIR) && to.startsWith(CONFIG_DIR)) {
 			VirtualFile vfFrom = virtualFolder.get(from);
 			VirtualFile vfTo = virtualFolder.get(to);
-			if(vfFrom == null || vfTo == null){
-				throw new FuseException("Cannot move "+from+" to "+to)
-				.initErrno(FuseException.EEXIST);
+			if (vfFrom == null || vfTo == null) {
+				throw new FuseException("Cannot move " + from + " to " + to)
+						.initErrno(FuseException.ENOENT);
 			}
-			if( ! (vfFrom instanceof VirtualRealFile && vfTo instanceof VirtualRealFile) ){
-				throw new FuseException("Cannot move "+from+" to "+to)
-				.initErrno(FuseException.EACCES);
+			if (!(vfFrom instanceof VirtualRealFile && vfTo instanceof VirtualRealFile)) {
+				throw new FuseException("Cannot move " + from + " to " + to)
+						.initErrno(FuseException.EACCES);
 			}
-			String uniqueServiceNameFrom = new File(from).getName();
-			String uniqueServiceNameTo = new File(to).getName();
-			mounter.moveData(uniqueServiceNameFrom, uniqueServiceNameTo);
+			moveFragments(from, to);
 			virtualFolder.remove(from);
 			return;
 		}
-		if(from.equals(to)){
-			throw new FuseException("Cannot rename "+from+" to "+to)
-				.initErrno(FuseException.EACCES);
-		} 
-		if(from.startsWith(DATA_DIR) && to.startsWith(DATA_DIR)){
+		if (from.equals(to)) {
+			throw new FuseException("Cannot rename " + from + " to " + to)
+					.initErrno(FuseException.EACCES);
+		}
+		if (from.startsWith(DATA_DIR) && to.startsWith(DATA_DIR)) {
 			from = removeDataFolderPrefix(from);
 			to = removeDataFolderPrefix(to);
 			super.rename(from, to);
 			return;
 		}
-		throw new FuseException("Cannot rename "+from+" to "+to)
-			.initErrno(FuseException.EACCES);
+		throw new FuseException("Cannot rename " + from + " to " + to)
+				.initErrno(FuseException.EACCES);
+	}
+
+	private void moveFragments(String from, String to) throws FuseException {
+		boolean successful = true;
+		String uniqueServiceNameFrom = new File(from).getName();
+		String uniqueServiceNameTo = new File(to).getName();
+		BackendService serviceFrom = mounter.getServices().get(uniqueServiceNameFrom);
+		BackendService serviceTo = mounter.getServices().get(uniqueServiceNameTo);
+		//System.out.println("mv "+serviceFrom.getDataDirPath()+"/* "+serviceTo.getDataDirPath());
+		boolean fileMoved;
+		for(File srcFileFragment: new File(serviceFrom.getDataDirPath()).listFiles()){
+			File destFileFragment = new File(serviceTo.getDataDirPath()+"/"+srcFileFragment.getName());
+			fileMoved = srcFileFragment.renameTo(destFileFragment );
+			if( ! fileMoved ){ //depending on the platform moving between mountpoints can fail
+				try{
+					FileUtil.copy(srcFileFragment, destFileFragment);
+					fileMoved = true;
+				} catch (IOException e) {
+					fileMoved = false;
+				}
+			}
+			if(fileMoved){
+				try{
+					getFileFragmentStore().renameFragment(srcFileFragment.getPath(), destFileFragment.getPath());
+				} catch (IOException e) {
+					successful = false;
+				}
+			} else {
+				successful = false;
+			}
+		} //end of for
+		if( !successful ){
+			throw new FuseException("IO Exception on moving files from " + from
+					+ " to " + to).initErrno(FuseException.EIO);
+		}
 	}	
+	
 		
 		public void mkdir(String path, int mode) throws FuseException {
 			if(path.startsWith(DATA_DIR) && ! path.equals(DATA_DIR)){

@@ -1,10 +1,11 @@
 #!/bin/bash
 
 echo "Start von NubiSave"
-mountpoint=$HOME/nubisavemount
+userdir=$HOME/nubisave
+mountpoint=$HOME/.nubisave/nubisavemount
 storages=$HOME/.nubisave/storages
 
-mkdir -p $mountpoint $storages
+mkdir -p "$mountpoint" "$storages"
 scriptpath=`readlink -f $0`
 scriptloc=`dirname $scriptpath`
 cd $scriptloc
@@ -19,16 +20,19 @@ fi
 
 echo "- Start des Splitter-Moduls"
 cd splitter
-./mount.sh $mountpoint $storages &
+./mount.sh "$mountpoint" "$storages" &
 cd ..
 
 if [ "$1" != "headless" ]
 then
 	# FIXME: This should be solved by some event detection
-	sleep 2;
+	sleep 2
+	if [ ! -h "$userdir" ]
+	then
+		ln -sf "$mountpoint/data" "$userdir"
+	fi
 
 	echo "- Start der NubiSave-Konfigurations-GUI"
-
 	cd bin/
-	java -jar Nubisave.jar $mountpoint
+	java -jar Nubisave.jar "$mountpoint"
 fi
