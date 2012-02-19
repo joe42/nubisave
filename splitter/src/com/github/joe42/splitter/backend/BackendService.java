@@ -13,6 +13,8 @@ public class BackendService implements StorageService{
 	private String path, name, mountCommand;
 	private String store;
 	private Boolean isBackendModule;
+	private Integer nrOfFilePartsToStore;
+	private Double availability;
 
 	private BackendService(String store, String name){
 		/**
@@ -50,6 +52,14 @@ To this end the mountpoint parameter is substituted by store+"/"+HIDDEN_DIR_NAME
 		mountCommand = IniUtil.get(options, "mounting", "command");
 		//TODO: if mountCommand == null log or exception
 		mountCommand = substituteCommandParameters(options);
+		nrOfFilePartsToStore = IniUtil.get(options, "splitter", "fileparts", Integer.class);
+		if(nrOfFilePartsToStore == null){
+			nrOfFilePartsToStore = 0;
+		}
+		availability = IniUtil.get(options, "splitter", "availability", Double.class);
+		if(availability == null){
+			availability = 0d;
+		}
 	}
 	
 	private String substituteCommandParameters(Ini config){
@@ -124,5 +134,11 @@ To this end the mountpoint parameter is substituted by store+"/"+HIDDEN_DIR_NAME
 		Runtime rt =  Runtime.getRuntime();
 		rt .exec("fusermount -uz "+path);
 		rt .exec("fusermount -uz "+path+"/data");
+	}
+	public int getNrOfFilePartsToStore() {
+		return nrOfFilePartsToStore;
+	}
+	public double getAvailability() {
+		return availability;
 	}
 }
