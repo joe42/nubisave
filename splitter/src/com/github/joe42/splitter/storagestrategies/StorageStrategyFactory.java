@@ -13,7 +13,6 @@ import com.github.joe42.splitter.backend.BackendServices;
  * Responsible for creating, configuring and pooling StorageStrategies.
  */
 public class StorageStrategyFactory {
-	public static enum AvailableStorageStrategies {Roundrobin};
 	private RoundRobinStorageStrategy roundRobin = null;
 	private UseAllInParallelStorageStrategy useInParallel = null;
 	private BackendServices services;
@@ -34,7 +33,6 @@ public class StorageStrategyFactory {
 		StorageStrategy ret = null;
 		if(strategyName.equals("UseAllInParallel")){
 			if(useInParallel == null){
-				dataDirPaths = new TreeSet<String>(services.getDataDirPaths());
 				useInParallel = new UseAllInParallelStorageStrategy(services);
 			}
 			if( !useInParallel.getStorageServices().equals(services) ) {
@@ -46,7 +44,6 @@ public class StorageStrategyFactory {
 			ret = useInParallel;
 		} else { //RoundRobin as default
 			if(roundRobin == null || ! dataDirPaths.equals(new TreeSet<String>(services.getDataDirPaths()))){
-				dataDirPaths = new TreeSet<String>(services.getDataDirPaths());
 				roundRobin = new RoundRobinStorageStrategy(services);
 			}
 			if( !roundRobin.getStorageServices().equals(services) ) {
