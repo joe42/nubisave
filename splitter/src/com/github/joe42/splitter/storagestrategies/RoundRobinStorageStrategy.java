@@ -86,7 +86,7 @@ public class RoundRobinStorageStrategy implements StorageStrategy {
 	public List<String> getFragmentDirectories() {
 		int nrOfFragments = getNrOfRedundantFragments() +1;
 		List<String> ret = new ArrayList<String>();
-		for(long i=round; i<round+nrOfFragments;i++){
+		for(long i=(round*nrOfFragments); i<(round*nrOfFragments)+nrOfFragments;i++){
 			ret.add(potentialStorageDirectories.get((int) (i%potentialStorageDirectories.size())));
 		}
 		round++;
