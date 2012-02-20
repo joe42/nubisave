@@ -7,7 +7,8 @@ import org.ini4j.Ini;
 
 import com.github.joe42.splitter.util.file.IniUtil;
 /**
- * A backend service, which is a storage service that can be mounted and unmounted in the file system.
+ * A storage service that can be mounted and unmounted in the file system.
+ * It may represent either a front end storage used to store files in or a back end services, which might be used by one or more front end storages.
  */
 public class BackendService implements StorageService{
 	private String path, name, mountCommand;
@@ -92,44 +93,44 @@ To this end the mountpoint parameter is substituted by store+"/"+HIDDEN_DIR_NAME
 		return isBackendModule;
 	}
 	
+	/** @return the path where this service is mounted */
 	public String getPath(){
-		/** @return the path where this service is mounted */
 		return path;
 	}
+	/** @return the directory where this service is mounted as a subfolder*/
 	public String getStore(){
-		/** @return the directory where this service is mounted as a subfolder*/
 		return store;
 	}
+	/** @return the command to run to mount this service */
 	public String getMountcommand(){
-		/** @return the command to run to mount this service */
 		return mountCommand;
 	}
+	/** @return the name of this service */
 	public String getName(){
-		/** @return the name of this service */
 		return name;
 	}
+	/** @return the path where this storage service keeps its data */
 	public String getDataDirPath(){
-		/** @return the path where this storage service keeps its data */
 		return path+DATA_DIR;
 	}
+	/** @return the path where this storage service keeps its configuration files */
 	public String getConfigDirPath(){
-		/** @return the path where this storage service keeps its configuration files */
 		return path+CONFIG_DIR;
 	}
+	/** @return the path of this storage service's configuration file */
 	public String getConfigFilePath(){
-		/** @return the path of this storage service's configuration file */
 		return path+CONFIG_PATH;
 	}
+	/** Executes this.getMountcommand() to mount the service at this.getPath()
+	 * This should create a directory this.getPath()+DATA_DIR, where files may be stored 
+	 * and a file this.getPath()+CONFIG_PATH advertising the success of mounting the service 
+	 * and providing a place to write the configuration file to.
+	 * */
 	public void mount() throws IOException {
-		/** Executes this.getMountcommand() to mount the service at this.getPath()
-		 * This should create a directory this.getPath()+DATA_DIR, where files may be stored 
-		 * and a file this.getPath()+CONFIG_PATH advertising the success of mounting the service 
-		 * and providing a place to write the configuration file to.
-		 * */
 		new ProcessBuilder( "/bin/bash", "-c", mountCommand ).start();
 	}
+	/** Executes fusermount -uz to unmount the service at this.getPath() and this.getPah()+"/data" */
 	public void unmount() throws IOException {
-		/** Executes fusermount -uz to unmount the service at this.getPath() and this.getPah()+"/data" */
 		//TODO: add unmountcommand section to option file
 		Runtime rt =  Runtime.getRuntime();
 		rt .exec("fusermount -uz "+path);
@@ -140,5 +141,27 @@ To this end the mountpoint parameter is substituted by store+"/"+HIDDEN_DIR_NAME
 	}
 	public double getAvailability() {
 		return availability;
+	}
+	
+	/**
+	 * Return true iff o is an instance of BackendService and its attributes are equal.
+	 * The attributes that are compared are:
+	 * path, name, mountCommand, store, isBackendModule, nrOfFilePartsToStore, and availability.
+	 */
+	@Override
+	public boolean equals(Object o){
+		if( ! (o instanceof BackendServices) ){
+			return false;
+		}
+		boolean ret = true;
+		BackendService service = (BackendService) o;
+		ret &= path.equals(service.path);
+		ret &= path.equals(service.name);
+		ret &= path.equals(service.mountCommand);
+		ret &= path.equals(service.store);
+		ret &= path.equals(service.isBackendModule);
+		ret &= path.equals(service.nrOfFilePartsToStore);
+		ret &= path.equals(service.availability);
+		return ret;
 	}
 }
