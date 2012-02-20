@@ -35,10 +35,10 @@ public class StorageStrategyFactory {
 		if(strategyName.equals("UseAllInParallel")){
 			if(useInParallel == null){
 				dataDirPaths = new TreeSet<String>(services.getDataDirPaths());
-				useInParallel = new UseAllInParallelStorageStrategy(services.getDataDirPaths());
+				useInParallel = new UseAllInParallelStorageStrategy(services);
 			}
-			if( !new TreeSet<String>(useInParallel.getPotentialStorageDirectories()).equals(new TreeSet<String>(services.getDataDirPaths())) ) {
-				useInParallel.setPotentialStorageDirectories(services.getDataDirPaths());
+			if( !useInParallel.getStorageServices().equals(services) ) {
+				useInParallel.setStorageServices(services);
 			}
 			useInParallel.setRedundancy(redundancy);
 			changeToCurrentStrategy = useInParallel.changeToCurrentStrategy(previousStorageStrategy);
@@ -47,10 +47,10 @@ public class StorageStrategyFactory {
 		} else { //RoundRobin as default
 			if(roundRobin == null || ! dataDirPaths.equals(new TreeSet<String>(services.getDataDirPaths()))){
 				dataDirPaths = new TreeSet<String>(services.getDataDirPaths());
-				roundRobin = new RoundRobinStorageStrategy(services.getDataDirPaths());
+				roundRobin = new RoundRobinStorageStrategy(services);
 			}
-			if( !new TreeSet<String>(roundRobin.getPotentialStorageDirectories()).equals(new TreeSet<String>(services.getDataDirPaths())) ) {
-				roundRobin.setPotentialStorageDirectories(services.getDataDirPaths());
+			if( !roundRobin.getStorageServices().equals(services) ) {
+				roundRobin.setStorageServices(services);
 			}
 			roundRobin.setRedundancy(redundancy);
 			changeToCurrentStrategy = roundRobin.changeToCurrentStrategy(previousStorageStrategy);

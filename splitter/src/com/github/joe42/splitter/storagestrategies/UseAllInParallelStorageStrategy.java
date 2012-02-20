@@ -1,34 +1,72 @@
 package com.github.joe42.splitter.storagestrategies;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+
+import com.github.joe42.splitter.backend.BackendService;
+import com.github.joe42.splitter.backend.BackendServices;
+import com.github.joe42.splitter.util.math.SetUtil;
 
 /**
- * Uses all potential storage directories. 
- * Storing a file is only successful if all storage operations were successful.
+ * Uses all potential storage directories.
  */
 public class UseAllInParallelStorageStrategy  implements StorageStrategy {
-	private List<String> potentialStorageDirectories;
-	private int redundancy;
-	private long filesize;
+	protected List<String> potentialStorageDirectories;
+	protected int redundancy;
+	protected long filesize;
+	protected BackendServices services;
 	
 	
 	/**
-	 * Creates a UseAllInParallelStorageStrategy object using all potentialStorageDirectories in parallel with half the number of #potentialStorageDirectories - 1 as expendable stores.
-	 * @param potentialStorageDirectories
+	 * Creates a UseAllInParallelStorageStrategy object using all potentialStorageDirectories in parallel with a redundancy of 50%.
+	 * @param storageServices
 	 */
-	public UseAllInParallelStorageStrategy(List<String> potentialStorageDirectories){
-		this.potentialStorageDirectories = potentialStorageDirectories;
+	public UseAllInParallelStorageStrategy(BackendServices storageServices){
+		this.services = storageServices;
+		setPotentialStorageDirectories();
 		redundancy = 50;
 	}
-
-	public void setPotentialStorageDirectories(List<String> potentialStorageDirectories){
-		this.potentialStorageDirectories = potentialStorageDirectories;
+	
+	private void setPotentialStorageDirectories() {
+		potentialStorageDirectories = new ArrayList<String>();
+		for(BackendService storageService: services.getFrontEndStorageServices()){
+			for(int i=0; i<storageService.getNrOfFilePartsToStore();i++){
+				potentialStorageDirectories.add(storageService.getDataDirPath());
+			}
+		}
 	}
-	public List<String> getPotentialStorageDirectories(){
-		return potentialStorageDirectories;
+
+	/**
+	 * @return the availability of the file stored in percent according to this storage strategy and the storage services' availability
+	 */
+	@Override
+	public double getStorageAvailability(){
+		double availability = 0;
+		Set<BackendService> storageServices = new HashSet<BackendService>(services.getFrontEndStorageServices());
+		for(Set<BackendService> storageServiceCombination: SetUtil.powerSet(storageServices)){
+			if(BackendServices.getNrOfFilePartsOfCombination(storageServiceCombination) < getNrOfFilePartsNeededToReconstructFile()){
+				availability += services.getExclusiveAvailabilityOfStorageCombination(storageServiceCombination);
+			}
+		}
+		return availability;
 	}
 
+	private int getNrOfFilePartsNeededToReconstructFile() {
+		return potentialStorageDirectories.size()-getNrOfRedundantFragments();
+	}
+
+	public void setStorageServices(BackendServices services){
+		this.services = services;
+		setPotentialStorageDirectories();
+	}
+	
+	public BackendServices getStorageServices(){
+		return services;
+	}
+	
 	/**
 	 * Set the redundancy in percent from 0 to 100. 
 	 * A value of 100 means that all but one of the stores used to store a file can fail with the file still being recoverable.
@@ -59,10 +97,9 @@ public class UseAllInParallelStorageStrategy  implements StorageStrategy {
 		return false;
 	}
 
-
 	/**
 	 * Get the directories to store the file fragments to
-	 * Returns all potential storages.
+	 * Returns the storage directories for all storage services, as often as specified by each service's {@link BackendServices#getNrOfFilePartsToStore() getNrOfFilePartsToStore()} 
 	 * @return a list of directory paths 
 	 */
 	@Override
@@ -85,12 +122,12 @@ public class UseAllInParallelStorageStrategy  implements StorageStrategy {
 
 	/**
 	 * Get the number of file fragments that must be stored successfully.
-	 * The number equals one plus the number of redundant fragments returned by {@link #getNrOfRedundantFragments() getNrOfRedundantFragments()}.
+	 * The number equals the number of all fragments.
 	 * @return the number of file fragments that must be stored
 	 */
 	@Override
 	public int getNrOfRequiredSuccessfullyStoredFragments() {
-		return 1 +  getNrOfRedundantFragments(); 
+		return potentialStorageDirectories.size(); 
 	}
 
 }

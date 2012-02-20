@@ -1,7 +1,18 @@
 package com.github.joe42.splitter.storagestrategies;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections.SetUtils;
+
+import com.github.joe42.splitter.backend.BackendService;
+import com.github.joe42.splitter.backend.BackendServices;
+import com.github.joe42.splitter.util.math.SetUtil;
 
 
 /**
@@ -12,23 +23,27 @@ public class RoundRobinStorageStrategy implements StorageStrategy {
 	private List<String> potentialStorageDirectories;
 	private int redundancy;
 	private long filesize;
+	private BackendServices storageServices;
 	
 	
 	/**
 	 * Creates a RoundRobinStorageStrategy object with a list of storages to iterate over and with half the number of #potentialStorageDirectories - 1 as expendable stores.
-	 * @param potentialStorageDirectories
+	 * @param storageServices the storage service used by this storage strategy
 	 */
-	public RoundRobinStorageStrategy(List<String> potentialStorageDirectories){
-		this.potentialStorageDirectories = potentialStorageDirectories;
+	public RoundRobinStorageStrategy(BackendServices storageServices){
+		this.storageServices = storageServices;
+		this.potentialStorageDirectories = storageServices.getDataDirPaths();
 		round = 0;
 		redundancy = 50;
 	}
 
-	public void setPotentialStorageDirectories(List<String> potentialStorageDirectories){
-		this.potentialStorageDirectories = potentialStorageDirectories;
+	public void setStorageServices(BackendServices storageServices){
+		this.storageServices = storageServices;
+		this.potentialStorageDirectories = storageServices.getDataDirPaths();
 	}
-	public List<String> getPotentialStorageDirectories(){
-		return potentialStorageDirectories;
+	
+	public BackendServices getStorageServices(){
+		return storageServices;
 	}
 
 	/**
@@ -100,5 +115,50 @@ public class RoundRobinStorageStrategy implements StorageStrategy {
 	public int getNrOfRequiredSuccessfullyStoredFragments() {
 		return 1;
 	}
+	
 
+	/**
+	 * @return the minimal availability of the file stored according to this StorageStrategy instance in percent
+	 */
+	@Override
+	public double getStorageAvailability(){
+		double availability = 0;
+		double combinationAvailability = 0;
+		Set<Set<BackendService>> storageCombinations = getStorageCombinations();
+		for(Set<BackendService> storageCombination: storageCombinations ){
+			//get availability of file stored in combination (sum of probabilities of all combinations, where at least one store is available in strageCombination)
+			combinationAvailability = storageServices.getExclusiveAvailabilityOfStorageCombination(storageCombination);
+			if (availability > combinationAvailability){
+				availability = combinationAvailability;
+			}
+		}
+		return availability;
+	}
+
+	/**
+	 * @return a set of storages containing all combinations of storages used by
+	 *         this strategy
+	 */
+	private Set<Set<BackendService>> getStorageCombinations() {
+		Set<Set<BackendService>> combinations = new HashSet<Set<BackendService>>();
+		Set<BackendService> combination = new HashSet<BackendService>(
+				storageServices.getFrontEndStorageServices());
+		List<String> storageDirectoryCombination;
+		int nrOfFragments = getNrOfRedundantFragments() + 1;
+		round = 0;
+		while (true) {
+			storageDirectoryCombination = new ArrayList<String>();
+			for (long i = round; i < round + nrOfFragments; i++) {
+				storageDirectoryCombination.add(potentialStorageDirectories
+						.get((int) (i % potentialStorageDirectories.size())));
+			}
+			round += getNrOfRedundantFragments() + 1;
+			combination = storageServices
+					.getStorageServicesFromStorageDirectories(storageDirectoryCombination);
+			if (combinations.contains(combination)) {
+				return combinations;
+			}
+			combinations.add(combination); 
+		}
+	}
 }
