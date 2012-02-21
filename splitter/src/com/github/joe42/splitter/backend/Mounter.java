@@ -86,4 +86,12 @@ public class Mounter {
 		}
 		return false;
 	}
+
+	/**
+	 * @param storage
+	 * @return true iff storage's configuration file exists
+	 */
+	public boolean isStorageMounted(BackendService storage) {
+		return new File(storage.getConfigFilePath()).exists();
+	}
 }

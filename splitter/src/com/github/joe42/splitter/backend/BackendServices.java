@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -12,7 +13,7 @@ import org.apache.commons.collections.CollectionUtils;
 /**
  *Manages the storages used by NubiSave. The actual stores are instances of BackendService.
  */
-public class BackendServices {
+public class BackendServices extends Observable { 
 	private Map<String, BackendService> services;
 	
 	public BackendServices(){
@@ -42,6 +43,8 @@ public class BackendServices {
 	 */
 	public void add(String serviceName, BackendService service){
 		services.put(serviceName, service);
+		setChanged();
+		notifyObservers();
 	}
 	
 	/**
@@ -50,6 +53,8 @@ public class BackendServices {
 	 */
 	public void remove(String serviceName){
 		services.remove(serviceName);
+		setChanged();
+		notifyObservers();
 	}
 
 	/**

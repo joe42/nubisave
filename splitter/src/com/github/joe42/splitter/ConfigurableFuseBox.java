@@ -118,6 +118,10 @@ public class ConfigurableFuseBox extends FuseBox  implements StorageService{
 		//Mount backend module:
 		String configFileName = new File(path).getName();
 		Ini options = IniUtil.getIni(vtf.getText());
+		if(storageServiceMgr.isMounted(configFileName)){
+			storageServiceMgr.configureService(configFileName, options);
+			return;
+		}
 		String mountpoint = storageServiceMgr.mount(configFileName, options); 
 		if (mountpoint != null) {
 			virtualFolder.remove(path); 

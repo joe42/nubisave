@@ -33,15 +33,33 @@ public class BackendService implements StorageService{
 		 * Creates a backend service.
 		 * @param storages the directory where this services should be mounted as a subfolder
 		 * @param name the unique name of the service, which should later be the name of the folder where the service is mounted to
-		 * @param options an ini file containing the command in the section mounting with the key command, which is run \
-to mount the service. If the command contains a parameter of the name mountpoint, then it will be substituted by store+"/"+name.\
-Further it may contain a parameter section with options, where each word in the command is substituted \
-by the value of the parameter option of the same name. Last there can be a isbackendmodule option in the section splitter.\
-This option decides weather the service should be mounted in the special directory HIDDEN_DIR_NAME. \
-To this end the mountpoint parameter is substituted by store+"/"+HIDDEN_DIR_NAME+"/"+name  instead.
+		 * @param options see {@link #configure(String, Ini) configure} for a list of possible options
 		 * 					
 		 */
 		this(store,name);
+		configure(name, options);
+	}
+	
+	/**
+	 * Configure this storage via an ini file.
+	 * The ini file should contain a command in the section mounting with the key command, which is run to mount the storage. 
+	 * If the command contains a parameter of the name mountpoint, then it will be substituted by store+"/"+name.
+	 * Further the file may contain a parameter section with options, where each word in the command is substituted
+	 * by the value of the parameter option of the same name. 
+	 * 	
+	 * There can be a section splitter containing the following optional options to configure
+	 * the use of the file system by splitter: 
+	 * The isbackendmodule option decides whether the service 
+	 * should be mounted in the special directory StorageService.HIDDEN_DIR_NAME. 
+	 * To this end the mountpoint parameter is substituted by the path
+	 * this.getStorages()+"/"+StorageService.HIDDEN_DIR_NAME+"/"+uniqueServiceName  instead.
+	 * Choose a storage strategy for the splitter by setting the storagestrategy option to roundrobin or useallinparallel. 
+	 * The fileparts option is an integer which may be used by a storage strategy to choose how intensely a storage shall be used.
+	 * Commonly, fileparts is used to determine how many file parts are distributed to the store after splitting up a file.  
+	 * @param name
+	 * @param options
+	 */
+	public void configure(String name, Ini options) {
 		isBackendModule = IniUtil.get(options, "splitter", "isbackendmodule", Boolean.class);
 		if(isBackendModule == null){
 			isBackendModule = false;
@@ -156,12 +174,23 @@ To this end the mountpoint parameter is substituted by store+"/"+HIDDEN_DIR_NAME
 		boolean ret = true;
 		BackendService service = (BackendService) o;
 		ret &= path.equals(service.path);
-		ret &= path.equals(service.name);
-		ret &= path.equals(service.mountCommand);
-		ret &= path.equals(service.store);
-		ret &= path.equals(service.isBackendModule);
-		ret &= path.equals(service.nrOfFilePartsToStore);
-		ret &= path.equals(service.availability);
+		ret &= name.equals(service.name);
+		ret &= mountCommand.equals(service.mountCommand);
+		ret &= store.equals(service.store);
+		ret &= isBackendModule.equals(service.isBackendModule);
+		ret &= nrOfFilePartsToStore.equals(service.nrOfFilePartsToStore);
+		ret &= availability.equals(service.availability);
+		return ret;
+	}
+	
+	@Override
+	public int hashCode(){
+		int ret = path.hashCode();
+		ret += name.hashCode();
+		ret += mountCommand.hashCode();
+		ret += isBackendModule.hashCode();
+		ret += nrOfFilePartsToStore.hashCode();
+		ret += availability.hashCode();
 		return ret;
 	}
 }
