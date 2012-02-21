@@ -1,6 +1,6 @@
 package com.github.joe42.splitter;
 
-import com.github.joe42.splitter.backend.Mounter;
+import com.github.joe42.splitter.backend.StorageServicesMgr;
 
 import fuse.FuseMount;
 
@@ -16,9 +16,9 @@ public class Main {
 		System.arraycopy(args, 0, fuseArgs, 0, fuseArgs.length);
 		// System.out.println(fuseArgs[0]);
 		try {
-			Mounter mounter = new Mounter(args[3]);
-			CauchyReedSolomonSplitter splitter = new CauchyReedSolomonSplitter(mounter.getServices()); 
-			FuseMount.mount(fuseArgs, new ConfigurableFuseBox(splitter, mounter));
+			StorageServicesMgr storageServiceMgr = new StorageServicesMgr(args[3]);
+			CauchyReedSolomonSplitter splitter = new CauchyReedSolomonSplitter(storageServiceMgr.getServices()); 
+			FuseMount.mount(fuseArgs, new ConfigurableFuseBox(splitter, storageServiceMgr));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

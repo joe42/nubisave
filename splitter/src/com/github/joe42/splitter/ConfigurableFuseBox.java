@@ -9,6 +9,7 @@ import org.ini4j.Ini;
 
 import com.github.joe42.splitter.backend.BackendService;
 import com.github.joe42.splitter.backend.Mounter;
+import com.github.joe42.splitter.backend.StorageServicesMgr;
 import com.github.joe42.splitter.backend.StorageService;
 import com.github.joe42.splitter.util.file.FileUtil;
 import com.github.joe42.splitter.util.file.IniUtil;
@@ -26,12 +27,12 @@ public class ConfigurableFuseBox extends FuseBox  implements StorageService{
 
 	private VirtualFileContainer virtualFolder;
 	private VirtualFile vtSplitterConfig;
-	private Mounter mounter;
+	private StorageServicesMgr storageServiceMgr;
 	private static final Logger log = Logger.getLogger("FuseBox");
 	
-	public ConfigurableFuseBox(CauchyReedSolomonSplitter splitter, Mounter mounter) throws IOException{
+	public ConfigurableFuseBox(CauchyReedSolomonSplitter splitter, StorageServicesMgr storageServiceMgr) throws IOException{
 		super(splitter);
-		this.mounter = mounter;
+		this.storageServiceMgr = storageServiceMgr;
 		virtualFolder = new VirtualFileContainer();
 		vtSplitterConfig = new VirtualFile(CONFIG_PATH);
 		vtSplitterConfig.setText("[splitter]\nredundancy = 0");
@@ -117,7 +118,7 @@ public class ConfigurableFuseBox extends FuseBox  implements StorageService{
 		//Mount backend module:
 		String configFileName = new File(path).getName();
 		Ini options = IniUtil.getIni(vtf.getText());
-		String mountpoint = mounter.mount(configFileName, options); 
+		String mountpoint = storageServiceMgr.mount(configFileName, options); 
 		if (mountpoint != null) {
 			virtualFolder.remove(path); 
 			virtualFolder.add(new VirtualRealFile(path, mountpoint+CONFIG_PATH));
@@ -213,7 +214,7 @@ file is removed after at most 10 seconds
 			}
 		}*/
 			String uniqueServiceName = new File(path).getName();
-			mounter.unmount(uniqueServiceName);
+			storageServiceMgr.unmount(uniqueServiceName);
 			virtualFolder.remove(path);
 		}
 		if(path.startsWith(DATA_DIR)){
@@ -273,8 +274,8 @@ file is removed after at most 10 seconds
 		boolean successful = true;
 		String uniqueServiceNameFrom = new File(from).getName();
 		String uniqueServiceNameTo = new File(to).getName();
-		BackendService serviceFrom = mounter.getServices().get(uniqueServiceNameFrom);
-		BackendService serviceTo = mounter.getServices().get(uniqueServiceNameTo);
+		BackendService serviceFrom = storageServiceMgr.getServices().get(uniqueServiceNameFrom);
+		BackendService serviceTo = storageServiceMgr.getServices().get(uniqueServiceNameTo);
 		log.debug("mv "+serviceFrom.getDataDirPath()+"/* "+serviceTo.getDataDirPath());
 		boolean fileMoved;
 		for(File srcFileFragment: new File(serviceFrom.getDataDirPath()).listFiles()){
