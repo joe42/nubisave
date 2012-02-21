@@ -9,13 +9,16 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 
+/**
+ *Manages the storages used by NubiSave. The actual stores are instances of BackendService.
+ */
 public class BackendServices {
 	private Map<String, BackendService> services;
 	
 	public BackendServices(){
 		this.services = new HashMap<String, BackendService>();
 	}
-	
+
 	/**
 	 * Return true iff o is an instance of BackendServices and maps the same service names to the same BackendService instances.
 	 */
@@ -25,6 +28,11 @@ public class BackendServices {
 			return false;
 		}
 		return ((BackendServices)o).services.equals(services);
+	}
+	
+	@Override
+	public int hashCode(){
+		return services.hashCode();
 	}
 	
 	/**
@@ -119,7 +127,7 @@ public class BackendServices {
 	/**
 	 * Get the probability of a combination of stores being unavailable
 	 * If the combination of stores cannot be used to reconstruct a stored file, 0 is returned.
-	 * @param storageServiceCombination 
+	 * @param storageServiceCombination  a set of front end services
 	 * @return unavailability of a combination of stores
 	 */
 	public static double getUnavailabilityOfCombination(Set<BackendService> storageServiceCombination) {
@@ -138,7 +146,7 @@ public class BackendServices {
 	/**
 	 * Get the availability of a combination of stores
 	 * If the combination of stores cannot be used to reconstruct a stored file, 0 is returned.
-	 * @param storageServiceCombination 
+	 * @param storageServiceCombination a set of front end services
 	 * @return availability of a combination of stores
 	 */
 	public static double getAvailabilityOfCombination(Set<BackendService> storageServiceCombination) {
@@ -154,6 +162,11 @@ public class BackendServices {
 		return availabilityOfCombination;
 	}
 
+	/**
+	 * Turn a list of data directory paths to a set of back end services with coinciding directory paths  
+	 * @param storageDirectoryCombination list of data directory paths, each coinciding with the directory path of a back end service
+	 * @return
+	 */
 	public Set<BackendService> getStorageServicesFromStorageDirectories(
 			List<String> storageDirectoryCombination) {
 		Set<BackendService> storages = new HashSet<BackendService>();
