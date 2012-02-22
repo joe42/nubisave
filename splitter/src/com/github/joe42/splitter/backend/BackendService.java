@@ -73,11 +73,11 @@ public class BackendService implements StorageService{
 		mountCommand = substituteCommandParameters(options);
 		nrOfFilePartsToStore = IniUtil.get(options, "splitter", "fileparts", Integer.class);
 		if(nrOfFilePartsToStore == null){
-			nrOfFilePartsToStore = 0;
+			nrOfFilePartsToStore = 1;
 		}
 		availability = IniUtil.get(options, "splitter", "availability", Double.class);
 		if(availability == null){
-			availability = 0d;
+			availability = 0.5d;
 		}
 	}
 	
