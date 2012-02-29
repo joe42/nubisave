@@ -3,6 +3,7 @@ package com.github.joe42.splitter.backend;
 import java.io.IOException;
 import java.util.*;
 
+import org.apache.log4j.Logger;
 import org.ini4j.Ini;
 
 import com.github.joe42.splitter.util.file.IniUtil;
@@ -11,31 +12,32 @@ import com.github.joe42.splitter.util.file.IniUtil;
  * It may represent either a front end storage used to store files in or a back end services, which might be used by one or more front end storages.
  */
 public class BackendService implements StorageService{
+	private static final Logger log = Logger.getLogger("BackendService");
 	private String path, name, mountCommand;
 	private String store;
 	private Boolean isBackendModule;
 	private Integer nrOfFilePartsToStore;
 	private Double availability;
 
+	/**
+	 * Creates a backend service.
+	 * @param storages the directory where this services should be mounted as a subfolder
+	 * @param name the unique name of the service, which should later be the name of the folder where the service is mounted to
+	 */
 	private BackendService(String store, String name){
-		/**
-		 * Creates a backend service.
-		 * @param storages the directory where this services should be mounted as a subfolder
-		 * @param name the unique name of the service, which should later be the name of the folder where the service is mounted to
-		 */
 		this.store = store;
 		this.path = store;		
 		this.name = name;
 		mountCommand = "";
 	}
+	/**
+	 * Creates a backend service.
+	 * @param storages the directory where this services should be mounted as a subfolder
+	 * @param name the unique name of the service, which should later be the name of the folder where the service is mounted to
+	 * @param options see {@link #configure(String, Ini) configure} for a list of possible options
+	 * 					
+	 */
 	public BackendService(String store, String name, Ini options){
-		/**
-		 * Creates a backend service.
-		 * @param storages the directory where this services should be mounted as a subfolder
-		 * @param name the unique name of the service, which should later be the name of the folder where the service is mounted to
-		 * @param options see {@link #configure(String, Ini) configure} for a list of possible options
-		 * 					
-		 */
 		this(store,name);
 		configure(name, options);
 	}
@@ -79,6 +81,7 @@ public class BackendService implements StorageService{
 		if(availability == null){
 			availability = 0.5d;
 		}
+		log.debug("Configure BackendService: isBackendModule:"+isBackendModule+" weight:"+nrOfFilePartsToStore+" availability:"+availability);
 	}
 	
 	private String substituteCommandParameters(Ini config){
