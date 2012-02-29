@@ -245,4 +245,13 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 		}
 	}
 
+	/**
+	 * Get the minimal availability of files achieved by the current Splitter instance.
+	 * The calculation considers the availability of the storages on which the file parts are located.
+	 * The availability of NubiSave itself does not need to be considered.
+	 * @return the availability in percent
+	 */
+	public double getStorageAvailability(){
+		return storageStrategy.getStorageAvailability(); //forward call to the storage strategy factory
+	}
 }
