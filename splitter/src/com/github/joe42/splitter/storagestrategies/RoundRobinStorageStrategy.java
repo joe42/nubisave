@@ -3,6 +3,8 @@ package com.github.joe42.splitter.storagestrategies;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -18,12 +20,13 @@ import com.github.joe42.splitter.util.math.SetUtil;
 /**
  * Iterates over a list of storages by consecutive calls to {@link #getFragmentDirectories() getFragmentDirectories()}.
  */
-public class RoundRobinStorageStrategy implements StorageStrategy {
+public class RoundRobinStorageStrategy implements StorageStrategy, Observer {
 	private long round;
-	private List<String> potentialStorageDirectories;
 	private int redundancy;
 	private long filesize;
 	private BackendServices storageServices;
+	private ArrayList<String> potentialStorageDirectories;
+	private boolean storageServicesHaveChanged;
 	
 	
 	/**
@@ -32,14 +35,16 @@ public class RoundRobinStorageStrategy implements StorageStrategy {
 	 */
 	public RoundRobinStorageStrategy(BackendServices storageServices){
 		this.storageServices = storageServices;
-		this.potentialStorageDirectories = storageServices.getDataDirPaths();
+		storageServices.addObserver(this);
+		storageServicesHaveChanged = true;
+		update();
 		round = 0;
 		redundancy = 50;
 	}
 
 	public void setStorageServices(BackendServices storageServices){
 		this.storageServices = storageServices;
-		this.potentialStorageDirectories = storageServices.getDataDirPaths();
+		storageServicesHaveChanged = true;
 	}
 	
 	public BackendServices getStorageServices(){
@@ -101,7 +106,7 @@ public class RoundRobinStorageStrategy implements StorageStrategy {
 	 */
 	@Override
 	public int getNrOfRedundantFragments() {
-		int nrOfFileStores =  potentialStorageDirectories.size();
+		int nrOfFileStores = potentialStorageDirectories.size();
 		int nrOfRedundantFragments = (int) ((nrOfFileStores-1) * (redundancy /100f));
 		return nrOfRedundantFragments;
 	}
@@ -160,5 +165,30 @@ public class RoundRobinStorageStrategy implements StorageStrategy {
 			}
 			combinations.add(combination); 
 		}
+	}
+	
+	/**
+	 * Put the storage strategy into a consistent state. 
+	 * Should be called after a storage service has changed.
+	 */
+	public void update() {
+		if(storageServicesHaveChanged){
+			storageServicesHaveChanged = false;
+			potentialStorageDirectories = new ArrayList<String>();
+			for(BackendService storageService: storageServices.getFrontEndStorageServices()){
+				if(storageService.getNrOfFilePartsToStore()>0){
+					potentialStorageDirectories.add(storageService.getDataDirPath());
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Sets a flag, that this storage strategy's services have been changed
+	 * {@link #update() update()} must be called afterwards, to put the storage strategy into a consistent state.
+	 */
+	@Override
+	public void update(Observable storageServices, Object arg1) {
+		storageServicesHaveChanged = true;
 	}
 }

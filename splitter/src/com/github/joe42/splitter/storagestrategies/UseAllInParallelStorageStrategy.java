@@ -3,6 +3,8 @@ package com.github.joe42.splitter.storagestrategies;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Set;
 
 
@@ -13,11 +15,12 @@ import com.github.joe42.splitter.util.math.SetUtil;
 /**
  * Uses all potential storage directories.
  */
-public class UseAllInParallelStorageStrategy  implements StorageStrategy {
+public class UseAllInParallelStorageStrategy  implements StorageStrategy, Observer {
 	protected List<String> potentialStorageDirectories;
 	protected int redundancy;
 	protected long filesize;
 	protected BackendServices services;
+	private boolean storageServicesHaveChanged;
 	
 	
 	/**
@@ -26,15 +29,24 @@ public class UseAllInParallelStorageStrategy  implements StorageStrategy {
 	 */
 	public UseAllInParallelStorageStrategy(BackendServices storageServices){
 		this.services = storageServices;
-		setPotentialStorageDirectories();
+		storageServices.addObserver(this);
+		storageServicesHaveChanged = true;
+		update();
 		redundancy = 50;
 	}
 	
-	private void setPotentialStorageDirectories() {
-		potentialStorageDirectories = new ArrayList<String>();
-		for(BackendService storageService: services.getFrontEndStorageServices()){
-			for(int i=0; i<storageService.getNrOfFilePartsToStore();i++){
-				potentialStorageDirectories.add(storageService.getDataDirPath());
+	/**
+	 * Put the storage strategy into a consistent state. 
+	 * Should be called after a storage service has changed.
+	 */
+	public void update() {
+		if(storageServicesHaveChanged){
+			storageServicesHaveChanged = false;
+			potentialStorageDirectories = new ArrayList<String>();
+			for(BackendService storageService: services.getFrontEndStorageServices()){
+				for(int i=0; i<storageService.getNrOfFilePartsToStore();i++){
+					potentialStorageDirectories.add(storageService.getDataDirPath());
+				}
 			}
 		}
 	}
@@ -60,7 +72,7 @@ public class UseAllInParallelStorageStrategy  implements StorageStrategy {
 
 	public void setStorageServices(BackendServices services){
 		this.services = services;
-		setPotentialStorageDirectories();
+		storageServicesHaveChanged = true;
 	}
 	
 	public BackendServices getStorageServices(){
@@ -130,4 +142,12 @@ public class UseAllInParallelStorageStrategy  implements StorageStrategy {
 		return potentialStorageDirectories.size(); 
 	}
 
+	/**
+	 * Sets a flag, that this storage strategy's services have been changed
+	 * {@link #update() update()} must be called afterwards, to put the storage strategy into a consistent state.
+	 */
+	@Override
+	public void update(Observable storageServices, Object arg1) {
+		storageServicesHaveChanged = true;
+	}
 }

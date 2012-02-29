@@ -8,7 +8,7 @@ import java.util.TreeSet;
 
 import com.github.joe42.splitter.backend.BackendService;
 import com.github.joe42.splitter.backend.BackendServices;
-
+//TODO: check if backendservices changed here, but not with equals because backendservices is a reference that would be changed as well?
 /**
  * Responsible for creating, configuring and pooling StorageStrategies.
  */
@@ -35,9 +35,7 @@ public class StorageStrategyFactory {
 			if(useInParallel == null){
 				useInParallel = new UseAllInParallelStorageStrategy(services);
 			}
-			if( !useInParallel.getStorageServices().equals(services) ) {
-				useInParallel.setStorageServices(services);
-			}
+			useInParallel.update(); // update possible changes to services 
 			useInParallel.setRedundancy(redundancy);
 			changeToCurrentStrategy = useInParallel.changeToCurrentStrategy(previousStorageStrategy);
 			previousStorageStrategy = useInParallel;
@@ -46,9 +44,7 @@ public class StorageStrategyFactory {
 			if(roundRobin == null || ! dataDirPaths.equals(new TreeSet<String>(services.getDataDirPaths()))){
 				roundRobin = new RoundRobinStorageStrategy(services);
 			}
-			if( !roundRobin.getStorageServices().equals(services) ) {
-				roundRobin.setStorageServices(services);
-			}
+			useInParallel.update(); // update possible changes to services 
 			roundRobin.setRedundancy(redundancy);
 			changeToCurrentStrategy = roundRobin.changeToCurrentStrategy(previousStorageStrategy);
 			previousStorageStrategy = roundRobin;
