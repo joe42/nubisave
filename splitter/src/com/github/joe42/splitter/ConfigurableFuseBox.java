@@ -120,6 +120,7 @@ public class ConfigurableFuseBox extends FuseBox  implements StorageService{
 		Ini options = IniUtil.getIni(vtf.getText());
 		if(storageServiceMgr.isMounted(configFileName)){
 			storageServiceMgr.configureService(configFileName, options);
+			updateVTSplitterConfigFile();
 			return;
 		}
 		String mountpoint = storageServiceMgr.mount(configFileName, options); 
@@ -129,6 +130,7 @@ public class ConfigurableFuseBox extends FuseBox  implements StorageService{
 			vtf = virtualFolder.get(path);
 			buf.rewind();
 			vtf.write(buf, offset);
+			updateVTSplitterConfigFile();
 			return;
 		} else {
 			throw new FuseException("IO Exception on creating store.")
@@ -136,10 +138,17 @@ public class ConfigurableFuseBox extends FuseBox  implements StorageService{
         }
 	}
 
+	private void updateVTSplitterConfigFile() {
+		Ini config = IniUtil.getIni(vtSplitterConfig.getText());
+		config.put("splitter", "availability", getStorageAvailability());
+		vtSplitterConfig.setText(IniUtil.getString(config));
+	}
+
 	private void configureSplitter() {
 		Ini config = IniUtil.getIni(vtSplitterConfig.getText());
 		setRedundancy(config.fetch("splitter", "redundancy", Integer.class));
 		setStorageStrategyName(config.fetch("splitter", "storagestrategy", String.class));
+		updateVTSplitterConfigFile();
 	}
 	
 	public void read(String path, ByteBuffer buf, long offset)
