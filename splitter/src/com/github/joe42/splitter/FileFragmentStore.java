@@ -147,4 +147,11 @@ public class FileFragmentStore {
 		fileFragmentMetaDataStore.moveFragment(from, to);		
 	}
 
+	/**
+	 * Get the minimal availability of files stored by the current file fragment store.
+	 * @return the availability in percent
+	 */
+	public double getStorageAvailability() {
+		return splitter.getStorageAvailability(); //forward call to the splitter
+	}
 }

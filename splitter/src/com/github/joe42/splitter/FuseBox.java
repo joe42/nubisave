@@ -341,4 +341,12 @@ public class FuseBox implements Filesystem1 {
 	protected FileFragmentStore getFileFragmentStore(){
 		return fileStore;
 	}
+	
+	/**
+	 * Get the minimal availability of files stored by the current fuse box.
+	 * @return the availability in percent
+	 */
+	public double getStorageAvailability(){
+		return fileStore.getStorageAvailability(); //forward call to the file store
+	}
 }
