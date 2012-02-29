@@ -20,6 +20,7 @@ public class StorageServicesMgr {
 	public StorageServicesMgr(String storages){
 		this.storages = storages;
 		mounter = new Mounter(storages);
+		services = new BackendServices();
 	}
 	/**
 	 * Get the current services
@@ -67,9 +68,13 @@ public class StorageServicesMgr {
 	
 	/**
 	 * @param uniqueServiceName
-	 * @return true if the storage denoted by uniqueServiceName is mounted
+	 * @return true iff the storage denoted by uniqueServiceName is mounted
 	 */
 	public  boolean isMounted(String uniqueServiceName) {
+		BackendService service = services.get(uniqueServiceName);
+		if(service == null){
+			return false;
+		}
 		return mounter.isStorageMounted(services.get(uniqueServiceName));
 	}
 	
