@@ -250,6 +250,9 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 	 * @return the availability in percent
 	 */
 	public double getStorageAvailability(){
+		if(storageStrategy == null){
+			return 0;
+		}
 		return storageStrategy.getStorageAvailability(); //forward call to the storage strategy factory
 	}
 }

@@ -17,7 +17,7 @@ public class StorageStrategyFactory {
 	private UseAllInParallelStorageStrategy useInParallel = null;
 	private BackendServices services;
 	private boolean changeToCurrentStrategy = true;
-	private StorageStrategy previousStorageStrategy = null,  currentStorageStrategy = null;
+	private StorageStrategy previousStorageStrategy = null;
 	private Set<String> dataDirPaths = new TreeSet<String>();
 	public StorageStrategyFactory(BackendServices services){
 		this.services = services;
@@ -30,7 +30,7 @@ public class StorageStrategyFactory {
 	 * @return
 	 */
 	public StorageStrategy createStrategy(String strategyName, int redundancy) {
-		currentStorageStrategy = null;
+		StorageStrategy ret = null;
 		if(strategyName.equals("UseAllInParallel")){
 			if(useInParallel == null){
 				useInParallel = new UseAllInParallelStorageStrategy(services);
@@ -38,7 +38,7 @@ public class StorageStrategyFactory {
 			useInParallel.setRedundancy(redundancy);
 			changeToCurrentStrategy = useInParallel.changeToCurrentStrategy(previousStorageStrategy);
 			previousStorageStrategy = useInParallel;
-			currentStorageStrategy = useInParallel;
+			ret = useInParallel;
 		} else { //RoundRobin as default
 			if(roundRobin == null || ! dataDirPaths.equals(new TreeSet<String>(services.getDataDirPaths()))){
 				roundRobin = new RoundRobinStorageStrategy(services);
@@ -46,9 +46,9 @@ public class StorageStrategyFactory {
 			roundRobin.setRedundancy(redundancy);
 			changeToCurrentStrategy = roundRobin.changeToCurrentStrategy(previousStorageStrategy);
 			previousStorageStrategy = roundRobin;
-			currentStorageStrategy = roundRobin;
+			ret = roundRobin;
 		}
-		return currentStorageStrategy;
+		return ret;
 	}
 	
 	/**
@@ -56,15 +56,5 @@ public class StorageStrategyFactory {
 	 */
 	public boolean changeToCurrentStrategy(){
 		return changeToCurrentStrategy ;
-	}
-	
-	/**
-	 * Get the minimal availability of files achieved by the current StorageStrategy instance.
-	 * The calculation considers the availability of the storages on which the {@link #getFragmentDirectories() fragment directories} are located.
-	 * The availability of NubiSave itself does not need to be considered.
-	 * @return the availability in percent
-	 */
-	public double getStorageAvailability(){
-		return currentStorageStrategy.getStorageAvailability(); //forward call to the respective storage strategy instance
 	}
 }
