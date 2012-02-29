@@ -26,7 +26,6 @@ public class RoundRobinStorageStrategy implements StorageStrategy, Observer {
 	private long filesize;
 	private BackendServices storageServices;
 	private ArrayList<String> potentialStorageDirectories;
-	private boolean storageServicesHaveChanged;
 	
 	
 	/**
@@ -36,15 +35,17 @@ public class RoundRobinStorageStrategy implements StorageStrategy, Observer {
 	public RoundRobinStorageStrategy(BackendServices storageServices){
 		this.storageServices = storageServices;
 		storageServices.addObserver(this);
-		storageServicesHaveChanged = true;
 		update();
 		round = 0;
 		redundancy = 50;
 	}
 
 	public void setStorageServices(BackendServices storageServices){
+		this.storageServices.deleteObserver(this);
 		this.storageServices = storageServices;
-		storageServicesHaveChanged = true;
+		storageServices.addObserver(this);
+		this.storageServices = storageServices;
+		update(); // update possible changes to services 
 	}
 	
 	public BackendServices getStorageServices(){
@@ -171,24 +172,20 @@ public class RoundRobinStorageStrategy implements StorageStrategy, Observer {
 	 * Put the storage strategy into a consistent state. 
 	 * Should be called after a storage service has changed.
 	 */
-	public void update() {
-		if(storageServicesHaveChanged){
-			storageServicesHaveChanged = false;
-			potentialStorageDirectories = new ArrayList<String>();
-			for(BackendService storageService: storageServices.getFrontEndStorageServices()){
-				if(storageService.getNrOfFilePartsToStore()>0){
-					potentialStorageDirectories.add(storageService.getDataDirPath());
-				}
+	private void update() {
+		potentialStorageDirectories = new ArrayList<String>();
+		for(BackendService storageService: storageServices.getFrontEndStorageServices()){
+			if(storageService.getNrOfFilePartsToStore()>0){
+				potentialStorageDirectories.add(storageService.getDataDirPath());
 			}
 		}
 	}
 	
 	/**
-	 * Sets a flag, that this storage strategy's services have been changed
-	 * {@link #update() update()} must be called afterwards, to put the storage strategy into a consistent state.
+	 * Put the storage strategy into a consistent state after this strategy's services have been changed
 	 */
 	@Override
 	public void update(Observable storageServices, Object arg1) {
-		storageServicesHaveChanged = true;
+		update(); // update possible changes to services 
 	}
 }
