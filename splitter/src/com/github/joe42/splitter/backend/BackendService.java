@@ -196,4 +196,10 @@ public class BackendService implements StorageService{
 		ret += availability.hashCode();
 		return ret;
 	}
+	
+	@Override
+	public String toString() {
+		return name;
+	}
+	
 }
