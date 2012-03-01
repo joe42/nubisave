@@ -78,10 +78,35 @@ public class Splitter {
             System.err.println("Splitter.setRedundancy(int redundancy): Failed to configure Splitter "+" - "+e.getMessage()==null?e.getMessage():"");
         }
     }
-    public int getRedundancy() throws IOException{
-        /**Gets the redundancy level for Splitter module**/
+    /**Gets the redundancy level for Splitter module**/
+    public int getRedundancy(){
+        try{
             Ini splitterConfig = new Ini(new File(configurationFilePath));
             return Integer.parseInt(splitterConfig.get("splitter", "redundancy"));
+        } catch(Exception e){
+            return 100;
+        }
+    }
+
+    /**Sets the storage strategy for Splitter module**/
+    public void setStorageStrategy(String storageStrategy) {
+        try{
+            Ini splitterConfig = new Ini(new File(configurationFilePath));
+            splitterConfig.put("splitter", "storagestrategy", storageStrategy);
+            splitterConfig.store();
+        } catch(Exception e){
+            System.err.println("Splitter.setStorageStrategy(String storageStrategy): Failed to configure Splitter "+" - "+e.getMessage()==null?e.getMessage():"");
+        }
+    }
+
+    /**Gets the storage strategy from the Splitter module**/
+    public String getStorageStrategy() {
+        try{
+            Ini splitterConfig = new Ini(new File(configurationFilePath));
+            return splitterConfig.get("splitter", "storagestrategy");
+        } catch(Exception e){
+            return "RoundRobin";
+        }
     }
 
 }

@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -126,6 +127,9 @@ public class MainWindow extends javax.swing.JFrame {
         changeMatchMakerURLBtn = new javax.swing.JButton();
         matchMakerLabel1 = new javax.swing.JLabel();
         matchMakerField = new javax.swing.JTextField();
+        availabilityLabel = new javax.swing.JLabel();
+        storageStrategyComboBox = new javax.swing.JComboBox();
+        jLabel4 = new javax.swing.JLabel();
 
         customStorageserviceChooser.setCurrentDirectory(new java.io.File("../splitter/mountscripts"));
         customStorageserviceChooser.setDialogTitle("Custom Service");
@@ -175,7 +179,7 @@ public class MainWindow extends javax.swing.JFrame {
             .addGroup(providerPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(providerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 383, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE)
                     .addGroup(providerPanelLayout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -234,6 +238,17 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
+        availabilityLabel.setText("Availability:");
+
+        storageStrategyComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "RoundRobin", "UseAllInParallel" }));
+        storageStrategyComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                storageStrategyComboBoxActionPerformed(evt);
+            }
+        });
+
+        jLabel4.setText("Storage strategy:");
+
         javax.swing.GroupLayout optionPanelLayout = new javax.swing.GroupLayout(optionPanel);
         optionPanel.setLayout(optionPanelLayout);
         optionPanelLayout.setHorizontalGroup(
@@ -253,7 +268,15 @@ public class MainWindow extends javax.swing.JFrame {
                             .addComponent(matchMakerLabel)
                             .addComponent(matchMakerURLField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 613, Short.MAX_VALUE))
                         .addGap(36, 36, 36)
-                        .addComponent(changeMatchMakerURLBtn))))
+                        .addComponent(changeMatchMakerURLBtn))
+                    .addGroup(optionPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addGap(67, 67, 67)
+                        .addComponent(storageStrategyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(366, Short.MAX_VALUE))
+                    .addGroup(optionPanelLayout.createSequentialGroup()
+                        .addComponent(availabilityLabel)
+                        .addContainerGap(624, Short.MAX_VALUE))))
         );
         optionPanelLayout.setVerticalGroup(
             optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -268,13 +291,19 @@ public class MainWindow extends javax.swing.JFrame {
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(redundancySlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(matchMakerLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(matchMakerURLField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(changeMatchMakerURLBtn))
-                .addGap(176, 176, 176))
+                .addGap(54, 54, 54)
+                .addGroup(optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(storageStrategyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
+                .addGap(40, 40, 40)
+                .addComponent(availabilityLabel)
+                .addGap(46, 46, 46))
         );
 
         jTabbedPane1.addTab("Options", optionPanel);
@@ -287,7 +316,7 @@ public class MainWindow extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 445, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 446, Short.MAX_VALUE)
         );
 
         pack();
@@ -334,8 +363,15 @@ public class MainWindow extends javax.swing.JFrame {
     private void changeMatchMakerURLBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changeMatchMakerURLBtnActionPerformed
         Nubisave.properties.setProperty("matchmakerURI", matchMakerURLField.getText());
     }//GEN-LAST:event_changeMatchMakerURLBtnActionPerformed
+
+    private void storageStrategyComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_storageStrategyComboBoxActionPerformed
+        JComboBox cb = (JComboBox)evt.getSource();
+        String storageStrategy = (String)cb.getSelectedItem();
+        Nubisave.mainSplitter.setStorageStrategy(storageStrategy);
+    }//GEN-LAST:event_storageStrategyComboBoxActionPerformed
     public NubiTableModel tableModel;
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel availabilityLabel;
     private javax.swing.JButton changeMatchMakerURLBtn;
     private javax.swing.JFileChooser customStorageserviceChooser;
     private javax.swing.JButton jButton1;
@@ -343,6 +379,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JOptionPane jOptionPane1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
@@ -356,6 +393,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JPanel providerPanel;
     private javax.swing.JTable providerTable;
     private javax.swing.JSlider redundancySlider;
+    private javax.swing.JComboBox storageStrategyComboBox;
     // End of variables declaration//GEN-END:variables
 
     class IniFileFilter extends javax.swing.filechooser.FileFilter {
