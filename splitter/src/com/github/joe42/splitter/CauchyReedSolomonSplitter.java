@@ -33,21 +33,44 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 	private MultipleFileHandler concurrent_multi_file_handler;
 	private MultipleFileHandler serial_multi_file_handler;
 	private StorageStrategy storageStrategy;
+	private int redundancy;
+	private String storageStrategyName;
 	private StorageStrategyFactory storageStrategyFactory;
 	private BackendServices services;
 	
 	public CauchyReedSolomonSplitter(BackendServices services){
 		this.services = services;
+		redundancy = 50;
+		storageStrategyName = "";
 		storageStrategyFactory = new StorageStrategyFactory(services);
 		concurrent_multi_file_handler = new ConcurrentMultipleFileHandler();
 		serial_multi_file_handler = new SerialMultipleFileHandler();
 	}
 	
+	public int getRedundancy() {
+		return redundancy;
+	}
+
+	public void setRedundancy(int redundancy) {
+		this.redundancy = redundancy;
+	}
+
+	public String getStorageStrategyName() {
+		return storageStrategyName;
+	}
+
+	public void setStorageStrategyName(String storageStrategyName) {
+		if(storageStrategyName == null){
+			storageStrategyName = "";
+		}
+		this.storageStrategyName = storageStrategyName;
+	}
+
 	public BackendServices getBackendServices(){
 		return services;
 	}
 	
-	public void splitFile(FileFragmentMetaDataStore fileFragmentMetaDataStore, String path, FileChannel temp, int redundancy, String storageStrategyName) throws FuseException, IOException {
+	public void splitFile(FileFragmentMetaDataStore fileFragmentMetaDataStore, String path, FileChannel temp) throws FuseException, IOException {
 		
 		int nr_of_file_parts_successfully_stored = 0;
 		HashMap<String, byte[]> fileParts = new HashMap<String, byte[]>();
@@ -250,9 +273,7 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 	 * @return the availability in percent
 	 */
 	public double getStorageAvailability(){
-		if(storageStrategy == null){
-			return 0;
-		}
+		storageStrategy = storageStrategyFactory.createStrategy(storageStrategyName, redundancy);
 		return storageStrategy.getStorageAvailability(); //forward call to the storage strategy factory
 	}
 }

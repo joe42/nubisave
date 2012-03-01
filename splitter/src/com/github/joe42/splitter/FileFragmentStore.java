@@ -20,9 +20,7 @@ public class FileFragmentStore {
 	protected RandomAccessTemporaryFileChannels tempFiles;
 	protected RandomAccessTemporaryFileChannel tempReadChannel;
 	protected CauchyReedSolomonSplitter splitter;
-	private int redundancy;
 	protected FileFragmentMetaDataStore fileFragmentMetaDataStore;
-	protected String storageStrategyName;
 
 	public FileFragmentStore(CauchyReedSolomonSplitter splitter) throws IOException {
 		tempFiles = new RandomAccessTemporaryFileChannels();
@@ -31,19 +29,19 @@ public class FileFragmentStore {
 	}
 
 	public void setRedundancy(int redundancy){
-		this.redundancy = redundancy;
+		this.splitter.setRedundancy(redundancy);
 	}
 	
 	public int getRedundancy(){
-		return redundancy;
+		return this.splitter.getRedundancy();
 	}
 	
 	public void setStorageStrategyName(String storageStrategyName){
-		this.storageStrategyName = storageStrategyName;
+		this.splitter.setStorageStrategyName(storageStrategyName);
 	}
 	
 	public String getStorageStrategyName(){
-		return storageStrategyName;
+		return this.splitter.getStorageStrategyName();
 	}
 
 	public void write(String path, ByteBuffer buf, long offset) throws IOException, FuseException {
@@ -115,7 +113,7 @@ public class FileFragmentStore {
 	public void flushCache(String path) throws FuseException, IOException {
 		if ( ! hasFlushed(path) ) {
 			FileChannel temp = tempFiles.getFileChannel(path);
-			splitter.splitFile(fileFragmentMetaDataStore, path, temp, redundancy, storageStrategyName);
+			splitter.splitFile(fileFragmentMetaDataStore, path, temp);
 		}
 		removeCache(path);
 	}
