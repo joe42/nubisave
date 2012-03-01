@@ -11,6 +11,7 @@ import java.util.TreeSet;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.collections.SetUtils;
+import org.apache.log4j.Logger;
 
 import com.github.joe42.splitter.backend.BackendService;
 import com.github.joe42.splitter.backend.BackendServices;
@@ -21,6 +22,7 @@ import com.github.joe42.splitter.util.math.SetUtil;
  * Iterates over a list of storages by consecutive calls to {@link #getFragmentDirectories() getFragmentDirectories()}.
  */
 public class RoundRobinStorageStrategy implements StorageStrategy, Observer {
+	private static final Logger log = Logger.getLogger("RoundRobinStorageStrategy");
 	private long round;
 	private int redundancy;
 	private long filesize;
@@ -130,14 +132,24 @@ public class RoundRobinStorageStrategy implements StorageStrategy, Observer {
 	public double getStorageAvailability(){
 		double availability = 0;
 		double combinationAvailability = 0;
+		boolean firstIteration = true;
 		Set<Set<BackendService>> storageCombinations = getStorageCombinations();
 		for(Set<BackendService> storageCombination: storageCombinations ){
-			//get availability of file stored in combination (sum of probabilities of all combinations, where at least one store is available in strageCombination)
-			combinationAvailability = storageServices.getExclusiveAvailabilityOfStorageCombination(storageCombination);
-			if (availability > combinationAvailability){
+			log.debug("combination:"+storageCombination);
+			//get availability of file stored in combination (sum of probabilities of all combinations, where at least one store is available in storageCombination)
+			combinationAvailability = 0;  
+			for(Set<BackendService> storageServiceCombination: SetUtil.powerSet(storageCombination)){
+				log.debug("combination:"+storageServiceCombination);
+				if(BackendServices.getNrOfFilePartsOfCombination(storageServiceCombination) >= 1){
+					combinationAvailability += BackendServices.getExclusiveAvailabilityOfStorageCombination(storageServiceCombination, storageCombination);
+				}
+			}
+			if (firstIteration || availability > combinationAvailability){
+				firstIteration = false;
 				availability = combinationAvailability;
 			}
 		}
+		log.debug("storage availability:"+availability);
 		return availability;
 	}
 

@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
+import java.util.HashSet;
+
+import org.apache.log4j.Logger;
 
 
 import com.github.joe42.splitter.backend.BackendService;
@@ -16,6 +19,7 @@ import com.github.joe42.splitter.util.math.SetUtil;
  * Uses all potential storage directories.
  */
 public class UseAllInParallelStorageStrategy  implements StorageStrategy, Observer {
+	private static final Logger log = Logger.getLogger("UseAllInParallelStorageStrategy");
 	protected List<String> potentialStorageDirectories;
 	protected int redundancy;
 	protected long filesize;
@@ -54,10 +58,12 @@ public class UseAllInParallelStorageStrategy  implements StorageStrategy, Observ
 		double availability = 0;
 		Set<BackendService> storageServices = new HashSet<BackendService>(services.getFrontEndStorageServices());
 		for(Set<BackendService> storageServiceCombination: SetUtil.powerSet(storageServices)){
-			if(BackendServices.getNrOfFilePartsOfCombination(storageServiceCombination) < getNrOfFilePartsNeededToReconstructFile()){
-				availability += services.getExclusiveAvailabilityOfStorageCombination(storageServiceCombination);
+			if(BackendServices.getNrOfFilePartsOfCombination(storageServiceCombination) >= getNrOfFilePartsNeededToReconstructFile()){
+				log.debug("combination:"+storageServiceCombination+ " fileparts:"+BackendServices.getNrOfFilePartsOfCombination(storageServiceCombination)+ " needed:"+getNrOfFilePartsNeededToReconstructFile());
+				availability += BackendServices.getExclusiveAvailabilityOfStorageCombination(storageServiceCombination, new HashSet<BackendService>(services.getFrontEndStorageServices()));
 			}
 		}
+		log.debug("storage availability:"+availability);
 		return availability;
 	}
 
@@ -77,8 +83,6 @@ public class UseAllInParallelStorageStrategy  implements StorageStrategy, Observ
 	
 	/**
 	 * Set the redundancy in percent from 0 to 100. 
-	 * A value of 100 means that all but one of the stores used to store a file can fail with the file still being recoverable.
-	 * A value of 0 means that non of the stores used to store a file may fail. Otherwise the file cannot be recovered.
 	 * See {@link #getNrOfRedundantFragments() getNrOfRedundantFragments()} for the exact formula details.
 	 * @param redundancy
 	 */

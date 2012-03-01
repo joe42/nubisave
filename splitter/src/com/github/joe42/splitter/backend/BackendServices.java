@@ -7,13 +7,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Set;
+import java.util.HashSet;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.log4j.Logger;
 
 /**
  *Manages the storages used by NubiSave. The actual stores are instances of BackendService.
  */
 public class BackendServices extends Observable { 
+	private static final Logger log = Logger.getLogger("BackendServices");
 	private Map<String, BackendService> services;
 	
 	public BackendServices(){
@@ -118,20 +121,27 @@ public class BackendServices extends Observable {
 	}
 
 	/**
-	 * Get probability of only the storageServiceCombination being available and no other front end storage
-	 * @param storageServiceCombination subset of front end storage services
+	 * Get probability of only the storageServiceCombination being available while no other storage in superSet is available
+	 * @param storageServiceCombination subset superSet 
+	 * @param superSet combination of front end storage services
 	 * @return probability for the storageServiceCombination being available exclusively
 	 */
-	public double getExclusiveAvailabilityOfStorageCombination(Set<BackendService> storageServiceCombination) {
-		double availability = 0;
-		availability += getAvailabilityOfCombination(storageServiceCombination);
-		availability -= getUnavailabilityOfCombination( (Set<BackendService>) CollectionUtils.disjunction(getFrontEndStorageServices(), storageServiceCombination) );
-		return availability;
+	@SuppressWarnings("unchecked")
+	public static double getExclusiveAvailabilityOfStorageCombination(Set<BackendService> storageServiceCombination, Set<BackendService> superSet) {
+		double exclusiveAvailability = 0, availability = 0, unavailability = 0;
+		availability = getAvailabilityOfCombination(storageServiceCombination);
+		log.debug("availability:"+availability);
+		unavailability = getUnavailabilityOfCombination( new HashSet<BackendService>(CollectionUtils.disjunction(superSet, storageServiceCombination)) );
+		exclusiveAvailability = availability;
+		if(unavailability != 0){
+			exclusiveAvailability = availability * unavailability;
+		}
+		log.debug("exclusive availability:"+exclusiveAvailability);
+		return exclusiveAvailability;
 	}
 
 	/**
-	 * Get the probability of a combination of stores being unavailable
-	 * If the combination of stores cannot be used to reconstruct a stored file, 0 is returned.
+	 * Get the probability of a combination of stores being unavailable at the same time
 	 * @param storageServiceCombination  a set of front end services
 	 * @return unavailability of a combination of stores
 	 */
@@ -144,13 +154,13 @@ public class BackendServices extends Observable {
 			} else{
 				unavailabilityOfCombination *= 1-storageService.getAvailability();
 			}
+			log.debug("unavailabilityOfCombination:"+unavailabilityOfCombination);
 		}
 		return unavailabilityOfCombination;
 	}
 
 	/**
-	 * Get the availability of a combination of stores
-	 * If the combination of stores cannot be used to reconstruct a stored file, 0 is returned.
+	 * Get the availability of a combination of stores being available at the same time
 	 * @param storageServiceCombination a set of front end services
 	 * @return availability of a combination of stores
 	 */
