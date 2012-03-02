@@ -16,8 +16,6 @@ cd ..
 
 if [ "$1" != "headless" ]
 then
-    # FIXME: This should be solved by some event detection
-    sleep 2;
     if [ ! -h "$userdir" ]
     then
 	ln -s "$mountpoint/data" "$userdir"
