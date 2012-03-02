@@ -66,6 +66,7 @@ public class BackendService implements StorageService{
 		if(isBackendModule == null){
 			isBackendModule = false;
 		}
+		path = store;
 		if(isBackendModule){
 			path += "/"+HIDDEN_DIR_NAME;	
 		}
