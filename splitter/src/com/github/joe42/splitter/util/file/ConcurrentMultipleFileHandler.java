@@ -39,6 +39,43 @@ public class ConcurrentMultipleFileHandler implements MultipleFileHandler{
 			executor.shutdown();
 			return nr_of_files_written;
 		}
+		
+		public int writeFilesAsByteArrays(HashMap<String, byte[]> files, int files_needed){
+			int nr_of_files_written = 0;
+			if(files == null || files.size() == 0){
+				return nr_of_files_written;
+			}
+			ExecutorService executor = Executors.newFixedThreadPool(files.size());
+			List<Future<Boolean>> list = new ArrayList<Future<Boolean>>();
+
+			for (String file_name : files.keySet()) {
+				Callable<Boolean> worker = new Write(file_name, files.get(file_name));
+				Future<Boolean> submit = executor.submit(worker);
+				list.add(submit);
+			}
+			// Now wait for the result
+			outer_loop:
+			while (true) {
+				for (Future<Boolean> future : list) {
+					try {
+						if(future.get(100, TimeUnit.MILLISECONDS) == true){
+							nr_of_files_written++;
+						}
+						if(nr_of_files_written==files_needed){
+							break outer_loop;
+						}
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					} catch (ExecutionException e) {
+						e.printStackTrace();
+					} catch (TimeoutException e) {
+						e.printStackTrace();
+					} 
+				}
+			}
+			executor.shutdown();
+			return nr_of_files_written;
+		}
 
 		class Write implements Callable<Boolean> {
 			private String file_name;
@@ -82,21 +119,34 @@ public class ConcurrentMultipleFileHandler implements MultipleFileHandler{
 					list.add(submit);
 				}
 				// Now retrieve the result
-				for (Future<byte[]> future : list) {
+				Future<byte[]> future = null;
+				List<Integer> processed = new ArrayList<Integer>();
+				outer_loop:
+				while (true) {
 					try {
-						if(future.get() != null){
-							ret.add(future.get());
+						for (int i = 0; i < list.size(); i++) {
+							future = list.get(i);
+							ret.add(future.get(100, TimeUnit.SECONDS));
+							if(ret.size()==files_needed){
+								break outer_loop;
+							}
+							processed.add(i);
 						}
-						if(ret.size()>= files_needed){
-							break;
+						for(int i: processed){
+							list.remove(i);//done with processing this future
 						}
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					} catch (ExecutionException e) {
 						e.printStackTrace();
+					} catch (TimeoutException e) {
 					} 
 				}
-				executor.shutdown();
+				for (int i = 0; i < list.size(); i++) { //cancel all unneeded file reads
+					future = list.get(i);
+					future.cancel(true);
+				}
+				executor.shutdownNow();
 
 			return ret;
 		}
@@ -134,7 +184,6 @@ public class ConcurrentMultipleFileHandler implements MultipleFileHandler{
 						in.read(ret);
 						in.close();
 					} catch (IOException e) {
-						//don't care
 						e.printStackTrace();
 					}
 				}

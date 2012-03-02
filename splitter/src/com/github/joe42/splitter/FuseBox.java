@@ -3,7 +3,6 @@ package com.github.joe42.splitter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.*;
@@ -16,6 +15,7 @@ import jdbm.htree.HTree;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
+import com.github.joe42.splitter.util.LinuxUtil;
 import com.github.joe42.splitter.util.file.MultipleFileHandler;
 import com.github.joe42.splitter.util.file.RandomAccessTemporaryFileChannels;
 import com.github.joe42.splitter.util.file.PropertiesUtil;
@@ -31,12 +31,6 @@ import fuse.FuseStatfs;
 import fuse.compat.Filesystem1;
 import fuse.compat.FuseDirEnt;
 import fuse.compat.FuseStat;
-
-//TODO: add copyright
-//Parallel read: done
-//Fixed: write appended data; or wrote nonsence.
-//<1238
-//overwrite existing files
 
 public class FuseBox implements Filesystem1 {
 	private static final Logger  log = Logger.getLogger("FuseBox");
@@ -57,48 +51,8 @@ public class FuseBox implements Filesystem1 {
 		
 		metaDataStore = new FileMetaDataStore();
 		fileStore = new FilePartFragmentStore(splitter);
-		UID = getUID();
-		GID = getGID();
-	}
-
-	private int getUID() {
-		String uid = null;
-		try {
-		    String userName = System.getProperty("user.name");
-		    String command = "id -u "+userName;
-		    Process child = Runtime.getRuntime().exec(command);
-
-		    // Get the input stream and read from it
-		    InputStream in = child.getInputStream();
-		    int c;
-		    uid = "";
-		    while ((c = in.read()) != -1) {
-		        uid += ((char)c);
-		    }
-		    in.close();
-		} catch (IOException e) {
-		}
-		return Integer.parseInt(uid.trim());
-	}
-
-	private int getGID() {
-		String gid = null;
-		try {
-		    String userName = System.getProperty("user.name");
-		    String command = "id -g "+userName;
-		    Process child = Runtime.getRuntime().exec(command);
-
-		    // Get the input stream and read from it
-		    InputStream in = child.getInputStream();
-		    int c;
-		    gid = "";
-		    while ((c = in.read()) != -1) {
-		        gid += ((char)c);
-		    }
-		    in.close();
-		} catch (IOException e) {
-		}
-		return Integer.parseInt(gid.trim());
+		UID = LinuxUtil.getUID();
+		GID = LinuxUtil.getGID();
 	}
 
 	public void chmod(String path, int mode) throws FuseException {
@@ -109,15 +63,9 @@ public class FuseBox implements Filesystem1 {
 		throw new FuseException("Read Only").initErrno(FuseException.EACCES);
 	}
 
-	// mknod is not called because of unsupportet op exception here
 	public FuseStat getattr(String path) throws FuseException {
 		FuseStat stat = new FuseStat();
 		Entry entry = null;
-		/*
-		 * if(path.startsWith("/.config###")){ if(path.equals("/.config###")){
-		 * entry = new FolderEntry(); stat.mode = FuseFtype.TYPE_DIR | 0755; }
-		 * if() }
-		 */
 		try {
 			entry = metaDataStore.getEntry(path);
 			if (entry instanceof FileEntry) {
@@ -134,7 +82,6 @@ public class FuseBox implements Filesystem1 {
 		if (entry == null)
 			throw new FuseException("No Such Entry")
 					.initErrno(FuseException.ENOENT);
-		//TODO: tidy up
 		stat.nlink = entry.nlink;
 		stat.uid = entry.uid;
 		stat.gid = entry.gid;
@@ -147,7 +94,6 @@ public class FuseBox implements Filesystem1 {
 	}
 
 	public FuseDirEnt[] getdir(String path) throws FuseException {
-		//TODO: tidy up
 		FastIterator paths;
 		try {
 			if (metaDataStore.getFolderEntry(path) == null)
@@ -379,12 +325,28 @@ public class FuseBox implements Filesystem1 {
 	protected void setRedundancy(int redundancy) {
 		fileStore.setRedundancy(redundancy);
 	}
-
+	
 	protected int getRedundancy() {
 		return fileStore.getRedundancy();
+	}
+
+	protected void setStorageStrategyName(String storageStrategyName) {
+		fileStore.setStorageStrategyName(storageStrategyName);
+	}
+	
+	protected void getStorageStrategyName() {
+		fileStore.getStorageStrategyName();
 	}
 	
 	protected FileFragmentStore getFileFragmentStore(){
 		return fileStore;
+	}
+	
+	/**
+	 * Get the minimal availability of files stored by the current fuse box.
+	 * @return the availability in percent
+	 */
+	public double getStorageAvailability(){
+		return fileStore.getStorageAvailability(); //forward call to the file store
 	}
 }

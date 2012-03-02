@@ -28,7 +28,7 @@ do
 #pgrep -lf "$PROCESS_NAME"| grep -Ev $NOT_IN_PROCESS_NAME
 #echo end
    pid=`pgrep -lf $PROCESS_NAME| grep -Ev $NOT_IN_PROCESS_NAME | cut -d' ' -f1`
-   if [ "`sudo -n echo iamroot`" == "iamroot" ]; then
+   if [ "`sudo -n echo iamroot 2>&1`" == "iamroot" ]; then
       sudo smem -c "pid pss swap" | gawk -v pid=$pid '(pid == $1) {print systime()" "$2" "$3 }' >> "$MEMORY_LOG"
    else
       smem -c "pid pss swap" | gawk -v pid=$pid '(pid == $1) {print systime()" "$2" "$3 }' >> "$MEMORY_LOG"

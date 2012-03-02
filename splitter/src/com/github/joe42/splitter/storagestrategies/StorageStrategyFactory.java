@@ -8,13 +8,13 @@ import java.util.TreeSet;
 
 import com.github.joe42.splitter.backend.BackendService;
 import com.github.joe42.splitter.backend.BackendServices;
-
+//TODO: check if backendservices changed here, but not with equals because backendservices is a reference that would be changed as well?
 /**
  * Responsible for creating, configuring and pooling StorageStrategies.
  */
 public class StorageStrategyFactory {
-	public static enum AvailableStorageStrategies {Roundrobin};
 	private RoundRobinStorageStrategy roundRobin = null;
+	private UseAllInParallelStorageStrategy useInParallel = null;
 	private BackendServices services;
 	private boolean changeToCurrentStrategy = true;
 	private StorageStrategy previousStorageStrategy = null;
@@ -31,13 +31,17 @@ public class StorageStrategyFactory {
 	 */
 	public StorageStrategy createStrategy(String strategyName, int redundancy) {
 		StorageStrategy ret = null;
-		if(strategyName.equals("RoundRobin")){
-			if(roundRobin == null || ! dataDirPaths.equals(new TreeSet<String>(services.getDataDirPaths()))){
-				dataDirPaths = new TreeSet<String>(services.getDataDirPaths());
-				roundRobin = new RoundRobinStorageStrategy(services.getDataDirPaths());
+		if(strategyName.equals("UseAllInParallel")){
+			if(useInParallel == null){
+				useInParallel = new UseAllInParallelStorageStrategy(services);
 			}
-			if( !new TreeSet<String>(roundRobin.getPotentialStorageDirectories()).equals(new TreeSet<String>(services.getDataDirPaths())) ) {
-				roundRobin.setPotentialStorageDirectories(services.getDataDirPaths());
+			useInParallel.setRedundancy(redundancy);
+			changeToCurrentStrategy = useInParallel.changeToCurrentStrategy(previousStorageStrategy);
+			previousStorageStrategy = useInParallel;
+			ret = useInParallel;
+		} else { //RoundRobin as default
+			if(roundRobin == null || ! dataDirPaths.equals(new TreeSet<String>(services.getDataDirPaths()))){
+				roundRobin = new RoundRobinStorageStrategy(services);
 			}
 			roundRobin.setRedundancy(redundancy);
 			changeToCurrentStrategy = roundRobin.changeToCurrentStrategy(previousStorageStrategy);

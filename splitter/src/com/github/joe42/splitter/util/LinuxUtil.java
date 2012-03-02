@@ -44,4 +44,52 @@ public class LinuxUtil {
 		}
 	    return usedBytes;
 	}
+
+
+	/**
+	 * Get the user's UID.
+	 */
+	public static int getUID() {
+		String uid = null;
+		try {
+		    String userName = System.getProperty("user.name");
+		    String command = "id -u "+userName;
+		    Process child = Runtime.getRuntime().exec(command);
+	
+		    // Get the input stream and read from it
+		    InputStream in = child.getInputStream();
+		    int c;
+		    uid = "";
+		    while ((c = in.read()) != -1) {
+		        uid += ((char)c);
+		    }
+		    in.close();
+		} catch (IOException e) {
+		}
+		return Integer.parseInt(uid.trim());
+	}
+
+
+	/**
+	 * Get the user's GID.
+	 */
+	public static int getGID() {
+		String gid = null;
+		try {
+		    String userName = System.getProperty("user.name");
+		    String command = "id -g "+userName;
+		    Process child = Runtime.getRuntime().exec(command);
+	
+		    // Get the input stream and read from it
+		    InputStream in = child.getInputStream();
+		    int c;
+		    gid = "";
+		    while ((c = in.read()) != -1) {
+		        gid += ((char)c);
+		    }
+		    in.close();
+		} catch (IOException e) {
+		}
+		return Integer.parseInt(gid.trim());
+	}
 }

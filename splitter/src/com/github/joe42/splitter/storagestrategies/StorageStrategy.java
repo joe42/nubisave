@@ -46,4 +46,12 @@ public interface StorageStrategy {
 	 * @return
 	 */
 	public boolean changeToCurrentStrategy(StorageStrategy other);
+	
+	/**
+	 * Get the minimal availability of files achieved by this StorageStrategy instance.
+	 * The calculation considers the availability of the storages on which the {@link #getFragmentDirectories() fragment directories} are located.
+	 * The availability of NubiSave itself does not need to be considered.
+	 * @return the availability in percent
+	 */
+	public double getStorageAvailability();
 }

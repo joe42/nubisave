@@ -29,25 +29,48 @@ import fuse.FuseException;
 
 public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter and abstract interface
 	private static final int CAUCHY_WORD_LENGTH = 1;
-	private static final Logger  log = Logger.getLogger("Splitter");
+	private static final Logger  log = Logger.getLogger("CauchyReedSolomonSplitter");
 	private MultipleFileHandler concurrent_multi_file_handler;
 	private MultipleFileHandler serial_multi_file_handler;
 	private StorageStrategy storageStrategy;
+	private int redundancy;
+	private String storageStrategyName;
 	private StorageStrategyFactory storageStrategyFactory;
 	private BackendServices services;
 	
 	public CauchyReedSolomonSplitter(BackendServices services){
 		this.services = services;
+		redundancy = 50;
+		storageStrategyName = "";
 		storageStrategyFactory = new StorageStrategyFactory(services);
 		concurrent_multi_file_handler = new ConcurrentMultipleFileHandler();
 		serial_multi_file_handler = new SerialMultipleFileHandler();
 	}
 	
+	public int getRedundancy() {
+		return redundancy;
+	}
+
+	public void setRedundancy(int redundancy) {
+		this.redundancy = redundancy;
+	}
+
+	public String getStorageStrategyName() {
+		return storageStrategyName;
+	}
+
+	public void setStorageStrategyName(String storageStrategyName) {
+		if(storageStrategyName == null){
+			storageStrategyName = "";
+		}
+		this.storageStrategyName = storageStrategyName;
+	}
+
 	public BackendServices getBackendServices(){
 		return services;
 	}
 	
-	public void splitFile(FileFragmentMetaDataStore fileFragmentMetaDataStore, String path, FileChannel temp, int redundancy) throws FuseException, IOException {
+	public void splitFile(FileFragmentMetaDataStore fileFragmentMetaDataStore, String path, FileChannel temp) throws FuseException, IOException {
 		
 		int nr_of_file_parts_successfully_stored = 0;
 		HashMap<String, byte[]> fileParts = new HashMap<String, byte[]>();
@@ -59,7 +82,7 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 		String fragment_name;
 		if(! fileFragmentMetaDataStore.hasFragments(path) || storageStrategyFactory.changeToCurrentStrategy()){
 			List<String> fragmentDirectories;
-			storageStrategy = storageStrategyFactory.createStrategy("RoundRobin", redundancy);
+			storageStrategy = storageStrategyFactory.createStrategy(storageStrategyName, redundancy);
 			 fragmentDirectories = storageStrategy.getFragmentDirectories();
 			 nr_of_file_fragments = fragmentDirectories.size();
 			String uniquePath, uniqueFileName;
@@ -154,10 +177,10 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 			ArrayList<String> fragmentFileNames) throws IOException {
 		byte[] arr;
 		HashMap<String, byte[]> fileParts = new HashMap<String, byte[]>();
+		arr = new byte[(int) temp.size()];
+		temp.read(ByteBuffer.wrap(arr));
 		for (String fragmentFileName: fragmentFileNames) {
 			log.debug("write: " + fragmentFileName);
-			arr = new byte[(int) temp.size()];
-			temp.read(ByteBuffer.wrap(arr));
 			fileParts.put(fragmentFileName, arr);
 		}
 		return fileParts;
@@ -180,7 +203,7 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 				ret = new RandomAccessTemporaryFileChannel();
 				List<byte[]> segmentBuffers = serial_multi_file_handler
 						.getFilesAsByteArrays(fragmentNames.toArray(new String[0]), nr_of_redundant_fragments);
-				//System.out.println(fileFragmentMetaDataStore.getNrOfFragments(path)+" "+fileFragmentMetaDataStore.getNrOfRequiredFragments(path));
+				log.debug(fileFragmentMetaDataStore.getNrOfFragments(path)+" "+fileFragmentMetaDataStore.getNrOfRequiredFragments(path));
 				ret.getChannel().write(ByteBuffer.wrap(segmentBuffers.get(0)));
 				return ret;
 			} else {
@@ -188,7 +211,7 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 				try {
 					crsidacodec = new CauchyInformationDispersalCodec(
 							fileFragmentMetaDataStore.getNrOfFragments(path), nr_of_file_fragments_required, CAUCHY_WORD_LENGTH);
-					//System.out.println(fileFragmentMetaDataStore.getNrOfFragments(path)+" "+fileFragmentMetaDataStore.getNrOfRequiredFragments(path));
+					log.debug(fileFragmentMetaDataStore.getNrOfFragments(path)+" "+fileFragmentMetaDataStore.getNrOfRequiredFragments(path));
 					decoder = crsidacodec.getDecoder();
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -245,4 +268,12 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 		}
 	}
 
+	/**
+	 * Get the minimal availability of files stored by the current Splitter instance.
+	 * @return the availability in percent
+	 */
+	public double getStorageAvailability(){
+		storageStrategy = storageStrategyFactory.createStrategy(storageStrategyName, redundancy);
+		return storageStrategy.getStorageAvailability(); //forward call to the storage strategy factory
+	}
 }

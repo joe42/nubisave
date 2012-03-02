@@ -5,6 +5,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+
+import org.apache.log4j.Logger;
+
 import com.github.joe42.splitter.util.file.RandomAccessTemporaryFileChannel;
 import com.github.joe42.splitter.util.file.RandomAccessTemporaryFileChannels;
 import com.github.joe42.splitter.vtf.FileEntry;
@@ -13,10 +16,10 @@ import com.github.joe42.splitter.util.*;
 import fuse.FuseException;
 
 public class FileFragmentStore {
+	private static final Logger  log = Logger.getLogger("FileFragmentStore");
 	protected RandomAccessTemporaryFileChannels tempFiles;
 	protected RandomAccessTemporaryFileChannel tempReadChannel;
 	protected CauchyReedSolomonSplitter splitter;
-	private int redundancy;
 	protected FileFragmentMetaDataStore fileFragmentMetaDataStore;
 
 	public FileFragmentStore(CauchyReedSolomonSplitter splitter) throws IOException {
@@ -26,11 +29,19 @@ public class FileFragmentStore {
 	}
 
 	public void setRedundancy(int redundancy){
-		this.redundancy = redundancy;
+		this.splitter.setRedundancy(redundancy);
 	}
 	
 	public int getRedundancy(){
-		return redundancy;
+		return this.splitter.getRedundancy();
+	}
+	
+	public void setStorageStrategyName(String storageStrategyName){
+		this.splitter.setStorageStrategyName(storageStrategyName);
+	}
+	
+	public String getStorageStrategyName(){
+		return this.splitter.getStorageStrategyName();
 	}
 
 	public void write(String path, ByteBuffer buf, long offset) throws IOException, FuseException {
@@ -50,7 +61,7 @@ public class FileFragmentStore {
 	}
 
 	public void read(String path, ByteBuffer buf, long offset) throws FuseException, IOException {
-		//System.out.println("buf.limit(): "+buf.limit()+" buf.position(): "+buf.position()+" "+"file size: "+fileFragmentMetaDataStore.getFragmentsSize(path)+" offset: "+offset+" end of read: "+(offset+buf.limit()));
+		log.debug("buf.limit(): "+buf.limit()+" buf.position(): "+buf.position()+" "+"file size: "+fileFragmentMetaDataStore.getFragmentsSize(path)+" offset: "+offset+" end of read: "+(offset+buf.limit()));
 		if (tempReadChannel == null) {
 			if( ! fileFragmentMetaDataStore.hasFragments(path) ) {
 				return;
@@ -66,8 +77,6 @@ public class FileFragmentStore {
 	 * @return true iff the file has been stored completely
 	 */
 	public boolean hasFlushed(String path)  throws IOException {
-		//System.out.println("tempFiles: "+tempFiles);
-		//System.out.println("tempFiles: "+tempFiles.getFileChannel(path));
 		return tempFiles.getFileChannel(path) == null;
 	}
 
@@ -104,7 +113,7 @@ public class FileFragmentStore {
 	public void flushCache(String path) throws FuseException, IOException {
 		if ( ! hasFlushed(path) ) {
 			FileChannel temp = tempFiles.getFileChannel(path);
-			splitter.splitFile(fileFragmentMetaDataStore, path, temp, redundancy);
+			splitter.splitFile(fileFragmentMetaDataStore, path, temp);
 		}
 		removeCache(path);
 	}
@@ -135,5 +144,12 @@ public class FileFragmentStore {
 	public void renameFragment(String from, String to) throws IOException {
 		fileFragmentMetaDataStore.moveFragment(from, to);		
 	}
-	
+
+	/**
+	 * Get the minimal availability of files stored by the current file fragment store.
+	 * @return the availability in percent
+	 */
+	public double getStorageAvailability() {
+		return splitter.getStorageAvailability(); //forward call to the splitter
+	}
 }

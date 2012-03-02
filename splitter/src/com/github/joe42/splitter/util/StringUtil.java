@@ -1,9 +1,25 @@
 package com.github.joe42.splitter.util;
 
+import java.io.IOException;
 import java.nio.*;
 import java.nio.charset.*;
+import java.security.GeneralSecurityException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.crypto.*;
+import javax.crypto.spec.*;
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
 
 public class StringUtil {
+    private static final byte[] SALT = {
+        (byte) 0xde, (byte) 0x33, (byte) 0x10, (byte) 0x12,
+        (byte) 0xde, (byte) 0x33, (byte) 0x10, (byte) 0x12,
+    };
 	private static long string_uid = 0;
 	public static String filterNonAscii(String inString) {
 		// Create the encoder and decoder for the character encoding
@@ -69,5 +85,46 @@ public class StringUtil {
 		bb = null;
 		return;
 	}
+
+    private static String encrypt(String text, String pwd) {
+        try {
+            SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBEWithMD5AndDES");
+            SecretKey key = keyFactory.generateSecret(new PBEKeySpec(pwd.toCharArray()));
+            Cipher pbeCipher = Cipher.getInstance("PBEWithMD5AndDES");
+            pbeCipher.init(Cipher.ENCRYPT_MODE, key, new PBEParameterSpec(SALT, 20));
+            return base64Encode(pbeCipher.doFinal(text.getBytes()));
+        } catch (GeneralSecurityException ex) {
+            Logger.getLogger(StringUtil.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return "";
+    }
+
+    private static String base64Encode(byte[] bytes) {
+        // NB: This class is internal, and you probably should use another impl
+        return new BASE64Encoder().encode(bytes);
+    }
+
+    private static String decrypt(String text, String pwd) {
+        try {
+        SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBEWithMD5AndDES");
+        SecretKey key = keyFactory.generateSecret(new PBEKeySpec(pwd.toCharArray()));
+        Cipher pbeCipher = Cipher.getInstance("PBEWithMD5AndDES");
+        pbeCipher.init(Cipher.DECRYPT_MODE, key, new PBEParameterSpec(SALT, 20));
+        return new String(pbeCipher.doFinal(base64Decode(text)));
+        } catch (GeneralSecurityException ex) {
+            Logger.getLogger(StringUtil.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return "";
+    }
+
+    private static byte[] base64Decode(String property) {
+        try {
+            // NB: This class is internal, and you probably should use another impl
+            return new BASE64Decoder().decodeBuffer(property);
+        } catch (IOException ex) {
+            Logger.getLogger(StringUtil.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return new byte[0];
+    }
 
 }

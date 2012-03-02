@@ -23,7 +23,7 @@ rm -f $FOLDER/*
 
 for size in `echo $FILE_SIZES`
 do
-    dd if=/dev/urandom of=$FOLDER/${size}MB bs=${size}MB count=1
+    dd if=/dev/urandom of=$FOLDER/${size}MB bs=1MB count=$size
 done
 
 dd if=/dev/zero of=$FOLDER/sparse bs=1 count=1 seek=1000MB
