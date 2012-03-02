@@ -11,6 +11,7 @@ import java.util.HashSet;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
+import org.ini4j.Ini;
 
 /**
  *Manages the storages used by NubiSave. The actual stores are instances of BackendService.
@@ -189,5 +190,11 @@ public class BackendServices extends Observable {
 			storages.add(getServiceByDataDirPath(storageDirectory));
 		}
 		return storages;
+	}
+
+	public void configure(String uniqueServiceName, Ini mountOptions) {
+		get(uniqueServiceName).configure(uniqueServiceName, mountOptions);
+		setChanged();
+		notifyObservers();
 	}
 }

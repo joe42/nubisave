@@ -9,14 +9,14 @@ import org.ini4j.Ini;
 
 import com.github.joe42.splitter.util.file.FileUtil;
 
-
+/**
+ * Facade to add, remove, mount and unmount storages.
+ * */
 public class StorageServicesMgr { 
 	private Mounter mounter;
 	private String storages;
 	private BackendServices services;
-	/**
-	 * For mounting the FUSE modules.
-	 * */
+
 	public StorageServicesMgr(String storages){
 		this.storages = storages;
 		mounter = new Mounter(storages);
@@ -96,6 +96,6 @@ public class StorageServicesMgr {
 	 * @param mountOptions an ini file with several mount options for the storage service to mount
 	 */
 	public void configureService(String uniqueServiceName, Ini mountOptions){
-		services.get(uniqueServiceName).configure(uniqueServiceName, mountOptions);
+		services.configure(uniqueServiceName, mountOptions);
 	}
 }
