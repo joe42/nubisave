@@ -106,6 +106,9 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 		logStoreProperties(nr_of_file_fragments, nr_of_file_fragments_required, nr_of_redundant_fragments, nrOfRequiredSuccessfullyStoredFragments);
 		if(nr_of_file_fragments_required == 1){
 			fileParts = replicateFile( temp, path, fragmentFileNames);
+		} else if(nr_of_file_fragments_required == nr_of_file_fragments){ //no redundancy but several stores
+			log.debug(" 1 . temp.size():"+ temp.size());
+			fileParts = simpleSplitFile( temp, path, fragmentFileNames);
 		} else {
 			
 			Digest digestFunc = new SHA256Digest();
@@ -147,6 +150,7 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 						.initErrno(FuseException.EIO);
 			}
 		}
+		log.debug(" temp.size():"+ temp.size());
 		nr_of_file_parts_successfully_stored = concurrent_multi_file_handler.writeFilesAsByteArrays(fileParts);
 
 		//if (log.isDebugEnabled())
@@ -160,6 +164,31 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 			//TODO: delete previous Fragments
 			fileFragmentMetaDataStore.setFragment(path, fragmentFileNames, nr_of_file_fragments_required, nrOfRequiredSuccessfullyStoredFragments, "", temp.size());
 		}
+	}
+
+	private HashMap<String, byte[]> simpleSplitFile(FileChannel temp, String path,
+			ArrayList<String> fragmentFileNames) throws IOException {
+			log.debug("Splitting with no redundancy");
+			byte[] arr;
+			int size=0, read_bytes;
+			HashMap<String, byte[]> fileParts = new HashMap<String, byte[]>();
+			int normal_array_size = ((int) temp.size()+1)/fragmentFileNames.size();
+			arr = new byte[normal_array_size];
+			for (String fragmentFileName: fragmentFileNames) {
+				if(size+normal_array_size>temp.size()){
+					arr = new byte[(int)temp.size()-size];
+				} else {
+					arr = new byte[normal_array_size];
+				}
+				read_bytes = temp.read(ByteBuffer.wrap(arr));
+				size += read_bytes;
+				/*if(read_bytes <1){
+					break;
+				}*/
+				log.debug("write: " + fragmentFileName);
+				fileParts.put(fragmentFileName, arr);
+			}
+			return fileParts;
 	}
 
 	private void logStoreProperties(int nrOfFileFragments,
@@ -206,7 +235,9 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 				log.debug(fileFragmentMetaDataStore.getNrOfFragments(path)+" "+fileFragmentMetaDataStore.getNrOfRequiredFragments(path));
 				ret.getChannel().write(ByteBuffer.wrap(segmentBuffers.get(0)));
 				return ret;
-			} else {
+			} else if(nr_of_file_fragments_required == fragmentNames.size()){ //no redundancy but several stores
+				return simpleGlueFilesTogether(fragmentNames);
+			}else {
 				
 				try {
 					crsidacodec = new CauchyInformationDispersalCodec(
@@ -266,6 +297,23 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 			e.printStackTrace();
 			throw new FuseException("IO error", e).initErrno(FuseException.EIO);
 		}
+	}
+
+	private RandomAccessTemporaryFileChannel simpleGlueFilesTogether(
+			List<String> fragmentNames) throws IOException {
+		RandomAccessTemporaryFileChannel ret;
+		ret = new RandomAccessTemporaryFileChannel();
+		List<byte[]> segmentBuffers = concurrent_multi_file_handler
+			.getFilesAsByteArrays(fragmentNames.toArray(new String[0]));
+		//fileParts = glueFile( temp, path, fragmentFileNames);fragmentNames.size()
+		ByteBuffer bb; int len;
+		for (byte[] arr: segmentBuffers) {
+			bb = ByteBuffer.wrap(arr);
+			len = arr.length;
+			ret.getChannel().write(bb);
+			log.debug("read + "+len+"bytes from : " + fragmentNames.get(segmentBuffers.indexOf(arr)));
+		}
+		return ret;
 	}
 
 	/**
