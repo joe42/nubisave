@@ -126,7 +126,7 @@ public class ConcurrentMultipleFileHandler implements MultipleFileHandler{
 					try {
 						for (int i = 0; i < list.size(); i++) {
 							future = list.get(i);
-							ret.add(future.get(100, TimeUnit.SECONDS));
+							ret.add(i, future.get(100, TimeUnit.SECONDS));
 							if(ret.size()==files_needed){
 								break outer_loop;
 							}
@@ -178,9 +178,6 @@ public class ConcurrentMultipleFileHandler implements MultipleFileHandler{
 							return null;
 						} 
 						ret = new byte[(int) file.length()];
-						if(len == 0){
-							return ret;
-						}
 						in.read(ret);
 						in.close();
 					} catch (IOException e) {
