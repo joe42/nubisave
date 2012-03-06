@@ -30,7 +30,6 @@ java_all: ${JAVASRC}
 
 java_clean:
 	rm -rf build/*
-	rm -rf splitter.db
 
 
 
