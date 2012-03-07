@@ -127,6 +127,7 @@ public class MainWindow extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
+        migrateBtn = new javax.swing.JButton();
         optionPanel = new javax.swing.JPanel();
         mntDirTxtField = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
@@ -181,6 +182,13 @@ public class MainWindow extends javax.swing.JFrame {
 
         jLabel1.setText(" Add Services:");
 
+        migrateBtn.setText("Migrate");
+        migrateBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                migrateBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout providerPanelLayout = new javax.swing.GroupLayout(providerPanel);
         providerPanel.setLayout(providerPanelLayout);
         providerPanelLayout.setHorizontalGroup(
@@ -189,10 +197,11 @@ public class MainWindow extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 579, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(providerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(providerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(migrateBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         providerPanelLayout.setVerticalGroup(
@@ -206,7 +215,9 @@ public class MainWindow extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton3)))
+                        .addComponent(jButton3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 288, Short.MAX_VALUE)
+                        .addComponent(migrateBtn)))
                 .addContainerGap())
         );
 
@@ -438,6 +449,12 @@ public class MainWindow extends javax.swing.JFrame {
             setIsSplitterMounted();
         }
     }//GEN-LAST:event_jTabbedPane1StateChanged
+
+    private void migrateBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_migrateBtnActionPerformed
+        List<String> storeNames = new ArrayList<String>();
+        MigrationDialog migrationDialog = new MigrationDialog(this, true);
+        migrationDialog.setVisible(true);
+    }//GEN-LAST:event_migrateBtnActionPerformed
     public NubiTableModel tableModel;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel availabilityLabel;
@@ -457,6 +474,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JLabel matchMakerLabel;
     private javax.swing.JLabel matchMakerLabel1;
     private javax.swing.JTextField matchMakerURLField;
+    private javax.swing.JButton migrateBtn;
     private javax.swing.JTextField mntDirTxtField;
     private javax.swing.JButton openMntDirBtn;
     private javax.swing.JPanel optionPanel;

@@ -150,4 +150,12 @@ public class Splitter {
         }
     }
 
+    public void moveStoreData(String sourceStoreName, String destinationStoreName) {
+        try {
+            new ProcessBuilder("/bin/bash", "-c", "mv "+configurationDirPath+"/"+sourceStoreName+" "+configurationDirPath+"/"+destinationStoreName).start();
+        } catch (IOException ex) {
+            Logger.getLogger(Splitter.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
 }
