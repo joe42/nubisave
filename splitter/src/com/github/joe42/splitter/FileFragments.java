@@ -81,8 +81,9 @@ public class FileFragments implements Serializable {
 	}
 
 	public void rename(String from, String to) {
+		int index = fileFragmentPaths.indexOf(from);
 		fileFragmentPaths.remove(from);
-		fileFragmentPaths.add(to);
+		fileFragmentPaths.add(index, to);
 	}
 
 	public boolean containsPath(String fragmentPath) {
