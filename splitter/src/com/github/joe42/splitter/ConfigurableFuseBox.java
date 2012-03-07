@@ -292,6 +292,14 @@ file is removed after at most 10 seconds
 		log.debug("mv "+serviceFrom.getDataDirPath()+"/* "+serviceTo.getDataDirPath());
 		boolean fileMoved;
 		for(File srcFileFragment: new File(serviceFrom.getDataDirPath()).listFiles()){
+			try {
+				if( ! getFileFragmentStore().hasFragment(srcFileFragment.getPath()) ){
+					continue;
+				}
+			} catch (IOException e1) {
+				throw new FuseException("IO Exception on moving files from " + from
+						+ " to " + to).initErrno(FuseException.EIO);
+			}
 			File destFileFragment = new File(serviceTo.getDataDirPath()+"/"+srcFileFragment.getName());
 			fileMoved = srcFileFragment.renameTo(destFileFragment );
 			if( ! fileMoved ){ //depending on the platform moving between mountpoints can fail

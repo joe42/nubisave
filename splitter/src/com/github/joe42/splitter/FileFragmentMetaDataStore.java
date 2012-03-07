@@ -52,8 +52,9 @@ public class FileFragmentMetaDataStore {
 	public void moveFragment(String from, String to) throws IOException{
 		FastIterator iter = fileFragmentsMap.keys();
 		String key =  (String) iter.next();
-		FileFragments fragments = (FileFragments) fileFragmentsMap.get(key);
-        while ( fragments != null ) {
+		FileFragments fragments;
+        while ( key != null ) {
+        	fragments = (FileFragments) fileFragmentsMap.get(key);
         	if(fragments.containsPath(from)){
         		fragments.rename(from, to);
         		fileFragmentsMap.put(key, fragments);
@@ -61,9 +62,26 @@ public class FileFragmentMetaDataStore {
         		return;
         	}
     		key =  (String) iter.next();
-    		fragments = (FileFragments) fileFragmentsMap.get(key);
         }
 		System.out.println("None of the file parts contained the file "+from+" this should not happen.");
+	}
+	
+	/** Check if a file fragment exists
+	 * @param fragmentName a path of a file fragment
+	 * @return true iff the file fragment exists
+	 * @throws IOException */
+	public boolean hasFragment(String fragmentName) throws IOException{
+		FastIterator iter = fileFragmentsMap.keys();
+		String key =  (String) iter.next();
+		FileFragments fragments;
+        while ( key != null ) {
+        	fragments = (FileFragments) fileFragmentsMap.get(key);
+        	if(fragments.containsPath(fragmentName)){
+        		return true;
+        	}
+    		key =  (String) iter.next();
+        }
+		return false;
 	}
 
 	/**Sets a list of fragment paths for a whole file

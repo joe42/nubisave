@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
+import jdbm.helper.FastIterator;
+
 import org.apache.log4j.Logger;
 
 import com.github.joe42.splitter.util.file.RandomAccessTemporaryFileChannel;
@@ -143,6 +145,14 @@ public class FileFragmentStore {
 	 */
 	public void renameFragment(String from, String to) throws IOException {
 		fileFragmentMetaDataStore.moveFragment(from, to);		
+	}
+	
+	/** Check if a file fragment exists
+	 * @param fragmentName a path of a file fragment
+	 * @return true iff the file fragment exists
+	 * @throws IOException */
+	public boolean hasFragment(String fragmentName) throws IOException{
+		return fileFragmentMetaDataStore.hasFragment(fragmentName);		
 	}
 
 	/**
