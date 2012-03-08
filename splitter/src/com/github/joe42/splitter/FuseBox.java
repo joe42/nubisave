@@ -46,11 +46,11 @@ public class FuseBox implements Filesystem1 {
 
 	private int GID;
 
-	public FuseBox(CauchyReedSolomonSplitter splitter) throws IOException {
+	public FuseBox(FilePartFragmentStore fileStore) throws IOException {
 		PropertyConfigurator.configure("log4j.properties");
 		
 		metaDataStore = new FileMetaDataStore();
-		fileStore = new FilePartFragmentStore(splitter);
+		this.fileStore = fileStore;
 		UID = LinuxUtil.getUID();
 		GID = LinuxUtil.getGID();
 	}
