@@ -140,6 +140,19 @@ public class Splitter {
         }
     }
 
+    /**
+     * Gets the storage configuration file from the splitter module
+     * @param uniqueStorageName unique name of the storage service
+     * @return a file representing the storage services configuration in the splitter module
+     */
+    public File getConfigFile(String uniqueStorageName) {
+        try{
+            return new File(configurationDirPath+"/"+uniqueStorageName);
+        } catch(Exception e){
+            return null;
+        }
+    }
+
     /**Gets the availability from the Splitter module**/
     public double getAvailability() {
         try{
