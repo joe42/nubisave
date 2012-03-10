@@ -21,9 +21,12 @@ import com.github.joe42.splitter.vtf.VirtualFile;
 import com.github.joe42.splitter.vtf.VirtualFileContainer;
 import com.github.joe42.splitter.vtf.VirtualRealFile;
 
+import fuse.FuseDirFiller;
 import fuse.FuseException;
 import fuse.FuseFtype;
+import fuse.FuseGetattrSetter;
 import fuse.FuseStatfs;
+import fuse.FuseStatfsSetter;
 import fuse.compat.FuseDirEnt;
 import fuse.compat.FuseStat;
 public class ConfigurableFuseBox extends FuseBox  implements StorageService{
@@ -41,18 +44,24 @@ public class ConfigurableFuseBox extends FuseBox  implements StorageService{
 		vtSplitterConfig.setText("[splitter]\nredundancy = 0");
 		virtualFolder.add(vtSplitterConfig);
 	}
-	
-	public FuseStat getattr(String path) throws FuseException {
+
+	@Override
+	public int getattr(String path, FuseGetattrSetter getattrSetter) throws FuseException {
+		FuseStat attr;
 		if(virtualFolder.containsFile(path)){
 			VirtualFile vtf = virtualFolder.get(path);
-			return vtf.getAttr();
+			attr = vtf.getAttr();
+			getattrSetter.set(attr.inode, attr.mode, attr.nlink, attr.uid, attr.gid, 0, attr.size, attr.blocks, attr.atime, attr.mtime, attr.ctime);
+			return 0;
 		}
 		if(virtualFolder.containsDir(path)){
-			return new FolderEntry().getFuseStat();
+			attr = new FolderEntry().getFuseStat();
+			getattrSetter.set(attr.inode, attr.mode, attr.nlink, attr.uid, attr.gid, 0, attr.size, attr.blocks, attr.atime, attr.mtime, attr.ctime);
+			return 0;
 		}
 		if(path.startsWith(DATA_DIR)){
 			path = removeDataFolderPrefix(path);
-			return super.getattr(path);
+			return super.getattr(path, getattrSetter);
 		}
 		throw new FuseException("No Such Entry")
 		.initErrno(FuseException.ENOENT);
@@ -66,46 +75,38 @@ public class ConfigurableFuseBox extends FuseBox  implements StorageService{
         }
         return path;
 	}
-	
-	public FuseDirEnt[] getdir(String path) throws FuseException {
+
+	@Override
+	public int getdir(String path, FuseDirFiller dirFiller) throws FuseException {
 		/** Additionally to the overwritten method's return value it can return the virtual configuration files*/
 		if (path.equals(vtSplitterConfig.getDir())) {
-			return virtualFolder.getDir(path);
+			for(FuseDirEnt ent: virtualFolder.getDir(path)){
+				dirFiller.add(ent.name, 0, ent.mode);
+			}
+			return 0;
 		}
 		if(path.startsWith(DATA_DIR)){
 			path = removeDataFolderPrefix(path);
-			return super.getdir(path);
+			return super.getdir(path, dirFiller);
 		}
 		if(path.equals("/")){
-			FuseDirEnt[] ret = new FuseDirEnt[4];
-			FuseDirEnt dirEntry = new FuseDirEnt();
-			dirEntry.name = ".";
-			dirEntry.mode = FuseFtype.TYPE_DIR;
-			ret[0] = dirEntry;
-			dirEntry = new FuseDirEnt();
-			dirEntry.name = "..";
-			dirEntry.mode = FuseFtype.TYPE_DIR;
-			ret[1] = dirEntry;
-			dirEntry = new FuseDirEnt();
-			dirEntry.name = vtSplitterConfig.getName();
-			dirEntry.mode = FuseFtype.TYPE_DIR;
-			ret[2] = dirEntry;
-			dirEntry = new FuseDirEnt();
-			dirEntry.name = DATA_DIR_NAME; 
-			dirEntry.mode = FuseFtype.TYPE_DIR;
-			ret[3] = dirEntry;
-			return ret;
+
+			dirFiller.add(".", 0, FuseFtype.TYPE_DIR | 0755);
+			dirFiller.add("..", 0, FuseFtype.TYPE_DIR | 0755);
+			dirFiller.add(vtSplitterConfig.getName(), 0, FuseFtype.TYPE_DIR | 0755);
+			dirFiller.add(DATA_DIR_NAME, 0, FuseFtype.TYPE_DIR | 0755);
+			return 0;
 		}
 		throw new FuseException("Invalid parameter for getdir (ConfigurableSplitter)")
 			.initErrno(FuseException.EIO);
 	}
 
-	public void write(String path, ByteBuffer buf, long offset)
+	@Override
+	public int write(String path, Object fh, boolean isWritepage, ByteBuffer buf, long offset)
 			throws FuseException {
 		if(path.startsWith(DATA_DIR)){
 			path = removeDataFolderPrefix(path);
-			super.write(path, buf, offset);
-			return;
+			return super.write(path, fh, isWritepage, buf, offset);
 		}
 		VirtualFile vtf = virtualFolder.get(path);
 		vtf.write(buf, offset);
@@ -116,7 +117,7 @@ public class ConfigurableFuseBox extends FuseBox  implements StorageService{
 		}
 		if (vtSplitterConfig.getPath().equals(path)){
 			configureSplitter();
-			return;
+			return 0;
 		}
 		//Mount backend module:
 		String configFileName = new File(path).getName();
@@ -124,7 +125,7 @@ public class ConfigurableFuseBox extends FuseBox  implements StorageService{
 		if(storageServiceMgr.isMounted(configFileName)){
 			storageServiceMgr.configureService(configFileName, options);
 			updateVTSplitterConfigFile();
-			return;
+			return 0;
 		}
 		String mountpoint = storageServiceMgr.mount(configFileName, options); 
 		if (mountpoint != null) {
@@ -134,7 +135,7 @@ public class ConfigurableFuseBox extends FuseBox  implements StorageService{
 			buf.rewind();
 			vtf.write(buf, offset);
 			updateVTSplitterConfigFile();
-			return;
+			return 0;
 		} else {
 			throw new FuseException("IO Exception on creating store.")
 			.initErrno(FuseException.EIO);
@@ -153,38 +154,48 @@ public class ConfigurableFuseBox extends FuseBox  implements StorageService{
 		setStorageStrategyName(config.fetch("splitter", "storagestrategy", String.class));
 		updateVTSplitterConfigFile();
 	}
-	
-	public void read(String path, ByteBuffer buf, long offset)
+
+	@Override
+	public int read(String path, Object fh, ByteBuffer buf, long offset)
 			throws FuseException {
 		if ( path.startsWith(DATA_DIR) ) {
 			path = removeDataFolderPrefix(path);
-			super.read(path, buf, offset);
-			return;
+			return super.read(path, fh, buf, offset);
 		}
 		VirtualFile vtf = virtualFolder.get(path);
 		vtf.read(buf, offset);
+		return 0;
 	}
-	
-	public void release(String path, int flags) throws FuseException {
+
+	@Override
+	public int fsync(String path, Object fh, boolean isDatasync) throws FuseException {
 		if (path.startsWith(DATA_DIR)) {
 			path = removeDataFolderPrefix(path);
-			super.release(path, flags);
+			return super.flush(path, fh);
 		}
+		return 0;
 	}
 	
-	
-	
-	public void mknod(String path, int mode, int rdev) throws FuseException {
-		/** Makes new mountpoints at storages/foldername, where foldername is the filename of path.
-		 *  The configuration file for the module is present in the same directory as the Splitter's configuration file.
-		 * */
+	@Override
+	public int flush(String path, Object fh) throws FuseException {
+		if (path.startsWith(DATA_DIR)) {
+			path = removeDataFolderPrefix(path);
+			return super.flush(path, fh);
+		}
+		return 0;
+	}
+
+	/** Makes new mountpoints at storages/foldername, where foldername is the filename of path.
+	 *  The configuration file for the module is present in the same directory as the Splitter's configuration file.
+	 * */
+	@Override
+	public int mknod(String path, int mode, int rdev) throws FuseException {
 		Boolean makeNewStorage = false;
 		makeNewStorage = ! virtualFolder.containsFile(path);
 		makeNewStorage &= vtSplitterConfig.getDir().equals(new File(path).getParent());
 		if (makeNewStorage) {
-	        //TODO: move mount logic to write and only create stub here to be recognized by getattr. Then also allow to mount other "Modules".
 			virtualFolder.add(new VirtualFile(path));
-            return;
+            return 0;
 		}
 		if(path.equals(DATA_DIR) || virtualFolder.containsFile(path)){
 			throw new FuseException("Entity"+path+" already exists.")
@@ -192,23 +203,26 @@ public class ConfigurableFuseBox extends FuseBox  implements StorageService{
 		}
 		if(path.startsWith(DATA_DIR)){
 			path = removeDataFolderPrefix(path);
-			super.mknod(path, mode, rdev);
+			return super.mknod(path, mode, rdev);
 		}
-	}
-	
-	public void truncate(String path, long size) throws FuseException {
-			if (virtualFolder.containsFile(path)) {
-				VirtualFile vtf = virtualFolder.get(path);
-				vtf.truncate();
-				return;
-			}
-			if(path.startsWith(DATA_DIR)){
-				path = removeDataFolderPrefix(path);
-			}
-			super.truncate(path, size);
+		return 0;
 	}
 
-	public void unlink(String path) throws FuseException {
+	@Override
+	public int truncate(String path, long size) throws FuseException {
+		if (virtualFolder.containsFile(path)) {
+			VirtualFile vtf = virtualFolder.get(path);
+			vtf.truncate();
+			return 0;
+		}
+		if(path.startsWith(DATA_DIR)){
+			path = removeDataFolderPrefix(path);
+		}
+		return super.truncate(path, size);
+	}
+
+	@Override
+	public int unlink(String path) throws FuseException {
 		//unmount storage module if removing config file
 		if(path.startsWith(CONFIG_DIR)){
 			VirtualFile vf = virtualFolder.get(path);
@@ -235,17 +249,21 @@ file is removed after at most 10 seconds
 		}
 		if(path.startsWith(DATA_DIR)){
 			path = removeDataFolderPrefix(path);
-			super.unlink(path);
+			return super.unlink(path);
 		}
+		return 0;
 	}
-	
-	public FuseStatfs statfs() throws FuseException {
-		FuseStatfs ret = super.statfs();
-		ret.files += 2 + virtualFolder.getFileNames(vtSplitterConfig.getDir()).size(); //data and config directory + virtual configuration files
-		return ret;
+
+	@Override
+	public int statfs(FuseStatfsSetter statfsSetter) throws FuseException {
+		FuseStatfs statfs = super.statfs();
+		statfs.files += 2 + virtualFolder.getFileNames(vtSplitterConfig.getDir()).size(); //data and config directory + virtual configuration files
+		statfsSetter.set(statfs.blockSize, statfs.blocks, statfs.blocksFree, statfs.blocksAvail, statfs.files, statfs.filesFree, statfs.namelen);
+		return 0;
 	}	
-	
-	public void rmdir(String path) throws FuseException {
+
+	@Override
+	public int rmdir(String path) throws FuseException {
 		if(! path.startsWith(DATA_DIR) || path.equals(DATA_DIR)){
 			throw new FuseException("Cannot remove "+path)
 				.initErrno(FuseException.EACCES);
@@ -253,10 +271,11 @@ file is removed after at most 10 seconds
 			path = removeDataFolderPrefix(path);
 			super.rmdir(path);
 		}
+		return 0;
 	}	
-	
-	public void rename(String from, String to) throws FuseException {
-		// FIX: success depends on targets beeing files or directories
+
+	@Override
+	public int rename(String from, String to) throws FuseException {
 		if (from.startsWith(CONFIG_DIR) && to.startsWith(CONFIG_DIR)) {
 			VirtualFile vfFrom = virtualFolder.get(from);
 			VirtualFile vfTo = virtualFolder.get(to);
@@ -269,7 +288,7 @@ file is removed after at most 10 seconds
 						.initErrno(FuseException.EACCES);
 			}
 			moveFragments(from, to);
-			return;
+			return 0;
 		}
 		if (from.equals(to)) {
 			throw new FuseException("Cannot rename " + from + " to " + to)
@@ -278,8 +297,7 @@ file is removed after at most 10 seconds
 		if (from.startsWith(DATA_DIR) && to.startsWith(DATA_DIR)) {
 			from = removeDataFolderPrefix(from);
 			to = removeDataFolderPrefix(to);
-			super.rename(from, to);
-			return;
+			return super.rename(from, to);
 		}
 		throw new FuseException("Cannot rename " + from + " to " + to)
 				.initErrno(FuseException.EACCES);
@@ -343,12 +361,11 @@ file is removed after at most 10 seconds
 		}
 	}
 	
-		
-	public void mkdir(String path, int mode) throws FuseException {
+	@Override
+	public int mkdir(String path, int mode) throws FuseException {
 		if(path.startsWith(DATA_DIR) && ! path.equals(DATA_DIR)){
 			path = removeDataFolderPrefix(path);
-			super.mkdir(path, mode);
-			return;
+			return super.mkdir(path, mode);
 		}
 		throw new FuseException("Cannot mkdir "+path)
 			.initErrno(FuseException.EACCES);

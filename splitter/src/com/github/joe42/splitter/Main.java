@@ -1,5 +1,7 @@
 package com.github.joe42.splitter;
 
+import org.apache.commons.logging.LogFactory;
+
 import com.github.joe42.splitter.backend.StorageServicesMgr;
 
 import fuse.FuseMount;
@@ -18,7 +20,7 @@ public class Main {
 		try {
 			StorageServicesMgr storageServiceMgr = new StorageServicesMgr(args[3]);
 			CauchyReedSolomonSplitter splitter = new CauchyReedSolomonSplitter(storageServiceMgr.getServices()); 
-			FuseMount.mount(fuseArgs, new ConfigurableFuseBox(splitter, storageServiceMgr));
+			FuseMount.mount(fuseArgs, new ConfigurableFuseBox(splitter, storageServiceMgr), LogFactory.getLog("javafs"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
