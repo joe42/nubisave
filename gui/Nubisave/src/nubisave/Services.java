@@ -76,9 +76,23 @@ public class Services implements Iterable<StorageService>{
     }
 
     /**
+     * Get the StorageService instance with the given unique name
+     * @param uniqueName the unique name of the element to retrieved
+     * @return the StorageService instance with the given name
+     */
+    public StorageService getByUniqueName(String uniqueName) {
+        for(StorageService s: mmServices){
+            if(s.getUniqName().equals(uniqueName)){
+                return s;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Get a StorageService instance with the given name
      * @param name the name of the element to retrieved
-     * @retu a StorageService instance with the given name
+     * @return a StorageService instance with the given name
      */
     public StorageService get(String name) {
         for(StorageService s: mmServices){
