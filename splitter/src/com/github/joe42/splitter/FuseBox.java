@@ -111,7 +111,7 @@ public class FuseBox implements Filesystem1 {
 					&& path.equals( new File(fileName).getParent() )) {
 				FuseDirEnt dirEntry = new FuseDirEnt();
 				dirEntry.name = new File(fileName).getName();
-				dirEntry.mode = FuseFtype.TYPE_FILE;
+				dirEntry.mode = FuseFtype.TYPE_FILE | 0644;
 				dirEntries.add(dirEntry);
 			}
 		}
@@ -127,7 +127,7 @@ public class FuseBox implements Filesystem1 {
 					&& !dirName.equals(path)) {
 				FuseDirEnt dirEntry = new FuseDirEnt();
 				dirEntry.name = new File(dirName).getName();
-				dirEntry.mode = FuseFtype.TYPE_DIR;
+				dirEntry.mode = FuseFtype.TYPE_DIR | 0755;
 				dirEntries.add(dirEntry);
 			}
 		}
@@ -136,11 +136,11 @@ public class FuseBox implements Filesystem1 {
 		int i = 0;
 		FuseDirEnt dirEntry = new FuseDirEnt();
 		dirEntry.name = ".";
-		dirEntry.mode = FuseFtype.TYPE_DIR;
+		dirEntry.mode = FuseFtype.TYPE_DIR | 0755;
 		ret[i++] = dirEntry;
 		dirEntry = new FuseDirEnt();
 		dirEntry.name = "..";
-		dirEntry.mode = FuseFtype.TYPE_DIR;
+		dirEntry.mode = FuseFtype.TYPE_DIR | 0755;
 		ret[i++] = dirEntry;
 		for (FuseDirEnt dirEntryIter : dirEntries) {
 			ret[i++] = dirEntryIter;
