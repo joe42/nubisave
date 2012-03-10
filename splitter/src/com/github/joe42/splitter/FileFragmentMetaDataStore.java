@@ -31,7 +31,7 @@ public class FileFragmentMetaDataStore {
 	 * @param fileName the path to the whole file 
 	 * @return true iff the store contains fragments of the file
 	 * @throws IOException */
-	public boolean hasFragments(String fileName) throws IOException{
+	public synchronized boolean hasFragments(String fileName) throws IOException{
 		return fileFragmentsMap.get(fileName) != null;
 	}
 
@@ -39,7 +39,7 @@ public class FileFragmentMetaDataStore {
 	 * @param from a path to a whole file 
 	 * @param to the new path of a whole file
 	 * @throws IOException */
-	public void moveFragments(String from, String to) throws IOException{
+	public synchronized void moveFragments(String from, String to) throws IOException{
 		fileFragmentsMap.put(to, fileFragmentsMap.get(from));
 		fileFragmentsMap.remove(from);
 		commit();
@@ -49,7 +49,7 @@ public class FileFragmentMetaDataStore {
 	 * @param from a path of a file fragment
 	 * @param to the new path of the file fragment
 	 * @throws IOException */
-	public void moveFragment(String from, String to) throws IOException{
+	public synchronized void moveFragment(String from, String to) throws IOException{
 		FastIterator iter = fileFragmentsMap.keys();
 		String key =  (String) iter.next();
 		FileFragments fragments;
@@ -70,7 +70,7 @@ public class FileFragmentMetaDataStore {
 	 * @param fragmentName a path of a file fragment
 	 * @return true iff the file fragment exists
 	 * @throws IOException */
-	public boolean hasFragment(String fragmentName) throws IOException{
+	public synchronized boolean hasFragment(String fragmentName) throws IOException{
 		FastIterator iter = fileFragmentsMap.keys();
 		String key =  (String) iter.next();
 		FileFragments fragments;
@@ -92,7 +92,7 @@ public class FileFragmentMetaDataStore {
 	 * @param filesize the complete file's size 
 	 * @throws IOException 
 	 */
-	public void setFragment(String fileName, ArrayList<String> fragmentPaths, int requiredFragments, int nrOfRequiredSuccessfullyStoredFragments, String checksum, long filesize) throws IOException{
+	public synchronized void setFragment(String fileName, ArrayList<String> fragmentPaths, int requiredFragments, int nrOfRequiredSuccessfullyStoredFragments, String checksum, long filesize) throws IOException{
 		fileFragmentsMap.put(fileName, new FileFragments(fragmentPaths, requiredFragments, nrOfRequiredSuccessfullyStoredFragments, checksum, filesize));
 		commit();
 	}
@@ -102,7 +102,7 @@ public class FileFragmentMetaDataStore {
 	 * @return the number of fragments required to reconstruct the file or 0 if the file is not yet associated with any fragments
 	 * @throws IOException 
 	 */
-	public int getNrOfRequiredFragments(String fileName) throws IOException{
+	public synchronized int getNrOfRequiredFragments(String fileName) throws IOException{
 		FileFragments fragments = (FileFragments) fileFragmentsMap.get(fileName);
 		if(fragments == null){
 			return 0;
@@ -115,7 +115,7 @@ public class FileFragmentMetaDataStore {
 	 * @return the number of all fragments for the complete file or 0 if the file is not yet associated with any fragments
 	 * @throws IOException 
 	 */
-	public int getNrOfFragments(String fileName) throws IOException{
+	public synchronized int getNrOfFragments(String fileName) throws IOException{
 		FileFragments fragments = (FileFragments) fileFragmentsMap.get(fileName);
 		if(fragments == null){
 			return 0;
@@ -128,7 +128,7 @@ public class FileFragmentMetaDataStore {
 	 * @param requiredFragments the number of fragments required to reconstruct the file
 	 * @throws IOException 
 	 */
-	public void setNrOfRequiredFragments(String fileName, int requiredFragments) throws IOException {
+	public synchronized void setNrOfRequiredFragments(String fileName, int requiredFragments) throws IOException {
 		((FileFragments) fileFragmentsMap.get(fileName)).setNrOfRequiredFragments(requiredFragments);		
 		commit();
 	}
@@ -138,7 +138,7 @@ public class FileFragmentMetaDataStore {
 	 * @return the minimal number of fragments that should certainly have been stored 
 	 * @throws IOException 
 	 */
-	public int  getNrOfRequiredSuccessfullyStoredFragments(String fileName) throws IOException {
+	public synchronized int getNrOfRequiredSuccessfullyStoredFragments(String fileName) throws IOException {
 		FileFragments fragments = (FileFragments) fileFragmentsMap.get(fileName);
 		if(fragments == null){
 			return 0;
@@ -150,7 +150,7 @@ public class FileFragmentMetaDataStore {
 	 * @param fileName the path to the whole file 
 	 * @return the paths to all fragments of the file
 	 * @throws IOException */
-	public ArrayList<String> getFragments(String fileName) throws IOException{
+	public synchronized ArrayList<String> getFragments(String fileName) throws IOException{
 		return ((FileFragments)fileFragmentsMap.get(fileName)).getPaths();
 	}
 
@@ -159,7 +159,7 @@ public class FileFragmentMetaDataStore {
 	 * Any changes made to the entries after calling those methods are ignored. To commit further changes, call the respective put*Entry method again, after the changes, and then call commit.
 	 * @throws IOException
 	 */
-	public void commit() throws IOException {
+	public synchronized void commit() throws IOException {
 		recman.commit();
 	}
 	
@@ -168,12 +168,12 @@ public class FileFragmentMetaDataStore {
 	 * @param filePath
 	 * @throws IOException
 	 */
-	public void remove(String filePath) throws IOException{
+	public synchronized void remove(String filePath) throws IOException{
 		fileFragmentsMap.remove(filePath);
 		recman.commit();
 	}
 	
-	public long getFragmentsSize(String filePath) throws IOException{
+	public synchronized long getFragmentsSize(String filePath) throws IOException{
 		FileFragments fragments = ((FileFragments)fileFragmentsMap.get(filePath));
 		if(fragments == null){
 			return 0;

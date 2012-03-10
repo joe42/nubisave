@@ -3,6 +3,8 @@ package com.github.joe42.splitter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
 
 import org.apache.log4j.Logger;
 import org.ini4j.Ini;
@@ -11,6 +13,7 @@ import com.github.joe42.splitter.backend.BackendService;
 import com.github.joe42.splitter.backend.Mounter;
 import com.github.joe42.splitter.backend.StorageServicesMgr;
 import com.github.joe42.splitter.backend.StorageService;
+import com.github.joe42.splitter.util.StringUtil;
 import com.github.joe42.splitter.util.file.FileUtil;
 import com.github.joe42.splitter.util.file.IniUtil;
 import com.github.joe42.splitter.vtf.FolderEntry;
@@ -266,7 +269,6 @@ file is removed after at most 10 seconds
 						.initErrno(FuseException.EACCES);
 			}
 			moveFragments(from, to);
-			virtualFolder.remove(from);
 			return;
 		}
 		if (from.equals(to)) {
@@ -283,57 +285,72 @@ file is removed after at most 10 seconds
 				.initErrno(FuseException.EACCES);
 	}
 
-	private void moveFragments(String from, String to) throws FuseException {
-		boolean successful = true;
-		String uniqueServiceNameFrom = new File(from).getName();
-		String uniqueServiceNameTo = new File(to).getName();
-		BackendService serviceFrom = storageServiceMgr.getServices().get(uniqueServiceNameFrom);
-		BackendService serviceTo = storageServiceMgr.getServices().get(uniqueServiceNameTo);
-		log.debug("mv "+serviceFrom.getDataDirPath()+"/* "+serviceTo.getDataDirPath());
-		boolean fileMoved;
-		for(File srcFileFragment: new File(serviceFrom.getDataDirPath()).listFiles()){
-			try {
-				if( ! getFileFragmentStore().hasFragment(srcFileFragment.getPath()) ){
-					continue;
+	private void moveFragments(final String from, final String to) throws FuseException {
+		Thread t = new Thread(new FileCopy(from, to));
+        t.start();
+	}	
+	//TODO: disable write access during operation
+	private class FileCopy implements Runnable {
+		private String source;
+		private String destination;
+		public FileCopy(String from, String to){
+			this.source = from;
+			this.destination = to;
+		}
+		public void run() {
+			boolean successful = true;
+			String uniqueServiceNameFrom = new File(source).getName();
+			String uniqueServiceNameTo = new File(destination).getName();
+			BackendService serviceFrom = storageServiceMgr.getServices().get(uniqueServiceNameFrom);
+			BackendService serviceTo = storageServiceMgr.getServices().get(uniqueServiceNameTo);
+			log.debug("mv "+serviceFrom.getDataDirPath()+"/* "+serviceTo.getDataDirPath());
+			File[] filesToMove = new File(serviceFrom.getDataDirPath()).listFiles();
+			int nrOfFilesToMove = filesToMove.length;
+			int cntMovedFiles = 1;
+			for(File srcFileFragment: filesToMove){
+				try {
+					if( ! getFileFragmentStore().hasFragment(srcFileFragment.getPath()) ){
+						continue;
+					}
+				} catch (IOException e1) {
+					successful = false;
+					break;
 				}
-			} catch (IOException e1) {
-				throw new FuseException("IO Exception on moving files from " + from
-						+ " to " + to).initErrno(FuseException.EIO);
-			}
-			File destFileFragment = new File(serviceTo.getDataDirPath()+"/"+srcFileFragment.getName());
-			fileMoved = srcFileFragment.renameTo(destFileFragment );
-			if( ! fileMoved ){ //depending on the platform moving between mountpoints can fail
+				File destFileFragment = new File(serviceTo.getDataDirPath()+"/"+srcFileFragment.getName());
 				try{
 					FileUtil.copy(srcFileFragment, destFileFragment);
-					fileMoved = true;
-				} catch (IOException e) {
-					fileMoved = false;
-				}
-			}
-			if(fileMoved){
-				try{
 					getFileFragmentStore().renameFragment(srcFileFragment.getPath(), destFileFragment.getPath());
+					srcFileFragment.delete();
 				} catch (IOException e) {
 					successful = false;
 				}
-			} else {
-				successful = false;
-			}
-		} //end of for
-		if( !successful ){
-			throw new FuseException("IO Exception on moving files from " + from
-					+ " to " + to).initErrno(FuseException.EIO);
-		}
-	}	
-	
-		
-		public void mkdir(String path, int mode) throws FuseException {
-			if(path.startsWith(DATA_DIR) && ! path.equals(DATA_DIR)){
-				path = removeDataFolderPrefix(path);
-				super.mkdir(path, mode);
+				cntMovedFiles++;
+				VirtualFile vtf = virtualFolder.get(source);
+				if(vtf == null){ //might be deleted in concurrent operation
+					return;
+				}
+				Ini ini = IniUtil.getIni(vtf.getText());
+				ini.put("splitter", "migrationprogress", (int)((cntMovedFiles * 100d) / nrOfFilesToMove));	
+				vtf.setText(IniUtil.getString(ini));
+			} //end of for
+			VirtualFile vtf = virtualFolder.get(source);
+			if(vtf == null){ //might be deleted in concurrent operation
 				return;
 			}
-			throw new FuseException("Cannot mkdir "+path)
-				.initErrno(FuseException.EACCES);
+			Ini ini = IniUtil.getIni(vtf.getText());
+			ini.put("splitter", "migrationissuccessful", successful);	
+			vtf.setText(IniUtil.getString(ini));
+		}
+	}
+	
+		
+	public void mkdir(String path, int mode) throws FuseException {
+		if(path.startsWith(DATA_DIR) && ! path.equals(DATA_DIR)){
+			path = removeDataFolderPrefix(path);
+			super.mkdir(path, mode);
+			return;
+		}
+		throw new FuseException("Cannot mkdir "+path)
+			.initErrno(FuseException.EACCES);
 	}
 }
