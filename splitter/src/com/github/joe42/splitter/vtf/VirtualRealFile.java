@@ -1,8 +1,10 @@
 package com.github.joe42.splitter.vtf;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
+import java.nio.charset.Charset;
 
 import com.github.joe42.splitter.util.StringUtil;
 import com.github.joe42.splitter.util.file.FileUtil;
@@ -17,14 +19,18 @@ public class VirtualRealFile extends VirtualFile {
 	}
 	public FuseStat getAttr(){
 		FileEntry entry = getFileEntry();
-		entry.size = (int) realFile.length()*2;
+		try {
+			entry.size = (int) getText().getBytes("UTF-8").length;
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 		return entry.getFuseStat(); 
 	}
 	public void truncate(){
 		FileUtil.writeFile(realFile, "");
 	}
 	public String getText(){
-		return FileUtil.readFile(realFile);
+		return new String(FileUtil.readFile(realFile).getBytes(), Charset.forName("UTF-8"));
 	}
 	public String getRealPath(){
 		/**
@@ -34,18 +40,16 @@ public class VirtualRealFile extends VirtualFile {
 	}
 
 	public String toString() {
-		return FileUtil.readFile(realFile);
+		return new String(FileUtil.readFile(realFile).getBytes(), Charset.forName("UTF-8"));
 	}
 
 	public void read(ByteBuffer buf, long offset) {
-		String text = FileUtil.readFile(realFile);
-		CharBuffer cbuf = buf.asCharBuffer();
-		int limit = text.length();
-		if(text.length()>buf.limit()){
+		byte[] text = getText().getBytes(Charset.forName("UTF-8"));
+		int limit = text.length;
+		if(limit>buf.limit()){
 			limit = buf.limit();
 		}
-		cbuf.put(text.substring((int) offset, limit));
-		buf.position(limit*2);
+		buf.put(text, (int)offset, limit);
 	}
 
 	public void write(ByteBuffer buf, long offset) {
