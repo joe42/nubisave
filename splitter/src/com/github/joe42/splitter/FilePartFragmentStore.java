@@ -62,6 +62,7 @@ public class FilePartFragmentStore extends FileFragmentStore{
 	}
 
 	public void read(String path, ByteBuffer buf, long offset) throws FuseException, IOException {
+		//TODO: read backward
 		String filePartPath = ((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).getFilePartPath(path, offset);
 		if (tempReadChannel == null || lastFilePartPathReadFrom == null || ! lastFilePartPathReadFrom.equals(filePartPath)) { 
 			if(tempReadChannel != null){
@@ -114,7 +115,6 @@ public class FilePartFragmentStore extends FileFragmentStore{
 			return ret;
 		}
 		ret = splitter.glueFilesTogether(fileFragmentMetaDataStore, filePartPath);
-		ret.setLength(MAX_FILESIZE);
 		return ret;
 	}
 	
@@ -199,6 +199,7 @@ public class FilePartFragmentStore extends FileFragmentStore{
 		long offsetOfLastByte = size - 1; //offset of the last byte of a file with #size bytes
 		filePartPath = ((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).getFilePartPath(path, offsetOfLastByte);
 		RandomAccessTemporaryFileChannel lastFilePart = getFilePart(filePartPath);
+		lastFilePart.setLength(MAX_FILESIZE);
 		if(size != 0 && size % MAX_FILESIZE == 0){ //size can have a maximum of MAX_FILESIZE
 			size = MAX_FILESIZE;
 		} else {
