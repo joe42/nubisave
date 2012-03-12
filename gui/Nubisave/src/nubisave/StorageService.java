@@ -52,10 +52,10 @@ public class StorageService {
         }
     }
 
+    /**
+     * @param file an ini configuration file for a custom service
+     */
     public StorageService(File file) {
-        /**
-         * @param file an ini configuration file for a custom service
-         */
             name = file.getName().split("\\.")[0]; //use the filename as a service name
             uniqName = name + new Random().nextInt(10000000);
             type = StorageType.CUSTOM;
@@ -69,13 +69,13 @@ public class StorageService {
             }
     }
 
+    /**@return the configuration file for this service*/
     public Ini getConfig(){
-        /**@return the configuration file for this service*/
         return config;
     }
 
+    /**Sets the configuration file for this service*/
     public void setConfig(Ini config){
-        /**Sets the configuration file for this service*/
         this.config = config;
         if(config != null){
             try{
@@ -123,24 +123,24 @@ public class StorageService {
         this.uniqName = uniqName;
     }
 
+    /**
+     * @return the number of local backends for this service
+     */
     public int getNrOfBackends() {
-        /**
-         * @return the number of local backends for this service
-         */
         return nrOfBackends;
     }
 
+    /**
+     * @return true iff this storage service is used as a backend for an other service
+     */
     public boolean isBackendModule() {
-        /**
-         * @return true iff this storage service is used as a backend for an other service
-         */
         return isBackendModule;
     }
 
+    /**
+     * @param isBackendModule iff true set this storage service to be used as a backend for an other service
+     */
     public void setBackendModule(boolean isBackendModule) {
-        /**
-         * @param isBackendModule iff true set this storage service to be used as a backend for an other service
-         */
         this.isBackendModule = isBackendModule;
     }
 
@@ -148,12 +148,12 @@ public class StorageService {
         return this.backendServices;
     }
 
+    /**
+     * Adds service as a backend service.
+     * Then removes the backend service added before all others if more than #getNrOfBackends() backendservices have been added.
+     * If service is already a backend service it is not added.
+     */
     public void addBackendService(StorageService service) {
-        /**
-         * Adds service as a backend service.
-         * Then removes the backend service added before all others if more than #getNrOfBackends() backendservices have been added.
-         * If service is already a backend service it is not added.
-         */
         if(backendServices.contains(service)){
             return;
         }
@@ -163,10 +163,10 @@ public class StorageService {
         }
     }
 
+    /**
+     * Removes service from this services list of backend services.
+     */
     public void removeBackendService(StorageService service) {
-        /**
-         * Removes service from this services list of backend services.
-         */
         backendServices.remove(service);
     }
 
@@ -175,7 +175,7 @@ public class StorageService {
      * Backend services are substituted and isbackendmodule parameter is set as well
      * @param directory the directory to store the configuration file
      */
-    void storeConfiguration(String directory) {
+    public void storeConfiguration(String directory) {
         String path = directory + "/" + getUniqName();
         try{
             int serviceIndex = 1;
