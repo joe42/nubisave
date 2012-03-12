@@ -169,5 +169,27 @@ public class StorageService {
          */
         backendServices.remove(service);
     }
+
+    /**
+     * Store the configuration as a file with the name of this service's unique name
+     * Backend services are substituted and isbackendmodule parameter is set as well
+     * @param directory the directory to store the configuration file
+     */
+    void storeConfiguration(String directory) {
+        String path = directory + "/" + getUniqName();
+        try{
+            int serviceIndex = 1;
+            for(StorageService s: getBackendServices()){
+                config.put("parameter", "backendservice"+serviceIndex++, s.getUniqName());
+            }
+            if(isBackendModule()){
+                config.put("splitter", "isbackendmodule", true);
+            }
+            config.store(new File(path));
+        } catch(Exception e){
+            System.err.println("StorageService.storeConfiguration(StorageService service): Error writing configuration for StorageService instance "+getUniqName()+" - "+e.getMessage()==null?e.getMessage():"");
+            return;
+        }
+    }
     
 }
