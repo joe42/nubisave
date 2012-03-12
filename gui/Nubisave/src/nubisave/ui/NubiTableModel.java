@@ -90,7 +90,11 @@ public class NubiTableModel extends AbstractTableModel {
     @Override
     public void setValueAt(Object o,int row,int column) {
         if (column == Headers.MOUNTED.ordinal()) {
-            Nubisave.mainSplitter.mountStorageModule(Nubisave.services.get(row));
+            if(! Nubisave.mainSplitter.isModuleMounted(Nubisave.services.get(row))){
+                Nubisave.mainSplitter.mountStorageModule(Nubisave.services.get(row)); // mount the module
+            } else {
+                Nubisave.mainSplitter.unmountStorageModule(Nubisave.services.get(row)); // unmount the module
+            }
         }
     }
 }
