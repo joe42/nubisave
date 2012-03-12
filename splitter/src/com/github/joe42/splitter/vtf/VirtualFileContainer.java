@@ -15,11 +15,15 @@ public class VirtualFileContainer {
 		vtf.remove(virtualFile);
 	}
 	public synchronized void remove(String path) {
+		VirtualFile fileToRemove = null;
 		for(VirtualFile file: vtf){
 			if(file.getPath().equals(path)){
-				vtf.remove(file);
-				return;
+				fileToRemove = file;
+				break;
 			}
+		}
+		if(fileToRemove != null){
+			vtf.remove(fileToRemove);
 		}
 	}
 
