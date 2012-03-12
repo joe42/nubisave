@@ -78,22 +78,7 @@ public class Splitter {
         return new File(path).exists();
     }
     public void mountStorageModule(StorageService service){
-        String path = configurationDirPath + "/" + service.getUniqName();
-        try{
-            Ini serviceIni = service.getConfig();
-            int serviceIndex = 1;
-            for(StorageService s: service.getBackendServices()){
-                    serviceIni.put("parameter", "backendservice"+serviceIndex++, s.getUniqName());
-                }
-                if(service.isBackendModule()){
-                    serviceIni.put("splitter", "isbackendmodule", true);
-            }
-
-            serviceIni.store(new File(path));
-        } catch(Exception e){
-            System.err.println("Splitter.mountStorageModule(StorageService service): Error writing configuration for StorageService instance "+service.getUniqName()+" - "+e.getMessage()==null?e.getMessage():"");
-            return;
-        }
+        service.storeConfiguration(configurationDirPath);
     }
     public void unmountStorageModule(StorageService service){
         String path = configurationDirPath + "/" + service.getUniqName();
