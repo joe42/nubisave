@@ -77,7 +77,7 @@ public class ButtonEditor extends DefaultCellEditor {
                     String desc = (String) owner.tableModel.getValueAt(row, NubiTableModel.Headers.DESCRIPTION.ordinal());
                     String[] options = {"No", "Remove"};
                     int n = JOptionPane.showOptionDialog(owner,
-                            "Remove and umount " + desc + "?",
+                            "Remove and unmount " + desc + "?",
                             "Remove?",
                             JOptionPane.YES_NO_OPTION,
                             JOptionPane.QUESTION_MESSAGE,
@@ -85,7 +85,9 @@ public class ButtonEditor extends DefaultCellEditor {
                             options,
                             options[1]);
                     if (n == 1) {
-                        Nubisave.mainSplitter.unmountStorageModule(Nubisave.services.get(row));
+                        if(Nubisave.mainSplitter.isModuleMounted(Nubisave.services.get(row))){
+                            Nubisave.mainSplitter.unmountStorageModule(Nubisave.services.get(row));
+                        }
                         Nubisave.services.remove(row);
                         
                     }
