@@ -63,7 +63,11 @@ public class StorageServicesMgr {
 	
 	public boolean unmount(String uniqueServiceName){
 		BackendService service = services.get(uniqueServiceName);
-		return mounter.unmount(service);
+		boolean unmounted = mounter.unmount(service);
+		if(unmounted) {
+			services.remove(uniqueServiceName);
+		}
+		return unmounted;
 	}
 	
 	/**

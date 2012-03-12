@@ -230,22 +230,18 @@ public class ConfigurableFuseBox extends FuseBox  implements StorageService{
 				throw new FuseException("Cannot remove "+path)
 				.initErrno(FuseException.EEXIST);
 			}
-			if( ! (vf instanceof VirtualRealFile) ){
+			if( vf == vtSplitterConfig ){
 				throw new FuseException("Cannot remove "+path)
 				.initErrno(FuseException.EACCES);
 			}
-			/*Bug:
-			 * Bugfix in feature #462 Unmounting Service via Virtual File Interface:
-Only remove virtual configuration file if the corresponding configuration 
-file is removed after at most 10 seconds
-						String uniqueServiceName = new File(path).getName();
-			if(mounter.unmount(uniqueServiceName)){
-				virtualFolder.remove(path);
-			}
-		}*/
 			String uniqueServiceName = new File(path).getName();
-			storageServiceMgr.unmount(uniqueServiceName);
-			virtualFolder.remove(path);
+			boolean unmounted = storageServiceMgr.unmount(uniqueServiceName);
+			if(unmounted) {
+				virtualFolder.remove(path);
+			} else {
+				throw new FuseException("IO Exception on removing store.")
+					.initErrno(FuseException.EIO);
+			}
 		}
 		if(path.startsWith(DATA_DIR)){
 			path = removeDataFolderPrefix(path);
