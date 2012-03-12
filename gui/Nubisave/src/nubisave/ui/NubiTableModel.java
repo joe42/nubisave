@@ -92,6 +92,7 @@ public class NubiTableModel extends AbstractTableModel {
         if (column == Headers.MOUNTED.ordinal()) {
             if(! Nubisave.mainSplitter.isModuleMounted(Nubisave.services.get(row))){
                 Nubisave.mainSplitter.mountStorageModule(Nubisave.services.get(row)); // mount the module
+                fireTableDataChanged(); // reload table, since backend modules might have been mounted along with this storage module
             } else {
                 Nubisave.mainSplitter.unmountStorageModule(Nubisave.services.get(row)); // unmount the module
             }

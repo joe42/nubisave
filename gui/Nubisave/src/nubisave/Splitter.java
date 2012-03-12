@@ -4,6 +4,7 @@
 
 package nubisave;
 
+import com.github.joe42.splitter.backend.BackendService;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -78,6 +79,9 @@ public class Splitter {
         return new File(path).exists();
     }
     public void mountStorageModule(StorageService service){
+        for(StorageService backendStore: service.getBackendServices()){
+            backendStore.storeConfiguration(configurationDirPath);
+        }
         service.storeConfiguration(configurationDirPath);
     }
     public void unmountStorageModule(StorageService service){
