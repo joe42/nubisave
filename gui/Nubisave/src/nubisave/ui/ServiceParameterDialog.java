@@ -157,6 +157,7 @@ public class ServiceParameterDialog extends javax.swing.JDialog {
                 name = jLabels.get(i+sectionCnt).getText();
                 value = jTextFields.get(i).getText();
                 config.get(section).put(name, value);
+                nubisave.Nubisave.services.update(service);
             }
         }
         dispose();

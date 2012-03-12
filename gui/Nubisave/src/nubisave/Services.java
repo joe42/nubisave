@@ -38,24 +38,35 @@ public class Services implements Iterable<StorageService>{
     }
 
     /**
-     * Add a new StorageService instance to the list.
+     * Add a new StorageService instance to the list and persist it.
      * @param newService the instance to add
      */
     public void add(StorageService newService){
         mmServices.add(newService);
-        try{
-            Ini serviceIni = newService.getConfig();
-            int serviceIndex = 1;
-            for(StorageService s: newService.getBackendServices()){
-                    serviceIni.put("parameter", "backendservice"+serviceIndex++, s.getUniqName());
+        newService.storeConfiguration(database_directory);
+    }
+
+    /**
+     * Persists changes to the existing services.
+     * @param existingService the instance to persist
+     */
+    public void update(StorageService existingService){
+        existingService.storeConfiguration(database_directory);
+    }
+
+    /**
+     * Persists changes to the existing services.
+     * Sets the correct isBackendModule value for each service.
+     */
+    public void update(){
+        for(StorageService s1: nubisave.Nubisave.services){
+            s1.setBackendModule(false);
+            for(StorageService s2: nubisave.Nubisave.services){
+                if(s2.getBackendServices().contains(s1)){
+                    s1.setBackendModule(true);
                 }
-                if(newService.isBackendModule()){
-                    serviceIni.put("splitter", "isbackendmodule", true);
             }
-            serviceIni.store(new File(database_directory+"/"+newService.getUniqName()));
-        } catch(Exception e){
-            System.err.println("Services instance add(StorageService newService): Error storing configuration for StorageService instance "+newService.getUniqName()+" - "+e.getMessage()==null?e.getMessage():"");
-            return;
+            update(s1);
         }
     }
 
@@ -115,10 +126,12 @@ public class Services implements Iterable<StorageService>{
 
     /**
      * Remove the StorageService instance at position i. Shifts any subsequent elements to the left (subtracts one from their indices).
+     * Unpersists the store.
      * @param i index of the element to remove
      * @throws IndexOutOfBoundsException - if the index is out of range (index < 0 || index >= size())
      */
     public void remove(int i) {
+        new File(database_directory+"/"+mmServices.get(i).getUniqName()).delete();
         mmServices.remove(i);
     }
 }
