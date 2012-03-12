@@ -88,6 +88,19 @@ public class StorageService {
             } catch (NullPointerException e) {
                 System.err.println("StorageService instance "+name+".setConfig(Ini config): configuration has no isbackendmodule parameter"+" - "+e.getMessage()==null?e.getMessage():"");
             }
+            try{
+                int backendServiceIndex = 1;
+                String backendServiceName;
+                while(true){
+                    backendServiceName = config.get("parameter", "backendservice"+backendServiceIndex++, String.class);
+                    if(backendServiceName == null){
+                        return;
+                    }
+                    addBackendService(Nubisave.services.getByUniqueName(backendServiceName));
+                }
+            } catch (NullPointerException e) {
+                System.out.println("StorageService instance "+name+".setConfig(Ini config): configuration has no more backendservice parameters"+" - "+e.getMessage()==null?e.getMessage():"");
+            }
         }
     }
 
@@ -164,7 +177,7 @@ public class StorageService {
     }
 
     /**
-     * Removes service from this services list of backend services.
+     * Removes service from this service's list of backend services.
      */
     public void removeBackendService(StorageService service) {
         backendServices.remove(service);

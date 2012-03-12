@@ -37,12 +37,16 @@ public class BackendConfigurationDialog extends javax.swing.JDialog {
         this.listModel = new DefaultListModel();
         availableBackendServicesListSelectionListener = new AvailableBackendServicesListSelectionListener();
         availableBackendServices.setModel(listModel);
-        availableBackendServices.addListSelectionListener(availableBackendServicesListSelectionListener);
         for(StorageService s: nubisave.Nubisave.services){
             if(! s.getUniqName().equals(service.getUniqName())){
                 listModel.addElement(s.getUniqName());
             }
         }
+        //set current selection
+        for(StorageService s: service.getBackendServices()){
+            availableBackendServices.setSelectedValue(s.getUniqName(), false);
+        }
+        availableBackendServices.addListSelectionListener(availableBackendServicesListSelectionListener);
     }
 
     /**
@@ -56,7 +60,7 @@ public class BackendConfigurationDialog extends javax.swing.JDialog {
                 selectedServiceNames.add((String)o);
             }
             for(String serviceName: selectedServiceNames){
-                StorageService selectedService = nubisave.Nubisave.services.get(serviceName);
+                StorageService selectedService = nubisave.Nubisave.services.getByUniqueName(serviceName);
                 service.addBackendService(selectedService);
             }
             nubisave.Nubisave.services.update();
