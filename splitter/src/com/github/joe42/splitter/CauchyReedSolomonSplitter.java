@@ -13,6 +13,8 @@ import org.jigdfs.ida.base.InformationDispersalCodec;
 import org.jigdfs.ida.base.InformationDispersalDecoder;
 import org.jigdfs.ida.base.InformationDispersalEncoder;
 import org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalCodec;
+import org.jigdfs.ida.exception.IDADecodeException;
+import org.jigdfs.ida.exception.IDANotInitializedException;
 
 import com.github.joe42.splitter.backend.BackendService;
 import com.github.joe42.splitter.backend.BackendServices;
@@ -218,10 +220,6 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 	public RandomAccessTemporaryFileChannel glueFilesTogether(FileFragmentMetaDataStore fileFragmentMetaDataStore, String path) throws FuseException {
 		RandomAccessTemporaryFileChannel ret = null;
 		List<byte[]> receivedFileSegments = new ArrayList<byte[]>();
-		Digest digestFunc = new SHA256Digest();
-		byte[] digestByteArray = new byte[digestFunc.getDigestSize()];
-		InformationDispersalCodec crsidacodec;
-		InformationDispersalDecoder decoder;
 		try {
 			int nr_of_file_fragments_required = fileFragmentMetaDataStore.getNrOfRequiredFragments(path);
 			List<String> fragmentNames = fileFragmentMetaDataStore.getFragments(path);
@@ -239,64 +237,80 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 				return simpleGlueFilesTogether(fragmentNames);
 			}else {
 				
-				try {
-					crsidacodec = new CauchyInformationDispersalCodec(
-							fileFragmentMetaDataStore.getNrOfFragments(path), nr_of_file_fragments_required, CAUCHY_WORD_LENGTH);
-					log.debug(fileFragmentMetaDataStore.getNrOfFragments(path)+" "+fileFragmentMetaDataStore.getNrOfRequiredFragments(path));
-					decoder = crsidacodec.getDecoder();
-				} catch (Exception e) {
-					e.printStackTrace();
-					throw new FuseException("IDA could not be initialized")
-							.initErrno(FuseException.EACCES);
-				}
-				String hexString = null;
-				log.info("glue ");
-				int readBytes;
-				ret = new RandomAccessTemporaryFileChannel();
-				int validSegment = 0;
-	
-				List<byte[]> segmentBuffers = concurrent_multi_file_handler
-						.getFilesAsByteArrays(fragmentNames.toArray(new String[0]), fileFragmentMetaDataStore.getNrOfRequiredFragments(path));
-				for (byte[] segmentBuffer : segmentBuffers) {
-					//log.info("glue " + new String(segmentBuffer));
-	
-					digestFunc.reset();
-	
-					digestFunc.update(segmentBuffer, 0, segmentBuffer.length);
-	
-					digestFunc.doFinal(digestByteArray, 0);
-	
-					hexString = new String(Hex.encode(digestByteArray));
-	
-					/*
-					 * if (!hexString.equals(file_fragment.getName())) {
-					 * log.error("this file segment is invalid! " +
-					 * file_fragment.getName() + " <> " + hexString); } else {
-					 */
-					receivedFileSegments.add(segmentBuffer);
-					validSegment++;
-	
-					if (validSegment >= fileFragmentMetaDataStore.getNrOfRequiredFragments(path)) {
-						break;
-					}
-					// }
-				}
-				byte[] recoveredFile = decoder.process(receivedFileSegments);
-	
-				digestFunc.reset();
-	
-				digestFunc.update(recoveredFile, 0, recoveredFile.length);
-	
-				digestFunc.doFinal(digestByteArray, 0);
-	
-				ret.getChannel().write(ByteBuffer.wrap(recoveredFile));
-	
-				return ret;
+				return crsGlueFilesTogether(fileFragmentMetaDataStore, path,
+						receivedFileSegments,
+						nr_of_file_fragments_required, fragmentNames);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new FuseException("IO error", e).initErrno(FuseException.EIO);
 		}
+	}
+
+	private RandomAccessTemporaryFileChannel crsGlueFilesTogether(
+			FileFragmentMetaDataStore fileFragmentMetaDataStore, String path,
+			List<byte[]> receivedFileSegments, 
+			int nr_of_file_fragments_required, List<String> fragmentNames)
+			throws FuseException, IOException, IDADecodeException,
+			IDANotInitializedException {
+		RandomAccessTemporaryFileChannel ret;
+		InformationDispersalCodec crsidacodec;
+		InformationDispersalDecoder decoder;
+		Digest digestFunc = new SHA256Digest();
+		byte[] digestByteArray = new byte[digestFunc.getDigestSize()];
+		try {
+			crsidacodec = new CauchyInformationDispersalCodec(
+					fileFragmentMetaDataStore.getNrOfFragments(path), nr_of_file_fragments_required, CAUCHY_WORD_LENGTH);
+			log.debug(fileFragmentMetaDataStore.getNrOfFragments(path)+" "+fileFragmentMetaDataStore.getNrOfRequiredFragments(path));
+			decoder = crsidacodec.getDecoder();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new FuseException("IDA could not be initialized")
+					.initErrno(FuseException.EACCES);
+		}
+		String hexString = null;
+		log.info("glue ");
+		int readBytes;
+		ret = new RandomAccessTemporaryFileChannel();
+		int validSegment = 0;
+
+		List<byte[]> segmentBuffers = concurrent_multi_file_handler
+				.getFilesAsByteArrays(fragmentNames.toArray(new String[0]), fileFragmentMetaDataStore.getNrOfRequiredFragments(path));
+		for (byte[] segmentBuffer : segmentBuffers) {
+			//log.info("glue " + new String(segmentBuffer));
+
+			digestFunc.reset();
+
+			digestFunc.update(segmentBuffer, 0, segmentBuffer.length);
+
+			digestFunc.doFinal(digestByteArray, 0);
+
+			hexString = new String(Hex.encode(digestByteArray));
+
+			/*
+			 * if (!hexString.equals(file_fragment.getName())) {
+			 * log.error("this file segment is invalid! " +
+			 * file_fragment.getName() + " <> " + hexString); } else {
+			 */
+			receivedFileSegments.add(segmentBuffer);
+			validSegment++;
+
+			if (validSegment >= fileFragmentMetaDataStore.getNrOfRequiredFragments(path)) {
+				break;
+			}
+			// }
+		}
+		byte[] recoveredFile = decoder.process(receivedFileSegments);
+
+		digestFunc.reset();
+
+		digestFunc.update(recoveredFile, 0, recoveredFile.length);
+
+		digestFunc.doFinal(digestByteArray, 0);
+
+		ret.getChannel().write(ByteBuffer.wrap(recoveredFile));
+
+		return ret;
 	}
 
 	private RandomAccessTemporaryFileChannel simpleGlueFilesTogether(
