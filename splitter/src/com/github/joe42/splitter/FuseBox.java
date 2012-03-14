@@ -385,4 +385,11 @@ public class FuseBox implements Filesystem3 {
 	public int release(String path, Object fh, int flags) throws FuseException {
 		return 0;
 	}
+
+	/**
+	 * Do cleanup and release resources
+	 */
+	public void close() {		
+	}
 }
+// TODO Auto-generated method stub

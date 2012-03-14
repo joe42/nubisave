@@ -17,12 +17,17 @@ public class Main {
 		String fuseArgs[] = new String[args.length-1];
 		System.arraycopy(args, 0, fuseArgs, 0, fuseArgs.length);
 		// System.out.println(fuseArgs[0]);
+		FuseBox fuseBox = null;
 		try {
 			StorageServicesMgr storageServiceMgr = new StorageServicesMgr(args[3]);
-			CauchyReedSolomonSplitter splitter = new CauchyReedSolomonSplitter(storageServiceMgr.getServices()); 
-			FuseMount.mount(fuseArgs, new ConfigurableFuseBox(splitter, storageServiceMgr), LogFactory.getLog("javafs"));
+			CauchyReedSolomonSplitter splitter = new CauchyReedSolomonSplitter(storageServiceMgr.getServices());
+			 fuseBox = new ConfigurableFuseBox(splitter, storageServiceMgr);
+			FuseMount.mount(fuseArgs, fuseBox, LogFactory.getLog("javafs"));
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+		if(fuseBox != null){
+			fuseBox.close();
 		}
 	}
 }

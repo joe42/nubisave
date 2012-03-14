@@ -34,6 +34,7 @@ public class ConfigurableFuseBox extends FuseBox  implements StorageService{
 	private VirtualFileContainer virtualFolder;
 	private VirtualFile vtSplitterConfig;
 	private StorageServicesMgr storageServiceMgr;
+	private boolean parallel_execution_of_read;
 	private static final Logger log = Logger.getLogger("FuseBox");
 	
 	public ConfigurableFuseBox(CauchyReedSolomonSplitter splitter, StorageServicesMgr storageServiceMgr) throws IOException{
@@ -365,5 +366,19 @@ public class ConfigurableFuseBox extends FuseBox  implements StorageService{
 		}
 		throw new FuseException("Cannot mkdir "+path)
 			.initErrno(FuseException.EACCES);
+	}
+	
+
+	/**
+	 * Unmount backend stores
+	 */
+	@Override
+	public void close() {		
+		boolean unmounted;
+		for(String storeName: storageServiceMgr.getServices().getStorageServicesNames()){
+			if( ! storageServiceMgr.unmount(storeName)) {
+				log.error("Store "+storeName+" could not be unmounted.");
+			}
+		}
 	}
 }
