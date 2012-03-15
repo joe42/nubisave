@@ -3,6 +3,7 @@ package com.github.joe42.splitter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.channels.FileChannel;
@@ -32,13 +33,16 @@ import fuse.FuseFtype;
 import fuse.FuseGetattrSetter;
 import fuse.FuseMount;
 import fuse.FuseOpenSetter;
+import fuse.FuseSizeSetter;
 import fuse.FuseStatfs;
 import fuse.FuseStatfsSetter;
+import fuse.XattrLister;
+import fuse.XattrSupport;
 import fuse.compat.Filesystem1;
 import fuse.compat.FuseDirEnt;
 import fuse.compat.FuseStat;
 
-public class FuseBox implements Filesystem3 {
+public class FuseBox implements Filesystem3, XattrSupport {
 	private static final Logger  log = Logger.getLogger("FuseBox");
 
 	private static final int blockSize = 512;
@@ -391,5 +395,35 @@ public class FuseBox implements Filesystem3 {
 	 */
 	public void close() {		
 	}
+
+	@Override
+	public int getxattr(String path, String name, ByteBuffer dst)
+			throws FuseException, BufferOverflowException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getxattrsize(String path, String name, FuseSizeSetter sizeSetter)
+			throws FuseException {
+		sizeSetter.setSize(0);
+		return 0;
+	}
+
+	@Override
+	public int listxattr(String path, XattrLister lister) throws FuseException {
+		//lister.add(xattrName);
+		return 0;
+	}
+
+	@Override
+	public int removexattr(String path, String name) throws FuseException {
+		return 0;
+	}
+
+	@Override
+	public int setxattr(String path, String name, ByteBuffer value, int flags)
+			throws FuseException {
+		return 0;
+	}
 }
-// TODO Auto-generated method stub
