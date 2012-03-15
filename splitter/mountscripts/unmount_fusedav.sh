@@ -1,7 +1,7 @@
 #!/bin/sh
 #usage: sh unmount_fusedav.sh mountpoint
 #unmount fusedav
-fusermount -zu $1/data
+fusermount -zu "$1/data"
 
 #remove data directory
 rm "$1/data"
