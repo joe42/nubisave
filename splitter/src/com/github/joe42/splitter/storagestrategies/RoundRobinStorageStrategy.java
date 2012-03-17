@@ -133,6 +133,9 @@ public class RoundRobinStorageStrategy implements StorageStrategy, Observer {
 		double availability = 0;
 		double combinationAvailability = 0;
 		boolean firstIteration = true;
+		if(potentialStorageDirectories.size() == 0) {
+			return 0;
+		}
 		Set<Set<BackendService>> storageCombinations = getStorageCombinations();
 		for(Set<BackendService> storageCombination: storageCombinations ){
 			log.debug("combination:"+storageCombination);

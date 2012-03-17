@@ -43,6 +43,24 @@ public class Mounter {
 		}
 		return configFile.exists();
 	}
+	
+	/** Waits at most 10 seconds until the file configFilePath is removed.
+	 * This method is used to determine if a file system module is unmounted successfully.
+	 * @param configFilePath path to a module's configuration file
+	 * @returns: true iff the file does not exist after at most 10 seconds
+	 */
+	private boolean isUnmounted(String configFilePath) {
+		File configFile = new File(configFilePath);
+		int timeUsed = 0;
+		while(configFile.exists() && timeUsed < 1000*10){
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+			}
+			timeUsed += 500;
+		}
+		return ! configFile.exists();
+	}
 			
 	/**
 	 * Execute the command given in mountOption's mounting section, which should mount a file system.
@@ -68,17 +86,18 @@ public class Mounter {
 		return true;
 	}
 
-	/** Executes fusermount -uz to unmount the service at this.getPath() and this.getPath()+"/data"
-	 * @param uniqueServiceName TODO
+	/** Unmount the service
+	 * @param uniqueServiceName name of the service to unmount  
 	 * @return true iff the service was unmounted within 10 seconds
 	 */
-	public boolean unmount(BackendService service){
+	public boolean unmount(BackendService storage){
 		try {
-			if(service == null){
+			if(storage == null){
 				return false;
 			}
-			service.unmount();
-			if(! isMounted(service.getConfigFilePath())){
+			log.info("Executing: "+storage.getUnmountcommand());
+			storage.unmount();
+			if(isUnmounted(storage.getConfigFilePath())){
 				return true;
 			}
 		} catch (IOException e) {

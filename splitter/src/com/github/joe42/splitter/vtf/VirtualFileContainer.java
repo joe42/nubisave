@@ -8,22 +8,26 @@ import fuse.compat.FuseDirEnt;
 
 public class VirtualFileContainer {
 	List<VirtualFile> vtf = new ArrayList<VirtualFile>();
-	public void add(VirtualFile virtualFile) {
+	public synchronized void add(VirtualFile virtualFile) {
 		vtf.add(virtualFile);
 	}
-	public void remove(VirtualFile virtualFile) {
+	public synchronized void remove(VirtualFile virtualFile) {
 		vtf.remove(virtualFile);
 	}
-	public void remove(String path) {
+	public synchronized void remove(String path) {
+		VirtualFile fileToRemove = null;
 		for(VirtualFile file: vtf){
 			if(file.getPath().equals(path)){
-				vtf.remove(file);
-				return;
+				fileToRemove = file;
+				break;
 			}
+		}
+		if(fileToRemove != null){
+			vtf.remove(fileToRemove);
 		}
 	}
 
-	public boolean containsFile(String path){
+	public synchronized boolean containsFile(String path){
 		for(VirtualFile file: vtf){
 			if(file.getPath().equals(path)){
 				return true;
@@ -32,7 +36,7 @@ public class VirtualFileContainer {
 		return false;
 	}
 	
-	public List<String> getDirNames(){
+	public synchronized List<String> getDirNames(){
 		/**@return All directory names of this container*/
 		List<String> ret = new ArrayList<String>();
 		String dir;
@@ -47,7 +51,7 @@ public class VirtualFileContainer {
 	}
 	
 
-	public List<String> getDirNames(String path){
+	public synchronized List<String> getDirNames(String path){
 		/**@return All directory names in path*/
 		List<String> ret = new ArrayList<String>();
 		String parent;
@@ -64,7 +68,7 @@ public class VirtualFileContainer {
 		return ret;
 	}
 	
-	public List<String> getFileNames(String path){
+	public synchronized List<String> getFileNames(String path){
 		/**@return All file names in path*/
 		List<String> ret = new ArrayList<String>();
 		for(VirtualFile file: vtf){
@@ -84,19 +88,19 @@ public class VirtualFileContainer {
 		for (String file : getFileNames(path)) {
 			FuseDirEnt entity = new FuseDirEnt();
 			entity.name = file;
-			entity.mode = FuseFtype.TYPE_FILE;
+			entity.mode = FuseFtype.TYPE_FILE | 0664;
 			ret.add(entity);
 		}
 		for (String dir : getDirNames(path)) {
 			FuseDirEnt entity = new FuseDirEnt();
 			entity.name = dir;
-			entity.mode = FuseFtype.TYPE_DIR;
+			entity.mode = FuseFtype.TYPE_DIR | 0755;
 			ret.add(entity);
 		}
 		return ret.toArray(new FuseDirEnt[0]);
 	}
 	
-	public VirtualFile get(String path){
+	public synchronized VirtualFile get(String path){
 		/**
 		 * @return the first virtual File with the path path or null if it does not exist
 		 */

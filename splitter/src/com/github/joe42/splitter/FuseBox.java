@@ -3,7 +3,9 @@ package com.github.joe42.splitter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
 import java.nio.channels.FileChannel;
 import java.util.*;
 
@@ -24,46 +26,55 @@ import com.github.joe42.splitter.vtf.FileEntry;
 import com.github.joe42.splitter.vtf.FolderEntry;
 import com.github.joe42.splitter.vtf.VirtualFileContainer;
 
+import fuse.Filesystem3;
+import fuse.FuseDirFiller;
 import fuse.FuseException;
 import fuse.FuseFtype;
+import fuse.FuseGetattrSetter;
 import fuse.FuseMount;
+import fuse.FuseOpenSetter;
+import fuse.FuseSizeSetter;
 import fuse.FuseStatfs;
+import fuse.FuseStatfsSetter;
+import fuse.XattrLister;
+import fuse.XattrSupport;
 import fuse.compat.Filesystem1;
 import fuse.compat.FuseDirEnt;
 import fuse.compat.FuseStat;
 
-public class FuseBox implements Filesystem1 {
+public class FuseBox implements Filesystem3, XattrSupport {
 	private static final Logger  log = Logger.getLogger("FuseBox");
 
 	private static final int blockSize = 512;
 
 	protected FileFragmentStore fileStore;
 
-	private FuseStatfs statfs;
 	private FileMetaDataStore metaDataStore;
 
 	private int UID;
 
 	private int GID;
 
-	public FuseBox(CauchyReedSolomonSplitter splitter) throws IOException {
+	public FuseBox(FilePartFragmentStore fileStore) throws IOException {
 		PropertyConfigurator.configure("log4j.properties");
 		
 		metaDataStore = new FileMetaDataStore();
-		fileStore = new FilePartFragmentStore(splitter);
+		this.fileStore = fileStore;
 		UID = LinuxUtil.getUID();
 		GID = LinuxUtil.getGID();
 	}
 
-	public void chmod(String path, int mode) throws FuseException {
+	@Override
+	public int chmod(String path, int mode) throws FuseException {
 		throw new FuseException("Read Only").initErrno(FuseException.EACCES);
 	}
 
-	public void chown(String path, int uid, int gid) throws FuseException {
+	@Override
+	public int chown(String path, int uid, int gid) throws FuseException {
 		throw new FuseException("Read Only").initErrno(FuseException.EACCES);
 	}
-
-	public FuseStat getattr(String path) throws FuseException {
+	@Override
+	public int getattr(String path, FuseGetattrSetter getattrSetter) throws FuseException {
 		FuseStat stat = new FuseStat();
 		Entry entry = null;
 		try {
@@ -89,11 +100,12 @@ public class FuseBox implements Filesystem1 {
 		stat.mtime = entry.mtime;
 		stat.ctime = entry.ctime;
 		stat.blocks = (int) ((stat.size + 511L) / 512L);
-
-		return stat;
+		getattrSetter.set(stat.inode, stat.mode, stat.nlink, stat.uid, stat.gid, 0, stat.size, stat.blocks, stat.atime, stat.mtime, stat.ctime);
+		return 0;
 	}
 
-	public FuseDirEnt[] getdir(String path) throws FuseException {
+	@Override
+	public int getdir(String path, FuseDirFiller dirFiller) throws FuseException {
 		FastIterator paths;
 		try {
 			if (metaDataStore.getFolderEntry(path) == null)
@@ -105,14 +117,10 @@ public class FuseBox implements Filesystem1 {
 					.initErrno(FuseException.EIO);
 		}
 		String fileName, dirName;
-		List<FuseDirEnt> dirEntries = new ArrayList<FuseDirEnt>();
 		while ((fileName = (String) paths.next()) != null) {
 			if (fileName.startsWith(path)
 					&& path.equals( new File(fileName).getParent() )) {
-				FuseDirEnt dirEntry = new FuseDirEnt();
-				dirEntry.name = new File(fileName).getName();
-				dirEntry.mode = FuseFtype.TYPE_FILE;
-				dirEntries.add(dirEntry);
+				dirFiller.add(new File(fileName).getName(), 0, FuseFtype.TYPE_FILE | 0644);
 			}
 		}
 		try {
@@ -125,44 +133,33 @@ public class FuseBox implements Filesystem1 {
 			if (dirName.startsWith(path)
 					&& path.equals( new File(dirName).getParent() )
 					&& !dirName.equals(path)) {
-				FuseDirEnt dirEntry = new FuseDirEnt();
-				dirEntry.name = new File(dirName).getName();
-				dirEntry.mode = FuseFtype.TYPE_DIR;
-				dirEntries.add(dirEntry);
+				dirFiller.add(new File(dirName).getName(), 0, FuseFtype.TYPE_DIR | 0755);
 			}
 		}
-		FuseDirEnt[] ret = new FuseDirEnt[dirEntries.size() + 2];
+		dirFiller.add(".", 0, FuseFtype.TYPE_DIR | 0755);
+		dirFiller.add("..", 0, FuseFtype.TYPE_DIR | 0755);
 
-		int i = 0;
-		FuseDirEnt dirEntry = new FuseDirEnt();
-		dirEntry.name = ".";
-		dirEntry.mode = FuseFtype.TYPE_DIR;
-		ret[i++] = dirEntry;
-		dirEntry = new FuseDirEnt();
-		dirEntry.name = "..";
-		dirEntry.mode = FuseFtype.TYPE_DIR;
-		ret[i++] = dirEntry;
-		for (FuseDirEnt dirEntryIter : dirEntries) {
-			ret[i++] = dirEntryIter;
-		}
-		return ret;
+		return 0;
 	}
 
-	public void link(String from, String to) throws FuseException {
+	@Override
+	public int link(String from, String to) throws FuseException {
 		throw new FuseException("Read Only").initErrno(FuseException.EACCES);
 	}
 
-	public void mkdir(String path, int mode) throws FuseException {
+	@Override
+	public int mkdir(String path, int mode) throws FuseException {
 		try {
 			metaDataStore.makeFolderEntry(path);
 		} catch (IOException e) {
 			throw new FuseException("IO Exception on accessing metadata")
 					.initErrno(FuseException.EIO);
 		}
+		return 0;
 	}
 
-	public void mknod(String path, int mode, int rdev) throws FuseException {
-
+	@Override
+	public int mknod(String path, int mode, int rdev) throws FuseException {
 		FileEntry fileEntry;
 		try {
 			fileEntry = metaDataStore.makeFileEntry(path);
@@ -175,17 +172,18 @@ public class FuseBox implements Filesystem1 {
 			throw new FuseException("IO Exception on accessing metadata")
 					.initErrno(FuseException.EIO);
 		}
+		return rdev;
+	}
+	
+	@Override
+	public int open(String path, int flags, FuseOpenSetter openSetter)
+			throws FuseException {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
-	public void open(String path, int flags) throws FuseException {
-		log.debug("opened: " + path);
-		// ZipEntry entry = getFileZipEntry(path);
-
-		// if (flags == O_WRONLY || flags == O_RDWR)
-		// throw new FuseException("Read Only").initErrno(FuseException.EACCES);
-	}
-
-	public void rename(String from, String to) throws FuseException {
+	@Override
+	public int rename(String from, String to) throws FuseException {
 		if (from.equals(to)) 
 			throw new FuseException("Entity"+to+" already exists.")
 				.initErrno(FuseException.EEXIST);
@@ -196,9 +194,11 @@ public class FuseBox implements Filesystem1 {
 			throw new FuseException("IO Exception on reading metadata")
 					.initErrno(FuseException.EIO);
 		}
+		return 0;
 	}
 
-	public void rmdir(String path) throws FuseException {
+	@Override
+	public int rmdir(String path) throws FuseException {
 		Entry dirEntry = null;
 		try {
 			dirEntry = (FolderEntry) metaDataStore.getFolderEntry(path);
@@ -211,9 +211,10 @@ public class FuseBox implements Filesystem1 {
 			throw new FuseException("IO Exception on accessing metadata")
 					.initErrno(FuseException.EIO);
 		}
+		return 0;
 	}
-
-	public FuseStatfs statfs() throws FuseException {
+	
+	protected FuseStatfs statfs() throws FuseException {
 		int files = 0;
 		int dirs = 0;
 		int blocks = 0;
@@ -239,7 +240,7 @@ public class FuseBox implements Filesystem1 {
 			throw new FuseException("IO Exception on accessing metadata")
 					.initErrno(FuseException.EIO);
 		}
-		statfs = new FuseStatfs();
+		FuseStatfs statfs = new FuseStatfs();
 		long freeBytes = fileStore.getFreeBytes();
 		statfs.blocks = (int)((freeBytes+fileStore.getUsedBytes())/blockSize);
 		statfs.blocksAvail = (int)(freeBytes/blockSize);
@@ -253,12 +254,23 @@ public class FuseBox implements Filesystem1 {
 				+ " blocks (" + blockSize + " byte/block).");
 		return statfs;
 	}
+	
+	@Override
+	public int statfs(FuseStatfsSetter statfsSetter) throws FuseException {
+		FuseStatfs statfs = statfs();
+		log.debug(statfs.files + " files, " + statfs.blocks
+				+ " blocks (" + statfs.blockSize + " byte/block).");
+		statfsSetter.set(statfs.blockSize, statfs.blocks, statfs.blocksFree, statfs.blocksAvail, statfs.files, statfs.filesFree, statfs.namelen);
+		return 0;
+	}
 
-	public void symlink(String from, String to) throws FuseException {
+	@Override
+	public int symlink(String from, String to) throws FuseException {
 		throw new FuseException("Read Only").initErrno(FuseException.EOPNOTSUPP);
 	}
 
-	public void truncate(String path, long size) throws FuseException {
+	@Override
+	public int truncate(String path, long size) throws FuseException {
 		try {
 			fileStore.flushCache(path);
 			fileStore.truncate(path, size);
@@ -266,10 +278,13 @@ public class FuseBox implements Filesystem1 {
 			throw new FuseException("IO Exception on truncating file")
 					.initErrno(FuseException.EIO);
 		}
+		return 0;
 	}
 
-	public void unlink(String path) throws FuseException {
+	@Override
+	public int unlink(String path) throws FuseException {
 		removeFile(path);
+		return 0;
 	}
 
 	private void removeFile(String path) throws FuseException {
@@ -282,15 +297,19 @@ public class FuseBox implements Filesystem1 {
 		}
 	}
 
-	public void utime(String path, int atime, int mtime) throws FuseException {
-		// noop
+	@Override
+	public int utime(String path, int atime, int mtime) throws FuseException {
+		return 0;
 	}
 
-	public String readlink(String path) throws FuseException {
+	@Override
+	public int readlink(String path, CharBuffer link) throws FuseException {
 		throw new FuseException("Not a link").initErrno(FuseException.ENOENT);
+		//return 0;
 	}
 
-	public void write(String path, ByteBuffer buf, long offset)
+	@Override
+	public int write(String path, Object fh, boolean isWritepage, ByteBuffer buf, long offset)
 			throws FuseException {
 		try {
 			fileStore.write(path, buf, offset);
@@ -298,9 +317,11 @@ public class FuseBox implements Filesystem1 {
 			throw new FuseException("IO Exception")
 					.initErrno(FuseException.EIO);
 		}
+		return 0;
 	}
-
-	public void read(String path, ByteBuffer buf, long offset)
+	
+	@Override
+	public int read(String path, Object fh, ByteBuffer buf, long offset)
 			throws FuseException {
 		try {
 			fileStore.read(path, buf, offset);
@@ -311,15 +332,29 @@ public class FuseBox implements Filesystem1 {
 		if (log.isDebugEnabled())
 			log.debug("read " + buf.position() + "/" + buf.capacity()
 					+ " requested bytes");
+		return 0;
 	}
-
-	public void release(String path, int flags) throws FuseException {
+	
+	@Override
+	public int fsync(String path, Object fh, boolean isDatasync) throws FuseException {
 		try {
 			fileStore.flushCache(path);
 		} catch (IOException e) {
 			throw new FuseException("IO Exception")
 			.initErrno(FuseException.EIO);
 		}
+		return 0;
+	}
+	
+	@Override
+	public int flush(String path, Object fh) throws FuseException {
+		try {
+			fileStore.flushCache(path);
+		} catch (IOException e) {
+			throw new FuseException("IO Exception")
+			.initErrno(FuseException.EIO);
+		}
+		return 0;
 	}
 
 	protected void setRedundancy(int redundancy) {
@@ -348,5 +383,47 @@ public class FuseBox implements Filesystem1 {
 	 */
 	public double getStorageAvailability(){
 		return fileStore.getStorageAvailability(); //forward call to the file store
+	}
+	
+	@Override
+	public int release(String path, Object fh, int flags) throws FuseException {
+		return 0;
+	}
+
+	/**
+	 * Do cleanup and release resources
+	 */
+	public void close() {		
+	}
+
+	@Override
+	public int getxattr(String path, String name, ByteBuffer dst)
+			throws FuseException, BufferOverflowException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getxattrsize(String path, String name, FuseSizeSetter sizeSetter)
+			throws FuseException {
+		sizeSetter.setSize(0);
+		return 0;
+	}
+
+	@Override
+	public int listxattr(String path, XattrLister lister) throws FuseException {
+		//lister.add(xattrName);
+		return 0;
+	}
+
+	@Override
+	public int removexattr(String path, String name) throws FuseException {
+		return 0;
+	}
+
+	@Override
+	public int setxattr(String path, String name, ByteBuffer value, int flags)
+			throws FuseException {
+		return 0;
 	}
 }

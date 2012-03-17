@@ -61,9 +61,17 @@ public class StorageServicesMgr {
 		return service.getPath();
 	}
 	
+	/**
+	 * @param uniqueServiceName
+	 * @return true iff the service was unmounted successfully
+	 */
 	public boolean unmount(String uniqueServiceName){
 		BackendService service = services.get(uniqueServiceName);
-		return mounter.unmount(service);
+		boolean unmounted = mounter.unmount(service);
+		if(unmounted) {
+			services.remove(uniqueServiceName);
+		}
+		return unmounted;
 	}
 	
 	/**

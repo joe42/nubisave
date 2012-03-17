@@ -6,10 +6,14 @@ package nubisave;
 
 import com.github.joe42.splitter.util.file.PropertiesUtil;
 import java.io.File;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.ini4j.Ini;
+import org.ini4j.InvalidFileFormatException;
 
 /**
  * Persistently manages the current list of StorageServices. They can be added, removed, iterated over and retrieved by index or name.
@@ -22,6 +26,13 @@ public class Services implements Iterable<StorageService>{
     public Services() {
         mmServices = new LinkedList<StorageService>();
         database_directory = new PropertiesUtil("nubi.properties").getProperty("splitter_configuration_directory");
+    }
+
+    /**Load services from database
+     * Adds new services from the database and reloads existing ones
+     * @param database_directory
+     */
+    public void loadFromDataBase(String database_directory){
         File dir = new File(database_directory);
         dir.mkdirs();
         if(dir.isDirectory()){
@@ -29,33 +40,55 @@ public class Services implements Iterable<StorageService>{
             for(String file: dir.list()){
                 unique_name_of_service = file;
                 service_name = unique_name_of_service.split("[0-9]")[0]; // remove number
-                StorageService newService = new StorageService(new File(dir.getPath()+"/"+file));
-                newService.setName(service_name);
-                newService.setUniqName(unique_name_of_service);
-                mmServices.add(newService);
+                if(getByUniqueName(unique_name_of_service) == null){
+                    StorageService newService = new StorageService(new File(dir.getPath()+"/"+file));
+                    newService.setName(service_name);
+                    newService.setUniqName(unique_name_of_service);
+                    mmServices.add(newService);
+                } 
+            }
+            //Configure services again so that backend modules, which did not exist when the constructor was called, can be added
+            for(String file: dir.list()){
+                unique_name_of_service = file;
+                try {
+                    getByUniqueName(unique_name_of_service).setConfig(new Ini(new File(dir.getPath() + "/" + file)));
+                } catch (IOException ex) {
+                    Logger.getLogger(Services.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
     }
 
     /**
-     * Add a new StorageService instance to the list.
+     * Add a new StorageService instance to the list and persist it.
      * @param newService the instance to add
      */
     public void add(StorageService newService){
         mmServices.add(newService);
-        try{
-            Ini serviceIni = newService.getConfig();
-            int serviceIndex = 1;
-            for(StorageService s: newService.getBackendServices()){
-                    serviceIni.put("parameter", "backendservice"+serviceIndex++, s.getUniqName());
+        newService.storeConfiguration(database_directory);
+    }
+
+    /**
+     * Persists changes to an existing service.
+     * @param existingService the instance to persist
+     */
+    public void update(StorageService existingService){
+        existingService.storeConfiguration(database_directory);
+    }
+
+    /**
+     * Persists changes to the existing services.
+     * Sets the correct isBackendModule value for each service.
+     */
+    public void update(){
+        for(StorageService s1: nubisave.Nubisave.services){
+            s1.setBackendModule(false);
+            for(StorageService s2: nubisave.Nubisave.services){
+                if(s2.getBackendServices().contains(s1)){
+                    s1.setBackendModule(true);
                 }
-                if(newService.isBackendModule()){
-                    serviceIni.put("splitter", "isbackendmodule", true);
             }
-            serviceIni.store(new File(database_directory+"/"+newService.getUniqName()));
-        } catch(Exception e){
-            System.err.println("Services instance add(StorageService newService): Error storing configuration for StorageService instance "+newService.getUniqName()+" - "+e.getMessage()==null?e.getMessage():"");
-            return;
+            update(s1);
         }
     }
 
@@ -76,9 +109,23 @@ public class Services implements Iterable<StorageService>{
     }
 
     /**
+     * Get the StorageService instance with the given unique name
+     * @param uniqueName the unique name of the element to retrieved
+     * @return the StorageService instance with the given name
+     */
+    public StorageService getByUniqueName(String uniqueName) {
+        for(StorageService s: mmServices){
+            if(s.getUniqName().equals(uniqueName)){
+                return s;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Get a StorageService instance with the given name
      * @param name the name of the element to retrieved
-     * @retu a StorageService instance with the given name
+     * @return a StorageService instance with the given name
      */
     public StorageService get(String name) {
         for(StorageService s: mmServices){
@@ -101,10 +148,12 @@ public class Services implements Iterable<StorageService>{
 
     /**
      * Remove the StorageService instance at position i. Shifts any subsequent elements to the left (subtracts one from their indices).
+     * Unpersists the store.
      * @param i index of the element to remove
      * @throws IndexOutOfBoundsException - if the index is out of range (index < 0 || index >= size())
      */
     public void remove(int i) {
+        new File(database_directory+"/"+mmServices.get(i).getUniqName()).delete();
         mmServices.remove(i);
     }
 }

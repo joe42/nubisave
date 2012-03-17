@@ -48,6 +48,7 @@ public class UseAllInParallelStorageStrategy  implements StorageStrategy, Observ
 				potentialStorageDirectories.add(storageService.getDataDirPath());
 			}
 		}
+		System.out.println("update: "+potentialStorageDirectories);
 	}
 
 	/**
@@ -56,6 +57,9 @@ public class UseAllInParallelStorageStrategy  implements StorageStrategy, Observ
 	@Override
 	public double getStorageAvailability(){
 		double availability = 0;
+		if(potentialStorageDirectories.size() == 0) {
+			return 0;
+		}		
 		Set<BackendService> storageServices = new HashSet<BackendService>(services.getFrontEndStorageServices());
 		for(Set<BackendService> storageServiceCombination: SetUtil.powerSet(storageServices)){
 			if(BackendServices.getNrOfFilePartsOfCombination(storageServiceCombination) >= getNrOfFilePartsNeededToReconstructFile()){

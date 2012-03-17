@@ -16,8 +16,10 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Map.Entry;
 import nubisave.StorageService;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.swing.*;
@@ -27,22 +29,18 @@ import org.ini4j.Ini;
 public class ServiceParameterDialog extends javax.swing.JDialog {
 
     private StorageService service;
-    private ArrayList<JLabel> jLabels;
-    private ArrayList<JTextField> jTextFields;
     private javax.swing.JButton applyBtn;
     private javax.swing.JButton cancelBtn;
     private Ini config;
+    private List<JPanel> sectionGroupBoxes;
     
     /** Creates new form ServiceParameterDialog */
     public ServiceParameterDialog(java.awt.Frame parent, boolean modal,StorageService service) {
         super(parent, modal);
         this.service = service;
         initComponents();
-        jLabels = new ArrayList<JLabel>();
-        jTextFields = new ArrayList<JTextField>();
+        sectionGroupBoxes = new ArrayList<JPanel>();
 
-        jLabels = new ArrayList<JLabel>();
-        jTextFields = new ArrayList<JTextField>();
         JPanel mainGrid = new JPanel();
         setContentPane(mainGrid);
         mainGrid.setLayout(new GridBagLayout());
@@ -54,16 +52,15 @@ public class ServiceParameterDialog extends javax.swing.JDialog {
         int cntMainGridLine = 0;
         config = service.getConfig();
         Set<String> sectionNames = config.keySet(); // get all section names
-        String comment;
         for(String section: sectionNames){
-            comment = config.getComment(section);
-            if("hidden".equals(comment)){
+            if(isHiddenSection(section)){
                 continue;
             }
             //add section name
             groupBox = new JPanel();
             groupBox.setBorder(BorderFactory.createTitledBorder(section));
             groupBox.setLayout(new GridBagLayout());
+            groupBox.setName(section);
             //label.setFont(new Font("Courier New", Font.BOLD, 16));
             c = new GridBagConstraints();
             c.fill = GridBagConstraints.HORIZONTAL;
@@ -72,21 +69,16 @@ public class ServiceParameterDialog extends javax.swing.JDialog {
             c.gridx = 0;
             c.gridy = cntMainGridLine;
             mainGrid.add(groupBox, c);
-
+            sectionGroupBoxes.add(groupBox);
 
             cntMainGridLine++;
 
             int cntGroupBoxLine = 0;
             for (Map.Entry<String, String> parameter : config.get(section).entrySet()){
-                if(parameter.getKey().equals("backendservice") || parameter.getKey().equals("isbackendmodule")){
-                    continue;
-                }
-                comment = config.get(section).getComment(parameter.getKey());
-                if("hidden".equals(comment)){
+                if(isHiddenParameter(parameter, section)){
                     continue;
                 }
                 label = new JLabel(parameter.getKey());
-                jLabels.add(label);
                 c = new GridBagConstraints();
                 c.fill = GridBagConstraints.HORIZONTAL;
                 c.weightx = 1;
@@ -99,7 +91,6 @@ public class ServiceParameterDialog extends javax.swing.JDialog {
                 } else {
                     textfield = new JTextField(parameter.getValue());
                 }
-                jTextFields.add(textfield);
                 c = new GridBagConstraints();
                 c.fill = GridBagConstraints.HORIZONTAL;
                 c.weightx = 1;
@@ -146,17 +137,13 @@ public class ServiceParameterDialog extends javax.swing.JDialog {
     }
 
     private void applyBtnActionPerformed(java.awt.event.ActionEvent evt) {
-        Set<String> sectionNames = config.keySet(); // get all section names
-        for(String section: sectionNames){
+        for(JPanel sectionGroupBox: sectionGroupBoxes){
             String name, value;
-            int sectionCnt = 0;
-            for(int i=0; i< jTextFields.size();i++ ){
-                if(sectionNames.contains(jLabels.get(i+sectionCnt).getText())){ //ignore section labels which have no textfield value
-                    sectionCnt++;
-                }
-                name = jLabels.get(i+sectionCnt).getText();
-                value = jTextFields.get(i).getText();
-                config.get(section).put(name, value);
+            for(int i=0; i< sectionGroupBox.getComponentCount();i+=2 ){
+                name = ((JLabel)sectionGroupBox.getComponent(i)).getText();
+                value = ((JTextField)sectionGroupBox.getComponent(i+1)).getText();
+                config.get(sectionGroupBox.getName()).put(name, value);
+                nubisave.Nubisave.services.update(service);
             }
         }
         dispose();
@@ -190,6 +177,47 @@ public class ServiceParameterDialog extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    /**
+     * Tell if this parameter should be hidden
+     * The parameter should be hidden if it is preceeded with a comment "hidden" or if the parameter is one of "backendservice" or "isbackendmodule",
+     * which are configured automatically.
+     * @param parameter
+     * @param section
+     * @return
+     */
+    private boolean isHiddenParameter(Entry<String, String> parameter, String section) {
+        boolean isHidden = false;
+        if(parameter.getKey().equals("backendservice") || parameter.getKey().equals("isbackendmodule")){
+            isHidden = true;
+        }
+        String comment = config.get(section).getComment(parameter.getKey());
+        if("hidden".equals(comment)){
+            isHidden = true;
+        }
+        return isHidden;
+    }
+
+    /**
+     * Tell if this section should be hidden
+     * The section should be hidden if it is preceeded with a comment "hidden" or if all of its parameters are hidden
+     * @param section
+     * @return true iff this section should not be displayed
+     */
+    private boolean isHiddenSection(String section) {
+        boolean isHidden;
+        String comment = config.getComment(section);
+        if("hidden".equals(comment)){
+            return true;
+        }
+        isHidden = true;
+        for (Map.Entry<String, String> parameter : config.get(section).entrySet()){
+            if(! isHiddenParameter(parameter, section) ){
+                isHidden = false;
+            }
+        }
+        return isHidden;
+    }
 
    
     // Variables declaration - do not modify//GEN-BEGIN:variables

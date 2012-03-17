@@ -107,6 +107,14 @@ public class BackendServices extends Observable {
 		}
 		return storageServices;
 	}
+	
+	/**
+	 * @return list of all storage services' names
+	 */
+	public List<String> getStorageServicesNames() {
+		List<String> storageServices = new ArrayList<String>(services.keySet());
+		return storageServices;
+	}
 
 	/**
 	 * @param storageServiceCombination

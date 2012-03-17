@@ -7,13 +7,13 @@ public class FileEntry extends Entry{
 	public FileEntry(){
 		nlink = 1;
 		size = 0;
-		mode = FuseFtype.TYPE_FILE | 664;
+		mode = FuseFtype.TYPE_FILE | 0664;
 		this.blocksize = 512;
 	}
 	public FileEntry(int blocksize){
 		nlink = 1;
 		size = 0;
-		mode = FuseFtype.TYPE_FILE | 664;
+		mode = FuseFtype.TYPE_FILE | 0664;
 		this.blocksize = blocksize;
 	}
 	public void setMode(int mode){

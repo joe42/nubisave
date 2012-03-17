@@ -11,6 +11,7 @@
 
 package nubisave.ui;
 
+import com.github.joe42.splitter.util.file.PropertiesUtil;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,39 +37,33 @@ public class BackendConfigurationDialog extends javax.swing.JDialog {
         this.listModel = new DefaultListModel();
         availableBackendServicesListSelectionListener = new AvailableBackendServicesListSelectionListener();
         availableBackendServices.setModel(listModel);
-        availableBackendServices.addListSelectionListener(availableBackendServicesListSelectionListener);
         for(StorageService s: nubisave.Nubisave.services){
-            if(! s.getName().equals(service.getName())){
-                listModel.addElement(s.getName());
+            if(! s.getUniqName().equals(service.getUniqName())){
+                listModel.addElement(s.getUniqName());
             }
         }
-
+        //set current selection
+        for(StorageService s: service.getBackendServices()){
+            availableBackendServices.setSelectedValue(s.getUniqName(), false);
+        }
+        availableBackendServices.addListSelectionListener(availableBackendServicesListSelectionListener);
     }
 
+    /**
+     * Adapt storage services to changes in the selection of backend stores.
+     * Add the backend stores to the current service and set
+     */
     private void availableBackendServicesValueChanged(javax.swing.event.ListSelectionEvent evt) {
         if(! evt.getValueIsAdjusting()){
-            List<String> values = new ArrayList<String>();
+            List<String> selectedServiceNames = new ArrayList<String>();
             for(Object o: availableBackendServices.getSelectedValues()){
-                values.add((String)o);
+                selectedServiceNames.add((String)o);
             }
-            for(String serviceName: values){
-                StorageService selectedService = nubisave.Nubisave.services.get(serviceName);
+            for(String serviceName: selectedServiceNames){
+                StorageService selectedService = nubisave.Nubisave.services.getByUniqueName(serviceName);
                 service.addBackendService(selectedService);
             }
-            //set current selection
-            availableBackendServices.clearSelection();
-            for(StorageService s: service.getBackendServices()){
-                availableBackendServices.setSelectedValue(s.getName(), false);
-            }
-            //mark services which are used as backend service
-            for(StorageService s1: nubisave.Nubisave.services){
-                s1.setBackendModule(false);
-                for(StorageService s2: nubisave.Nubisave.services){
-                    if(s2.getBackendServices().contains(s1)){
-                        s1.setBackendModule(true);
-                    }
-                }
-            }
+            nubisave.Nubisave.services.update();
         }
     }
 
@@ -153,9 +148,7 @@ public class BackendConfigurationDialog extends javax.swing.JDialog {
 
         @Override
         public void valueChanged(ListSelectionEvent e) {
-            availableBackendServices.removeListSelectionListener(availableBackendServicesListSelectionListener);
             availableBackendServicesValueChanged(e);
-            availableBackendServices.addListSelectionListener(availableBackendServicesListSelectionListener);
         }
 
     }

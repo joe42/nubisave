@@ -18,6 +18,7 @@ public class BackendService implements StorageService{
 	private Boolean isBackendModule;
 	private Integer nrOfFilePartsToStore;
 	private Double availability;
+	private String unmountCommand;
 
 	/**
 	 * Creates a backend service.
@@ -29,6 +30,7 @@ public class BackendService implements StorageService{
 		this.path = store;		
 		this.name = name;
 		mountCommand = "";
+		unmountCommand = "";
 	}
 	/**
 	 * Creates a backend service.
@@ -71,9 +73,11 @@ public class BackendService implements StorageService{
 			path += "/"+HIDDEN_DIR_NAME;	
 		}
 		path += "/"+name;
-		mountCommand = IniUtil.get(options, "mounting", "command");
+		mountCommand = IniUtil.get(options, "mounting", "mountcommand");
+		unmountCommand = IniUtil.get(options, "mounting", "unmountcommand");
 		//TODO: if mountCommand == null log or exception
-		mountCommand = substituteCommandParameters(options);
+		mountCommand = substituteCommandParameters(options, mountCommand);
+		unmountCommand = substituteCommandParameters(options, unmountCommand);
 		nrOfFilePartsToStore = IniUtil.get(options, "splitter", "fileparts", Integer.class);
 		if(nrOfFilePartsToStore == null){
 			nrOfFilePartsToStore = 1;
@@ -85,13 +89,14 @@ public class BackendService implements StorageService{
 		log.debug("Configure BackendService: isBackendModule:"+isBackendModule+" weight:"+nrOfFilePartsToStore+" availability:"+availability);
 	}
 	
-	private String substituteCommandParameters(Ini config){
+	private String substituteCommandParameters(Ini config, String command){
 		/**
 		 * @return the mountcommand with each parameter is substituted by the value of the  option of the same name in the parameter section of config
 		 */
 		String substitutedCommand = "";
+		log.debug("command:"+command);
 		Map<String, String> substitutions = config.get("parameter");
-		for(String word: mountCommand.split(" ")){
+		for(String word: command.split(" ")){
 			if(word.equals("mountpoint")){
 				word = path;
 			} else if(substitutions != null){
@@ -127,6 +132,10 @@ public class BackendService implements StorageService{
 	public String getMountcommand(){
 		return mountCommand;
 	}
+	/** @return the command to run to unmount this service */
+	public String getUnmountcommand(){
+		return unmountCommand;
+	}
 	/** @return the name of this service */
 	public String getName(){
 		return name;
@@ -151,12 +160,11 @@ public class BackendService implements StorageService{
 	public void mount() throws IOException {
 		new ProcessBuilder( "/bin/bash", "-c", mountCommand ).start();
 	}
-	/** Executes fusermount -uz to unmount the service at this.getPath() and this.getPah()+"/data" */
+	/** Executes this.getUnmountcommand() to unmount the service at this.getPath()
+	 * This should care about unmounting the service and removing meta files and meta directories created by mount().
+	 * */
 	public void unmount() throws IOException {
-		//TODO: add unmountcommand section to option file
-		Runtime rt =  Runtime.getRuntime();
-		rt .exec("fusermount -uz "+path);
-		rt .exec("fusermount -uz "+path+"/data");
+		new ProcessBuilder( "/bin/bash", "-c", unmountCommand ).start();
 	}
 	public int getNrOfFilePartsToStore() {
 		return nrOfFilePartsToStore;
@@ -180,6 +188,7 @@ public class BackendService implements StorageService{
 		ret &= path.equals(service.path);
 		ret &= name.equals(service.name);
 		ret &= mountCommand.equals(service.mountCommand);
+		ret &= unmountCommand.equals(service.unmountCommand);
 		ret &= store.equals(service.store);
 		ret &= isBackendModule.equals(service.isBackendModule);
 		ret &= nrOfFilePartsToStore.equals(service.nrOfFilePartsToStore);
@@ -192,6 +201,7 @@ public class BackendService implements StorageService{
 		int ret = path.hashCode();
 		ret += name.hashCode();
 		ret += mountCommand.hashCode();
+		ret += unmountCommand.hashCode();
 		ret += isBackendModule.hashCode();
 		ret += nrOfFilePartsToStore.hashCode();
 		ret += availability.hashCode();

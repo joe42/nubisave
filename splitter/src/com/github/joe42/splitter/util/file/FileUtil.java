@@ -32,7 +32,7 @@ public class FileUtil {
 	    StringBuilder fileContents = new StringBuilder();
 	    Scanner scanner;
 		try {
-			scanner = new Scanner(file);
+			scanner = new Scanner(file, "UTF-8");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			return null;
