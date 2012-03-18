@@ -1,10 +1,10 @@
 /*
- * WSML service description for the 4Shared cloud storage service
+ * WSML service description for the STRATO HiDrive cloud storage service
  */
 
 wsmlVariant _"http://www.wsmo.org/wsml/wsml-syntax/wsml-flight"
 
-namespace {_"http://localhost:8080/Matchmaker/ontologies/CloudStorage/fourshared.wsml#",
+namespace {_"http://localhost:8080/Matchmaker/ontologies/CloudStorage/HiDrive.wsml#",
 	qos _"http://localhost:8080/Matchmaker/ontologies/QoSBase.wsml#",
 	rqos _"http://localhost:8080/Matchmaker/ontologies/RemoteQoSBase.wsml#",
 	biz _"http://localhost:8080/Matchmaker/ontologies/BusinessBase.wsml#",
@@ -13,17 +13,17 @@ namespace {_"http://localhost:8080/Matchmaker/ontologies/CloudStorage/fourshared
 	dc _"http://purl.org/dc/elements/1.1#",
 	wsml _"http://www.wsmo.org/wsml/wsml-syntax#" }
 
-webService FourShared
+webService StratoHiDrive
  importsOntology { _"http://localhost:8080/Matchmaker/ontologies/CloudStorage.wsml#" }
 
 /* Define Service Class */
 capability ServiceCapability
  postcondition definedBy ?serviceType memberOf cloud#CloudStorage .
 
-interface FourSharedInterface
- importsOntology { FourSharedOntology }
+interface StratoHiDriveInterface
+ importsOntology { StratoHiDriveOntology }
 
-ontology FourSharedOntology
+ontology StratoHiDriveOntology
  importsOntology { _"http://localhost:8080/Matchmaker/ontologies/CloudStorage.wsml#" }
 
 /* ---------------------- */
@@ -31,7 +31,7 @@ ontology FourSharedOntology
 /* ---------------------- */
 
 instance Availability memberOf { cloud#Availability, qos#ServiceSpec }
-	qos#value hasValue 99
+	qos#value hasValue 95
 	qos#unit hasValue qos#Percentage
 
 instance MaxDownTime memberOf { cloud#MaxDownTime, qos#ServiceSpec }
@@ -43,7 +43,7 @@ instance ResponseTime memberOf { cloud#ResponseTime, qos#ServiceSpec }
 	qos#unit hasValue qos#MilliSecond
 
 instance NetworkBandwidth memberOf { cloud#NetworkBandwidth, qos#ServiceSpec }
-	qos#value hasValue 100
+	qos#value hasValue 200
 	qos#unit hasValue qos#Mbps
 
 /* ------------------------- */
@@ -71,7 +71,7 @@ instance Redundancy memberOf { cloud#Redundancy, qos#ServiceSpec }
 /* ------------------- */
 
 instance PricePerMonth memberOf { cloud#PricePerMonth, qos#ServiceSpec }
-	qos#value hasValue 0
+	qos#value hasValue 10
 	qos#unit hasValue qos#Euro
 
 instance PricePerData memberOf { cloud#PricePerData, qos#ServiceSpec }
@@ -86,24 +86,22 @@ instance FreePeriod memberOf { cloud#FreePeriod, qos#ServiceSpec }
 /* Main instance definition */
 /* ------------------------ */
 
-instance FourShared memberOf { cloud#CloudStorage }
-	hasName hasValue "4Shared"
-	hasIcon hasValue "http://static.4shared.com/images/indexPage/header-logo.png"
-	hasWebsite hasValue "http://www.4shared.com/"
-	hasCountry hasValue "USA"
-	hasStoragePlan hasValue { FourSharedPlan }
+instance StratoHiDrive memberOf { cloud#CloudStorage }
+	hasName hasValue "STRATO HiDrive"
+	hasIcon hasValue "http://www.strato.de/_assets_de/image/rubrik/online_speicher/img_hidrive_app_70x65.png"
+	hasWebsite hasValue "http://www.strato.de/online-speicher/"
+	hasCountry hasValue "Germany"
+	hasStoragePlan hasValue { StratoHiDrivePlan }
 	hasProperty hasValue { Availability, ResponseTime, MaxDownTime, NetworkBandwidth, SignupPrivacy }
 
-instance FourSharedWebdavProtocol memberOf { cloud#Protocol }
+instance StratoHiDriveWebdavProtocol memberOf { cloud#Protocol }
 	hasType hasValue "webdav"
-	hasUrl hasValue "https://webdav.4shared.com/"
+	hasUrl hasValue "https://{userid}.webdav.hidrive.strato.com"
 
-instance FourSharedSftpProtocol memberOf { cloud#Protocol }
-	hasType hasValue "sftp"
-	hasUrl hasValue "sftp://sftp.4shared.com/"
-
-instance FourSharedPlan memberOf { cloud#CloudStoragePlan }
-	hasSignupForm hasValue "http://www.4shared.com/"
-	hasProtocol hasValue { FourSharedWebdavProtocol, FourSharedSftpProtocol }
+instance StratoHiDrivePlan memberOf { cloud#CloudStoragePlan }
+	hasSignupForm hasValue "https://www.strato.de/ordering?wfc=hidrive&step=select_package&phase=Hosting&Department=STORAGE&Category=STORAGE&Group=STORAGE_MEDIA&Product=STORAGE_MEDIA30_A"
+	//FIXME: offer is invalid, substitutes are not free anymore
+	//hasSignupForm hasValue "https://www.strato.de/ordering?Department=STORAGE&wfc=test_hidrive&step=select_package&phase=Hosting&Product=STORAGE_MEDIA20_TRIAL&Category=STORAGE&Group=STORAGE_MEDIA"
+	hasProtocol hasValue { StratoHiDriveWebdavProtocol }
 	hasProperty hasValue { PricePerMonth, PricePerData, FreePeriod }
 

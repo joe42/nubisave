@@ -1,10 +1,10 @@
 /*
- * WSML service description for the 4Shared cloud storage service
+ * WSML service description for the Google Cloud Storage cloud storage service
  */
 
 wsmlVariant _"http://www.wsmo.org/wsml/wsml-syntax/wsml-flight"
 
-namespace {_"http://localhost:8080/Matchmaker/ontologies/CloudStorage/fourshared.wsml#",
+namespace {_"http://localhost:8080/Matchmaker/ontologies/CloudStorage/googlestorage.wsml#",
 	qos _"http://localhost:8080/Matchmaker/ontologies/QoSBase.wsml#",
 	rqos _"http://localhost:8080/Matchmaker/ontologies/RemoteQoSBase.wsml#",
 	biz _"http://localhost:8080/Matchmaker/ontologies/BusinessBase.wsml#",
@@ -13,17 +13,17 @@ namespace {_"http://localhost:8080/Matchmaker/ontologies/CloudStorage/fourshared
 	dc _"http://purl.org/dc/elements/1.1#",
 	wsml _"http://www.wsmo.org/wsml/wsml-syntax#" }
 
-webService FourShared
+webService GoogleCloudStorage
  importsOntology { _"http://localhost:8080/Matchmaker/ontologies/CloudStorage.wsml#" }
 
 /* Define Service Class */
 capability ServiceCapability
  postcondition definedBy ?serviceType memberOf cloud#CloudStorage .
 
-interface FourSharedInterface
- importsOntology { FourSharedOntology }
+interface GoogleCloudStorageInterface
+ importsOntology { GoogleCloudStorageOntology }
 
-ontology FourSharedOntology
+ontology GoogleCloudStorageOntology
  importsOntology { _"http://localhost:8080/Matchmaker/ontologies/CloudStorage.wsml#" }
 
 /* ---------------------- */
@@ -31,19 +31,19 @@ ontology FourSharedOntology
 /* ---------------------- */
 
 instance Availability memberOf { cloud#Availability, qos#ServiceSpec }
-	qos#value hasValue 99
+	qos#value hasValue 99.5
 	qos#unit hasValue qos#Percentage
 
 instance MaxDownTime memberOf { cloud#MaxDownTime, qos#ServiceSpec }
-	qos#value hasValue 15
+	qos#value hasValue 10
 	qos#unit hasValue qos#MilliSecond
 
 instance ResponseTime memberOf { cloud#ResponseTime, qos#ServiceSpec }
-	qos#value hasValue 40
+	qos#value hasValue 20
 	qos#unit hasValue qos#MilliSecond
 
 instance NetworkBandwidth memberOf { cloud#NetworkBandwidth, qos#ServiceSpec }
-	qos#value hasValue 100
+	qos#value hasValue 1000
 	qos#unit hasValue qos#Mbps
 
 /* ------------------------- */
@@ -75,7 +75,7 @@ instance PricePerMonth memberOf { cloud#PricePerMonth, qos#ServiceSpec }
 	qos#unit hasValue qos#Euro
 
 instance PricePerData memberOf { cloud#PricePerData, qos#ServiceSpec }
-	qos#value hasValue 0
+	qos#value hasValue 0.17
 	qos#unit hasValue qos#Euro
 
 instance FreePeriod memberOf { cloud#FreePeriod, qos#ServiceSpec }
@@ -86,24 +86,24 @@ instance FreePeriod memberOf { cloud#FreePeriod, qos#ServiceSpec }
 /* Main instance definition */
 /* ------------------------ */
 
-instance FourShared memberOf { cloud#CloudStorage }
-	hasName hasValue "4Shared"
-	hasIcon hasValue "http://static.4shared.com/images/indexPage/header-logo.png"
-	hasWebsite hasValue "http://www.4shared.com/"
+instance GoogleCloudStorage memberOf { cloud#CloudStorage }
+	hasName hasValue "Google Cloud Storage"
+	hasIcon hasValue "http://www.google.com/images/icons/product/images-32.gif"
+	hasWebsite hasValue "http://www.google.com/"
 	hasCountry hasValue "USA"
-	hasStoragePlan hasValue { FourSharedPlan }
+	hasStoragePlan hasValue { GoogleCloudStoragePlan }
 	hasProperty hasValue { Availability, ResponseTime, MaxDownTime, NetworkBandwidth, SignupPrivacy }
 
-instance FourSharedWebdavProtocol memberOf { cloud#Protocol }
-	hasType hasValue "webdav"
-	hasUrl hasValue "https://webdav.4shared.com/"
+instance GoogleCloudStorageDownloadProtocol memberOf { cloud#Protocol }
+	hasType hasValue "https"
+	hasUrl hasValue "https://sandbox.google.com/storage/"
 
-instance FourSharedSftpProtocol memberOf { cloud#Protocol }
-	hasType hasValue "sftp"
-	hasUrl hasValue "sftp://sftp.4shared.com/"
+instance GoogleCloudStorageNativeProtocol memberOf { cloud#Protocol }
+	hasType hasValue "gs"
+	hasUrl hasValue "gs://"
 
-instance FourSharedPlan memberOf { cloud#CloudStoragePlan }
-	hasSignupForm hasValue "http://www.4shared.com/"
-	hasProtocol hasValue { FourSharedWebdavProtocol, FourSharedSftpProtocol }
+instance GoogleCloudStoragePlan memberOf { cloud#CloudStoragePlan }
+	hasSignupForm hasValue "https://accounts.google.com/ServiceLogin?service=devconsole&passive=1209600&continue=https://code.google.com/apis/console/&followup=https://code.google.com/apis/console/"
+	hasProtocol hasValue { GoogleCloudStorageNativeProtocol, GoogleCloudStorageDownloadProtocol }
 	hasProperty hasValue { PricePerMonth, PricePerData, FreePeriod }
 

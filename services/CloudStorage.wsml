@@ -1,5 +1,5 @@
 /*
- * WSMO4CloudStorage: WSML base and domain ontologies for cloud storage services
+ * WSMO4IoS CloudStorage: WSML base and domain ontologies for cloud storage services
  */
 
 wsmlVariant _"http://www.wsmo.org/wsml/wsml-syntax/wsml-flight"
@@ -17,7 +17,7 @@ ontology CloudStorage
  nonFunctionalProperties
   wsml#version hasValue "1.0"
   dc#creator hasValue "Gerd Bombach, Josef Spillner"
-  dc#title hasValue "WSMO4CloudStorage"
+  dc#title hasValue "WSMO4IoS CloudStorage"
   dc#description hasValue "WSML base and domain ontologies for cloud storage services"
   dc#publisher hasValue "Technische Universität Dresden"
   dc#date hasValue "2012-01-17"
