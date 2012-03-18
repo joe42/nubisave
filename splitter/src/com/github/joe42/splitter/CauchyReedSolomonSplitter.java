@@ -7,8 +7,7 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 import org.bouncycastle.crypto.Digest;
-import org.bouncycastle.crypto.digests.SHA256Digest;
-import org.bouncycastle.util.encoders.Hex;
+import org.bouncycastle.crypto.digests.MD5Digest;
 import org.jigdfs.ida.base.InformationDispersalCodec;
 import org.jigdfs.ida.base.InformationDispersalDecoder;
 import org.jigdfs.ida.base.InformationDispersalEncoder;
@@ -23,6 +22,7 @@ import com.github.joe42.splitter.storagestrategies.StorageStrategyFactory;
 import com.github.joe42.splitter.util.StringUtil;
 import com.github.joe42.splitter.util.file.ConcurrentMultipleFileHandler;
 import com.github.joe42.splitter.util.file.MultipleFileHandler;
+import com.github.joe42.splitter.util.file.MultipleFiles;
 import com.github.joe42.splitter.util.file.RandomAccessTemporaryFileChannel;
 import com.github.joe42.splitter.util.file.SerialMultipleFileHandler;
 import com.github.joe42.splitter.vtf.FileEntry;
@@ -39,14 +39,16 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 	private String storageStrategyName;
 	private StorageStrategyFactory storageStrategyFactory;
 	private BackendServices services;
+	private Digest digestFunc;
 	
 	public CauchyReedSolomonSplitter(BackendServices services){
 		this.services = services;
 		redundancy = 50;
 		storageStrategyName = "";
+		digestFunc = new MD5Digest();
 		storageStrategyFactory = new StorageStrategyFactory(services);
-		concurrent_multi_file_handler = new ConcurrentMultipleFileHandler();
-		serial_multi_file_handler = new SerialMultipleFileHandler();
+		concurrent_multi_file_handler = new ConcurrentMultipleFileHandler(digestFunc);
+		serial_multi_file_handler = new SerialMultipleFileHandler(digestFunc);
 	}
 	
 	public int getRedundancy() {
@@ -76,7 +78,7 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 		
 		int nr_of_file_parts_successfully_stored = 0;
 		HashMap<String, byte[]> fileParts = new HashMap<String, byte[]>();
-		ArrayList<String> fragmentFileNames = new ArrayList<String>();
+		ArrayList<String> fragmentPaths = new ArrayList<String>();
 		int nr_of_file_fragments;
 		int nr_of_redundant_fragments;
 		int nr_of_file_fragments_required;
@@ -93,67 +95,32 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 			for (int fragment_nr = 0; fragment_nr < nr_of_file_fragments; fragment_nr++) {
 				fragment_name = fragmentDirectories.get(fragment_nr) +"/"+ uniqueFileName 
 						+ '#' + fragment_nr;
-				fragmentFileNames.add(fragment_name);
+				fragmentPaths.add(fragment_name);
 			}
 			nr_of_redundant_fragments =  storageStrategy.getNrOfRedundantFragments();
 			nr_of_file_fragments_required =  nr_of_file_fragments - nr_of_redundant_fragments;
 			nrOfRequiredSuccessfullyStoredFragments = storageStrategy.getNrOfRequiredSuccessfullyStoredFragments();
 		} else {
-			fragmentFileNames = fileFragmentMetaDataStore.getFragments(path);
-			nr_of_file_fragments = fragmentFileNames.size();
+			fragmentPaths = fileFragmentMetaDataStore.getFragments(path);
+			nr_of_file_fragments = fragmentPaths.size();
 			nr_of_file_fragments_required = fileFragmentMetaDataStore.getNrOfRequiredFragments(path);
 			nr_of_redundant_fragments = nr_of_file_fragments - nr_of_file_fragments_required;
 			nrOfRequiredSuccessfullyStoredFragments = fileFragmentMetaDataStore.getNrOfRequiredSuccessfullyStoredFragments(path);
 		}
 		logStoreProperties(nr_of_file_fragments, nr_of_file_fragments_required, nr_of_redundant_fragments, nrOfRequiredSuccessfullyStoredFragments);
 		if(nr_of_file_fragments_required == 1){
-			fileParts = replicateFile( temp, path, fragmentFileNames);
+			fileParts = replicateFile( temp, path, fragmentPaths);
 		} else if(nr_of_file_fragments_required == nr_of_file_fragments){ //no redundancy but several stores
 			log.debug(" 1 . temp.size():"+ temp.size());
-			fileParts = simpleSplitFile( temp, path, fragmentFileNames);
+			fileParts = simpleSplitFile( temp, path, fragmentPaths);
 		} else {
 			
-			Digest digestFunc = new SHA256Digest();
-			byte[] digestByteArray = new byte[digestFunc.getDigestSize()];
-			String hexString = null;
-			InformationDispersalCodec crsidacodec;
-			InformationDispersalEncoder encoder;
-			try {
-				crsidacodec = new CauchyInformationDispersalCodec(
-						nr_of_file_fragments, nr_of_redundant_fragments, 1);
-				encoder = crsidacodec.getEncoder();
-			} catch (Exception e) {
-				e.printStackTrace();
-				throw new FuseException("IDA could not be initialized")
-						.initErrno(FuseException.EACCES);
-			}
-			try {
-				byte[] arr = new byte[(int) temp.size()];
-				temp.read(ByteBuffer.wrap(arr));
-				digestFunc.update(arr, 0, arr.length);
-				digestFunc.doFinal(digestByteArray, 0);
-				List<byte[]> result = encoder.process(arr);
-	
-				for (int fragment_nr = 0; fragment_nr < nr_of_file_fragments; fragment_nr++) {
-	
-					fragment_name = fragmentFileNames.get(fragment_nr);
-					log.debug("write: " + fragment_name);
-					byte[] b = result.get(fragment_nr);
-					digestFunc.reset();
-					digestFunc.update(b, 0, b.length);
-					digestFunc.doFinal(digestByteArray, 0);
-	
-					hexString = new String(Hex.encode(digestByteArray));
-					fileParts.put(fragment_name, b);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				throw new FuseException("IO error: " + e.toString(), e)
-						.initErrno(FuseException.EIO);
-			}
+			crsSplitFile(temp, fileParts, fragmentPaths,
+					nr_of_file_fragments, nr_of_redundant_fragments);
 		}
 		log.debug(" temp.size():"+ temp.size());
-		nr_of_file_parts_successfully_stored = concurrent_multi_file_handler.writeFilesAsByteArrays(fileParts);
+		MultipleFiles multipleFiles = concurrent_multi_file_handler.writeFilesAsByteArrays(fileParts);
+		nr_of_file_parts_successfully_stored = multipleFiles.getNrOfSuccessfullyTransferedFiles();
 
 		//if (log.isDebugEnabled())
 		  log.debug("nr_of_file_parts_successfully_stored: "+nr_of_file_parts_successfully_stored+" - MAX_FILE_FRAGMENTS_NEEDED "+nr_of_file_fragments_required);
@@ -164,12 +131,42 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 					.initErrno(FuseException.EIO);
 		} else {
 			//TODO: delete previous Fragments
-			fileFragmentMetaDataStore.setFragment(path, fragmentFileNames, nr_of_file_fragments_required, nrOfRequiredSuccessfullyStoredFragments, "", temp.size());
+			fileFragmentMetaDataStore.setFragments(path, fragmentPaths, nr_of_file_fragments_required, nrOfRequiredSuccessfullyStoredFragments, multipleFiles.getChecksums(fragmentPaths), temp.size());
+		}
+	}
+
+	private void crsSplitFile(FileChannel temp, HashMap<String, byte[]> fileParts, List<String> fragmentFileNames, 
+			int nr_of_file_fragments, int nr_of_redundant_fragments) throws FuseException {
+		String fragment_name;
+		InformationDispersalCodec crsidacodec;
+		InformationDispersalEncoder encoder;
+		try {
+			crsidacodec = new CauchyInformationDispersalCodec(nr_of_file_fragments, nr_of_redundant_fragments, 1);
+			encoder = crsidacodec.getEncoder();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new FuseException("IDA could not be initialized")
+					.initErrno(FuseException.EACCES);
+		}
+		try {
+			byte[] arr = new byte[(int) temp.size()];
+			temp.read(ByteBuffer.wrap(arr));
+			List<byte[]> result = encoder.process(arr);
+			for (int fragment_nr = 0; fragment_nr < nr_of_file_fragments; fragment_nr++) {
+				fragment_name = fragmentFileNames.get(fragment_nr);
+				log.debug("write: " + fragment_name);
+				byte[] b = result.get(fragment_nr);
+				fileParts.put(fragment_name, b);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new FuseException("IO error: " + e.toString(), e)
+					.initErrno(FuseException.EIO);
 		}
 	}
 
 	private HashMap<String, byte[]> simpleSplitFile(FileChannel temp, String path,
-			ArrayList<String> fragmentFileNames) throws IOException {
+			List<String> fragmentFileNames) throws IOException {
 			log.debug("Splitting with no redundancy");
 			byte[] arr;
 			int size=0, read_bytes;
@@ -205,7 +202,7 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 	}
 
 	private HashMap<String, byte[]> replicateFile(FileChannel temp, String path,
-			ArrayList<String> fragmentFileNames) throws IOException {
+			List<String> fragmentFileNames) throws IOException {
 		byte[] arr;
 		HashMap<String, byte[]> fileParts = new HashMap<String, byte[]>();
 		arr = new byte[(int) temp.size()];
@@ -219,27 +216,30 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 
 	public RandomAccessTemporaryFileChannel glueFilesTogether(FileFragmentMetaDataStore fileFragmentMetaDataStore, String path) throws FuseException {
 		RandomAccessTemporaryFileChannel ret = null;
-		List<byte[]> receivedFileSegments = new ArrayList<byte[]>();
+		Map<String, byte[]> fragmentPathsToChecksum;
 		try {
 			int nr_of_file_fragments_required = fileFragmentMetaDataStore.getNrOfRequiredFragments(path);
 			List<String> fragmentNames = fileFragmentMetaDataStore.getFragments(path);
+			fragmentPathsToChecksum = zip(fileFragmentMetaDataStore.getFragments(path), fileFragmentMetaDataStore.getFragmentsChecksums(path)); 
 			int nr_of_redundant_fragments = fragmentNames.size() - nr_of_file_fragments_required;
 			logStoreProperties(fileFragmentMetaDataStore.getNrOfFragments(path), nr_of_file_fragments_required, nr_of_redundant_fragments, fileFragmentMetaDataStore.getNrOfRequiredSuccessfullyStoredFragments(path));
 			log.debug("read: " + fragmentNames);
 			if(nr_of_file_fragments_required == 1){
 				ret = new RandomAccessTemporaryFileChannel();
-				List<byte[]> segmentBuffers = serial_multi_file_handler
-						.getFilesAsByteArrays(fragmentNames.toArray(new String[0]), nr_of_redundant_fragments);
+				MultipleFiles multipleFiles = serial_multi_file_handler
+						.getFilesAsByteArrays(fragmentPathsToChecksum, nr_of_redundant_fragments);
 				log.debug(fileFragmentMetaDataStore.getNrOfFragments(path)+" "+fileFragmentMetaDataStore.getNrOfRequiredFragments(path));
-				ret.getChannel().write(ByteBuffer.wrap(segmentBuffers.get(0)));
+				if(multipleFiles.getNrOfSuccessfullyTransferedFiles() < 1){
+					throw new IOException("File could not be retrieved successfully.");
+				}
+				ret.getChannel().write(ByteBuffer.wrap(multipleFiles.getSuccessfullyTransferedFiles().get(0)));
 				return ret;
 			} else if(nr_of_file_fragments_required == fragmentNames.size()){ //no redundancy but several stores
-				return simpleGlueFilesTogether(fragmentNames);
+				return simpleGlueFilesTogether(fileFragmentMetaDataStore.getFragments(path), fileFragmentMetaDataStore.getFragmentsChecksums(path));
 			}else {
 				
-				return crsGlueFilesTogether(fileFragmentMetaDataStore, path,
-						receivedFileSegments,
-						nr_of_file_fragments_required, fragmentNames);
+				return crsGlueFilesTogether(path,
+						nr_of_file_fragments_required, fragmentPathsToChecksum);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -247,85 +247,72 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 		}
 	}
 
-	private RandomAccessTemporaryFileChannel crsGlueFilesTogether(
-			FileFragmentMetaDataStore fileFragmentMetaDataStore, String path,
-			List<byte[]> receivedFileSegments, 
-			int nr_of_file_fragments_required, List<String> fragmentNames)
+	private RandomAccessTemporaryFileChannel crsGlueFilesTogether(String path,
+			int nr_of_file_fragments_required,
+			Map<String, byte[]> fragmentPathsToChecksum)
 			throws FuseException, IOException, IDADecodeException,
 			IDANotInitializedException {
+
 		RandomAccessTemporaryFileChannel ret;
+		List<byte[]> receivedFileSegments;
 		InformationDispersalCodec crsidacodec;
 		InformationDispersalDecoder decoder;
-		Digest digestFunc = new SHA256Digest();
-		byte[] digestByteArray = new byte[digestFunc.getDigestSize()];
 		try {
-			crsidacodec = new CauchyInformationDispersalCodec(
-					fileFragmentMetaDataStore.getNrOfFragments(path), nr_of_file_fragments_required, CAUCHY_WORD_LENGTH);
-			log.debug(fileFragmentMetaDataStore.getNrOfFragments(path)+" "+fileFragmentMetaDataStore.getNrOfRequiredFragments(path));
+			crsidacodec = new CauchyInformationDispersalCodec(fragmentPathsToChecksum
+					.size(), nr_of_file_fragments_required, CAUCHY_WORD_LENGTH);
+			log.debug(fragmentPathsToChecksum.keySet().toArray(new String[0]) + " "
+					+ nr_of_file_fragments_required);
 			decoder = crsidacodec.getDecoder();
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new FuseException("IDA could not be initialized")
 					.initErrno(FuseException.EACCES);
 		}
-		String hexString = null;
-		log.info("glue ");
-		int readBytes;
 		ret = new RandomAccessTemporaryFileChannel();
-		int validSegment = 0;
-
-		List<byte[]> segmentBuffers = concurrent_multi_file_handler
-				.getFilesAsByteArrays(fragmentNames.toArray(new String[0]), fileFragmentMetaDataStore.getNrOfRequiredFragments(path));
-		for (byte[] segmentBuffer : segmentBuffers) {
-			//log.info("glue " + new String(segmentBuffer));
-
-			digestFunc.reset();
-
-			digestFunc.update(segmentBuffer, 0, segmentBuffer.length);
-
-			digestFunc.doFinal(digestByteArray, 0);
-
-			hexString = new String(Hex.encode(digestByteArray));
-
-			/*
-			 * if (!hexString.equals(file_fragment.getName())) {
-			 * log.error("this file segment is invalid! " +
-			 * file_fragment.getName() + " <> " + hexString); } else {
-			 */
-			receivedFileSegments.add(segmentBuffer);
-			validSegment++;
-
-			if (validSegment >= fileFragmentMetaDataStore.getNrOfRequiredFragments(path)) {
-				break;
-			}
-			// }
-		}
+		MultipleFiles multipleFiles = ((ConcurrentMultipleFileHandler) concurrent_multi_file_handler)
+				.getFilesAsByteArrays(fragmentPathsToChecksum,
+						nr_of_file_fragments_required);
+		receivedFileSegments = multipleFiles.getSuccessfullyTransferedFiles();
 		byte[] recoveredFile = decoder.process(receivedFileSegments);
-
-		digestFunc.reset();
-
-		digestFunc.update(recoveredFile, 0, recoveredFile.length);
-
-		digestFunc.doFinal(digestByteArray, 0);
-
 		ret.getChannel().write(ByteBuffer.wrap(recoveredFile));
-
 		return ret;
 	}
 
+	/**
+	 * Get a map from each file path to the corresponding checksumof the file
+	 * @param fragmentPaths list of fragment paths 
+	 * @param checksums ordered to have the same index as the corresponding fragment path
+	 * @return a map from each file path to the corresponding checksum
+	 */
+	private Map<String, byte[]> zip(List<String> fragmentPaths,
+			List<byte[]> checksums) {
+		Map<String, byte[]> fileNamesToChecksum = new HashMap<String, byte[]>();
+		for (int i = 0; i < fragmentPaths.size(); i++) {
+			fileNamesToChecksum.put(fragmentPaths.get(i), checksums.get(i));
+		}
+		return fileNamesToChecksum;
+	}
+
+	/**
+	 * Glues files together in the order specified by their paths in <code>fragmentsPaths</code>
+	 * @param fragmentsPaths
+	 * @param fragmentsChecksums the checksum of each file fragment at the same index position as its path in fragmentsPaths
+	 * @return the complete file
+	 * @throws IOException
+	 */
 	private RandomAccessTemporaryFileChannel simpleGlueFilesTogether(
-			List<String> fragmentNames) throws IOException {
-		RandomAccessTemporaryFileChannel ret;
+			ArrayList<String> fragmentsPaths, List<byte[]> fragmentsChecksums) throws IOException {
+		RandomAccessTemporaryFileChannel ret;	
 		ret = new RandomAccessTemporaryFileChannel();
-		List<byte[]> segmentBuffers = concurrent_multi_file_handler
-			.getFilesAsByteArrays(fragmentNames.toArray(new String[0]));
-		//fileParts = glueFile( temp, path, fragmentFileNames);fragmentNames.size()
-		ByteBuffer bb; int len;
-		for (byte[] arr: segmentBuffers) {
-			bb = ByteBuffer.wrap(arr);
-			len = arr.length;
+		MultipleFiles multipleFiles = ((ConcurrentMultipleFileHandler) concurrent_multi_file_handler).
+			getFilesAsByteArrays(zip(fragmentsPaths, fragmentsChecksums));
+		if(fragmentsPaths.size() > multipleFiles.getNrOfSuccessfullyTransferedFiles()){
+			throw new IOException("Could not retrieve all fragments of the file.");
+		}
+		ByteBuffer bb;
+		for (String filePath: fragmentsPaths) {
+			bb = ByteBuffer.wrap(multipleFiles.getSuccessfullyTransferedFile(filePath));
 			ret.getChannel().write(bb);
-			log.debug("read + "+len+"bytes from : " + fragmentNames.get(segmentBuffers.indexOf(arr)));
 		}
 		return ret;
 	}

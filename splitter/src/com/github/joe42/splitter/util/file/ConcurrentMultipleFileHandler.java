@@ -4,77 +4,93 @@ import java.io.*;
 import java.util.*;
 import java.util.concurrent.*;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.bouncycastle.crypto.Digest;
+import org.bouncycastle.crypto.digests.MD5Digest;
+import org.bouncycastle.crypto.digests.SHA256Digest;
+
 public class ConcurrentMultipleFileHandler implements MultipleFileHandler{
 		private static final Logger  log = Logger.getLogger("concurrent multiple filehandler");
+		private Digest digestFunc;
+		
+		public ConcurrentMultipleFileHandler(Digest digestFunc) {
+			PropertyConfigurator.configure("log4j.properties");
+			this.digestFunc = digestFunc;
+		}
+
 		public ConcurrentMultipleFileHandler() {
 			PropertyConfigurator.configure("log4j.properties");
-		}
-		public int writeFilesAsByteArrays(HashMap<String, byte[]> files){
-			int nr_of_files_written = 0;
-			if(files == null || files.size() == 0){
-				return nr_of_files_written;
-			}
-			ExecutorService executor = Executors.newFixedThreadPool(files.size());
-			List<Future<Boolean>> list = new ArrayList<Future<Boolean>>();
-
-			for (String file_name : files.keySet()) {
-				Callable<Boolean> worker = new Write(file_name, files.get(file_name));
-				Future<Boolean> submit = executor.submit(worker);
-				list.add(submit);
-			}
-			// Now retrieve the result
-			for (Future<Boolean> future : list) {
-				try {
-					if(future.get() == true){
-						nr_of_files_written++;
-					}
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				} catch (ExecutionException e) {
-					e.printStackTrace();
-				} 
-			}
-			executor.shutdown();
-			return nr_of_files_written;
+			this.digestFunc = new MD5Digest();
 		}
 		
-		public int writeFilesAsByteArrays(HashMap<String, byte[]> files, int files_needed){
-			int nr_of_files_written = 0;
+		public MultipleFiles writeFilesAsByteArrays(HashMap<String, byte[]> files){
+			return writeFilesAsByteArrays(files, files.keySet().size());
+		}
+		
+		public MultipleFiles writeFilesAsByteArrays(HashMap<String, byte[]> files, int files_needed){
+			MultipleFiles multipleFiles =  new MultipleFiles(files.keySet(), digestFunc);
 			if(files == null || files.size() == 0){
-				return nr_of_files_written;
+				return multipleFiles;
 			}
 			ExecutorService executor = Executors.newFixedThreadPool(files.size());
-			List<Future<Boolean>> list = new ArrayList<Future<Boolean>>();
-
-			for (String file_name : files.keySet()) {
-				Callable<Boolean> worker = new Write(file_name, files.get(file_name));
-				Future<Boolean> submit = executor.submit(worker);
-				list.add(submit);
-			}
-			// Now wait for the result
-			outer_loop:
+			Map<String, Future<Boolean>> filePathsToFutures = startWriteJobs(files, executor);
+			// Now retrieve the result
+			Future<Boolean> future;
+			int canFail = files.size() - files_needed;
 			while (true) {
-				for (Future<Boolean> future : list) {
-					try {
-						if(future.get(100, TimeUnit.MILLISECONDS) == true){
-							nr_of_files_written++;
-						}
-						if(nr_of_files_written==files_needed){
-							break outer_loop;
-						}
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					} catch (ExecutionException e) {
-						e.printStackTrace();
-					} catch (TimeoutException e) {
-						e.printStackTrace();
-					} 
+				waitForWriteResults(files, multipleFiles, filePathsToFutures);
+				if(multipleFiles.getNrOfSuccessfullyTransferedFiles()>=files_needed || multipleFiles.getNrOfUnsuccessfullyTransferedFiles() > canFail){
+					break;
+				}
+			}
+			for (String filePath: filePathsToFutures.keySet()) { //cancel all unneeded file writes but at least set their checksum if they could not be transfered
+				future = filePathsToFutures.get(filePath);
+				if(! future.cancel(true)){
+					multipleFiles.addTransferedFile(filePath,  files.get(filePath));
+				} else {
+					multipleFiles.setChecksum(filePath,  files.get(filePath));
 				}
 			}
 			executor.shutdown();
-			return nr_of_files_written;
+			return multipleFiles;
+		}
+
+		private Map<String, Future<Boolean>> startWriteJobs(
+				HashMap<String, byte[]> files, ExecutorService executor) {
+			Map<String, Future<Boolean>> filePathsToFutures = new HashMap<String, Future<Boolean>>();
+			for (String filePath : files.keySet()) {
+				Callable<Boolean> worker = new Write(filePath, files.get(filePath));
+				Future<Boolean> submit = executor.submit(worker);
+				filePathsToFutures.put(filePath, submit);
+			}
+			return filePathsToFutures;
+		}
+
+		private void waitForWriteResults(HashMap<String, byte[]> files,
+				MultipleFiles multipleFiles, Map<String, Future<Boolean>> filePathsToFutures) {
+			Future<Boolean> future;
+			ArrayList<String> processed = new ArrayList<String>(); //file paths of processed futures
+			for (String filePath : filePathsToFutures.keySet()) {
+				try {
+					future = filePathsToFutures.get(filePath);
+					if(future.get(100, TimeUnit.MILLISECONDS) == true){
+						multipleFiles.addTransferedFile(filePath,  files.get(filePath));
+						processed.add(filePath);
+					} else {
+						multipleFiles.addFailedFilePath(filePath);
+						processed.add(filePath);
+					}
+				} catch (TimeoutException e) {
+				} catch (Exception e) { //InterruptedException ExecutionException
+					multipleFiles.addFailedFilePath(filePath);
+					processed.add(filePath);
+				}
+			}
+			for(String filePath: processed){
+				filePathsToFutures.remove(filePath);//done with processing this future
+			}
 		}
 
 		class Write implements Callable<Boolean> {
@@ -105,54 +121,87 @@ public class ConcurrentMultipleFileHandler implements MultipleFileHandler{
 			}
 
 		}	
-
-		public List<byte[]> getFilesAsByteArrays(String[] file_names, int files_needed){
-			List<byte[]> ret = new ArrayList<byte[]>();
-			if(file_names == null || file_names.length == 0){
-				return ret;
+		
+		/**
+		 * Try to retrieve at least <code>files_needed</code> files with the paths in <code>fileNamesToChecksum.keySet()<code>.
+		 * The map <code>fileNamesToChecksum.keySet()<code> contains the file paths of the files to retrieve and maps each file path
+		 * to its checksum. By default these checksums are compared to the checksum of the retrieved files generated by org.bouncycastle.crypto.Digest.SHA256Digest.
+		 * Other checksum algorithms can be specified by the constructor 
+		 * {@link #ConcurrentMultipleFileHandler(Digest) ConcurrentMultipleFileHandler(Digest digestFunc)}.
+		 * If <code>files_needed</code> files are retrieved successfully, the method returns at once. 
+		 * Also, if a retrieved file's checksum differs from the checksum provided by <code>fileNamesToChecksum<code> and there are not enough files in <code>file_names</code> 
+		 * to return <code>files_needed</code> files, the method returns with the successfully retrieved files at once. Pending read requests are canceled before returning.
+		 * @param filePathsToChecksum a map of file paths of the files which should be retrieved to their corresponding checksum for each file
+		 * @param files_needed the number of files that should be returned
+		 * @return a MultipleFiles instance
+		 */
+		public MultipleFiles getFilesAsByteArrays(Map<String, byte[]> filePathsToChecksum, int files_needed){
+			MultipleFiles multipleFiles = new MultipleFiles(filePathsToChecksum, digestFunc);
+			List<String> filePaths = new ArrayList<String>(filePathsToChecksum.keySet());
+			if(filePaths.size() == 0){
+				return multipleFiles;
 			}
-				ExecutorService executor = Executors.newFixedThreadPool(file_names.length);
-				List<Future<byte[]>> list = new ArrayList<Future<byte[]>>();
-				for (String file_name : file_names) {
-					Callable<byte[]> worker = new GetFileAsByteArray(file_name);
-					Future<byte[]> submit = executor.submit(worker);
-					list.add(submit);
+			ExecutorService executor = Executors.newFixedThreadPool(filePaths.size());
+			Map<String, Future<byte[]>> filePathsToFutures = startReadJobs(filePaths, executor);
+			// Now retrieve the result
+			int canFail = filePaths.size() - files_needed;
+			outer_loop:
+			while (true) {
+				waitForReadResults(files_needed, multipleFiles, filePathsToFutures, canFail);
+				if(multipleFiles.getNrOfSuccessfullyTransferedFiles()==files_needed || multipleFiles.getNrOfUnsuccessfullyTransferedFiles() > canFail){
+					break;
 				}
-				// Now retrieve the result
-				Future<byte[]> future = null;
-				List<Integer> processed = new ArrayList<Integer>();
-				outer_loop:
-				while (true) {
-					try {
-						for (int i = 0; i < list.size(); i++) {
-							future = list.get(i);
-							ret.add(i, future.get(100, TimeUnit.SECONDS));
-							if(ret.size()==files_needed){
-								break outer_loop;
-							}
-							processed.add(i);
-						}
-						for(int i: processed){
-							list.remove(i);//done with processing this future
-						}
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					} catch (ExecutionException e) {
-						e.printStackTrace();
-					} catch (TimeoutException e) {
-					} 
-				}
-				for (int i = 0; i < list.size(); i++) { //cancel all unneeded file reads
-					future = list.get(i);
-					future.cancel(true);
-				}
-				executor.shutdownNow();
+			}
+			Future<byte[]> future = null;
+			for (String filePath: filePathsToFutures.keySet()) { //cancel all unneeded file reads
+				future = filePathsToFutures.get(filePath);
+				future.cancel(true);
+			}
+			executor.shutdownNow();
 
-			return ret;
+			return multipleFiles;
 		}
 
-		public List<byte[]> getFilesAsByteArrays(String[] file_names){
-			return getFilesAsByteArrays(file_names, file_names.length);
+		private void waitForReadResults(int files_needed,
+				MultipleFiles multipleFiles,
+				Map<String, Future<byte[]>> filePathsToFutures, int canFail) {
+			byte[] data;
+			Future<byte[]> future = null;
+			ArrayList<String> processed = new ArrayList<String>(); //file paths of processed futures
+			for (String filePath: filePathsToFutures.keySet()) {
+				future = filePathsToFutures.get(filePath);
+				try {
+					data = future.get(100, TimeUnit.SECONDS);
+					multipleFiles.addTransferedFile(filePath, data);
+					processed.add(filePath);
+				} catch (TimeoutException e) {
+				} catch (Exception e) { //InterruptedException ExecutionException
+					multipleFiles.addFailedFilePath(filePath);
+					processed.add(filePath);
+				} 
+				if(multipleFiles.getNrOfSuccessfullyTransferedFiles()==files_needed || multipleFiles.getNrOfUnsuccessfullyTransferedFiles() > canFail){
+					return;
+				}
+			}
+			for(String filePath: processed){
+				filePathsToFutures.remove(filePath);//done with processing this future
+			}
+			return;
+		}
+
+		private Map<String, Future<byte[]>> startReadJobs(
+				List<String> filePaths, ExecutorService executor) {
+			Map<String, Future<byte[]>> filePathsToFutures = new HashMap<String, Future<byte[]>>();
+			for (String filePath : filePaths) {
+				Callable<byte[]> worker = new GetFileAsByteArray(filePath);
+				Future<byte[]> submit = executor.submit(worker);
+				filePathsToFutures.put(filePath, submit);
+			}
+			return filePathsToFutures;
+		}
+		
+		public MultipleFiles getFilesAsByteArrays(Map<String, byte[]> fileNamesToChecksum){
+			return getFilesAsByteArrays(fileNamesToChecksum, fileNamesToChecksum.keySet().size());
 		}
 
 		class GetFileAsByteArray implements Callable<byte[]> {

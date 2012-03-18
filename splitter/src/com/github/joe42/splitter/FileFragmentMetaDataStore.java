@@ -88,12 +88,12 @@ public class FileFragmentMetaDataStore {
 	 * @param fileName the whole file
 	 * @param fragmentPaths the fragments of the file 
 	 * @param nrOfRequiredSuccessfullyStoredFragments the number of file fragments that must be stored successfully
-	 * @param checksum the complete file's checksum 
+	 * @param checksums the checksum for each file fragment corresponding to the fileFragmentPath at the same index position
 	 * @param filesize the complete file's size 
 	 * @throws IOException 
 	 */
-	public synchronized void setFragment(String fileName, ArrayList<String> fragmentPaths, int requiredFragments, int nrOfRequiredSuccessfullyStoredFragments, String checksum, long filesize) throws IOException{
-		fileFragmentsMap.put(fileName, new FileFragments(fragmentPaths, requiredFragments, nrOfRequiredSuccessfullyStoredFragments, checksum, filesize));
+	public synchronized void setFragments(String fileName, ArrayList<String> fragmentPaths, int requiredFragments, int nrOfRequiredSuccessfullyStoredFragments, List<byte[]> checksums, long filesize) throws IOException{
+		fileFragmentsMap.put(fileName, new FileFragments(fragmentPaths, requiredFragments, nrOfRequiredSuccessfullyStoredFragments, checksums, filesize));
 		commit();
 	}
 
@@ -172,12 +172,24 @@ public class FileFragmentMetaDataStore {
 		fileFragmentsMap.remove(filePath);
 		recman.commit();
 	}
-	
+
 	public synchronized long getFragmentsSize(String filePath) throws IOException{
 		FileFragments fragments = ((FileFragments)fileFragmentsMap.get(filePath));
 		if(fragments == null){
 			return 0;
 		}
 		return fragments.getFilesize();
+	}
+	
+	/**
+	 * Get the checksum for each file fragment corresponding to the file corresponding to the fileFragmentPath at the same index position
+	 * @return checksums for each file fragment in the same order as specified by their paths in fileFragmentPaths
+	 */
+	public synchronized List<byte[]> getFragmentsChecksums(String filePath) throws IOException{
+		FileFragments fragments = ((FileFragments)fileFragmentsMap.get(filePath));
+		if(fragments == null){
+			return null;
+		}
+		return fragments.getChecksums();
 	}
 }
