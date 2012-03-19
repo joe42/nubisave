@@ -37,8 +37,8 @@ then
 
 	echo
 	echo
-	echo "Kopiere CloudQoS-Ontologie"
-	sudo cp services/CloudQoS.wsml $ontologiepath
+	echo "Kopiere CloudStorage-Ontologie"
+	sudo cp services/CloudStorage.wsml $ontologiepath
 fi
 
 echo
@@ -61,7 +61,7 @@ echo
 echo
 echo "Installation von CloudFusion"
 
-git submodule init 
+git submodule init
 git submodule update
 
 cd CloudFusion/cloudfusion
