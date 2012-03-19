@@ -205,7 +205,6 @@ public class FuseBox implements Filesystem3, XattrSupport {
 			if (dirEntry == null)
 				throw new FuseException("No Such Entry")
 						.initErrno(FuseException.ENOENT);
-			new File(path).delete();
 			metaDataStore.remove(path);
 		} catch (IOException e) {
 			throw new FuseException("IO Exception on accessing metadata")
