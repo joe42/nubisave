@@ -20,7 +20,7 @@
     </target>
     <target name="wsimport-client-ClientAccess" depends="wsimport-init">
         <mkdir dir="${build.generated.dir}/jax-wsCache/ClientAccess"/>
-        <property name="wsdl-ClientAccess" location="xml-resources/web-service-references/ClientAccess/wsdl/ClientAccess.wsdl"/>
+        <property name="wsdl-ClientAccess" location="xml-resources/ClientAccess.wsdl"/>
         <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/ClientAccess" destdir="${build.generated.dir}/jax-wsCache/ClientAccess" wsdl="${wsdl-ClientAccess}" catalog="catalog.xml" extension="true" verbose="true" wsdlLocation="file:xml-resources/ClientAccess.wsdl" xnocompile="true" xendorsed="true" package="nubisave.client">
             <depends file="${wsdl-ClientAccess}"/>
             <produces dir="${build.generated.dir}/jax-wsCache/ClientAccess"/>
