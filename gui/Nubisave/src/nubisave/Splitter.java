@@ -4,7 +4,6 @@
 
 package nubisave;
 
-import com.github.joe42.splitter.backend.BackendService;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
