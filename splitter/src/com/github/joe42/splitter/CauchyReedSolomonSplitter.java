@@ -238,7 +238,7 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 				return simpleGlueFilesTogether(fileFragmentMetaDataStore.getFragments(path), fileFragmentMetaDataStore.getFragmentsChecksums(path));
 			}else {
 				
-				return crsGlueFilesTogether(path,
+				return crsGlueFilesTogether(path, nr_of_redundant_fragments,
 						nr_of_file_fragments_required, fragmentPathsToChecksum);
 			}
 		} catch (Exception e) {
@@ -248,6 +248,7 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 	}
 
 	private RandomAccessTemporaryFileChannel crsGlueFilesTogether(String path,
+			int nr_of_redundant_file_fragments,
 			int nr_of_file_fragments_required,
 			Map<String, byte[]> fragmentPathsToChecksum)
 			throws FuseException, IOException, IDADecodeException,
@@ -259,9 +260,9 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 		InformationDispersalDecoder decoder;
 		try {
 			crsidacodec = new CauchyInformationDispersalCodec(fragmentPathsToChecksum
-					.size(), nr_of_file_fragments_required, CAUCHY_WORD_LENGTH);
+					.size(), nr_of_redundant_file_fragments, CAUCHY_WORD_LENGTH);
 			log.debug(fragmentPathsToChecksum.keySet().toArray(new String[0]) + " "
-					+ nr_of_file_fragments_required);
+					+ nr_of_redundant_file_fragments);
 			decoder = crsidacodec.getDecoder();
 		} catch (Exception e) {
 			e.printStackTrace();
