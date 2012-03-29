@@ -68,12 +68,8 @@ public class CauchyInformationDispersalDecoder implements InformationDispersalDe
       {
          throw new IDAInvalidParametersException("Chunk size must be positive");
       }
-      if (this.threshold > this.numSlices) 
-      {
-         throw new IDAInvalidParametersException("Threshold must be less than or equal to number of slices");
-      }
 
-      this.params = new CauchyIDAParameters(threshold, numSlices - threshold, chunkSize);
+      this.params = new CauchyIDAParameters(numSlices - threshold, threshold, chunkSize);
 
       if (logger.isTraceEnabled())
       {
@@ -93,8 +89,8 @@ public class CauchyInformationDispersalDecoder implements InformationDispersalDe
 
       int fragmentSize = getFragmentSize();
 
-      byte data[] = new byte[getMessageSize()];
-      byte fragments[] = new byte[getThreshold() * fragmentSize];
+      byte data[];
+      byte fragments[] = new byte[encodedBuffers.size() * fragmentSize];
       byte output[] = new byte[getMessageSize()];
 
       // Establish slice length
@@ -115,47 +111,46 @@ public class CauchyInformationDispersalDecoder implements InformationDispersalDe
          }
       }
       assert dataLength != -1 : "Data length can't be calculated";
-
+  
       int outputBufferSize = dataLength / fragmentSize * getMessageSize();
-
       if (outputBufferSize != output.length)
       {
          output = new byte[outputBufferSize];
       }
 
+
       int outputPosition = 0;
 
       int encodedBufferPosition = 0;
-
       do
       {
          // Copy encoded data into fragments array
          int fragmentIdx = 0;
-         for (int i = 0; i < encodedBuffers.size() && (fragmentIdx < threshold); i++)
+         for (int i = 0; i < encodedBuffers.size() && (fragmentIdx < encodedBuffers.size()); i++)
          {
             // Skip null buffers
             if (encodedBuffers.get(i) != null)
             {
                byte encodedBuffer[] = encodedBuffers.get(i);
                int fragmentOffset = fragmentIdx * fragmentSize;
-
                System.arraycopy(encodedBuffer, encodedBufferPosition, fragments, fragmentOffset,
-                     fragmentSize);
+            		   fragmentSize);
                fragmentIdx++;
             }
          }
 
-         if (fragmentIdx != threshold)
+         if (fragmentIdx < numSlices - threshold)
          {
-            throw new IDAInvalidSliceCountException("Expected " + threshold + " but got only "
+            throw new IDAInvalidSliceCountException("Expected " + (numSlices - threshold) + " but got only "
                   + fragmentIdx + " slices");
          }
          try
-         {
+         {//treshold=redundant fragments < data slices?
             data = CauchyDecode.decode(fragments, threshold, params);
          }
          catch (Exception e)
          {
+        	 e.printStackTrace();
             throw new IDAInvalidSliceFormatException("Decode error");
          }
 
