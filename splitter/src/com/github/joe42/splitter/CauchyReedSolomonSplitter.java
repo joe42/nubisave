@@ -141,7 +141,7 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 		InformationDispersalCodec crsidacodec;
 		InformationDispersalEncoder encoder;
 		try {
-			crsidacodec = new CauchyInformationDispersalCodec(nr_of_file_fragments, nr_of_redundant_fragments, 1);
+			crsidacodec = new CauchyInformationDispersalCodec(nr_of_file_fragments, nr_of_redundant_fragments, CAUCHY_WORD_LENGTH);
 			encoder = crsidacodec.getEncoder();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -227,7 +227,7 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 			if(nr_of_file_fragments_required == 1){
 				ret = new RandomAccessTemporaryFileChannel();
 				MultipleFiles multipleFiles = serial_multi_file_handler
-						.getFilesAsByteArrays(fragmentPathsToChecksum, nr_of_redundant_fragments);
+						.getFilesAsByteArrays(fragmentPathsToChecksum, nr_of_file_fragments_required);
 				log.debug(fileFragmentMetaDataStore.getNrOfFragments(path)+" "+fileFragmentMetaDataStore.getNrOfRequiredFragments(path));
 				if(multipleFiles.getNrOfSuccessfullyTransferedFiles() < 1){
 					throw new IOException("File could not be retrieved successfully.");
@@ -274,6 +274,7 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 				.getFilesAsByteArrays(fragmentPathsToChecksum,
 						nr_of_file_fragments_required);
 		receivedFileSegments = multipleFiles.getSuccessfullyTransferedFiles();
+		log.debug("received fragments: "+ receivedFileSegments.size());
 		byte[] recoveredFile = decoder.process(receivedFileSegments);
 		ret.getChannel().write(ByteBuffer.wrap(recoveredFile));
 		return ret;
