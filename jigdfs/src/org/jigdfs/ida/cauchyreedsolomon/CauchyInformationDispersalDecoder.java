@@ -146,7 +146,7 @@ public class CauchyInformationDispersalDecoder implements InformationDispersalDe
          }
          try
          {//treshold=redundant fragments < data slices?
-            data = CauchyDecode.decode(fragments, threshold, params);
+        	 data = CauchyDecode.decode(fragments, fragmentIdx, params);
          }
          catch (Exception e)
          {
