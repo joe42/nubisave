@@ -13,6 +13,7 @@ import org.jigdfs.ida.base.InformationDispersalDecoder;
 import org.jigdfs.ida.base.InformationDispersalEncoder;
 import org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalCodec;
 import org.jigdfs.ida.exception.IDADecodeException;
+import org.jigdfs.ida.exception.IDAInvalidParametersException;
 import org.jigdfs.ida.exception.IDANotInitializedException;
 
 import com.github.joe42.splitter.backend.BackendService;
@@ -40,6 +41,7 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 	private StorageStrategyFactory storageStrategyFactory;
 	private BackendServices services;
 	private Digest digestFunc;
+	private InformationDispersalCodec crsidacodec;
 	
 	public CauchyReedSolomonSplitter(BackendServices services){
 		this.services = services;
@@ -138,10 +140,9 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 	private void crsSplitFile(FileChannel temp, HashMap<String, byte[]> fileParts, List<String> fragmentFileNames, 
 			int nr_of_file_fragments, int nr_of_redundant_fragments) throws FuseException {
 		String fragment_name;
-		InformationDispersalCodec crsidacodec;
 		InformationDispersalEncoder encoder;
 		try {
-			crsidacodec = new CauchyInformationDispersalCodec(nr_of_file_fragments, nr_of_redundant_fragments, CAUCHY_WORD_LENGTH);
+			crsidacodec = getCRSCodec(nr_of_file_fragments,	nr_of_redundant_fragments);
 			encoder = crsidacodec.getEncoder();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -163,6 +164,23 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 			throw new FuseException("IO error: " + e.toString(), e)
 					.initErrno(FuseException.EIO);
 		}
+	}
+
+	/**
+	 * Gets a Cauchy Reed Solomon codec. 
+	 * Caches the last codec.
+	 * @param nr_of_file_fragments
+	 * @param nr_of_redundant_fragments
+	 * @return a codec with the above parameters
+	 * @throws IDAInvalidParametersException
+	 */
+	private InformationDispersalCodec getCRSCodec(int nr_of_file_fragments,
+			int nr_of_redundant_fragments) throws IDAInvalidParametersException {
+		if(crsidacodec != null && crsidacodec.getNumSlices() == nr_of_file_fragments && crsidacodec.getThreshold() == nr_of_redundant_fragments){
+			return crsidacodec;
+		}
+		crsidacodec = new CauchyInformationDispersalCodec(nr_of_file_fragments, nr_of_redundant_fragments, CAUCHY_WORD_LENGTH);
+		return crsidacodec;
 	}
 
 	private HashMap<String, byte[]> simpleSplitFile(FileChannel temp, String path,
@@ -256,11 +274,9 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 
 		RandomAccessTemporaryFileChannel ret;
 		List<byte[]> receivedFileSegments;
-		InformationDispersalCodec crsidacodec;
 		InformationDispersalDecoder decoder;
 		try {
-			crsidacodec = new CauchyInformationDispersalCodec(fragmentPathsToChecksum
-					.size(), nr_of_redundant_file_fragments, CAUCHY_WORD_LENGTH);
+			crsidacodec = getCRSCodec(fragmentPathsToChecksum.size(),	nr_of_redundant_file_fragments); 
 			log.debug(fragmentPathsToChecksum.keySet().toArray(new String[0]) + " "
 					+ nr_of_redundant_file_fragments);
 			decoder = crsidacodec.getDecoder();
