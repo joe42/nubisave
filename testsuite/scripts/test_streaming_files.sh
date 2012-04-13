@@ -84,7 +84,13 @@ function log_copy_operation {
     time_before_operation=`date +"%s"`
 	for nr in `seq 1 $nr_of_files`  # from 1 to file quantity
 	do
-		time_of_operation=`/usr/bin/time -f "%e" cp "$copy_source"$nr "$copy_destination"$nr 2>&1`
+		operation_succeeded=0
+		until [ $operation_succeeded -eq 1 ] ; do
+			time_of_operation=`/usr/bin/time -f "%e" cp "$copy_source"$nr "$copy_destination"$nr 2>&1`
+			if [ "`echo $time_of_operation|grep 'Command exited with non-zero status'`" == "" ] ; then
+				operation_succeeded=1
+			fi
+		done
 		time_of_multiple_operations=`echo $time_of_multiple_operations+$time_of_operation | bc`
 echo "Accumulation of previous operations' durations:" $time_of_multiple_operations
 echo "Current operation's duration" $time_of_operation
