@@ -66,7 +66,7 @@ public class FilePartFragmentStore extends FileFragmentStore{
 		String filePartPath = ((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).getFilePartPath(path, offset);
 		if (tempReadChannel == null || lastFilePartPathReadFrom == null || ! lastFilePartPathReadFrom.equals(filePartPath)) { 
 			if(tempReadChannel != null){
-				tempReadChannel.getChannel().close();
+				tempReadChannel.delete();
 			}
 			tempReadChannel = getFilePart(filePartPath);
 			 lastFilePartPathReadFrom = filePartPath;
