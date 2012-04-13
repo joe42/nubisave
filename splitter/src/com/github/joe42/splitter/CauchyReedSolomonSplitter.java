@@ -31,7 +31,7 @@ import com.github.joe42.splitter.vtf.FileEntry;
 import fuse.FuseException;
 
 public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter and abstract interface
-	private static final int CAUCHY_WORD_LENGTH = 1;
+	private static final int CAUCHY_WORD_LENGTH = 4096;
 	private static final Logger  log = Logger.getLogger("CauchyReedSolomonSplitter");
 	private MultipleFileHandler concurrent_multi_file_handler;
 	private MultipleFileHandler serial_multi_file_handler;
