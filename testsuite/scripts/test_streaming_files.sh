@@ -52,7 +52,7 @@ FILE_SIZES="$4"
 FILE_QUANTITYS="$5"
 FILE_SIZES_ARR=(`echo "$4"`)
 FILE_QUANTITYS_ARR=(`echo "$5"`)
-LOG_DIR="$TEST_DIRECTORY/logs/normal/`date`"
+LOG_DIR="$TEST_DIRECTORY/logs/streaming/`date`"
 SAMPLE_FILES_DIR=samplefiles
 TEMP_DIR=/tmp/storage_service`date +"%s"`
 WRITE_TIME_LOG="$LOG_DIR/write_time_log"
@@ -86,15 +86,17 @@ function log_copy_operation {
 	do
 		time_of_operation=`/usr/bin/time -f "%e" cp "$copy_source"$nr "$copy_destination"$nr 2>&1`
 		time_of_multiple_operations=`echo $time_of_multiple_operations+$time_of_operation | bc`
-		success=$((success+1))
+echo "Accumulation of previous operations' durations:" $time_of_multiple_operations
+echo "Current operation's duration" $time_of_operation
+		success=$(($success+1))
 		if [ "$check" != "" ];
 		then
 			error=`checksum "$copy_destination"$nr "$SAMPLE_FILES_DIR/${file_size}MB_"$nr`
 			if [ "$error" != "" ];
 			then
-				success=$((success-1))
+				success=$(($success-1))
 			fi
-    	fi
+    		fi
 	done
 
     time_after_operations=`echo $time_before_operation+$time_of_multiple_operations | bc` 
@@ -109,9 +111,10 @@ echo time_of_multiple_operations $time_of_multiple_operations
 	sleep 2 # wait until logging produces some results to process
     ../scripts/stop_net_mem_cpu_logging.sh
 	time_of_complete_operation=`echo $time_after_network_transfer-$time_before_operation | bc` 
+echo time_before_operation $time_before_operation time_after_operation $time_after_operations time_after_network_transfer $time_after_network_transfer 
 
-    #"file_size time_for_operation_in_seconds average_cpu_load max_cpu_load average_mem_load max_mem_load max_swap_load average_net_load total_net_load success_in_yes_no"
-    echo "$file_size	$(($file_size*$nr_of_files))	$time_of_complete_operation	`get_db_line $time_before_operation $time_after_operation $time_after_network_transfer`	$success" >> "$log_file"
+    #"file_size time_for_operation_in_seconds average_cpu_load average_cpu_load, max_cpu_load, average_mem_load, max_mem_load, max_swap_load, average_net_load, total_net_load success_in_num_of_successes"
+    echo "$file_size	$(($file_size*$nr_of_files))	$time_of_complete_operation	`get_db_line $time_before_operation $time_after_operations $time_after_network_transfer`	$success" >> "$log_file"
 
 }
 
@@ -138,7 +141,7 @@ do
 	echo "Test reading file size ${FILE_SIZES_ARR[$i]}MB"
 	log_copy_operation "$STORAGE_SERVICE_PATH/${FILE_SIZES_ARR[$i]}MB_" "$TEMP_DIR/${FILE_SIZES_ARR[$i]}MB_" "${FILE_SIZES_ARR[$i]}" "${FILE_QUANTITYS_ARR[$i]}" "$READ_TIME_LOG" "check"
 
-	for nr in `seq 1 ${FILE_QUANTITY[$i]}`  # from 1 to file quantity
+	for nr in `seq 1 ${FILE_QUANTITYS_ARR[$i]}`  # from 1 to file quantity
 	do
 		rm "$STORAGE_SERVICE_PATH/${FILE_SIZES_ARR[$i]}MB_$nr"
 	done
