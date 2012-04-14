@@ -88,7 +88,7 @@ public class FilePartFragmentStore extends FileFragmentStore{
 			return;
 		}
 		//available space in buffer exceeds file part size read from offset
-		tempReadChannel.getChannel().close();
+		tempReadChannel.delete();
 		filePartPath = ((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).getFilePartPath(path, offset/MAX_FILESIZE*MAX_FILESIZE+MAX_FILESIZE);
 		tempReadChannel = getFilePart(filePartPath);
 		lastFilePartPathReadFrom = filePartPath;
