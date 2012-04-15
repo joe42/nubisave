@@ -14,9 +14,10 @@ if [ $# -lt 5 ]; then
    echo "After copying a file, log the time for reading the file from the storage service, which was copied in the step before, to previous_file_read_time_log and then delete this file. "
    echo "Stop the storage service."
    echo "The logs' format is as follows: "
-   echo "file_size, time_for_operation_in_seconds, average_cpu_load, max_cpu_load, average_mem_load, max_mem_load, max_swap_load, average_net_load, total_net_load, success"
+   echo "file_size	time_for_operation_in_seconds	time_for_complete_operation_in_seconds	average_cpu_load	max_cpu_load	average_mem_load	max_mem_load	max_swap_load	average_net_load	total_net_load	success"
    echo "    file_size  - the size in MB of the file used for the operation"
    echo "    time_for_operation_in_seconds  - how long it took to perform the operation in seconds"
+   echo "    time_for_complete_operation_in_seconds  - how long it took to perform the operation in seconds including the time for network transfer"
    echo "    average_cpu_load  - the average CPU load of the process measured during the operation"
    echo "    max_cpu_load  - the maximum CPU load of the process measured during the operation"
    echo "    average_mem_load  - the average proportional set size of memory allocated by the process during the operation"
@@ -73,8 +74,8 @@ function log_copy_operation {
 	sleep 2 # wait until logging produces some results to process
     time_before_operation=`date +"%s"`
     time_of_operation=`/usr/bin/time -f "%e" cp "$copy_source" "$copy_destination" 2>&1`
+    time_after_operation=$(($time_before_operation+$time_of_operation))	
 echo time_of_operation $time_of_operation
-    time_after_operation=`date +"%s"`	
 	if [ "$STOP_NETWORK_MONITORING_AFTER_FILE_OPERATION" != "yes" ];
 	then
 		time_of_network_stagnation=`wait_until_transfer_is_complete $file_size "$TEMP_DIR/netlog" $time_before_operation`
@@ -84,7 +85,7 @@ echo time_of_operation $time_of_operation
 	fi
 	sleep 2 # wait until logging produces some results to process
     ../scripts/stop_net_mem_cpu_logging.sh
-
+	time_of_complete_operation=$(($time_after_network_transfer-$time_before_operation))	 
     success=yes
     if [ "$check" != "" ];
     then
@@ -96,7 +97,7 @@ echo time_of_operation $time_of_operation
     fi
 
     #"file_size time_for_operation_in_seconds average_cpu_load max_cpu_load average_mem_load max_mem_load max_swap_load average_net_load total_net_load success_in_yes_no"
-    echo "$file_size, $time_of_operation, `get_db_line $time_before_operation $time_after_operation $time_after_network_transfer`, $success" >> "$log_file"
+    echo "$file_size	$time_of_operation	$time_of_complete_operation	`get_db_line $time_before_operation $time_after_operation $time_after_network_transfer`	$success" >> "$log_file"
 }
 
 

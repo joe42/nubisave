@@ -27,7 +27,7 @@ function get_db_line {
     mem_avg=`gawk -v end=$end -v start=$start '(($1 >= start && $1 <= end) || ($1 >= start && n == 0)) {n++; total+=$2} END {print total/n}' "$TEMP_DIR"/memlog`
     cpu_max=`gawk -v end=$end -v start=$start 'BEGIN {max=0} (($1 >= start && $1 <= end && max < $2) || ($1 >= start && first_line == 0)) {max=$2; first_line=1} END {print max}' "$TEMP_DIR"/cpulog`
     cpu_avg=`gawk -v end=$end -v start=$start '(($1 >= start && $1 <= end) || ($1 >= start && n == 0)) {n++; total+=$2} END {print total/n}' "$TEMP_DIR"/cpulog`
-    echo -n "$cpu_avg, $cpu_max, $mem_avg, $mem_max, $swap_max, $net_avg, $net_total"
+    echo -n "$cpu_avg	$cpu_max	$mem_avg	$mem_max	$swap_max	$net_avg	$net_total"
 }
 
 function wait_until_transfer_is_complete {
@@ -39,9 +39,9 @@ function wait_until_transfer_is_complete {
 	transfered_KB=`round $transfered_KB`
 	previous_transfered_KB=$transfered_KB
 	stagnated=0
-	while [[ ($transfered_KB -lt $(($1*1000)) || $stagnated -lt 10) && $stagnated -lt 20 ]];
+	while [[ ($transfered_KB -lt $(($1*1000)) || $stagnated -lt 10) && $stagnated -lt 30 ]];
 	do
-		if [ $(($previous_transfered_KB+5)) -gt $transfered_KB ];
+		if [ $(($previous_transfered_KB+15)) -gt $transfered_KB ];
 		then
 			let stagnated=stagnated+1
 		else		

@@ -19,7 +19,7 @@ public class Main {
 		// System.out.println(fuseArgs[0]);
 		FuseBox fuseBox = null;
 		try {
-			StorageServicesMgr storageServiceMgr = new StorageServicesMgr(args[3]);
+			StorageServicesMgr storageServiceMgr = new StorageServicesMgr(args[args.length-1]);
 			CauchyReedSolomonSplitter splitter = new CauchyReedSolomonSplitter(storageServiceMgr.getServices());
 			 fuseBox = new ConfigurableFuseBox(splitter, storageServiceMgr);
 			FuseMount.mount(fuseArgs, fuseBox, LogFactory.getLog("javafs"));
