@@ -1,3 +1,23 @@
+nubisave (0.0~git20120318-1) unstable; urgency=low
+
+  * One month has passed, let's try an update.
+  * Includes updated ontologies from WSMO4IoS.
+
+ -- Josef Spillner <josef@rumba>  Sat, 17 Mar 2012 15:23:27 -0300
+
+nubisave (0.0~git20120217-1) unstable; urgency=low
+
+  * New year, new snapshot.
+  * Includes the extended Cloud Storage Ontology.
+
+ -- Josef Spillner <josef@rumba>  Thu, 16 Feb 2012 14:57:43 -0300
+
+nubisave (0.0~git20111221-1) unstable; urgency=low
+
+  * Pending snapshot.
+
+ -- Josef Spillner <josef@rumba>  Wed, 21 Dec 2011 17:59:29 +0100
+
 nubisave (0.0~git20111220-1) unstable; urgency=low
 
   * Today's snapshot with initial replication support.

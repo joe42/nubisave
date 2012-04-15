@@ -1,0 +1,97 @@
+/*
+ * WSMO4IoS CloudStorage: WSML base and domain ontologies for cloud storage services
+ */
+
+wsmlVariant _"http://www.wsmo.org/wsml/wsml-syntax/wsml-flight"
+
+namespace { _"http://localhost:8080/Matchmaker/ontologies/CloudStorage.wsml#",
+	    qos _"http://localhost:8080/Matchmaker/ontologies/QoSBase.wsml#",
+	    rqos _"http://localhost:8080/Matchmaker/ontologies/RemoteQoSBase.wsml#",
+	    biz _"http://localhost:8080/Matchmaker/ontologies/BusinessBase.wsml#",
+	    dc _"http://purl.org/dc/elements/1.1#",
+            wsml _"http://www.wsmo.org/wsml/wsml-syntax#" }
+
+ontology CloudStorage
+ importsOntology { _"http://localhost:8080/Matchmaker/ontologies/RemoteQoSBase.wsml#",
+                   _"http://localhost:8080/Matchmaker/ontologies/BusinessBase.wsml#" }
+ nonFunctionalProperties
+  wsml#version hasValue "1.0"
+  dc#creator hasValue "Gerd Bombach, Josef Spillner"
+  dc#title hasValue "WSMO4IoS CloudStorage"
+  dc#description hasValue "WSML base and domain ontologies for cloud storage services"
+  dc#publisher hasValue "Technische Universität Dresden"
+  dc#date hasValue "2012-01-17"
+  qosdefinition hasValue "Cloud Storage"
+ endNonFunctionalProperties
+
+/* ---------------------- */
+/* Generic QoS properties */
+/* ---------------------- */
+
+// These are now all imported from RemoteQoSBase!
+
+/* ------------------- */
+/* Business properties */
+/* ------------------- */
+
+// These are now all imported from BusinessBase!
+
+/* ------------------------- */
+/* Online account properties */
+/* ------------------------- */
+
+// SignupPrivacy
+concept SignupPrivacy subConceptOf {qos#Quality, qos#HigherBetter}
+	qos#unit impliesType qos#PercentageUnit
+
+instance SignuPrivacyRange memberOf qos#QualityRange
+	qos#item hasValue SignupPrivacy
+	qos#min hasValue 0
+        qos#max hasValue 100
+
+/* ------------------ */
+/* Storage properties */
+/* ------------------ */
+
+// Capacity
+concept Capacity subConceptOf {qos#Quality, qos#HigherBetter}
+	qos#unit impliesType qos#SpaceUnit
+
+instance CapacityRange memberOf qos#QualityRange
+	qos#item hasValue Capacity
+	qos#min hasValue 0
+
+concept Redundancy subConceptOf {qos#Quality, qos#HigherBetter}
+	qos#unit impliesType qos#PercentageUnit
+
+instance RedundancyRange memberOf qos#QualityRange
+	qos#item hasValue Redundancy
+	qos#min hasValue 0
+	qos#max hasValue 200
+
+/* ----------------------- */
+/* Main concept definition */
+/* ----------------------- */
+
+concept Protocol
+	hasType ofType (1) _string
+	hasUrl ofType (1) _string
+
+concept CloudStoragePlan subConceptOf biz#BusinessService
+	hasSignupForm ofType (1) _string
+	hasProtocol ofType (0 *) Protocol
+	hasCapacity ofType (1) Capacity
+
+concept CloudStorage subConceptOf rqos#RemoteQoS
+	hasName ofType (1) _string
+	hasIcon ofType (1) _string
+	hasWebsite ofType (1) _string
+	hasCountry ofType (1) _string
+	hasStoragePlan ofType (1 *) CloudStoragePlan
+
+// TODO: specific xsd#foo types where applicable
+// TODO: hasCountry should be something like context#LocationContext
+
+// TODO: CloudStorage subConceptOf CloudService
+//       instance XCloud memberOf {CloudStorage, OnlineAccount}
+

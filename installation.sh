@@ -19,22 +19,27 @@ else
 	echo "Ohne SPACE weiter - ConQo + Contract Wizard müssen vorhanden sein oder von extern genutzt werden."
 fi
 
-echo "Registrierung der Speicherdienstanbieter..."
+read -p "SPACE-Plattformdienste konfigurieren? (j/N) " antwort
 
-for service in services/CloudServices/*.wsml; do
-	servicename=$(basename "$service")
-	echo "-------------------------------------------"
-	echo "Registriere Service:    $servicename"
-	conqotool -u admin register "$service"
-done
+if [ "$antwort" == "j" ]
+then
+	echo "Registrierung der Speicherdienstanbieter..."
 
-#ontologiepath=`find /var/lib 2>/dev/null | grep Matchmaker/ontologies | head -n 1 `cloud
-ontologiepath=/var/lib/tomcat6/webapps/Matchmaker/ontologies/
+	for service in services/CloudServices/*.wsml; do
+		servicename=$(basename "$service")
+		echo "-------------------------------------------"
+		echo "Registriere Service:    $servicename"
+		conqotool -u admin register "$service"
+	done
 
-echo
-echo
-echo "Kopiere CloudQoS-Ontologie"
-sudo cp services/CloudQoS.wsml $ontologiepath
+	#ontologiepath=`find /var/lib 2>/dev/null | grep Matchmaker/ontologies | head -n 1 `cloud
+	ontologiepath=/var/lib/tomcat6/webapps/Matchmaker/ontologies/
+
+	echo
+	echo
+	echo "Kopiere CloudStorage-Ontologie"
+	sudo cp services/CloudStorage.wsml $ontologiepath
+fi
 
 echo
 echo
@@ -56,7 +61,7 @@ echo
 echo
 echo "Installation von CloudFusion"
 
-git submodule init 
+git submodule init
 git submodule update
 
 cd CloudFusion/cloudfusion

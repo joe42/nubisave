@@ -1,5 +1,10 @@
 #!/bin/sh
 
+if [ ! -d debian ]; then
+	echo "Error: Needs to be called from top-level directory as ./debian/rebuild" >&2
+	exit 1
+fi
+
 if [ "$1" = "--force" ]; then
 	rm -f ../nubisave_*
 	git clean -df
