@@ -4,7 +4,7 @@ if [ $# -lt 1 ]; then
    echo "Not enough arguments."
    echo
    echo
-   echo Creates n files {$size}MB#NR for all sizes in test_file_sizes with the size suggested by the name. The content is random. 
+   echo Creates n files {$size}MB_#NR for all sizes in test_file_sizes with the size suggested by the name. The content is random. 
    echo The number of files for each size is specified by the parameter number_of_files.
    echo The files are stored to the specified directory. All files in directory are deleted, when starting the script.
    echo Usage: `basename $0` directory  test_file_sizes number_of_files

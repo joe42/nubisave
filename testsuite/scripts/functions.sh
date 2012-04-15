@@ -39,9 +39,9 @@ function wait_until_transfer_is_complete {
 	transfered_KB=`round $transfered_KB`
 	previous_transfered_KB=$transfered_KB
 	stagnated=0
-	while [[ ($transfered_KB -lt $(($1*1000)) || $stagnated -lt 10) && $stagnated -lt 20 ]];
+	while [[ ($transfered_KB -lt $(($1*1000)) || $stagnated -lt 10) && $stagnated -lt 30 ]];
 	do
-		if [ $(($previous_transfered_KB+5)) -gt $transfered_KB ];
+		if [ $(($previous_transfered_KB+15)) -gt $transfered_KB ];
 		then
 			let stagnated=stagnated+1
 		else		
