@@ -111,10 +111,10 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 		}
 		logStoreProperties(nr_of_file_fragments, nr_of_file_fragments_required, nr_of_redundant_fragments, nrOfRequiredSuccessfullyStoredFragments);
 		if(nr_of_file_fragments_required == 1){
-			fileParts = replicateFile( temp, path, fragmentPaths);
+			fileParts = replicateFile( temp, fragmentPaths);
 		} else if(nr_of_file_fragments_required == nr_of_file_fragments){ //no redundancy but several stores
 			log.debug(" 1 . temp.size():"+ temp.size());
-			fileParts = simpleSplitFile( temp, path, fragmentPaths);
+			fileParts = simpleSplitFile( temp, fragmentPaths);
 		} else {
 			
 			crsSplitFile(temp, fileParts, fragmentPaths,
@@ -183,8 +183,7 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 		return crsidacodec;
 	}
 
-	private HashMap<String, byte[]> simpleSplitFile(FileChannel temp, String path,
-			List<String> fragmentFileNames) throws IOException {
+	private HashMap<String, byte[]> simpleSplitFile(FileChannel temp, List<String> fragmentFileNames) throws IOException {
 			log.debug("Splitting with no redundancy");
 			byte[] arr;
 			int size=0, read_bytes;
@@ -219,8 +218,7 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 		
 	}
 
-	private HashMap<String, byte[]> replicateFile(FileChannel temp, String path,
-			List<String> fragmentFileNames) throws IOException {
+	private HashMap<String, byte[]> replicateFile(FileChannel temp, List<String> fragmentFileNames) throws IOException {
 		byte[] arr;
 		HashMap<String, byte[]> fileParts = new HashMap<String, byte[]>();
 		arr = new byte[(int) temp.size()];
@@ -256,7 +254,7 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 				return simpleGlueFilesTogether(fileFragmentMetaDataStore.getFragments(path), fileFragmentMetaDataStore.getFragmentsChecksums(path));
 			}else {
 				
-				return crsGlueFilesTogether(path, nr_of_redundant_fragments,
+				return crsGlueFilesTogether(nr_of_redundant_fragments,
 						nr_of_file_fragments_required, fragmentPathsToChecksum);
 			}
 		} catch (Exception e) {
@@ -265,8 +263,7 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 		}
 	}
 
-	private RandomAccessTemporaryFileChannel crsGlueFilesTogether(String path,
-			int nr_of_redundant_file_fragments,
+	private RandomAccessTemporaryFileChannel crsGlueFilesTogether(int nr_of_redundant_file_fragments,
 			int nr_of_file_fragments_required,
 			Map<String, byte[]> fragmentPathsToChecksum)
 			throws FuseException, IOException, IDADecodeException,
