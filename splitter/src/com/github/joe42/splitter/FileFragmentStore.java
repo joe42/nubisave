@@ -38,6 +38,10 @@ public class FileFragmentStore {
 		this.fileFragmentMetaDataStore = new FileFragmentMetaDataStore();
 	}
 
+	public void reloadDatabase() throws IOException{
+		fileFragmentMetaDataStore.reloadDatabase();
+	}
+
 	public byte[] readMetaData(String path) throws IOException{
 		MultipleFileHandler serial_multi_file_handler = new SerialMultipleFileHandler();
 		Map<String, byte[]> filePathsToChecksum = new HashMap<String, byte[]>();

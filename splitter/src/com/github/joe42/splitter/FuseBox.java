@@ -1,5 +1,6 @@
 package com.github.joe42.splitter;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.BufferOverflowException;
@@ -32,9 +33,9 @@ public class FuseBox implements Filesystem3, XattrSupport {
 	private static final Logger  log = Logger.getLogger("FuseBox");
 	private static final int blockSize = 512;
 	protected FileFragmentStore fileStore;
-	private FileMetaDataStore metaDataStore;
-	private int UID;
-	private int GID;
+	protected FileMetaDataStore metaDataStore;
+	protected int UID;
+	protected int GID;
 
 	public FuseBox(FilePartFragmentStore fileStore) throws IOException {
 		PropertyConfigurator.configure("log4j.properties");

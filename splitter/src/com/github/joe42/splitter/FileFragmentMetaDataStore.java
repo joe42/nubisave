@@ -17,12 +17,15 @@ import jdbm.htree.HTree;
  */
 public class FileFragmentMetaDataStore {
 	protected HTree fileFragmentsMap;
-	private HTree filePartsMap;
 	protected RecordManager recman;
 	
 	
 	public FileFragmentMetaDataStore() throws IOException{
-		PropertiesUtil props = new PropertiesUtil("../bin/nubi.properties");
+		recman = FileMetaDataStore.getRecordManager();
+		fileFragmentsMap = FileMetaDataStore.loadPersistentMap(recman, "fileFragmentsMap"); 
+	}
+
+	public void reloadDatabase() throws IOException{
 		recman = FileMetaDataStore.getRecordManager();
 		fileFragmentsMap = FileMetaDataStore.loadPersistentMap(recman, "fileFragmentsMap"); 
 	}
