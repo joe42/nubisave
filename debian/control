@@ -2,7 +2,7 @@ Source: nubisave
 Section: x11
 Priority: extra
 Maintainer: Josef Spillner <josef@rumba>
-Build-Depends: debhelper (>= 8.0.0), openjdk-7-jdk | openjdk-6-jdk, python-setuptools, libfuse-dev, gcc
+Build-Depends: debhelper (>= 8.0.0), openjdk-6-jdk | openjdk-7-jdk, python-setuptools, libfuse-dev, gcc
 Standards-Version: 3.9.2
 Homepage: http://nubisave.org/
 Vcs-Git: git://nubisave.org/git/nubisave
