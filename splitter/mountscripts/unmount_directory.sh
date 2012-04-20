@@ -2,7 +2,7 @@
 #usage: sh unmount_directory.sh mountpoint
 
 #remove link to directory
-rm "$1/data"
+rmdir "$1/data"
 #remove config file to let the splitter know that the unmounting went well
 rm "$1/config/config"
 rmdir "$1/config"
