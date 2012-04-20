@@ -294,7 +294,7 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 	}
 
 	/**
-	 * Get a map from each file path to the corresponding checksumof the file
+	 * Get a map from each file path to the corresponding checksum of the file
 	 * @param fragmentPaths list of fragment paths 
 	 * @param checksums ordered to have the same index as the corresponding fragment path
 	 * @return a map from each file path to the corresponding checksum
