@@ -69,11 +69,45 @@ public class Services implements Iterable<StorageService>{
     }
 
     /**
+     * Add a new StorageService instance to the list and persist it.
+     * @param newService the instance to add
+     * @param index the position to add the service to
+     */
+    public void add(StorageService newService, int index){
+        mmServices.add(index, newService);
+        newService.storeConfiguration(database_directory);
+    }
+
+    /**
+     * Add a new StorageService instance to the list and persist it.
+     * @param newService the instance to add
+     * @param index the position to add the service to
+     */
+    public int getIndexByUniqueName(String uniqueName) {
+        for(int i=0; i<mmServices.size(); i++){
+            if(mmServices.get(i).getUniqName().equals(uniqueName)){
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
      * Persists changes to an existing service.
      * @param existingService the instance to persist
      */
     public void update(StorageService existingService){
         existingService.storeConfiguration(database_directory);
+    }
+
+    /**
+     * Persists the current services to a directory
+     * @param database_directory path to a directory (i.e. "/mydb")
+     */
+    public void storeToDatabase(String database_directory){
+        for(StorageService s: nubisave.Nubisave.services){
+            s.storeConfiguration(database_directory);
+        }
     }
 
     /**
