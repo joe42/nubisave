@@ -10,8 +10,6 @@
  */
 package nubisave.ui;
 
-import nubisave.Nubisave;
-import java.awt.Desktop;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -24,7 +22,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import nubisave.*;
 
@@ -146,6 +143,7 @@ public class MainWindow extends javax.swing.JFrame {
         splitterSessionComboBox = new javax.swing.JComboBox();
         jLabel5 = new javax.swing.JLabel();
         saveSessionButton = new javax.swing.JButton();
+        loadSessionButton = new javax.swing.JButton();
 
         customStorageserviceChooser.setCurrentDirectory(new java.io.File("../splitter/mountscripts"));
         customStorageserviceChooser.setDialogTitle("Custom Service");
@@ -166,7 +164,7 @@ public class MainWindow extends javax.swing.JFrame {
         jScrollPane1.setViewportView(providerTable);
         providerTable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
 
-        jButton1.setText("Remote");
+        jButton1.setText("Search");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -195,7 +193,7 @@ public class MainWindow extends javax.swing.JFrame {
             providerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, providerPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 579, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 656, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(providerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(migrateBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -287,11 +285,23 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
-        splitterSessionComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        splitterSessionComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9" }));
 
         jLabel5.setText("Choose Session:");
 
         saveSessionButton.setText("Save Session");
+        saveSessionButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveSessionButtonActionPerformed(evt);
+            }
+        });
+
+        loadSessionButton.setText("Load Session");
+        loadSessionButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loadSessionButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout optionPanelLayout = new javax.swing.GroupLayout(optionPanel);
         optionPanel.setLayout(optionPanelLayout);
@@ -300,23 +310,23 @@ public class MainWindow extends javax.swing.JFrame {
             .addGroup(optionPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(redundancySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 699, Short.MAX_VALUE)
+                    .addComponent(redundancySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 776, Short.MAX_VALUE)
                     .addComponent(jLabel2)
                     .addComponent(jLabel3)
                     .addGroup(optionPanelLayout.createSequentialGroup()
                         .addGroup(optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(matchMakerLabel)
-                            .addComponent(matchMakerURLField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 613, Short.MAX_VALUE))
+                            .addComponent(matchMakerURLField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 690, Short.MAX_VALUE))
                         .addGap(36, 36, 36)
                         .addComponent(changeMatchMakerURLBtn))
                     .addGroup(optionPanelLayout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addGap(67, 67, 67)
                         .addComponent(storageStrategyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 366, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 443, Short.MAX_VALUE))
                     .addGroup(optionPanelLayout.createSequentialGroup()
                         .addComponent(availabilityLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 624, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 701, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, optionPanelLayout.createSequentialGroup()
                         .addGroup(optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, optionPanelLayout.createSequentialGroup()
@@ -325,9 +335,11 @@ public class MainWindow extends javax.swing.JFrame {
                                 .addComponent(jLabel5)
                                 .addGap(38, 38, 38)
                                 .addComponent(splitterSessionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 191, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 133, Short.MAX_VALUE)
+                                .addComponent(loadSessionButton)
+                                .addGap(68, 68, 68)
                                 .addComponent(saveSessionButton))
-                            .addComponent(mntDirTxtField, javax.swing.GroupLayout.DEFAULT_SIZE, 612, Short.MAX_VALUE))
+                            .addComponent(mntDirTxtField, javax.swing.GroupLayout.DEFAULT_SIZE, 689, Short.MAX_VALUE))
                         .addGap(36, 36, 36)
                         .addComponent(openMntDirBtn)))
                 .addContainerGap())
@@ -340,7 +352,8 @@ public class MainWindow extends javax.swing.JFrame {
                     .addComponent(splitterIsMountedCheckBox)
                     .addComponent(jLabel5)
                     .addComponent(splitterSessionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(saveSessionButton))
+                    .addComponent(saveSessionButton)
+                    .addComponent(loadSessionButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -371,7 +384,7 @@ public class MainWindow extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 719, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 796, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -451,10 +464,22 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_jTabbedPane1StateChanged
 
     private void migrateBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_migrateBtnActionPerformed
-        List<String> storeNames = new ArrayList<String>();
         MigrationDialog migrationDialog = new MigrationDialog(this, true);
         migrationDialog.setVisible(true);
     }//GEN-LAST:event_migrateBtnActionPerformed
+
+    private void saveSessionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveSessionButtonActionPerformed
+        int sessionNumber = Integer.parseInt((String)splitterSessionComboBox.getSelectedItem());
+        Nubisave.mainSplitter.storeSession(sessionNumber);
+    }//GEN-LAST:event_saveSessionButtonActionPerformed
+
+    private void loadSessionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadSessionButtonActionPerformed
+        int sessionNumber = Integer.parseInt((String)splitterSessionComboBox.getSelectedItem());
+        Nubisave.mainSplitter.loadSession(sessionNumber);
+        tableModel.fireTableDataChanged();
+        redundancySlider.setValue(Nubisave.mainSplitter.getRedundancy());
+        storageStrategyComboBox.setSelectedItem(Nubisave.mainSplitter.getStorageStrategy());
+    }//GEN-LAST:event_loadSessionButtonActionPerformed
     public NubiTableModel tableModel;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel availabilityLabel;
@@ -470,6 +495,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JOptionPane jOptionPane1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JButton loadSessionButton;
     private javax.swing.JTextField matchMakerField;
     private javax.swing.JLabel matchMakerLabel;
     private javax.swing.JLabel matchMakerLabel1;
