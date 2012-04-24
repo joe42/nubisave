@@ -45,7 +45,7 @@ public class FileFragments implements Serializable {
 	}
 
 	/**
-	 * Get the checksum for each file fragment corresponding to the file corresponding to the fileFragmentPath at the same index position
+	 * Get the checksum for each file fragment corresponding to the fileFragmentPath at the same index position
 	 * @return checksums for each file fragment in the same order as specified by their paths in fileFragmentPaths
 	 */
 	public List<byte[]> getChecksums(){

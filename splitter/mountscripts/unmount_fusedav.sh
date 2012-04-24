@@ -4,7 +4,7 @@
 fusermount -zu "$1/data"
 
 #remove data directory
-rm "$1/data"
+rmdir "$1/data"
 #remove config file to let the splitter know that the unmounting went well
 rm "$1/config/config"
 rmdir "$1/config"

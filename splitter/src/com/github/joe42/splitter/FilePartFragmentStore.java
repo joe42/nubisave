@@ -221,4 +221,5 @@ public class FilePartFragmentStore extends FileFragmentStore{
 	public long getSize(String path) throws IOException {
 		return ((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).getSize(path);
 	}
+	
 }

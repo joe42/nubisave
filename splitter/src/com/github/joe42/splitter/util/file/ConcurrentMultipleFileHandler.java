@@ -22,7 +22,7 @@ public class ConcurrentMultipleFileHandler implements MultipleFileHandler{
 
 		public ConcurrentMultipleFileHandler() {
 			PropertyConfigurator.configure("log4j.properties");
-			this.digestFunc = new MD5Digest();
+			this.digestFunc = new SHA256Digest();
 		}
 		
 		public MultipleFiles writeFilesAsByteArrays(HashMap<String, byte[]> files){
@@ -215,25 +215,21 @@ public class ConcurrentMultipleFileHandler implements MultipleFileHandler{
 				return getFileAsByteArray(this.file_name);
 			}
 			
-			private byte[] getFileAsByteArray(String file_name) {
+			private byte[] getFileAsByteArray(String file_name) throws Exception {
 				byte[] ret = null;
 				File file = new File(file_name);
 				if (file.exists()) {
-					try {
-						FileInputStream in = new FileInputStream(file);
-						int len = (int) file.length();
-						if(len < 0){
-							log.error("file length returned must not be negative, but is:"+len);
-							return null;
-						} 
-						ret = new byte[(int) file.length()];
-						in.read(ret);
-						in.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+					FileInputStream in = new FileInputStream(file);
+					int len = (int) file.length();
+					if(len < 0){
+						throw new IOException("file length returned must not be negative, but is: "+len);
+					} 
+					ret = new byte[(int) file.length()];
+					in.read(ret);
+					in.close();
+					return ret;
 				}
-				return ret;
+				throw new FileNotFoundException("File not found: "+file_name);
 			}
 
 		}	
