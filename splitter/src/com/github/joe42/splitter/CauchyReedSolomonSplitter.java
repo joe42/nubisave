@@ -8,6 +8,7 @@ import java.util.*;
 import org.apache.log4j.Logger;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.digests.MD5Digest;
+import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.jigdfs.ida.base.InformationDispersalCodec;
 import org.jigdfs.ida.base.InformationDispersalDecoder;
 import org.jigdfs.ida.base.InformationDispersalEncoder;
@@ -47,7 +48,7 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 		this.services = services;
 		redundancy = 50;
 		storageStrategyName = "";
-		digestFunc = new MD5Digest();
+		digestFunc = new SHA256Digest();
 		storageStrategyFactory = new StorageStrategyFactory(services);
 		concurrent_multi_file_handler = new ConcurrentMultipleFileHandler(digestFunc);
 		serial_multi_file_handler = new SerialMultipleFileHandler(digestFunc);
@@ -287,7 +288,9 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 				.getFilesAsByteArrays(fragmentPathsToChecksum,
 						nr_of_file_fragments_required);
 		receivedFileSegments = multipleFiles.getSuccessfullyTransferedFiles();
-		log.debug("received fragments: "+ receivedFileSegments.size());
+		log.debug("successfully transfered fragments: "+ receivedFileSegments.size());
+		log.debug("fragments with corrupted content: "+ multipleFiles.getNrOfUnsuccessfullyTransferedFiles());
+		
 		byte[] recoveredFile = decoder.process(receivedFileSegments);
 		ret.getChannel().write(ByteBuffer.wrap(recoveredFile));
 		return ret;
