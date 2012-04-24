@@ -125,6 +125,7 @@ public class MainWindow extends javax.swing.JFrame {
         jButton3 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         migrateBtn = new javax.swing.JButton();
+        reloadServicesButton = new javax.swing.JButton();
         optionPanel = new javax.swing.JPanel();
         mntDirTxtField = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
@@ -187,6 +188,13 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
+        reloadServicesButton.setText("Reload");
+        reloadServicesButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                reloadServicesButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout providerPanelLayout = new javax.swing.GroupLayout(providerPanel);
         providerPanel.setLayout(providerPanelLayout);
         providerPanelLayout.setHorizontalGroup(
@@ -196,6 +204,7 @@ public class MainWindow extends javax.swing.JFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 656, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(providerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(reloadServicesButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(migrateBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButton3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -214,7 +223,9 @@ public class MainWindow extends javax.swing.JFrame {
                         .addComponent(jButton1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 288, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 246, Short.MAX_VALUE)
+                        .addComponent(reloadServicesButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(migrateBtn)))
                 .addContainerGap())
         );
@@ -480,6 +491,16 @@ public class MainWindow extends javax.swing.JFrame {
         redundancySlider.setValue(Nubisave.mainSplitter.getRedundancy());
         storageStrategyComboBox.setSelectedItem(Nubisave.mainSplitter.getStorageStrategy());
     }//GEN-LAST:event_loadSessionButtonActionPerformed
+
+    private void reloadServicesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reloadServicesButtonActionPerformed
+        Nubisave.services.loadFromDataBase(Nubisave.mainSplitter.getConfigDir());
+        Nubisave.services.update();
+        int index = Nubisave.services.getIndexByUniqueName("config");
+        if(index != -1){
+            Nubisave.services.remove(index);
+            tableModel.fireTableDataChanged();
+        }
+    }//GEN-LAST:event_reloadServicesButtonActionPerformed
     public NubiTableModel tableModel;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel availabilityLabel;
@@ -507,6 +528,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JPanel providerPanel;
     private javax.swing.JTable providerTable;
     private javax.swing.JSlider redundancySlider;
+    private javax.swing.JButton reloadServicesButton;
     private javax.swing.JButton saveSessionButton;
     private javax.swing.JCheckBox splitterIsMountedCheckBox;
     private javax.swing.JComboBox splitterSessionComboBox;

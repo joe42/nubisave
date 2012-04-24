@@ -79,6 +79,20 @@ public class Services implements Iterable<StorageService>{
     }
 
     /**
+     * Add a new StorageService instance to the list and persist it.
+     * @param newService the instance to add
+     * @param index the position to add the service to
+     */
+    public int getIndexByUniqueName(String uniqueName) {
+        for(int i=0; i<mmServices.size(); i++){
+            if(mmServices.get(i).getUniqName().equals(uniqueName)){
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
      * Persists changes to an existing service.
      * @param existingService the instance to persist
      */

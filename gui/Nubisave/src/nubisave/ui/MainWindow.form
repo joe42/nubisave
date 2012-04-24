@@ -72,6 +72,7 @@
                       <Component id="jScrollPane1" pref="656" max="32767" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="reloadServicesButton" max="32767" attributes="1"/>
                           <Component id="migrateBtn" max="32767" attributes="1"/>
                           <Component id="jButton3" alignment="1" max="32767" attributes="1"/>
                           <Component id="jLabel1" alignment="0" max="32767" attributes="1"/>
@@ -93,7 +94,9 @@
                               <Component id="jButton1" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="jButton3" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="288" max="32767" attributes="0"/>
+                              <EmptySpace pref="246" max="32767" attributes="0"/>
+                              <Component id="reloadServicesButton" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="migrateBtn" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -154,6 +157,14 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="migrateBtnActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JButton" name="reloadServicesButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Reload"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="reloadServicesButtonActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>

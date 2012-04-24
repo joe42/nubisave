@@ -37,6 +37,9 @@ public class Splitter {
     public String getDataDir(){
         return dataDir;
     }
+    public String getConfigDir(){
+        return configurationDirPath;
+    }
     /**
      * Mount the Splitter module.
      * Waits at most 10 seconds until the splitter is mounted.
