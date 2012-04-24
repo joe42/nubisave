@@ -74,7 +74,7 @@ public class FilePartFragmentMetaDataStore extends FileFragmentMetaDataStore{
 	 * @return the paths to all fragments of the file part
 	 * @throws IOException*/ 
 	public ArrayList<String> getFilePartFragments(String filePath, int filePartNumber) throws IOException{
-		return  super.getFragments(filePath+filePartNumber);
+		return  super.getFragments(filePath+"#"+filePartNumber+"#");
 	}
 	
 	/** Gets the fragments of one file part 
