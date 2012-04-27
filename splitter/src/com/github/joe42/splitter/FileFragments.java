@@ -2,6 +2,7 @@ package com.github.joe42.splitter;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -12,22 +13,22 @@ public class FileFragments implements Serializable {
 	private ArrayList<String> fileFragmentPaths;
 	private int requiredFragments;
 	private int nrOfRequiredSuccessfullyStoredFragments;
-	private String checksum;
+	private List<byte[]> checksums;
 	private long filesize;
 	
 	/**
 	 * @param fileFragmentPaths the paths of the fragments belonging to one file
 	 * @param requiredFragments the number of fragments required to reconstruct the file
 	 * @param nrOfRequiredSuccessfullyStoredFragments the number of file fragments that must be stored successfully
-	 * @param checksum the complete file's checksum 
+	 * @param checksums the checksum for each file fragment corresponding to the fileFragmentPath at the same index position
 	 * @param filesize the complete file's size 
 	 * @param offset the offset of the complete file, if it is yet just another fragment of a greater complete file and 0 otherwise
 	 */
-	public FileFragments(ArrayList<String> fileFragmentPaths, int requiredFragments, int nrOfRequiredSuccessfullyStoredFragments, String checksum, long filesize){
+	public FileFragments(ArrayList<String> fileFragmentPaths, int requiredFragments, int nrOfRequiredSuccessfullyStoredFragments, List<byte[]> checksums, long filesize){
 		this.fileFragmentPaths = fileFragmentPaths;
 		this.requiredFragments = requiredFragments;
 		this.nrOfRequiredSuccessfullyStoredFragments = nrOfRequiredSuccessfullyStoredFragments;
-		this.checksum = checksum;
+		this.checksums = checksums;
 		this.filesize = filesize;
 	}
 
@@ -39,12 +40,16 @@ public class FileFragments implements Serializable {
 		return filesize;
 	}
 	
-	public void setChecksum(String checksum){
-		this.checksum= checksum;
+	public void setChecksums(ArrayList<byte[]> checksums){
+		this.checksums = checksums;
 	}
 
-	public String getChecksum(){
-		return checksum;
+	/**
+	 * Get the checksum for each file fragment corresponding to the fileFragmentPath at the same index position
+	 * @return checksums for each file fragment in the same order as specified by their paths in fileFragmentPaths
+	 */
+	public List<byte[]> getChecksums(){
+		return checksums;
 	}
 	
 	public void setNrOfRequiredSuccessfullyStoredFragments(int nrOfRequiredSuccessfullyStoredFragments){
@@ -70,10 +75,6 @@ public class FileFragments implements Serializable {
 
 	public ArrayList<String> getPaths(){
 		return fileFragmentPaths;
-	}
-	
-	public void setPaths(ArrayList<String> fileFragmentPaths){
-		this.fileFragmentPaths = fileFragmentPaths;
 	}
 
 	public void setNrOfRequiredFragments(int requiredFragments) {

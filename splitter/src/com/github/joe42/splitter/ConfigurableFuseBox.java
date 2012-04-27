@@ -2,20 +2,40 @@ package com.github.joe42.splitter;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedSet;
+import java.util.Map.Entry;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
+import jdbm.RecordManagerFactory;
+
+import org.apache.commons.collections.OrderedMap;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.bouncycastle.util.encoders.Hex;
 import org.ini4j.Ini;
 
 import com.github.joe42.splitter.backend.BackendService;
+import com.github.joe42.splitter.backend.BackendServices;
 import com.github.joe42.splitter.backend.Mounter;
 import com.github.joe42.splitter.backend.StorageServicesMgr;
 import com.github.joe42.splitter.backend.StorageService;
 import com.github.joe42.splitter.util.StringUtil;
 import com.github.joe42.splitter.util.file.FileUtil;
 import com.github.joe42.splitter.util.file.IniUtil;
+import com.github.joe42.splitter.util.file.PropertiesUtil;
+import com.github.joe42.splitter.util.file.RandomAccessTemporaryFileChannel;
+import com.github.joe42.splitter.vtf.FileEntry;
 import com.github.joe42.splitter.vtf.FolderEntry;
 import com.github.joe42.splitter.vtf.VirtualFile;
 import com.github.joe42.splitter.vtf.VirtualFileContainer;
@@ -149,12 +169,238 @@ public class ConfigurableFuseBox extends FuseBox  implements StorageService{
 		vtSplitterConfig.setText(IniUtil.getString(config));
 	}
 
-	private void configureSplitter() {
+	private void configureSplitter() throws FuseException {
 		Ini config = IniUtil.getIni(vtSplitterConfig.getText());
+		//TODO: check and write version
+		try {
+			if(config.get("splitter").containsKey("save")){ 
+				log.debug("save Splitter's configuration");
+				if(config.containsKey("database")){ 
+					saveDatabase(config);
+				}
+				String sessionNumber = config.fetch("splitter", "save", String.class);
+				config.remove("splitter", "save");
+				fileStore.writeMetaData(IniUtil.getString(config), "/.nubisave_database.meta"+sessionNumber);
+				storageServiceMgr.getServices().storeServiceNames(".nubisave_service_name.session"+sessionNumber);
+			} else if(config.get("splitter").containsKey("load")){
+				setServicesMapping(config);
+				config = loadDatabaseMetaData(config);
+				reloadDatabase(config);
+			}
+			
+		} catch (IOException e) {
+			throw new FuseException("IO Exception on persisting Splitter's configuration.")
+				.initErrno(FuseException.EIO);
+		}
+		vtSplitterConfig.setText(IniUtil.getString(config));
 		setRedundancy(config.fetch("splitter", "redundancy", Integer.class));
 		setStorageStrategyName(config.fetch("splitter", "storagestrategy", String.class));
 		updateVTSplitterConfigFile();
 	}
+
+	private void reloadDatabase(final Ini config) {
+		log.debug("Overwriting current database with saved session");
+		final String dbPath = config.fetch("database", "path", String.class);
+		ScheduledExecutorService worker = Executors.newSingleThreadScheduledExecutor();
+			  worker.schedule(new Runnable() {
+				@Override
+				public void run() {
+					PropertiesUtil props = new PropertiesUtil("../bin/nubi.properties");
+					try {
+						FileUtil.copy(new File(System.getProperty("user.home")+"/.nubisave/nubisavemount/data"+dbPath), new File(props.getProperty("splitter_database_location")+".db"));
+						new File(props.getProperty("splitter_database_location")+".lg").delete();
+						metaDataStore.reloadDataBase();
+						fileStore.reloadDatabase();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}, 1, TimeUnit.SECONDS);
+	}
+
+	/**
+	 * Sets the mapping of current to previous service names in the splitter's configuration file
+	 * The section name is MapOfCurrentToPreviousServices and the parameter names are the current services' names
+	 * with the corresponding previous services' names as values. The services need to be renamed in order to access the files
+	 * from the previous session, after the database has been reloaded.
+	 */
+	private void setServicesMapping(Ini config) {String sessionNumber = config.fetch("splitter", "load", String.class);
+		Map<String,String> newToPreviousServiceNames =  storageServiceMgr.getServices().getServiceNameMapping(".nubisave_service_name.session"+sessionNumber);
+		for(Entry<String, String> newToPreviousServiceName: newToPreviousServiceNames.entrySet()){
+			config.put("MapOfCurrentToPreviousServices", newToPreviousServiceName.getKey(), newToPreviousServiceName.getValue());
+		}
+		vtSplitterConfig.setText(IniUtil.getString(config)); //TODO: synchronize
+	}
+
+	private Ini loadDatabaseMetaData(Ini config) throws IOException,
+			UnsupportedEncodingException {
+		log.debug("load Splitter's configuration");
+		byte[] splitter_config = fileStore.readMetaData("/.nubisave_database.meta"+config.fetch("splitter", "load", Integer.class));
+		log.debug("new String(splitter_config)"+new String(splitter_config));
+		vtSplitterConfig.setText(new String(splitter_config, "UTF-8")); 
+		config = IniUtil.getIni(new String(splitter_config, "UTF-8"));
+		config.remove("splitter", "load");
+
+		String dbPath = config.fetch("database", "path", String.class);
+		long dbSize = config.fetch("database", "size", long.class);
+		ArrayList<String> fragmentNames = new ArrayList<String>();
+		ArrayList<byte[]> checksums;
+		ArrayList<String> absoluteFragmentNames;
+		int nr_of_file_fragments_required;
+		int nr_of_file_fragments;
+		String sectionName, dbPartPath;
+		int databasePartNr = 0;
+		while(true){
+			sectionName = "databasePartNr_"+databasePartNr;
+			if( ! config.containsKey(sectionName) ){
+				break;
+			}
+			databasePartNr++;
+			dbPartPath = config.fetch(sectionName, "name", String.class);
+			nr_of_file_fragments_required = config.fetch(sectionName, "nrOfFileFragmentsRequired", Integer.class);
+			nr_of_file_fragments = config.fetch(sectionName, "nrOfFileFragments", Integer.class);
+			fragmentNames = new ArrayList<String>();
+			checksums = new ArrayList<byte[]>();
+			for(int i=0; i<nr_of_file_fragments; i++){
+				fragmentNames.add(config.fetch(sectionName, "fileFragmentName_"+i, String.class));
+				log.debug("fragment name "+i+": "+fragmentNames.get(i));
+				checksums.add( Hex.decode(config.fetch(sectionName, "fileFragmentNameChecksum_"+i, String.class)) );
+			}
+			absoluteFragmentNames = getAbsoluteFragmentPaths(fragmentNames, nr_of_file_fragments);
+			fileStore.fileFragmentMetaDataStore.setFragments(dbPartPath, absoluteFragmentNames, nr_of_file_fragments_required, nr_of_file_fragments, checksums, dbSize);
+			((FilePartFragmentMetaDataStore)fileStore.fileFragmentMetaDataStore).put(dbPath,dbSize);
+		}		
+		FileEntry fileEntry;
+			//metaDataStore.makeFolderEntry(dbPath);
+			fileEntry = metaDataStore.makeFileEntry(dbPath);
+			fileEntry.uid = UID;
+			fileEntry.gid = GID;
+			log.debug("size:"+fileStore.getSize(dbPath));
+			metaDataStore.putFileEntry(dbPath, fileEntry);
+		log.debug("Metadata of database successfully created");
+		return config;
+	}
+
+	/**
+	 * Get the absolute fragment paths of the fragment names
+	 * Since the paths of the back end services might differ on an other machine, only the relative fragment names
+	 * are stored online for global access. Here they are prefixed with the available local back end services' paths, 
+	 * if a file fragment exists on this back end. If not enough file fragments exist on the local back ends,
+	 * fake paths are included, so that the number of returned paths equals the nr_of_file_fragments.
+	 * This is important, as the number parameterizes the reconstruction mechanism.
+	 */
+	private ArrayList<String> getAbsoluteFragmentPaths(ArrayList<String> fragmentNames, int nr_of_file_fragments) {
+		ArrayList<String> absoluteFragmentNames = new ArrayList<String>();
+		boolean matchFound ;
+		for(String fragmentName: fragmentNames){
+			matchFound = false;
+			for(BackendService backend: storageServiceMgr.getServices().getFrontEndStorageServices()){
+				if(new File(backend.getDataDirPath()+fragmentName).exists()){
+					absoluteFragmentNames.add(backend.getDataDirPath()+fragmentName);
+					log.debug("absolute fragment name: "+backend.getDataDirPath()+fragmentName);
+					matchFound = true;
+					break;
+				}
+			}
+			if( ! matchFound ){
+				absoluteFragmentNames.add("fakePath");
+			}
+		}
+		return absoluteFragmentNames;
+	}
+
+	private void saveDatabase(Ini config) throws IOException {
+		String dbPath = config.fetch("database", "path", String.class);
+		FilePartFragmentMetaDataStore filePartFragmentDataStore = (FilePartFragmentMetaDataStore)fileStore.fileFragmentMetaDataStore;
+		long size = fileStore.getSize(dbPath);
+		log.debug("database dbPath: "+dbPath);
+		log.debug("database size: "+size);
+		config.put("database", "size", size);
+		List<String> fragments;
+		List<byte[]> checksums;
+		String sectionName;
+		int databasePartNr = 0;
+		for(String dbPartPath:  filePartFragmentDataStore.getFilePartPaths(dbPath)){
+			sectionName = "databasePartNr_"+databasePartNr;
+			fragments = getFragments(dbPartPath);
+			checksums = ((FileFragmentMetaDataStore)fileStore.fileFragmentMetaDataStore).getFragmentsChecksums(dbPartPath);
+			config.put(sectionName, "name", dbPartPath);
+			config.put(sectionName, "nrOfFileFragmentsRequired", filePartFragmentDataStore.getNrOfRequiredFragments(dbPartPath));
+			config.put(sectionName, "nrOfFileFragments", filePartFragmentDataStore.getNrOfFragments(dbPartPath));
+			for(int i=0; i<fragments.size();i++){
+				log.debug("fragment name "+i+": "+fragments.get(i));
+				config.put(sectionName, "fileFragmentName_"+i, fragments.get(i));
+				log.debug("checksums.get(i)="+checksums.size());
+				config.put(sectionName, "fileFragmentNameChecksum_"+i, new String(Hex.encode(checksums.get(i))) );
+				databasePartNr++;
+			}
+		}
+	}
+	
+	private void deletePreviousSession(Ini config) throws IOException{
+		String sectionName;
+		Ini previousSession;
+		int databasePartNr = 0;
+		while(true){ // remove previous database parts
+			sectionName = "databasePartNr_"+databasePartNr;
+			if( ! config.containsKey(sectionName) ){
+				break;
+			}
+			config.remove(sectionName);
+			databasePartNr++;
+		}
+		byte[] splitter_config = fileStore.readMetaData("/.nubisave_database.meta"+config.fetch("splitter", "load", Integer.class));
+		previousSession = IniUtil.getIni(new String(splitter_config, "UTF-8"));
+
+		ArrayList<String> fragmentNames = new ArrayList<String>();
+		ArrayList<String> absoluteFragmentNames;
+		int nr_of_file_fragments;
+		databasePartNr = 0;
+		while(true){
+			sectionName = "databasePartNr_"+databasePartNr;
+			if( ! previousSession.containsKey(sectionName) ){
+				break;
+			}
+			databasePartNr++;
+			nr_of_file_fragments = previousSession.fetch(sectionName, "nrOfFileFragments", Integer.class);
+			fragmentNames = new ArrayList<String>();
+			for(int i=0; i<nr_of_file_fragments; i++){
+				fragmentNames.add(previousSession.fetch(sectionName, "fileFragmentName_"+i, String.class));
+			}
+			absoluteFragmentNames = getAbsoluteFragmentPaths(fragmentNames, nr_of_file_fragments);
+			for(String previousFragment: absoluteFragmentNames){
+				new File(previousFragment).delete();
+			}
+		}		
+	}
+
+	private List<String> getFragments(String dbPartPath) throws IOException {
+		List<String> ret = new ArrayList<String>();
+		if(fileStore.fileFragmentMetaDataStore instanceof FilePartFragmentMetaDataStore){
+			FilePartFragmentMetaDataStore filePartFragmentMetaDataStore = ((FilePartFragmentMetaDataStore)fileStore.fileFragmentMetaDataStore);
+			String fragmentName;
+			int indexAfterDataDir;
+			int i=0;
+			for(String filePartFragmentPath: filePartFragmentMetaDataStore.getFilePartFragments(dbPartPath)){
+				log.debug("dbPartPath:"+filePartFragmentPath);
+				indexAfterDataDir = filePartFragmentPath.indexOf(DATA_DIR)+DATA_DIR.length();
+				fragmentName = filePartFragmentPath.substring(indexAfterDataDir);
+				ret.add(fragmentName);
+				i++;
+			}
+		} /*else {
+			List<String> absoluteFragmentNames =  fileStore.fileFragmentMetaDataStore.getFragments(dbPath);
+			String fragmentName = null; 
+			List<byte[]> checksums = fileStore.fileFragmentMetaDataStore.getFragmentsChecksums(dbPath);
+			for(int i=0; i<absoluteFragmentNames.size(); i++){
+				fragmentName =  absoluteFragmentNames.get(i).substring(absoluteFragmentNames.get(i).indexOf(DATA_DIR)+DATA_DIR.length());
+				log.debug("fragment name "+i+": "+fragmentName);
+				ret.put(fragmentName, checksums.get(i));
+			}
+		}*/
+		return ret;
+	}
+	
 
 	@Override
 	public int read(String path, Object fh, ByteBuffer buf, long offset)

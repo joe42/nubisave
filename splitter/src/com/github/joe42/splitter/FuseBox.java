@@ -1,59 +1,41 @@
 package com.github.joe42.splitter;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
-import java.nio.channels.FileChannel;
-import java.util.*;
-
-import jdbm.RecordManager;
-import jdbm.RecordManagerFactory;
 import jdbm.helper.FastIterator;
-import jdbm.htree.HTree;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 import com.github.joe42.splitter.util.LinuxUtil;
-import com.github.joe42.splitter.util.file.MultipleFileHandler;
-import com.github.joe42.splitter.util.file.RandomAccessTemporaryFileChannels;
-import com.github.joe42.splitter.util.file.PropertiesUtil;
 import com.github.joe42.splitter.vtf.Entry;
 import com.github.joe42.splitter.vtf.FileEntry;
 import com.github.joe42.splitter.vtf.FolderEntry;
-import com.github.joe42.splitter.vtf.VirtualFileContainer;
 
 import fuse.Filesystem3;
 import fuse.FuseDirFiller;
 import fuse.FuseException;
 import fuse.FuseFtype;
 import fuse.FuseGetattrSetter;
-import fuse.FuseMount;
 import fuse.FuseOpenSetter;
 import fuse.FuseSizeSetter;
 import fuse.FuseStatfs;
 import fuse.FuseStatfsSetter;
 import fuse.XattrLister;
 import fuse.XattrSupport;
-import fuse.compat.Filesystem1;
-import fuse.compat.FuseDirEnt;
 import fuse.compat.FuseStat;
 
 public class FuseBox implements Filesystem3, XattrSupport {
 	private static final Logger  log = Logger.getLogger("FuseBox");
-
 	private static final int blockSize = 512;
-
 	protected FileFragmentStore fileStore;
-
-	private FileMetaDataStore metaDataStore;
-
-	private int UID;
-
-	private int GID;
+	protected FileMetaDataStore metaDataStore;
+	protected int UID;
+	protected int GID;
 
 	public FuseBox(FilePartFragmentStore fileStore) throws IOException {
 		PropertyConfigurator.configure("log4j.properties");
@@ -205,7 +187,6 @@ public class FuseBox implements Filesystem3, XattrSupport {
 			if (dirEntry == null)
 				throw new FuseException("No Such Entry")
 						.initErrno(FuseException.ENOENT);
-			new File(path).delete();
 			metaDataStore.remove(path);
 		} catch (IOException e) {
 			throw new FuseException("IO Exception on accessing metadata")

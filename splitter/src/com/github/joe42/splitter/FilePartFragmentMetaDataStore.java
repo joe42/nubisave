@@ -31,6 +31,11 @@ public class FilePartFragmentMetaDataStore extends FileFragmentMetaDataStore{
 		filePathToFilePartNumbersMap = FileMetaDataStore.loadPersistentMap(recman, "filenameTofilePartNumbersMap"); 
 	}
 	
+	public void reloadDatabase() throws IOException{
+		super.reloadDatabase();
+		filePathToFilePartNumbersMap = FileMetaDataStore.loadPersistentMap(recman, "filenameTofilePartNumbersMap"); 
+	}
+
 	/**Store a file part name along with its number persistently
 	 * @param filePath the path of the whole file
 	 * @param offset the offset, which is automatically assigned to a file part number 
@@ -69,7 +74,7 @@ public class FilePartFragmentMetaDataStore extends FileFragmentMetaDataStore{
 	 * @return the paths to all fragments of the file part
 	 * @throws IOException*/ 
 	public ArrayList<String> getFilePartFragments(String filePath, int filePartNumber) throws IOException{
-		return  super.getFragments(filePath+filePartNumber);
+		return  super.getFragments(filePath+"#"+filePartNumber+"#");
 	}
 	
 	/** Gets the fragments of one file part 

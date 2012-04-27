@@ -1,7 +1,10 @@
 #!/bin/sh
-#usage: sh unmount_directory.sh mountpoint
+#usage: sh unmount_fuSim.sh mountpoint
 
-#remove link to directory
+#unmount fuSim 
+fusermount -zu "$1/data"
+
+#remove data directory
 rmdir "$1/data"
 #remove config file to let the splitter know that the unmounting went well
 rm "$1/config/config"

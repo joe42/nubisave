@@ -80,7 +80,7 @@ public class CauchyInformationDispersalEncoder
          throw new IDAInvalidParametersException("Threshold must be less than or equal to number of slices");
       }
       
-      this.params = new CauchyIDAParameters(this.threshold, this.numSlices - this.threshold, this.chunkSize);
+      this.params = new CauchyIDAParameters(this.numSlices - this.threshold, this.threshold, this.chunkSize);
       this.messageSize = params.getSliceLength() * params.getNumDataSlices();
       this.totalSliceLength = params.getTotalSliceLength();
       

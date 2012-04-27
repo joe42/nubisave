@@ -5,13 +5,21 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import jdbm.helper.FastIterator;
 
 import org.apache.log4j.Logger;
 
+import com.github.joe42.splitter.backend.BackendService;
+import com.github.joe42.splitter.util.file.ConcurrentMultipleFileHandler;
+import com.github.joe42.splitter.util.file.MultipleFileHandler;
+import com.github.joe42.splitter.util.file.MultipleFiles;
 import com.github.joe42.splitter.util.file.RandomAccessTemporaryFileChannel;
 import com.github.joe42.splitter.util.file.RandomAccessTemporaryFileChannels;
+import com.github.joe42.splitter.util.file.SerialMultipleFileHandler;
 import com.github.joe42.splitter.vtf.FileEntry;
 import com.github.joe42.splitter.util.*;
 
@@ -28,6 +36,37 @@ public class FileFragmentStore {
 		tempFiles = new RandomAccessTemporaryFileChannels();
 		this.splitter = splitter;
 		this.fileFragmentMetaDataStore = new FileFragmentMetaDataStore();
+	}
+
+	public void reloadDatabase() throws IOException{
+		fileFragmentMetaDataStore.reloadDatabase();
+	}
+
+	public byte[] readMetaData(String path) throws IOException{
+		MultipleFileHandler serial_multi_file_handler = new SerialMultipleFileHandler();
+		Map<String, byte[]> filePathsToChecksum = new HashMap<String, byte[]>();
+		log.debug("Read meta data file");
+		for(BackendService storageService: splitter.getBackendServices().getFrontEndStorageServices()){
+			if(storageService.getNrOfFilePartsToStore() != 0){
+				filePathsToChecksum.put(storageService.getDataDirPath()+path, null);
+				log.debug("Try reading meta data file from:"+storageService.getDataDirPath()+path);
+			}
+		}
+		log.debug("successfull parts: "+serial_multi_file_handler.getFilesAsByteArrays(filePathsToChecksum, 1).getNrOfSuccessfullyTransferedFiles());
+		return serial_multi_file_handler.getFilesAsByteArrays(filePathsToChecksum, 1).getSuccessfullyTransferedFiles().get(0);
+	}
+	
+	public void writeMetaData(String content, String path) throws IOException{
+		log.debug("Write meta data file");
+		HashMap<String, byte[]> filePathsToChecksum = new HashMap<String, byte[]>();
+		byte[] file = content.getBytes("UTF-8");
+		for(BackendService storageService: splitter.getBackendServices().getFrontEndStorageServices()){
+			if(storageService.getNrOfFilePartsToStore() != 0){
+				filePathsToChecksum.put(storageService.getDataDirPath()+path, file);
+				log.debug("Try writing meta data file to:"+storageService.getDataDirPath()+path);
+			}
+		}
+		new ConcurrentMultipleFileHandler().writeFilesAsByteArrays(filePathsToChecksum);
 	}
 
 	public void setRedundancy(int redundancy){
