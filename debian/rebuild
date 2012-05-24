@@ -5,6 +5,24 @@ if [ ! -d debian ]; then
 	exit 1
 fi
 
+if [ "$1" = "--prep" ]; then
+	apt-get install devscripts dh-make
+	apt-get install openjdk-6-jdk python-setuptools libfuse-dev
+	exit 0
+fi
+
+which debuild >/dev/null && which dh_make >/dev/null
+if [ $? != 0 ]; then
+	echo "Error: Needs build tools and dependencies. Call script with --prep first."
+	exit 1
+fi
+
+if [ ! -d CloudFusion ]; then
+	# git submodule init
+	# git submodule update CloudFusion
+	git clone git://github.com/joe42/CloudFusion.git
+fi
+
 if [ "$1" = "--force" ]; then
 	rm -f ../nubisave_*
 	git clean -df
