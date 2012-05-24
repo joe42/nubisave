@@ -38,7 +38,8 @@ override_dh_auto_install:
 	mkdir -p debian/nubisave/var/lib/tomcat6/webapps/Matchmaker/ontologies
 	cp services/CloudStorage.wsml debian/nubisave/var/lib/tomcat6/webapps/Matchmaker/ontologies/
 	mkdir -p debian/nubisave/lib/python2.7/site-packages
-	cd CloudFusion/cloudfusion && PYTHONPATH="../../debian/nubisave/lib/python2.7/site-packages" python setup.py install --prefix ../../debian/nubisave
+	mkdir -p debian/nubisave/lib/python2.6/site-packages
+	cd CloudFusion/cloudfusion && PYTHONPATH="../../debian/nubisave/lib/python2.7/site-packages:../../debian/nubisave/lib/python2.6/site-packages" python setup.py install --prefix ../../debian/nubisave
 	# FIXME: In wheezy, this becomes the 'python-poster' dependency
-	PYTHONPATH="debian/nubisave/lib/python2.7/site-packages" easy_install --prefix debian/nubisave 'http://pypi.python.org/packages/2.6/p/poster/poster-0.4-py2.6.egg#md5=f69a6be30737ad5d652a602f3af005ac'
+	PYTHONPATH="debian/nubisave/lib/python2.7/site-packages:debian/nubisave/lib/python2.6/site-packages" easy_install --prefix debian/nubisave 'http://pypi.python.org/packages/2.6/p/poster/poster-0.4-py2.6.egg#md5=f69a6be30737ad5d652a602f3af005ac'
 
