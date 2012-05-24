@@ -32,4 +32,13 @@ stamp=`date +%Y%m%d`
 
 rm -rf debian/nubisave
 echo y | dh_make -i --createorig -p nubisave_0.0~git$stamp
+if [ ! -f ../*.orig.tar.gz ]; then
+	# Workaround for old squeezy dh_make
+	origdir=$PWD
+	cd ../*.orig
+	tarname=`basename $PWD`
+	tarname=`echo $tarname | sed -e 's/-/_/'`.tar.gz
+	tar cfz ../$tarname .
+	cd $origdir
+fi
 debuild
