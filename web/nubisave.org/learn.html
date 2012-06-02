@@ -36,13 +36,20 @@
 			<li>J. Spillner, G. Bombach, S. Matthischke, J. Müller, R. Tzschichholz, A. Schill: Information Dispersion over Redundant Arrays of Optimal Cloud Storage for Desktop Users
 			(read <a href="downloads/dispersal-raoc-nubisave.pdf">preprint</a>, view <a href="downloads/ucc-raoc-nubisave_optimisedpdf.pdf">slides</a>)</li>
 			</ul>
+			A description of all the implementation features and progress has been created in the form of a study thesis after hard improvement work in May 2012:
+			<ul>
+			<li>J. Müller: NubiSave++: Failure Resilient Distributed File System in the Cloud</li>
+			</ul>
 			For a less technical explanation, please read the background information below.
 		</div>
 		<div class="section">
 			<h2>Motivation</h2>
 			Mozilla's "take back the web" applied to cloud computing means "take back data sovereignty"!
-			NubiSave is designed to achieve exactly this by establishing a local cloud storage controller within the realm
-			of the user - either directly as backup user, or as administrator responsible for securing the data of a group of people.
+			NubiSave is designed to achieve exactly this by establishing a local cloud storage controller, representing the
+			core building block of an automated cloud storage gateway.
+			All of this happens within the realm
+			of the user - either directly as desktop user, or as administrator responsible for securing the data of a group of people
+			in a local network.
 		</div>
 		<div class="section">
 			<h2>Technical Background</h2>
@@ -51,13 +58,13 @@
 			error-coding redundant (e.g. RAID-5) arrays.
 			In the cloud, however, users entrust all of their data to a single storage provider, either with encryption, or without.
 			Even encrypted cloud storage is still subject to unauthorised storage area access, deletion and brute-force attacks on the encryption.
-			Data dispersal (RAIC-n for n &gt;= 1) is the concept of ensuring that each provider only gets a part of the data, while at the same time
-			reaching higher long-term availability and access performance. NubiSave introduces RAOC-n for optimally selected storage providers
-			over which a RAIC-n is constructed.
+			Data dispersal in the cloud (RAIC-n for n &gt;= 1) is the concept of ensuring that each provider only gets a part of the data, while at the same time
+			reaching higher long-term availability and access performance. NubiSave introduces techniques to reach optimality for the user, called RAOC-n, for storage providers
+			over which an array is constructed, continuously used and adapted to changing cloud providers.
 		</div>
 		<div class="section">
 			<h2>Architecture</h2>
-			NubiSave allows for flexible chaining of splitter (1:n) and modifier (1:1) modules.
+			NubiSave allows for flexible chaining of splitter (1:n), modifier (1:1) and leaf transport modules in a hierarchic tree.
 			This makes it possible to send parts of the data unmodified to one provider, encrypt for a
 			second provider and compress for a third provider.
 			One possible setup consisting of three storage providers is shown in the diagram below:
@@ -65,6 +72,39 @@
 			<br/>
 			<a href="screenshots/encr_and_compr.png"><img src="screenshots/encr_and_compr.small.png" border="0"></a>
 			</p>
+		</div>
+		<div class="section">
+			<h2>Cloud Providers and Modifiers</h2>
+			Which cloud provider and modifier modules can be used with NubiSave? For a full list, visit
+			the listing at the <a href="http://sourceforge.net/apps/mediawiki/fuse/index.php?title=FileSystems">FUSE website</a>.
+			Selected modules are presented here. Overlay modifier modules include, among others:
+			<ul>
+			<li>EncFS for encryption</li>
+			<li>Lessfs for deduplication and compression</li>
+			<li>Gitfs for versioning</li>
+			<li>and of course, nested splitters</li>
+			</ul>
+			Cloud provider transport modules include, among others:
+			<ul>
+			<li>Local file systems and in-kernel network file systems: CIFS, SMB, NFS, hard disks, USB sticks, ...</li>
+			<li>Generic protocols: SSHFS, FuseDAV + DavFS2 for WebDAV, ObexFS for Bluetooth devices, CurlFTPFS for FTP, ...</li>
+			<li>Specific providers: CloudFusion (DropBox, SugarSync), S3QL (Google Storage, Amazon S3, Eucalyptus Walrus, OpenStack Swift), Wuala, BoxFS, ...</li>
+			</ul>
+		</div>
+		<div class="section">
+			<h2>Unique Features</h2>
+			NubiSave's intention is to take distributed cloud storage to a new level by experimenting with various optimisations
+			within the handling of providers and data beyond the initial optimal configuration. Such features includes:
+			<ul>
+			<li>Redundancy: NubiSave integrates the best space optimal maximum-distance separable and minimum-bandwidth/-storage regenerating erasure codes such as Cauchy Reed-Solomon through the <a href="http://web.eecs.utk.edu/~plank/plank/papers/CS-08-627.html">jErasure</a> library and JigDFS. For information theoretic security, a secret sharing scheme would be used instead. Zero redundancy is supported as well. Checksums are calculated for all fragments.</li>
+<!-- AONT-RS? Rotating codes? -->
+			<li>Scheduling: NubiSave introduces two storage strategies: Either it uses all providers in parallel or in a round-robin scheme.</li>
+			<li>Cache: NubiSave achieves distribution transparency through flexible multistage cache.</li>
+			<li>Streaming: NubiSave works on streams, hence doesn't need to buffer large files. This makes it suitable for small and embedded devices. And robots, too.</li>
+			<li>Sessions: NubiSave can store the metadata file in the cloud as well, hence making it possible to access all data from multiple devices with just a small pointer to this file.</li>
+			<li>Chunking: NubiSave introduces an intermediate layer between a large file and small fragments. The chunks or blocks contained therein can be written and retrieved separately, thus avoiding the need to transfer the entire file for smaller changes. Sparse files are specially supported.</li>
+			<li>Configuration: NubiSave can be configured through GUIs or plain text files. Modules as well as providers can be added and removed dynamically at runtime. Multiple distributed NubiSave installations can be connected to work across machines, hence increasing scalability.</li>
+			</ul>
 		</div>
 	</div>
 	<div id="foot">
