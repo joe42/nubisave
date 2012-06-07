@@ -27,10 +27,10 @@ override_dh_auto_install:
 	rm -rf debian/nubisave/usr/share/nubisave/fusej/src
 	rm -rf debian/nubisave/usr/share/nubisave/splitter/src
 	cp -r CloudFusion/cloudfusion/cloudfusion/config debian/nubisave/usr/share/nubisave/
-	touch debian/nubisave/usr/share/nubisave/splitter/splitter.db
-	touch debian/nubisave/usr/share/nubisave/splitter/splitter.lg
+	##(obsolete)##touch debian/nubisave/usr/share/nubisave/splitter/splitter.db
+	##(obsolete)##touch debian/nubisave/usr/share/nubisave/splitter/splitter.lg
 	# FIXME: interpret ${user.home} values in nubi.properties
-	sed -i -e 's/splitter_database_location=database_of_splitter/splitter_database_location=\/usr\/share\/nubisave\/splitter\/splitter/' debian/nubisave/usr/share/nubisave/bin/nubi.properties
+	##(obsolete?)##sed -i -e 's/splitter_database_location=database_of_splitter/splitter_database_location=\/usr\/share\/nubisave\/splitter\/splitter/' debian/nubisave/usr/share/nubisave/bin/nubi.properties
 	sed -i -e 's/R.File=log/R.File=$${user.home}\/.nubisave\/log/' debian/nubisave/usr/share/nubisave/splitter/log4j.properties
 	sed -i -e 's/CHAINSAW.File=log/CHAINSAW.File=$${user.home}\/.nubisave\/log/' debian/nubisave/usr/share/nubisave/splitter/log4j.properties
 	mkdir -p debian/nubisave/usr/bin
