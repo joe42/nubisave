@@ -1,3 +1,9 @@
+nubisave (0.0~git20120616-1) unstable; urgency=low
+
+  * Follow-up snapshot for SPACEflight compatibility. No code changes.
+
+ -- Josef Spillner <josef@rumba>  Sat, 16 Jun 2012 23:21:42 +0200
+
 nubisave (0.0~git20120607-1) unstable; urgency=low
 
   * Yet another snapshot, the first after the study thesis implementation completion.
