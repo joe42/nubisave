@@ -4,7 +4,7 @@
 
 wsmlVariant _"http://www.wsmo.org/wsml/wsml-syntax/wsml-flight"
 
-namespace {_"http://localhost:8080/Matchmaker/ontologies/CloudStorage/SkyDrive.wsml#",
+namespace {_"http://localhost:8080/Matchmaker/ontologies/CloudStorage/microsoft-skydrive.wsml#",
 	qos _"http://localhost:8080/Matchmaker/ontologies/QoSBase.wsml#",
 	rqos _"http://localhost:8080/Matchmaker/ontologies/RemoteQoSBase.wsml#",
 	biz _"http://localhost:8080/Matchmaker/ontologies/BusinessBase.wsml#",
