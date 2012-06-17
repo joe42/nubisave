@@ -7,6 +7,7 @@ wsmlVariant _"http://www.wsmo.org/wsml/wsml-syntax/wsml-flight"
 namespace { _"http://localhost:8080/Matchmaker/ontologies/CloudStorage.wsml#",
 	    qos _"http://localhost:8080/Matchmaker/ontologies/QoSBase.wsml#",
 	    rqos _"http://localhost:8080/Matchmaker/ontologies/RemoteQoSBase.wsml#",
+	    context _"http://localhost:8080/Matchmaker/ontologies/ContextBase.wsml#",
 	    biz _"http://localhost:8080/Matchmaker/ontologies/BusinessBase.wsml#",
 	    dc _"http://purl.org/dc/elements/1.1#",
             wsml _"http://www.wsmo.org/wsml/wsml-syntax#" }
@@ -14,6 +15,7 @@ namespace { _"http://localhost:8080/Matchmaker/ontologies/CloudStorage.wsml#",
 ontology CloudStorage
  importsOntology { _"http://localhost:8080/Matchmaker/ontologies/RemoteQoSBase.wsml#",
                    _"http://localhost:8080/Matchmaker/ontologies/BusinessBase.wsml#" }
+
  nonFunctionalProperties
   wsml#version hasValue "1.0"
   dc#creator hasValue "Gerd Bombach, Josef Spillner"
@@ -41,6 +43,7 @@ ontology CloudStorage
 /* ------------------------- */
 
 // SignupPrivacy
+
 concept SignupPrivacy subConceptOf {qos#Quality, qos#HigherBetter}
 	qos#unit impliesType qos#PercentageUnit
 
@@ -54,12 +57,15 @@ instance SignuPrivacyRange memberOf qos#QualityRange
 /* ------------------ */
 
 // Capacity
+
 concept Capacity subConceptOf {qos#Quality, qos#HigherBetter}
 	qos#unit impliesType qos#SpaceUnit
 
 instance CapacityRange memberOf qos#QualityRange
 	qos#item hasValue Capacity
 	qos#min hasValue 0
+
+// Redundancy
 
 concept Redundancy subConceptOf {qos#Quality, qos#HigherBetter}
 	qos#unit impliesType qos#PercentageUnit
@@ -68,6 +74,35 @@ instance RedundancyRange memberOf qos#QualityRange
 	qos#item hasValue Redundancy
 	qos#min hasValue 0
 	qos#max hasValue 200
+
+// Backup + BackupPeriod
+
+concept Backup subConceptOf {qos#Quality, qos#HigherBetter}
+	qos#unit impliesType qos#MeasurementUnit
+
+instance BackupRange memberOf qos#QualityRange
+	qos#item hasValue Backup
+	qos#min hasValue 0
+	qos#max hasValue 10
+
+concept BackupPeriod subConceptOf {qos#Quality, qos#HigherBetter}
+	qos#unit impliesType qos#TimeUnit
+
+instance BackupPeriodRange memberOf qos#QualityRange
+	qos#item hasValue BackupPeriod
+	qos#min hasValue 0
+	qos#defaultUnit hasValue Day
+
+// Encryption
+
+concept Encryption subConceptOf {qos#Quality, qos#RequireEquality}
+	qos#unit impliesType context#BooleanUnit
+
+instance EncryptionRange memberOf qos#QualityRange
+	qos#item hasValue Encryption
+	qos#min hasValue 0
+	qos#max hasValue 1
+	qos#defaultUnit hasValue context#Boolean
 
 /* ----------------------- */
 /* Main concept definition */
@@ -81,6 +116,10 @@ concept CloudStoragePlan subConceptOf biz#BusinessService
 	hasSignupForm ofType (1) _string
 	hasProtocol ofType (0 *) Protocol
 	hasCapacity ofType (1) Capacity
+	hasRedundancy ofType (1) Redundancy
+	hasBackup ofType (1) Backup
+	hasBackupPeriod ofType (1) BackupPeriod
+	hasEncryption ofType (1) Encryption
 
 concept CloudStorage subConceptOf rqos#RemoteQoS
 	hasName ofType (1) _string

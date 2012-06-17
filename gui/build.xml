@@ -1,0 +1,20 @@
+<project name="netbeansprojectextension" default="jar">
+
+<property name="project" value="Nubisave" />
+
+<description>
+Performs the NetBeans compilation without needing NetBeans itself.
+</description>
+
+<target name="jar">
+<ant dir="Nubisave"/>
+<copy file="Nubisave/dist/NubiSave_Configuration_GUI.jar" tofile="../bin/Nubisave.jar" />
+<copy file="Nubisave/lib/nubisaveclient.jar" todir="../bin/lib" />
+<copy file="Nubisave/lib/ConQoXMLParser.jar" todir="../bin/lib" />
+</target>
+
+<target name="clean">
+<ant dir="Nubisave" target="clean"/>
+</target>
+
+</project>

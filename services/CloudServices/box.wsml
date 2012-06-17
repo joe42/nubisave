@@ -1,10 +1,10 @@
 /*
- * WSML service description for the Google Cloud Storage cloud storage service
+ * WSML service description for the Box cloud storage service
  */
 
 wsmlVariant _"http://www.wsmo.org/wsml/wsml-syntax/wsml-flight"
 
-namespace {_"http://localhost:8080/Matchmaker/ontologies/CloudStorage/google-cloudstorage.wsml#",
+namespace {_"http://localhost:8080/Matchmaker/ontologies/CloudStorage/box.wsml#",
 	qos _"http://localhost:8080/Matchmaker/ontologies/QoSBase.wsml#",
 	rqos _"http://localhost:8080/Matchmaker/ontologies/RemoteQoSBase.wsml#",
 	biz _"http://localhost:8080/Matchmaker/ontologies/BusinessBase.wsml#",
@@ -13,17 +13,17 @@ namespace {_"http://localhost:8080/Matchmaker/ontologies/CloudStorage/google-clo
 	dc _"http://purl.org/dc/elements/1.1#",
 	wsml _"http://www.wsmo.org/wsml/wsml-syntax#" }
 
-webService GoogleCloudStorage
+webService Box
  importsOntology { _"http://localhost:8080/Matchmaker/ontologies/CloudStorage.wsml#" }
 
 /* Define Service Class */
 capability ServiceCapability
  postcondition definedBy ?serviceType memberOf cloud#CloudStorage .
 
-interface GoogleCloudStorageInterface
- importsOntology { GoogleCloudStorageOntology }
+interface BoxInterface
+ importsOntology { BoxOntology }
 
-ontology GoogleCloudStorageOntology
+ontology BoxOntology
  importsOntology { _"http://localhost:8080/Matchmaker/ontologies/CloudStorage.wsml#" }
 
 /* ---------------------- */
@@ -31,24 +31,24 @@ ontology GoogleCloudStorageOntology
 /* ---------------------- */
 
 instance Availability memberOf { rqos#Availability, qos#ServiceSpec }
-	qos#value hasValue 99.5
+	qos#value hasValue 99
 	qos#unit hasValue qos#Percentage
 
 instance MaxDownTime memberOf { rqos#MaxDownTime, qos#ServiceSpec }
-	qos#value hasValue 10
+	qos#value hasValue 15
 	qos#unit hasValue qos#MilliSecond
 
 instance ResponseTime memberOf { rqos#ResponseTime, qos#ServiceSpec }
-	qos#value hasValue 20
+	qos#value hasValue 40
 	qos#unit hasValue qos#MilliSecond
 
 // legacy
 instance NetworkBandwidth memberOf { rqos#NetworkBandwidth, qos#ServiceSpec }
-	qos#value hasValue 1000
+	qos#value hasValue 100
 	qos#unit hasValue qos#Mbps
 
 instance Throughput memberOf { rqos#Throughput, qos#ServiceSpec }
-	qos#value hasValue 1000
+	qos#value hasValue 100
 	qos#unit hasValue qos#Mbps
 
 /* ------------------------- */
@@ -63,8 +63,12 @@ instance SignupPrivacy memberOf { cloud#SignupPrivacy, qos#ServiceSpec }
 /* Storage properties */
 /* ------------------ */
 
-instance Capacity memberOf { cloud#Capacity, qos#ServiceSpec }
-	qos#value hasValue 10
+instance PersonalCapacity memberOf { cloud#Capacity, qos#ServiceSpec }
+	qos#value hasValue 5
+	qos#unit hasValue qos#GB
+
+instance BusinessCapacity memberOf { cloud#Capacity, qos#ServiceSpec }
+	qos#value hasValue 1000
 	qos#unit hasValue qos#GB
 
 instance Redundancy memberOf { cloud#Redundancy, qos#ServiceSpec }
@@ -78,44 +82,58 @@ instance Redundancy memberOf { cloud#Redundancy, qos#ServiceSpec }
 /* ------------------- */
 
 // legacy
-instance PricePerMonth memberOf { biz#PricePerMonth, qos#ServiceSpec }
+instance PersonalPricePerMonth memberOf { biz#PricePerMonth, qos#ServiceSpec }
 	qos#value hasValue 0
 	qos#unit hasValue qos#Euro
 
-instance PricePerPeriod memberOf { biz#PricePerPeriod, qos#ServiceSpec }
+// legacy
+instance BusinessPricePerMonth memberOf { biz#PricePerMonth, qos#ServiceSpec }
+	qos#value hasValue 15
+	qos#unit hasValue qos#USDollar
+
+instance PersonalPricePerPeriod memberOf { biz#PricePerPeriod, qos#ServiceSpec }
 	qos#value hasValue 0
 	qos#unit hasValue qos#Euro
+
+instance BusinessPricePerPeriod memberOf { biz#PricePerPeriod, qos#ServiceSpec }
+	qos#value hasValue 15
+	qos#unit hasValue qos#USDollar
 
 instance PricePerData memberOf { biz#PricePerData, qos#ServiceSpec }
-	qos#value hasValue 0.17
+	qos#value hasValue 0
 	qos#unit hasValue qos#Euro
 
-instance FreePeriod memberOf { biz#FreePeriod, qos#ServiceSpec }
+instance PersonalFreePeriod memberOf { biz#FreePeriod, qos#ServiceSpec }
 	qos#value hasValue 0
+	qos#unit hasValue qos#Day
+
+instance BusinessFreePeriod memberOf { biz#FreePeriod, qos#ServiceSpec }
+	qos#value hasValue 14
 	qos#unit hasValue qos#Day
 
 /* ------------------------ */
 /* Main instance definition */
 /* ------------------------ */
 
-instance GoogleCloudStorage memberOf { cloud#CloudStorage }
-	hasName hasValue "Google Cloud Storage"
-	hasIcon hasValue "http://www.google.com/images/icons/product/images-32.gif"
-	hasWebsite hasValue "http://www.google.com/"
+instance Box memberOf { cloud#CloudStorage }
+	hasName hasValue "Box"
+	hasIcon hasValue ""
+	hasWebsite hasValue "http://www.box.com/"
 	hasCountry hasValue "USA"
-	hasStoragePlan hasValue { GoogleCloudStoragePlan }
+	hasStoragePlan hasValue { BoxPersonalPlan, BoxBusinessPlan }
 	hasProperty hasValue { Availability, ResponseTime, MaxDownTime, NetworkBandwidth, SignupPrivacy }
 
-instance GoogleCloudStorageDownloadProtocol memberOf { cloud#Protocol }
-	hasType hasValue "https"
-	hasUrl hasValue "https://sandbox.google.com/storage/"
+instance BoxWebdavProtocol memberOf { cloud#Protocol }
+	hasType hasValue "webdav"
+	hasUrl hasValue "https://box.com/dav"
 
-instance GoogleCloudStorageNativeProtocol memberOf { cloud#Protocol }
-	hasType hasValue "gs"
-	hasUrl hasValue "gs://"
+instance BoxPersonalPlan memberOf { cloud#CloudStoragePlan }
+	hasSignupForm hasValue "https://www.box.com/signup/o/default/personal/lite"
+	hasProtocol hasValue { BoxWebdavProtocol }
+	hasProperty hasValue { PersonalPricePerMonth, PricePerData, PersonalFreePeriod }
 
-instance GoogleCloudStoragePlan memberOf { cloud#CloudStoragePlan }
-	hasSignupForm hasValue "https://accounts.google.com/ServiceLogin?service=devconsole&passive=1209600&continue=https://code.google.com/apis/console/&followup=https://code.google.com/apis/console/"
-	hasProtocol hasValue { GoogleCloudStorageNativeProtocol, GoogleCloudStorageDownloadProtocol }
-	hasProperty hasValue { PricePerMonth, PricePerData, FreePeriod }
+instance BoxBusinessPlan memberOf { cloud#CloudStoragePlan }
+	hasSignupForm hasValue "https://www.box.com/signup/o/default/business"
+	hasProtocol hasValue { BoxWebdavProtocol }
+	hasProperty hasValue { BusinessPricePerMonth, PricePerData, BusinessFreePeriod }
 

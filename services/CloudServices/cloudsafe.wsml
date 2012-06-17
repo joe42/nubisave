@@ -1,10 +1,10 @@
 /*
- * WSML service description for the 4Shared cloud storage service
+ * WSML service description for the CloudSafe cloud storage service
  */
 
 wsmlVariant _"http://www.wsmo.org/wsml/wsml-syntax/wsml-flight"
 
-namespace {_"http://localhost:8080/Matchmaker/ontologies/CloudStorage/fourshared.wsml#",
+namespace {_"http://localhost:8080/Matchmaker/ontologies/CloudStorage/cloudsafe.wsml#",
 	qos _"http://localhost:8080/Matchmaker/ontologies/QoSBase.wsml#",
 	rqos _"http://localhost:8080/Matchmaker/ontologies/RemoteQoSBase.wsml#",
 	biz _"http://localhost:8080/Matchmaker/ontologies/BusinessBase.wsml#",
@@ -13,17 +13,17 @@ namespace {_"http://localhost:8080/Matchmaker/ontologies/CloudStorage/fourshared
 	dc _"http://purl.org/dc/elements/1.1#",
 	wsml _"http://www.wsmo.org/wsml/wsml-syntax#" }
 
-webService FourShared
+webService CloudSafe
  importsOntology { _"http://localhost:8080/Matchmaker/ontologies/CloudStorage.wsml#" }
 
 /* Define Service Class */
 capability ServiceCapability
  postcondition definedBy ?serviceType memberOf cloud#CloudStorage .
 
-interface FourSharedInterface
+interface CloudSafeInterface
  importsOntology { FourSharedOntology }
 
-ontology FourSharedOntology
+ontology CloudSafeOntology
  importsOntology { _"http://localhost:8080/Matchmaker/ontologies/CloudStorage.wsml#" }
 
 /* ---------------------- */
@@ -63,8 +63,16 @@ instance SignupPrivacy memberOf { cloud#SignupPrivacy, qos#ServiceSpec }
 /* Storage properties */
 /* ------------------ */
 
-instance Capacity memberOf { cloud#Capacity, qos#ServiceSpec }
-	qos#value hasValue 10
+instance FreeCapacity memberOf { cloud#Capacity, qos#ServiceSpec }
+	qos#value hasValue 2
+	qos#unit hasValue qos#GB
+
+instance PremiumCapacity memberOf { cloud#Capacity, qos#ServiceSpec }
+	qos#value hasValue 5
+	qos#unit hasValue qos#GB
+
+instance PremiumLCapacity memberOf { cloud#Capacity, qos#ServiceSpec }
+	qos#value hasValue 50
 	qos#unit hasValue qos#GB
 
 instance Redundancy memberOf { cloud#Redundancy, qos#ServiceSpec }
@@ -78,12 +86,30 @@ instance Redundancy memberOf { cloud#Redundancy, qos#ServiceSpec }
 /* ------------------- */
 
 // legacy
-instance PricePerMonth memberOf { biz#PricePerMonth, qos#ServiceSpec }
+instance FreePricePerMonth memberOf { biz#PricePerMonth, qos#ServiceSpec }
 	qos#value hasValue 0
 	qos#unit hasValue qos#Euro
 
-instance PricePerPeriod memberOf { biz#PricePerPeriod, qos#ServiceSpec }
+// legacy
+instance PremiumPricePerMonth memberOf { biz#PricePerMonth, qos#ServiceSpec }
+	qos#value hasValue 2.99
+	qos#unit hasValue qos#Euro
+
+// legacy
+instance PremiumLPricePerMonth memberOf { biz#PricePerMonth, qos#ServiceSpec }
+	qos#value hasValue 7.99
+	qos#unit hasValue qos#Euro
+
+instance FreePricePerPeriod memberOf { biz#PricePerPeriod, qos#ServiceSpec }
 	qos#value hasValue 0
+	qos#unit hasValue qos#Euro
+
+instance PremiumPricePerPeriod memberOf { biz#PricePerPeriod, qos#ServiceSpec }
+	qos#value hasValue 2.99
+	qos#unit hasValue qos#Euro
+
+instance PremiumLPricePerPeriod memberOf { biz#PricePerPeriod, qos#ServiceSpec }
+	qos#value hasValue 7.99
 	qos#unit hasValue qos#Euro
 
 instance PricePerData memberOf { biz#PricePerData, qos#ServiceSpec }
@@ -98,24 +124,30 @@ instance FreePeriod memberOf { biz#FreePeriod, qos#ServiceSpec }
 /* Main instance definition */
 /* ------------------------ */
 
-instance FourShared memberOf { cloud#CloudStorage }
-	hasName hasValue "4Shared"
-	hasIcon hasValue "http://static.4shared.com/images/indexPage/header-logo.png"
-	hasWebsite hasValue "http://www.4shared.com/"
-	hasCountry hasValue "USA"
-	hasStoragePlan hasValue { FourSharedPlan }
+instance CloudSafe memberOf { cloud#CloudStorage }
+	hasName hasValue "CloudSafe"
+	hasIcon hasValue "https://secure.cloudsafe.com/static/cms/img/rebrush/icons/social/icon_blog.png"
+	hasWebsite hasValue "http://www.cloudsafe.com/"
+	hasCountry hasValue "Germany"
+	hasStoragePlan hasValue { CloudSafeFreePlan, CloudSafePremiumPlan, CloudSafePremiumLPlan }
 	hasProperty hasValue { Availability, ResponseTime, MaxDownTime, NetworkBandwidth, SignupPrivacy }
 
-instance FourSharedWebdavProtocol memberOf { cloud#Protocol }
+instance CloudSafeWebdavProtocol memberOf { cloud#Protocol }
 	hasType hasValue "webdav"
-	hasUrl hasValue "https://webdav.4shared.com/"
+	hasUrl hasValue "https://{userid}.webdav.cloudsafe.com/"
 
-instance FourSharedSftpProtocol memberOf { cloud#Protocol }
-	hasType hasValue "sftp"
-	hasUrl hasValue "sftp://sftp.4shared.com/"
+instance CloudSafeFreePlan memberOf { cloud#CloudStoragePlan }
+	hasSignupForm hasValue "https://secure.cloudsafe.com/registration"
+	hasProtocol hasValue { CloudSafeWebdavProtocol }
+	hasProperty hasValue { FreePricePerMonth, PricePerData, FreePeriod }
 
-instance FourSharedPlan memberOf { cloud#CloudStoragePlan }
-	hasSignupForm hasValue "http://www.4shared.com/"
-	hasProtocol hasValue { FourSharedWebdavProtocol, FourSharedSftpProtocol }
-	hasProperty hasValue { PricePerMonth, PricePerData, FreePeriod }
+instance CloudSafePremiumPlan memberOf { cloud#CloudStoragePlan }
+	hasSignupForm hasValue "https://secure.cloudsafe.com/registration"
+	hasProtocol hasValue { CloudSafeWebdavProtocol }
+	hasProperty hasValue { PremiumPricePerMonth, PricePerData, FreePeriod }
+
+instance CloudSafePremiumPlan memberOf { cloud#CloudStoragePlan }
+	hasSignupForm hasValue "https://secure.cloudsafe.com/registration"
+	hasProtocol hasValue { CloudSafeWebdavProtocol }
+	hasProperty hasValue { PremiumLPricePerMonth, PricePerData, FreePeriod }
 
