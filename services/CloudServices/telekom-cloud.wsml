@@ -30,19 +30,24 @@ ontology TelekomCloudOntology
 /* Generic QoS properties */
 /* ---------------------- */
 
-instance Availability memberOf { cloud#Availability, qos#ServiceSpec }
+instance Availability memberOf { rqos#Availability, qos#ServiceSpec }
 	qos#value hasValue 95
 	qos#unit hasValue qos#Percentage
 
-instance MaxDownTime memberOf { cloud#MaxDownTime, qos#ServiceSpec }
+instance MaxDownTime memberOf { rqos#MaxDownTime, qos#ServiceSpec }
 	qos#value hasValue 15
 	qos#unit hasValue qos#MilliSecond
 
-instance ResponseTime memberOf { cloud#ResponseTime, qos#ServiceSpec }
+instance ResponseTime memberOf { rqos#ResponseTime, qos#ServiceSpec }
 	qos#value hasValue 40
 	qos#unit hasValue qos#MilliSecond
 
-instance NetworkBandwidth memberOf { cloud#NetworkBandwidth, qos#ServiceSpec }
+// legacy
+instance NetworkBandwidth memberOf { rqos#NetworkBandwidth, qos#ServiceSpec }
+	qos#value hasValue 200
+	qos#unit hasValue qos#Mbps
+
+instance Throughput memberOf { rqos#Throughput, qos#ServiceSpec }
 	qos#value hasValue 200
 	qos#unit hasValue qos#Mbps
 
@@ -66,19 +71,26 @@ instance Redundancy memberOf { cloud#Redundancy, qos#ServiceSpec }
 	qos#value hasValue 0
 	qos#unit hasValue qos#Percentage
 
+// TODO: Backup, BackupPeriod, Encryption
+
 /* ------------------- */
 /* Business properties */
 /* ------------------- */
 
-instance PricePerMonth memberOf { cloud#PricePerMonth, qos#ServiceSpec }
+// legacy
+instance PricePerMonth memberOf { biz#PricePerMonth, qos#ServiceSpec }
 	qos#value hasValue 10
 	qos#unit hasValue qos#Euro
 
-instance PricePerData memberOf { cloud#PricePerData, qos#ServiceSpec }
+instance PricePerPeriod memberOf { biz#PricePerPeriod, qos#ServiceSpec }
+	qos#value hasValue 10
+	qos#unit hasValue qos#Euro
+
+instance PricePerData memberOf { biz#PricePerData, qos#ServiceSpec }
 	qos#value hasValue 0
 	qos#unit hasValue qos#Euro
 
-instance FreePeriod memberOf { cloud#FreePeriod, qos#ServiceSpec }
+instance FreePeriod memberOf { biz#FreePeriod, qos#ServiceSpec }
 	qos#value hasValue 0
 	qos#unit hasValue qos#Day
 
