@@ -8,7 +8,9 @@ Performs the NetBeans compilation without needing NetBeans itself.
 
 <target name="jar">
 <ant dir="Nubisave"/>
-<copy file="Nubisave/dist/NubiSave_Configuration_GUI.jar" tofile="../bin/Nubisave.NEW" />
+<copy file="Nubisave/dist/NubiSave_Configuration_GUI.jar" tofile="../bin/Nubisave.jar" />
+<copy file="Nubisave/lib/nubisaveclient.jar" todir="../bin/lib" />
+<copy file="Nubisave/lib/ConQoXMLParser.jar" todir="../bin/lib" />
 </target>
 
 <target name="clean">

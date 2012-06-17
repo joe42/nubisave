@@ -1,1 +1,5 @@
 Main-Class: nubisave.Nubisave
+Class-Path: lib/beansbinding-1.2.1.jar lib/ini4j-0.5.2.jar lib/Splitte
+ r.jar lib/commons-collections-3.2.1.jar lib/commons-configuration-1.7
+ .jar lib/commons-lang-2.6.jar lib/commons-logging-1.0.4.jar lib/nubis
+ aveclient.jar lib/ConQoXMLParser.jar
