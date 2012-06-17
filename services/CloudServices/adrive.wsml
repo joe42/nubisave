@@ -1,0 +1,169 @@
+/*
+ * WSML service description for the ADrive cloud storage service
+ */
+
+wsmlVariant _"http://www.wsmo.org/wsml/wsml-syntax/wsml-flight"
+
+namespace {_"http://localhost:8080/Matchmaker/ontologies/CloudStorage/adrive.wsml#",
+	qos _"http://localhost:8080/Matchmaker/ontologies/QoSBase.wsml#",
+	rqos _"http://localhost:8080/Matchmaker/ontologies/RemoteQoSBase.wsml#",
+	biz _"http://localhost:8080/Matchmaker/ontologies/BusinessBase.wsml#",
+	cloud _"http://localhost:8080/Matchmaker/ontologies/CloudStorage.wsml#",
+	context _"http://localhost:8080/Matchmaker/ontologies/ContextBase.wsml#",
+	dc _"http://purl.org/dc/elements/1.1#",
+	wsml _"http://www.wsmo.org/wsml/wsml-syntax#" }
+
+webService ADrive
+ importsOntology { _"http://localhost:8080/Matchmaker/ontologies/CloudStorage.wsml#" }
+
+/* Define Service Class */
+capability ServiceCapability
+ postcondition definedBy ?serviceType memberOf cloud#CloudStorage .
+
+interface ADriveInterface
+ importsOntology { ADriveOntology }
+
+ontology ADriveOntology
+ importsOntology { _"http://localhost:8080/Matchmaker/ontologies/CloudStorage.wsml#" }
+
+/* ---------------------- */
+/* Generic QoS properties */
+/* ---------------------- */
+
+instance Availability memberOf { rqos#Availability, qos#ServiceSpec }
+	qos#value hasValue 99
+	qos#unit hasValue qos#Percentage
+
+instance MaxDownTime memberOf { rqos#MaxDownTime, qos#ServiceSpec }
+	qos#value hasValue 15
+	qos#unit hasValue qos#MilliSecond
+
+instance ResponseTime memberOf { rqos#ResponseTime, qos#ServiceSpec }
+	qos#value hasValue 40
+	qos#unit hasValue qos#MilliSecond
+
+// legacy
+instance NetworkBandwidth memberOf { rqos#NetworkBandwidth, qos#ServiceSpec }
+	qos#value hasValue 100
+	qos#unit hasValue qos#Mbps
+
+instance Throughput memberOf { rqos#Throughput, qos#ServiceSpec }
+	qos#value hasValue 100
+	qos#unit hasValue qos#Mbps
+
+/* ------------------------- */
+/* Online account properties */
+/* ------------------------- */
+
+instance SignupPrivacy memberOf { cloud#SignupPrivacy, qos#ServiceSpec }
+	qos#value hasValue 0
+	qos#unit hasValue qos#Percentage
+
+/* ------------------ */
+/* Storage properties */
+/* ------------------ */
+
+instance BasicCapacity memberOf { cloud#Capacity, qos#ServiceSpec }
+	qos#value hasValue 50
+	qos#unit hasValue qos#GB
+
+instance SignatureCapacity memberOf { cloud#Capacity, qos#ServiceSpec }
+	qos#value hasValue 50
+	qos#unit hasValue qos#GB
+
+instance PremiumCapacity memberOf { cloud#Capacity, qos#ServiceSpec }
+	qos#value hasValue 100
+	qos#unit hasValue qos#GB
+
+instance Redundancy memberOf { cloud#Redundancy, qos#ServiceSpec }
+	qos#value hasValue 0
+	qos#unit hasValue qos#Percentage
+
+// TODO: Backup, BackupPeriod, Encryption
+
+/* ------------------- */
+/* Business properties */
+/* ------------------- */
+
+// legacy
+instance BasicPricePerMonth memberOf { biz#PricePerMonth, qos#ServiceSpec }
+	qos#value hasValue 0
+	qos#unit hasValue qos#USDollar
+
+// legacy
+instance SignaturePricePerMonth memberOf { biz#PricePerMonth, qos#ServiceSpec }
+	qos#value hasValue 6.95
+	qos#unit hasValue qos#USDollar
+
+// legacy
+instance PremiumPricePerMonth memberOf { biz#PricePerMonth, qos#ServiceSpec }
+	qos#value hasValue 13.95
+	qos#unit hasValue qos#USDollar
+
+instance BasicPricePerPeriod memberOf { biz#PricePerPeriod, qos#ServiceSpec }
+	qos#value hasValue 0
+	qos#unit hasValue qos#USDollar
+
+instance SignaturePricePerPeriod memberOf { biz#PricePerPeriod, qos#ServiceSpec }
+	qos#value hasValue 6.95
+	qos#unit hasValue qos#USDollar
+
+instance PremiumPricePerPeriod memberOf { biz#PricePerPeriod, qos#ServiceSpec }
+	qos#value hasValue 13.95
+	qos#unit hasValue qos#USDollar
+
+instance PricePerData memberOf { biz#PricePerData, qos#ServiceSpec }
+	qos#value hasValue 0
+	qos#unit hasValue qos#Euro
+
+instance BasicFreePeriod memberOf { biz#FreePeriod, qos#ServiceSpec }
+	qos#value hasValue 0
+	qos#unit hasValue qos#Day
+
+instance SignatureFreePeriod memberOf { biz#FreePeriod, qos#ServiceSpec }
+	qos#value hasValue 14
+	qos#unit hasValue qos#Day
+
+instance PremiumFreePeriod memberOf { biz#FreePeriod, qos#ServiceSpec }
+	qos#value hasValue 14
+	qos#unit hasValue qos#Day
+
+/* ------------------------ */
+/* Main instance definition */
+/* ------------------------ */
+
+instance ADrive memberOf { cloud#CloudStorage }
+	hasName hasValue "ADrive"
+	hasIcon hasValue "http://static.adrive.com/images/logo.jpg"
+	hasWebsite hasValue "http://www.adrive.com/"
+	hasCountry hasValue "USA"
+	hasStoragePlan hasValue { ADriveBasicPlan, ADriveSignaturePlan, ADrivePremiumPlan }
+	hasProperty hasValue { Availability, ResponseTime, MaxDownTime, NetworkBandwidth, SignupPrivacy }
+
+instance ADriveWebdavProtocol memberOf { cloud#Protocol }
+	hasType hasValue "webdav"
+	hasUrl hasValue "https://www.adrive.com/webDAV.php"
+
+instance ADriveFtpProtocol memberOf { cloud#Protocol }
+	hasType hasValue "ftp"
+	hasUrl hasValue "ftp://ftp.adrive.com"
+
+instance ADrivePropProtocol memberOf { cloud#Protocol }
+	hasType hasValue "proprietary"
+	hasUrl hasValue ""
+
+instance ADriveBasicPlan memberOf { cloud#CloudStoragePlan }
+	hasSignupForm hasValue "https://www.adrive.com/login/signup"
+	hasProtocol hasValue { ADrivePropProtocol }
+	hasProperty hasValue { BasicPricePerMonth, PricePerData, BasicFreePeriod }
+
+instance ADriveSignaturePlan memberOf { cloud#CloudStoragePlan }
+	hasSignupForm hasValue "https://www.adrive.com/login/signup"
+	hasProtocol hasValue { ADrivePropProtocol, ADriveWebdavProtocol, ADriveFtpProtocol }
+	hasProperty hasValue { SignaturePricePerMonth, PricePerData, SignatureFreePeriod }
+
+instance ADrivePremiumPlan memberOf { cloud#CloudStoragePlan }
+	hasSignupForm hasValue "https://www.adrive.com/login/signup"
+	hasProtocol hasValue { ADrivePropProtocol, ADriveWebdavProtocol, ADriveFtpProtocol }
+	hasProperty hasValue { PremiumPricePerMonth, PricePerData, PremiumFreePeriod }
+

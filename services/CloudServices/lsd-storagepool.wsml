@@ -1,0 +1,117 @@
+/*
+ * WSML service description for the LSD Storagepool cloud storage service
+ */
+
+wsmlVariant _"http://www.wsmo.org/wsml/wsml-syntax/wsml-flight"
+
+namespace {_"http://localhost:8080/Matchmaker/ontologies/CloudStorage/lsd-storagepool.wsml#",
+	qos _"http://localhost:8080/Matchmaker/ontologies/QoSBase.wsml#",
+	rqos _"http://localhost:8080/Matchmaker/ontologies/RemoteQoSBase.wsml#",
+	biz _"http://localhost:8080/Matchmaker/ontologies/BusinessBase.wsml#",
+	cloud _"http://localhost:8080/Matchmaker/ontologies/CloudStorage.wsml#",
+	context _"http://localhost:8080/Matchmaker/ontologies/ContextBase.wsml#",
+	dc _"http://purl.org/dc/elements/1.1#",
+	wsml _"http://www.wsmo.org/wsml/wsml-syntax#" }
+
+webService LSDStoragePool
+ importsOntology { _"http://localhost:8080/Matchmaker/ontologies/CloudStorage.wsml#" }
+
+/* Define Service Class */
+capability ServiceCapability
+ postcondition definedBy ?serviceType memberOf cloud#CloudStorage .
+
+interface LSDStoragePoolInterface
+ importsOntology { LSDStoragePoolOntology }
+
+ontology LSDStoragePoolOntology
+ importsOntology { _"http://localhost:8080/Matchmaker/ontologies/CloudStorage.wsml#" }
+
+/* ---------------------- */
+/* Generic QoS properties */
+/* ---------------------- */
+
+instance Availability memberOf { rqos#Availability, qos#ServiceSpec }
+	qos#value hasValue 99
+	qos#unit hasValue qos#Percentage
+
+instance MaxDownTime memberOf { rqos#MaxDownTime, qos#ServiceSpec }
+	qos#value hasValue 50
+	qos#unit hasValue qos#MilliSecond
+
+instance ResponseTime memberOf { rqos#ResponseTime, qos#ServiceSpec }
+	qos#value hasValue 60
+	qos#unit hasValue qos#MilliSecond
+
+// throughput
+instance NetworkBandwidth memberOf { rqos#NetworkBandwidth, qos#ServiceSpec }
+	qos#value hasValue 100
+	qos#unit hasValue qos#Mbps
+
+instance Throughput memberOf { rqos#Throughput, qos#ServiceSpec }
+	qos#value hasValue 100
+	qos#unit hasValue qos#Mbps
+
+/* ------------------------- */
+/* Online account properties */
+/* ------------------------- */
+
+instance SignupPrivacy memberOf { cloud#SignupPrivacy, qos#ServiceSpec }
+	qos#value hasValue 0
+	qos#unit hasValue qos#Percentage
+
+/* ------------------ */
+/* Storage properties */
+/* ------------------ */
+
+instance Capacity memberOf { cloud#Capacity, qos#ServiceSpec }
+	qos#value hasValue 90
+	qos#unit hasValue qos#GB
+
+instance Redundancy memberOf { cloud#Redundancy, qos#ServiceSpec }
+	qos#value hasValue 300
+	qos#unit hasValue qos#Percentage
+
+// TODO: Backup, BackupPeriod, Encryption
+
+/* ------------------- */
+/* Business properties */
+/* ------------------- */
+
+// legacy
+instance PricePerMonth memberOf { biz#PricePerMonth, qos#ServiceSpec }
+	qos#value hasValue 0.0
+	qos#unit hasValue qos#Euro
+
+instance PricePerPeriod memberOf { biz#PricePerPeriod, qos#ServiceSpec }
+	qos#value hasValue 0.0
+	qos#unit hasValue qos#Euro
+
+instance PricePerData memberOf { biz#PricePerData, qos#ServiceSpec }
+	qos#value hasValue 0.0
+	qos#unit hasValue qos#Euro
+
+instance FreePeriod memberOf { biz#FreePeriod, qos#ServiceSpec }
+	qos#value hasValue 0
+	qos#unit hasValue qos#Day
+
+/* ------------------------ */
+/* Main instance definition */
+/* ------------------------ */
+
+instance LSDStoragePool memberOf { cloud#CloudStorage }
+	hasName hasValue "LSD Storagepool"
+	hasIcon hasValue "http://www.computacao.ufcg.edu.br/_/rsrc/1272938838092/config/logo_full_dsc 201px.png"
+	hasWebsite hasValue "http://www.lsd.ufcg.edu.br/"
+	hasCountry hasValue "Brazil"
+	hasStoragePlan hasValue { LSDStoragePoolPlan }
+	hasProperty hasValue { Availability, ResponseTime, MaxDownTime, NetworkBandwidth, SignupPrivacy }
+
+instance LSDStoragePoolProtocol memberOf { cloud#Protocol }
+	hasType hasValue "webdav"
+	hasUrl hasValue "http://parati.lsd.ufcg.edu.br/nubisplits/"
+
+instance LSDStoragePoolPlan memberOf { cloud#CloudStoragePlan }
+	hasSignupForm hasValue ""
+	hasProtocol hasValue { LSDStoragePoolProtocol }
+	hasProperty hasValue { PricePerMonth, PricePerData, FreePeriod }
+
