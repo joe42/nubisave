@@ -1,0 +1,33 @@
+#!/bin/sh
+#
+# Mounts all configured Nubisave directories
+# Useful for headless configurations
+
+configdir=~/.nubisave/db/splitter_configuration
+splitterdir=/usr/share/nubisave/splitter/
+
+cd $configdir
+for storage in *
+do
+	echo "Storage: $storage"
+	mount=`grep ^mountcommand $storage | cut -d "=" -f 2-`
+	for param in $mount
+	do
+		#echo "--param:$param"
+		paramval=`grep ^$param $storage`
+		if [ $? = 0 ]
+		then
+			paramval=`echo $paramval | cut -d "=" -f 2-`
+			#echo "**$paramval"
+			mount=`echo $mount | sed -e "s&$param&$paramval&"`
+		fi
+	done
+	mountpoint=~/.nubisave/storages/$storage
+	mkdir -p $mountpoint $mountpoint/config
+	mount=`echo $mount | sed -e "s&mountpoint&$mountpoint&"`
+	echo "* mount: $mount"
+
+	cd $splitterdir
+	$mount
+	cd $configdir
+done
