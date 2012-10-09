@@ -32,5 +32,5 @@ then
 
 	echo "- Start der NubiSave-Konfigurations-GUI"
 	cd bin/
-	java -jar Nubisave.jar "$mountpoint"
+	java -Djava.library.path=lib -jar Nubisave.jar "$mountpoint"
 fi
