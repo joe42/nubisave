@@ -52,6 +52,22 @@ public class FileMetaDataStore {
 		fileMap = loadPersistentMap(recman, "filemap");
 	}
 	
+	public void reloadDataBase() throws IOException{
+		try {
+			recman = RecordManagerFactory.createRecordManager(props.getProperty("splitter_database_location"), props.getProperties());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		dirMap = loadPersistentMap(recman, "dirmap");
+		try {
+			dirMap.put("/", new FolderEntry());
+			recman.commit();
+		} catch (IOException e) {
+			throw new IOException("IO Exception on accessing metadata");
+		}
+		fileMap = loadPersistentMap(recman, "filemap");
+	}
+	
 	public static HTree loadPersistentMap(RecordManager recman, String mapName) throws IOException {
 		long recid = recman.getNamedObject(mapName);
 		HTree ret;

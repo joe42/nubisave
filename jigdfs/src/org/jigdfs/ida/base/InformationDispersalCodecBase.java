@@ -111,20 +111,13 @@ public abstract class InformationDispersalCodecBase implements
 	}
 
 	/**
-	 * Initializes IDA's encoder and decoder, cannot be changed thereafter
+	 * Initializes IDA's encoder and decoder
 	 * @throws IDAInvalidParametersException 
 	 */
 	protected void initialize() throws IDAInvalidParametersException {
-		if (_encoder == null) {
-			_encoder = getNewEncoder();
-		}
-
-		if (_decoder == null) {
-			_decoder = getNewDecoder();
-		}
-		
+		_encoder = getNewEncoder();
+		_decoder = getNewDecoder();
 		isInitialized = true;
-
 	}
 
 	public int getNumSlices() {

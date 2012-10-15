@@ -45,21 +45,33 @@
 			<li>Public access: <a href="git://nubisave.org/git/nubisave">git://nubisave.org/git/nubisave</a></li>
 			<li>Developer access: <a href="gitolite@nubisave.org:nubisave.git">gitolite@nubisave.org:nubisave.git</a></li>
 			<li>Web interface: <a href="http://nubisave.org/cgi-bin/gitweb.cgi?p=nubisave">http://nubisave.org/cgi-bin/gitweb.cgi?p=nubisave</a></li>
+			<li>Repository clones: at <a href="https://gitorious.org/nubisave">Gitorious</a></li>
 			</ul>
 		</div>
 		<div class="section">
 			<h2>Packages</h2>
 			For the time being, we offer an experimental generic Debian package which works well enough
-			for <a href="http://www.debian.org/">Debian</a> stable (squeeze), recent <a href="http://ubuntu.com/">Ubuntu</a>s
+			for <a href="http://www.debian.org/">Debian</a> stable (squeeze, wheezy), recent <a href="http://ubuntu.com/">Ubuntu</a>s
 			(lucid, maverick, natty) and <a href="http://spaceflight.serviceplatform.org/">SPACEflight</a> (1.0 beta5/6).
+			The package is designed to work on all architectures, but currently contains x86_64-specific libraries.
 			Install with <i>dpkg -i nubisave_*_all.deb</i> followed by <i>apt-get -f install</i> to resolve all dependencies.
 			<ul>
-			<li>Package for all architectures: <a href="downloads/nubisave_0.0~git20111216-1_all.deb">download</a> snapshot 16.12.2011, <a href="downloads/nubisave_0.0~git20111216-1_all.deb.asc">signature</a></li>
+			<li><a href="downloads/nubisave_0.0~git20120607-1_all.deb">download</a> snapshot 20.04.2012, <a href="downloads/nubisave_0.0~git20120607-1_all.deb.asc">signature</a></li>
 			<li>Signature key fingerprint: <i>5FE5 4798 19A6 7579 D5B3  52A6 3D29 91A5 CCF0 E02E</i> (OpenPGP key <a href="downloads/nubisave.key">download</a>)</li>
+			</ul>
+			<ul>
+			<li>Previous releases:
+			<ul>
+			<li><a href="downloads/nubisave_0.0~git20120420-1_all.deb">download</a> snapshot 20.04.2012, <a href="downloads/nubisave_0.0~git20120420-1_all.deb.asc">signature</a></li>
+			<li><a href="downloads/nubisave_0.0~git20111216-1_all.deb">download</a> snapshot 16.12.2011, <a href="downloads/nubisave_0.0~git20111216-1_all.deb.asc">signature</a></li>
+			</ul>
+			</li>
 			</ul>
 			On SPACEflight, SPACE is obviously pre-installed already; for the other distributions,
 			you'll need to activate the SPACE package repository first if you want NubiSave to find storage
-			providers automatically.
+			providers automatically from a local registry. Alternatively, use a global storage service
+			registry/spot market installation, or configure custom storage services through standard protocols
+			by yourself.
 			<ul>
 			<li><a href="http://serviceplatform.org/wiki/Package_Repository">SPACE package repository</a></li>
 			</ul>
@@ -69,7 +81,7 @@
 			NubiSave ships as part of the »π-Box«, the research demonstrator system for community-connected personal secure clouds.
 			This system does not require network access and just simulates cloud storage providers with local directories.
 			Information and download links can be found on the <a href="http://flexcloud.eu/?p=1714">π-Box page</a>.
-			NubiSave is added by the script fill-demonstrator-nubisave.sh from the π-Box live demonstrator
+			NubiSave is added by the script fill-demonstrator-nubisave(-system).sh from the π-Box live demonstrator
 			<a href="http://serviceplatform.org/cgi-bin/gitweb.cgi?p=pibox;a=tree;f=scripts;hb=HEAD">build scripts</a>.</i>
 		</div>
 	</div>

@@ -9,23 +9,34 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.bouncycastle.crypto.Digest;
+import org.bouncycastle.crypto.digests.SHA256Digest;
 
 public class SerialMultipleFileHandler implements MultipleFileHandler {
 	private static final Logger  log = Logger.getLogger("concurrent multiple filehandler");
+	private Digest digestFunc;
 	public SerialMultipleFileHandler() {
 		PropertyConfigurator.configure("log4j.properties");
+		this.digestFunc = new SHA256Digest();
 	}
-	public int writeFilesAsByteArrays(HashMap<String, byte[]> files){
-		int nr_of_files_written = 0;
+	public SerialMultipleFileHandler(Digest digestFunc) {
+		PropertyConfigurator.configure("log4j.properties");
+		this.digestFunc = digestFunc;
+	}
+
+	public MultipleFiles writeFilesAsByteArrays(HashMap<String, byte[]> files){
+		MultipleFiles multipleFiles = new MultipleFiles(files.keySet(), digestFunc);
 		if(files == null || files.size() == 0){
-			return nr_of_files_written;
+			return multipleFiles;
 		}
-		for (String file_name : files.keySet()) {
-			if(write(file_name, files.get(file_name))){
-				nr_of_files_written++;
+		for (String filePath : files.keySet()) {
+			if(write(filePath, files.get(filePath))){
+				multipleFiles.addTransferedFile(filePath, files.get(filePath));
+			} else {
+				multipleFiles.addFailedFilePath(filePath);
 			}
 		}
-		return nr_of_files_written;
+		return multipleFiles;
 	}
 
 	private boolean write(String fileName, byte[] bytes) {
@@ -41,25 +52,30 @@ public class SerialMultipleFileHandler implements MultipleFileHandler {
 		}
 		return true;
 	}
-	public List<byte[]> getFilesAsByteArrays(String[] file_names, int files_needed){
-		List<byte[]> ret = new ArrayList<byte[]>();
-		if(file_names == null || file_names.length == 0){
-			return ret;
+	public MultipleFiles getFilesAsByteArrays(Map<String, byte[]> filePathsToChecksum, int files_needed){
+		MultipleFiles multipleFiles = new MultipleFiles(filePathsToChecksum, digestFunc);
+		List<String> filePaths = new ArrayList<String>(filePathsToChecksum.keySet());
+		if(filePathsToChecksum.size() == 0){
+			return null;
 		}
+		int canFail = filePaths.size() - files_needed;
 		byte[] file;
-		for (String file_name : file_names) {
-			file = getFileAsByteArray(file_name);
+		for (String filePath : filePaths) {
+			file = getFileAsByteArray(filePath);
 			if(file != null){
-				ret.add(file);
+				multipleFiles.addTransferedFile(filePath, file);
+			} else {
+				multipleFiles.addFailedFilePath(filePath);
 			}
-			if(ret.size() >= files_needed){
+			if(multipleFiles.getNrOfSuccessfullyTransferedFiles()==files_needed || multipleFiles.getNrOfUnsuccessfullyTransferedFiles() > canFail){
 				break;
 			}
 		}
-		return ret;
+		return multipleFiles;
 	}
-	public List<byte[]> getFilesAsByteArrays(String[] file_names){
-		return getFilesAsByteArrays(file_names, file_names.length);
+	
+	public MultipleFiles getFilesAsByteArrays(Map<String, byte[]> filePathsToChecksum){
+		return getFilesAsByteArrays(filePathsToChecksum, filePathsToChecksum.size());
 	}
 
 	private byte[] getFileAsByteArray(String file_name) {

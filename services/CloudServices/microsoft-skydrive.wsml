@@ -1,0 +1,105 @@
+/*
+ * WSML service description for the Microsoft SkyDrive cloud storage service
+ */
+
+wsmlVariant _"http://www.wsmo.org/wsml/wsml-syntax/wsml-flight"
+
+namespace {_"http://localhost:8080/Matchmaker/ontologies/CloudStorage/SkyDrive.wsml#",
+	qos _"http://localhost:8080/Matchmaker/ontologies/QoSBase.wsml#",
+	rqos _"http://localhost:8080/Matchmaker/ontologies/RemoteQoSBase.wsml#",
+	biz _"http://localhost:8080/Matchmaker/ontologies/BusinessBase.wsml#",
+	cloud _"http://localhost:8080/Matchmaker/ontologies/CloudStorage.wsml#",
+	context _"http://localhost:8080/Matchmaker/ontologies/ContextBase.wsml#",
+	dc _"http://purl.org/dc/elements/1.1#",
+	wsml _"http://www.wsmo.org/wsml/wsml-syntax#" }
+
+webService MicrosoftSkyDrive
+ importsOntology { _"http://localhost:8080/Matchmaker/ontologies/CloudStorage.wsml#" }
+
+/* Define Service Class */
+capability ServiceCapability
+ postcondition definedBy ?serviceType memberOf cloud#CloudStorage .
+
+interface MicrosoftSkyDriveInterface
+ importsOntology { MicrosoftSkyDriveOntology }
+
+ontology MicrosoftSkyDriveOntology
+ importsOntology { _"http://localhost:8080/Matchmaker/ontologies/CloudStorage.wsml#" }
+
+/* ---------------------- */
+/* Generic QoS properties */
+/* ---------------------- */
+
+instance Availability memberOf { cloud#Availability, qos#ServiceSpec }
+	qos#value hasValue 95
+	qos#unit hasValue qos#Percentage
+
+instance MaxDownTime memberOf { cloud#MaxDownTime, qos#ServiceSpec }
+	qos#value hasValue 15
+	qos#unit hasValue qos#MilliSecond
+
+instance ResponseTime memberOf { cloud#ResponseTime, qos#ServiceSpec }
+	qos#value hasValue 40
+	qos#unit hasValue qos#MilliSecond
+
+instance NetworkBandwidth memberOf { cloud#NetworkBandwidth, qos#ServiceSpec }
+	qos#value hasValue 100
+	qos#unit hasValue qos#Mbps
+
+/* ------------------------- */
+/* Online account properties */
+/* ------------------------- */
+
+instance SignupPrivacy memberOf { cloud#SignupPrivacy, qos#ServiceSpec }
+	qos#value hasValue 0
+	qos#unit hasValue qos#Percentage
+
+/* ------------------ */
+/* Storage properties */
+/* ------------------ */
+
+instance Capacity memberOf { cloud#Capacity, qos#ServiceSpec }
+	qos#value hasValue 25
+	qos#unit hasValue qos#GB
+
+instance Redundancy memberOf { cloud#Redundancy, qos#ServiceSpec }
+	qos#value hasValue 0
+	qos#unit hasValue qos#Percentage
+
+/* ------------------- */
+/* Business properties */
+/* ------------------- */
+
+instance PricePerMonth memberOf { cloud#PricePerMonth, qos#ServiceSpec }
+	qos#value hasValue 0
+	qos#unit hasValue qos#Euro
+
+instance PricePerData memberOf { cloud#PricePerData, qos#ServiceSpec }
+	qos#value hasValue 0
+	qos#unit hasValue qos#Euro
+
+instance FreePeriod memberOf { cloud#FreePeriod, qos#ServiceSpec }
+	qos#value hasValue 0
+	qos#unit hasValue qos#Day
+
+/* ------------------------ */
+/* Main instance definition */
+/* ------------------------ */
+
+instance MicrosoftSkyDrive memberOf { cloud#CloudStorage }
+	hasName hasValue "Microsoft SkyDrive"
+	hasIcon hasValue "http://res2.explore.live.com/resbox/en/Live%20Explore/Main/bdea9717-460a-4105-84c0-b02fd1800b57_28.png"
+	hasWebsite hasValue "http://explore.live.com/skydrive"
+	hasCountry hasValue "USA"
+	hasStoragePlan hasValue { MicrosoftSkyDrivePlan }
+	hasProperty hasValue { Availability, ResponseTime, MaxDownTime, NetworkBandwidth, SignupPrivacy }
+
+instance MicrosoftSkyDriveWebdavProtocol memberOf { cloud#Protocol }
+	hasType hasValue "proprietary"
+	hasUrl hasValue "\\docs.live.net@SSL##onlineIDnumber##^2Public"
+
+instance MicrosoftSkyDrivePlan memberOf { cloud#CloudStoragePlan }
+	hasSignupForm hasValue "https://signup.live.com/signup.aspx?wreply=http:%2F%2Fskydrive.live.com%2Fhome.aspx&id=250206&cbcxt=sky&form=MWGMWU&publ=WLEXPL&crea=HTML_CIMS015781_SkyDrive_WW_GS&lic=1"
+	hasProtocol hasValue { MicrosoftSkyDriveProtocol }
+	hasProperty hasValue { PricePerMonth, PricePerData, FreePeriod }
+

@@ -7,6 +7,8 @@ package nubisave;
 import com.github.joe42.splitter.backend.BackendService;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.ini4j.Ini;
@@ -21,17 +23,22 @@ public class Splitter {
     private final String configurationDirPath;
     private final String configurationFilePath;
     private final String dataDir;
+    private final String mountScriptDir;
     public Splitter(String splitterMountpoint){
         this.splitterMountpoint = splitterMountpoint;
         this.configurationDirPath = splitterMountpoint+"/config";
         this.configurationFilePath = splitterMountpoint+"/config/config";
         this.dataDir = splitterMountpoint+"/data";
+        mountScriptDir = "../splitter/mountscripts";
     }
     public String getMountpoint(){
         return splitterMountpoint;
     }
     public String getDataDir(){
         return dataDir;
+    }
+    public String getConfigDir(){
+        return configurationDirPath;
     }
     /**
      * Mount the Splitter module.
@@ -158,6 +165,79 @@ public class Splitter {
         } catch (IOException ex) {
             Logger.getLogger(Splitter.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+
+    /**Loads a stored session with all back end modules and the Splitter's configuration**/
+    public void loadSession(int sessionNumber){
+        try{
+            Ini splitterConfig = new Ini(new File(configurationFilePath));
+            splitterConfig.put("splitter", "load", sessionNumber);
+            splitterConfig.store();
+            waitForSessionToLoad();
+            //rename services
+            StorageService service;
+            String uniqueServiceName;
+            String previousName = null;
+            for(int i=0; i<Nubisave.services.size();i++){
+                service = Nubisave.services.get(i);
+                uniqueServiceName = service.getUniqName();
+                try{
+                    previousName = splitterConfig.fetch("MapOfCurrentToPreviousServices", uniqueServiceName, String.class);
+                } catch(NullPointerException e){
+                    e.printStackTrace();
+                }
+                if(previousName != null){
+                    System.out.println("mapping: "+uniqueServiceName+"->"+previousName);
+                    service.setUniqName(previousName);
+                    Nubisave.services.add(service,i);
+                    Nubisave.services.remove(i);
+                    new File(configurationDirPath + "/" + uniqueServiceName).delete();
+                    mountStorageModule(service);
+                }
+            }
+
+            //load the back end modules:
+            Nubisave.services.loadFromDataBase(dataDir+"/.nubisave_session_"+sessionNumber);
+            Nubisave.services.update();
+        } catch(Exception e){
+            System.err.println("Splitter.loadSession(int sessionNumber): Failed to configure Splitter "+" - "+e.getMessage()==null?e.getMessage():"");
+        }
+    }
+
+    /**Stores a session with all back end modules and the Splitter's configuration**/
+    public void storeSession(int sessionNumber){
+        try{
+            String dbPath = System.getProperty("user.home")+"/.nubisave/nubisavemount/data/.nubisave_database"+sessionNumber;
+            //store the back end modules:
+            File dir = new File(dataDir+"/.nubisave_session_"+sessionNumber);
+            dir.mkdirs();
+            Nubisave.services.storeToDatabase(dataDir+"/.nubisave_session_"+sessionNumber);
+            FileUtil.copy(new File(new PropertiesUtil("nubi.properties").getProperty("splitter_database_location")+".db"), new File(dbPath));
+            Ini splitterConfig = new Ini(new File(configurationFilePath));
+            splitterConfig.put("splitter", "save", sessionNumber);
+            System.out.println( "gui db path: "+"/.nubisave_database"+sessionNumber);
+            splitterConfig.put("database", "path", "/.nubisave_database"+sessionNumber);
+            splitterConfig.store();
+
+        } catch(Exception e){
+            System.err.println("Splitter.storeSession(int sessionNumber): Failed to configure Splitter "+" - "+e.getMessage()==null?e.getMessage():"");
+        }
+    }
+
+    private void waitForSessionToLoad() {
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Splitter.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    /**
+     * @return the mountScriptDir
+     */
+    public String getMountScriptDir() {
+        return mountScriptDir;
     }
 
 }

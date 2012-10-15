@@ -1,50 +1,105 @@
 /*
- * WSML service description for the Sugarsync  service
+ * WSML service description for the SugarSync cloud storage service
  */
 
 wsmlVariant _"http://www.wsmo.org/wsml/wsml-syntax/wsml-flight"
 
-namespace {_"http://localhost:8080/Matchmaker/ontologies/CloudQos/sugarsync.wsml#",
+namespace {_"http://localhost:8080/Matchmaker/ontologies/CloudStorage/sugarsync.wsml#",
 	qos _"http://localhost:8080/Matchmaker/ontologies/QoSBase.wsml#",
-        cloud _"http://localhost:8080/Matchmaker/ontologies/CloudQoS.wsml#",
-        context _"http://localhost:8080/Matchmaker/ontologies/ContextBase.wsml#",
+	rqos _"http://localhost:8080/Matchmaker/ontologies/RemoteQoSBase.wsml#",
+	biz _"http://localhost:8080/Matchmaker/ontologies/BusinessBase.wsml#",
+	cloud _"http://localhost:8080/Matchmaker/ontologies/CloudStorage.wsml#",
+	context _"http://localhost:8080/Matchmaker/ontologies/ContextBase.wsml#",
 	dc _"http://purl.org/dc/elements/1.1#",
 	wsml _"http://www.wsmo.org/wsml/wsml-syntax#" }
 
-webService Sugarsync
-importsOntology { _"http://localhost:8080/Matchmaker/ontologies/CloudQoS.wsml#" }
+webService SugarSync
+ importsOntology { _"http://localhost:8080/Matchmaker/ontologies/CloudStorage.wsml#" }
 
 /* Define Service Class */
 capability ServiceCapability
  postcondition definedBy ?serviceType memberOf cloud#CloudStorage .
 
-interface SugarsyncInter
- importsOntology { S }
+interface SugarSyncInterface
+ importsOntology { SugarSyncOntology }
 
-ontology S
- importsOntology { _"http://localhost:8080/Matchmaker/ontologies/CloudQoS.wsml#"}
+ontology SugarSyncOntology
+ importsOntology { _"http://localhost:8080/Matchmaker/ontologies/CloudStorage.wsml#" }
 
-instance Availability memberOf { cloud#Availability , qos#ServiceSpec}
-  qos#value hasValue 95
-  qos#unit hasValue qos#Percentage
+/* ---------------------- */
+/* Generic QoS properties */
+/* ---------------------- */
 
-instance MaxDownTime memberOf { cloud#MaxDownTime , qos#ServiceSpec}
-  qos#value hasValue 50
-  qos#unit hasValue qos#MilliSecond
+instance Availability memberOf { cloud#Availability, qos#ServiceSpec }
+	qos#value hasValue 95
+	qos#unit hasValue qos#Percentage
 
-instance ResponseTime memberOf { cloud#ResponseTime , qos#ServiceSpec}
-  qos#value hasValue 60
-  qos#unit hasValue qos#MilliSecond
+instance MaxDownTime memberOf { cloud#MaxDownTime, qos#ServiceSpec }
+	qos#value hasValue 50
+	qos#unit hasValue qos#MilliSecond
 
-instance PricePerMonth memberOf { cloud#PricePerMonth , qos#ServiceSpec}
-  qos#value hasValue 10
-  qos#unit hasValue qos#Euro
+instance ResponseTime memberOf { cloud#ResponseTime, qos#ServiceSpec }
+	qos#value hasValue 60
+	qos#unit hasValue qos#MilliSecond
 
-instance PricePerData memberOf { cloud#PricePerData , qos#ServiceSpec}
-  qos#value hasValue 0.05
-  qos#unit hasValue qos#Euro
+instance NetworkBandwidth memberOf { cloud#NetworkBandwidth, qos#ServiceSpec }
+	qos#value hasValue 30
+	qos#unit hasValue qos#Mbps
 
-instance NetworkBandwidth memberOf { cloud#NetworkBandwidth , qos#ServiceSpec}
-  qos#value hasValue 30
-  qos#unit hasValue qos#Mbps
+/* ------------------------- */
+/* Online account properties */
+/* ------------------------- */
+
+instance SignupPrivacy memberOf { cloud#SignupPrivacy, qos#ServiceSpec }
+	qos#value hasValue 0
+	qos#unit hasValue qos#Percentage
+
+/* ------------------ */
+/* Storage properties */
+/* ------------------ */
+
+instance Capacity memberOf { cloud#Capacity, qos#ServiceSpec }
+	qos#value hasValue 10
+	qos#unit hasValue qos#GB
+
+instance Redundancy memberOf { cloud#Redundancy, qos#ServiceSpec }
+	qos#value hasValue 0
+	qos#unit hasValue qos#Percentage
+
+/* ------------------- */
+/* Business properties */
+/* ------------------- */
+
+instance PricePerMonth memberOf { cloud#PricePerMonth, qos#ServiceSpec }
+	qos#value hasValue 10
+	qos#unit hasValue qos#Euro
+
+instance PricePerData memberOf { cloud#PricePerData, qos#ServiceSpec }
+	qos#value hasValue 0.05
+	qos#unit hasValue qos#Euro
+
+instance FreePeriod memberOf { cloud#FreePeriod, qos#ServiceSpec }
+	qos#value hasValue 0
+	qos#unit hasValue qos#Day
+
+/* ------------------------ */
+/* Main instance definition */
+/* ------------------------ */
+
+instance SugarSync memberOf { cloud#CloudStorage }
+	hasName hasValue "SugarSync"
+	hasIcon hasValue "https://www.sugarsync.com/images/hero-any-access.png"
+	hasWebsite hasValue "http://www.sugarsync.com/"
+	hasCountry hasValue "USA"
+	hasStoragePlan hasValue { SugarSyncPlan }
+	hasProperty hasValue { Availability, ResponseTime, MaxDownTime, NetworkBandwidth, SignupPrivacy }
+
+instance SugarSyncProtocol memberOf { cloud#Protocol }
+	hasType hasValue "indirect"
+	hasUrl hasValue "indirect:/"
+
+instance SugarSyncPlan memberOf { cloud#CloudStoragePlan }
+	hasSignupForm hasValue "https://www.sugarsync.com/signup?startsub=5"
+	hasProtocol hasValue { SugarSyncProtocol }
+	hasProperty hasValue { PricePerMonth, PricePerData, FreePeriod }
 

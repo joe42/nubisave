@@ -11,7 +11,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import nubisave.Nubisave;
 
 /**
- *
+ * @deprecated 
  * @author demo
  */
 public class ShowSupportedCellRenderer extends DefaultTableCellRenderer {

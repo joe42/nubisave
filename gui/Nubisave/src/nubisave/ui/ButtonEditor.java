@@ -15,7 +15,7 @@ import javax.swing.JTable;
 import nubisave.*;
 
 /**
- *
+ * @deprecated 
  * @author demo
  */
 public class ButtonEditor extends DefaultCellEditor {

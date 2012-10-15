@@ -1,25 +1,68 @@
 Format: http://dep.debian.net/deps/dep5
-Upstream-Name: nubisave
-Source: <http://nubisave.org>
+Upstream-Name: NubiSave
+Upstream-Contact: Josef Spillner <josef.spillner@tu-dresden.de>
+Source: http://nubisave.org
+License: GPL-3+
+Copyright: 2011 Gerd Bombach <s1610412@mail.zih.tu-dresden.de>
+           2011 Steffen Matthischke <sSM00000@mail.zih.tu-dresden.de>
+           2011 Rico Tzschichholz <s5259173@mail.zih.tu-dresden.de>
+           2011, 2012 Johannes Müller <s9186231@mail.zih.tu-dresden.de>
+           2011, 2012 Josef Spillner <josef.spillner@tu-dresden.de>
 
 Files: *
-Copyright: <years> <put author's name and email here>
-           <years> <likewise for another author>
-License: <special license>
- Still to be sorted out.
- <Put the license of the package here indented by 1 space>
- <This follows the format of Description: lines in control file>
- .
- <Including paragraphs>
+Copyright: 2011, 2012 Johannes Müller <s9186231@mail.zih.tu-dresden.de>
+           2011, 2012 Josef Spillner <josef.spillner@tu-dresden.de>
+License: GPL-3+
+ (catch-all licence for the parts not explicitly mentioned below)
 
-# If you want to use GPL v2 or later for the /debian/* files use 
-# the following clauses, or change it to suit. Delete these two lines
-Files: debian/*
-Copyright: 2011 Josef Spillner <josef@rumba>
+Files: documentation/*
+Copyright: 2011 Johannes Müller <s9186231@mail.zih.tu-dresden.de>
+           2011 Gerd Bombach <s1610412@mail.zih.tu-dresden.de>
+License: GPL-3+
+
+Files: web/*
+Copyright: 2011 Josef Spillner <josef.spillner@tu-dresden.de>
+License: GPL-3+
+
+Files: gui/*
+Copyright: 2011 Steffen Matthischke <sSM00000@mail.zih.tu-dresden.de>
+           2011 Johannes Müller <s9186231@mail.zih.tu-dresden.de>
+License: GPL-3+
+
+Files: splitter/*
+Copyright: 2011 Johannes Müller <s9186231@mail.zih.tu-dresden.de>
+License: GPL-3+
+ (ASF-2 for ini4j, JDBM for JDBM, GPL-compatible in bouncycastle ... in splitter)
+
+Files: testsuite/*
+Copyright: 2011 Rico Tzschichholz <s5259173@mail.zih.tu-dresden.de>
+           2011 Johannes Müller <s9186231@mail.zih.tu-dresden.de>
+License: GPL-3+
+ (MIT for Sikuli in testsuite)
+
+Files: services/*
+Copyright: 2011 Gerd Bombach <s1610412@mail.zih.tu-dresden.de>
+License: GPL-3+
+
+Files: cloudfusion/*
+Copyright: 2011 Johannes Müller <s9186231@mail.zih.tu-dresden.de>
+License: Expat
+ (Expat for DropBox, New-BSD for FusePY)
+
+Files: fusej/*
+Copyright: 2003-2005 Peter Levart <peter@select-tech.si>
+License: LGPL-2+
+
+Files: jigdfs/*
+Copyright: 2009 timobj <timobj@gmail.com>
 License: GPL-2+
+
+Files: debian/*
+Copyright: 2011 Josef Spillner <josef.spillner@tu-dresden.de>
+License: GPL-3+
  This package is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
- the Free Software Foundation; either version 2 of the License, or
+ the Free Software Foundation; either version 3 of the License, or
  (at your option) any later version.
  .
  This package is distributed in the hope that it will be useful,
@@ -31,7 +74,4 @@ License: GPL-2+
  along with this program. If not, see <http://www.gnu.org/licenses/>
  .
  On Debian systems, the complete text of the GNU General
- Public License version 2 can be found in "/usr/share/common-licenses/GPL-2".
-
-# Please also look if there are files or directories which have a
-# different copyright/license attached and list them here.
+ Public License version 3 can be found in "/usr/share/common-licenses/GPL-3".

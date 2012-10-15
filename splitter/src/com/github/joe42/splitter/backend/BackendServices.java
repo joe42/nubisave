@@ -1,5 +1,7 @@
 package com.github.joe42.splitter.backend;
 
+import java.io.File;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,6 +14,8 @@ import java.util.HashSet;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.ini4j.Ini;
+
+import com.github.joe42.splitter.util.file.FileUtil;
 
 /**
  *Manages the storages used by NubiSave. The actual stores are instances of BackendService.
@@ -69,7 +73,7 @@ public class BackendServices extends Observable {
 	public BackendService get(String serviceName){
 		return services.get(serviceName);
 	}
-	
+
 	/**
 	 * Get a BackendService object 
 	 * @param dataDirPath the data directory path of the BackendService object
@@ -82,6 +86,15 @@ public class BackendServices extends Observable {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Get the unique name of a service by its data directory
+	 * @param dataDirPath the data directory path of the BackendService object
+	 * @return the unique name of a service
+	 */
+	public static String getUniqueServiceNameByDataDirPath(String dataDirPath){
+		return new File(dataDirPath).getParent();
 	}
 	
 	/**
@@ -105,6 +118,14 @@ public class BackendServices extends Observable {
 				storageServices.add(service);
 			}
 		}
+		return storageServices;
+	}
+	
+	/**
+	 * @return list of all storage services' names
+	 */
+	public List<String> getStorageServicesNames() {
+		List<String> storageServices = new ArrayList<String>(services.keySet());
 		return storageServices;
 	}
 
@@ -196,5 +217,42 @@ public class BackendServices extends Observable {
 		get(uniqueServiceName).configure(uniqueServiceName, mountOptions);
 		setChanged();
 		notifyObservers();
+	}
+
+	/**
+	 * Store the service name of each service in the service's data directory 
+	 * @param fileName the name of the file to store the service name
+	 */
+	public void storeServiceNames(String fileName) {
+		int index = 0; //index in case that several services store data in the same location
+		for(BackendService service: services.values()){
+			FileUtil.writeFile(new File(service.getDataDirPath()+"/"+fileName+"#"+index), service.getName());
+			index++;
+		}
+	}
+	
+	/**
+	 * Get a map from current service names to the names stored in the service's data directory 
+	 * Assumes at most 100 services
+	 * @param fileName the name of the file to read the service name from in each data directory
+	 */
+	public Map<String,String> getServiceNameMapping(String fileName) {
+		Map<String,String> ret = new HashMap<String, String>();
+		String storedServiceName;
+		Set<Integer> usedIndizes = new HashSet<Integer>();
+		for(BackendService service: services.values()){
+			for(int index=0; index<100; index++){
+				if(usedIndizes.contains(index)){
+					continue;
+				}
+				storedServiceName = FileUtil.readFile(new File(service.getDataDirPath()+"/"+fileName+"#"+index));
+				if(storedServiceName != null){
+					usedIndizes.add(index);
+					ret.put(service.getName(), storedServiceName);
+					break;
+				}
+			}
+		}
+		return ret;
 	}
 }

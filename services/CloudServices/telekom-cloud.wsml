@@ -1,0 +1,105 @@
+/*
+ * WSML service description for the Telecom Cloud cloud storage service
+ */
+
+wsmlVariant _"http://www.wsmo.org/wsml/wsml-syntax/wsml-flight"
+
+namespace {_"http://localhost:8080/Matchmaker/ontologies/CloudStorage/HiDrive.wsml#",
+	qos _"http://localhost:8080/Matchmaker/ontologies/QoSBase.wsml#",
+	rqos _"http://localhost:8080/Matchmaker/ontologies/RemoteQoSBase.wsml#",
+	biz _"http://localhost:8080/Matchmaker/ontologies/BusinessBase.wsml#",
+	cloud _"http://localhost:8080/Matchmaker/ontologies/CloudStorage.wsml#",
+	context _"http://localhost:8080/Matchmaker/ontologies/ContextBase.wsml#",
+	dc _"http://purl.org/dc/elements/1.1#",
+	wsml _"http://www.wsmo.org/wsml/wsml-syntax#" }
+
+webService TelekomCloud
+ importsOntology { _"http://localhost:8080/Matchmaker/ontologies/CloudStorage.wsml#" }
+
+/* Define Service Class */
+capability ServiceCapability
+ postcondition definedBy ?serviceType memberOf cloud#CloudStorage .
+
+interface TelekomCloudInterface
+ importsOntology { TelekomCloudOntology }
+
+ontology TelekomCloudOntology
+ importsOntology { _"http://localhost:8080/Matchmaker/ontologies/CloudStorage.wsml#" }
+
+/* ---------------------- */
+/* Generic QoS properties */
+/* ---------------------- */
+
+instance Availability memberOf { cloud#Availability, qos#ServiceSpec }
+	qos#value hasValue 95
+	qos#unit hasValue qos#Percentage
+
+instance MaxDownTime memberOf { cloud#MaxDownTime, qos#ServiceSpec }
+	qos#value hasValue 15
+	qos#unit hasValue qos#MilliSecond
+
+instance ResponseTime memberOf { cloud#ResponseTime, qos#ServiceSpec }
+	qos#value hasValue 40
+	qos#unit hasValue qos#MilliSecond
+
+instance NetworkBandwidth memberOf { cloud#NetworkBandwidth, qos#ServiceSpec }
+	qos#value hasValue 200
+	qos#unit hasValue qos#Mbps
+
+/* ------------------------- */
+/* Online account properties */
+/* ------------------------- */
+
+instance SignupPrivacy memberOf { cloud#SignupPrivacy, qos#ServiceSpec }
+	qos#value hasValue 0
+	qos#unit hasValue qos#Percentage
+
+/* ------------------ */
+/* Storage properties */
+/* ------------------ */
+
+instance Capacity memberOf { cloud#Capacity, qos#ServiceSpec }
+	qos#value hasValue 25
+	qos#unit hasValue qos#GB
+
+instance Redundancy memberOf { cloud#Redundancy, qos#ServiceSpec }
+	qos#value hasValue 0
+	qos#unit hasValue qos#Percentage
+
+/* ------------------- */
+/* Business properties */
+/* ------------------- */
+
+instance PricePerMonth memberOf { cloud#PricePerMonth, qos#ServiceSpec }
+	qos#value hasValue 10
+	qos#unit hasValue qos#Euro
+
+instance PricePerData memberOf { cloud#PricePerData, qos#ServiceSpec }
+	qos#value hasValue 0
+	qos#unit hasValue qos#Euro
+
+instance FreePeriod memberOf { cloud#FreePeriod, qos#ServiceSpec }
+	qos#value hasValue 0
+	qos#unit hasValue qos#Day
+
+/* ------------------------ */
+/* Main instance definition */
+/* ------------------------ */
+
+instance TelekomCloud memberOf { cloud#CloudStorage }
+	hasName hasValue "Telekom Cloud"
+	hasIcon hasValue "https://login.idm.telekom.com/res/dls20/v2011/cloudicon.png"
+	hasWebsite hasValue "https://mediencenter.t-online.de"
+	hasCountry hasValue "Germany"
+	hasStoragePlan hasValue { TelekomCloudPlan }
+	hasProperty hasValue { Availability, ResponseTime, MaxDownTime, NetworkBandwidth, SignupPrivacy }
+
+instance TelekomCloudWebdavProtocol memberOf { cloud#Protocol }
+	hasType hasValue "webdav"
+	hasUrl hasValue "https://mediencenter.t-online.de"
+
+instance TelekomCloudPlan memberOf { cloud#CloudStoragePlan }
+	hasSignupForm hasValue "https://mediencenter.t-online.de"
+	hasProtocol hasValue { TelekomCloudWebdavProtocol }
+	hasProperty hasValue { PricePerMonth, PricePerData, FreePeriod }
+

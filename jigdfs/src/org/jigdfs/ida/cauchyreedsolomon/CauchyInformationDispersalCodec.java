@@ -67,10 +67,6 @@ public class CauchyInformationDispersalCodec extends InformationDispersalCodecBa
       {
          throw new IDAInvalidParametersException("Chunk size must be positive");
       }
-      if (this.threshold > this.numSlices) 
-      {
-         throw new IDAInvalidParametersException("Threshold must be less than or equal to number of slices");
-      }
       
       initialize();
    }

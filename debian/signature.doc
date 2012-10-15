@@ -1,0 +1,1 @@
+gpg --detach-sign --armor -u josef.spillner@tu-dresden.de nubisave_0.0~git*_all.deb
