@@ -25,11 +25,13 @@ public class Splitter {
     private final String configurationDirPath;
     private final String configurationFilePath;
     private final String dataDir;
+    private final String mountScriptDir;
     public Splitter(String splitterMountpoint){
         this.splitterMountpoint = splitterMountpoint;
         this.configurationDirPath = splitterMountpoint+"/config";
         this.configurationFilePath = splitterMountpoint+"/config/config";
         this.dataDir = splitterMountpoint+"/data";
+        mountScriptDir = "../splitter/mountscripts";
     }
     public String getMountpoint(){
         return splitterMountpoint;
@@ -231,6 +233,13 @@ public class Splitter {
         } catch (InterruptedException ex) {
             Logger.getLogger(Splitter.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    /**
+     * @return the mountScriptDir
+     */
+    public String getMountScriptDir() {
+        return mountScriptDir;
     }
 
 }

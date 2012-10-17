@@ -8,8 +8,7 @@ import javax.swing.table.AbstractTableModel;
 import nubisave.*;
 
 /**
- *
- * @author demo
+ * @deprecated
  */
 public class NubiTableModel extends AbstractTableModel {
 

@@ -4,6 +4,7 @@
  */
 package nubisave;
 
+import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,12 +31,16 @@ public class StorageService {
     private LinkedList<StorageService> backendServices;
     private Map<String, String> parameterMap = new HashMap<String, String>();
     private Ini config = null;
+    private Point graphLocation;
+	private int nrOfFilePartsToStore;
+    private File file;
     
     public StorageService(String name) {
         this.name = name;
         uniqName = name + new Random().nextInt(10000000);
         supported = false;
         nrOfBackends = 0;
+        nrOfFilePartsToStore = 1;
         backendServices = new LinkedList<StorageService>();
         for (String s :Nubisave.supportedProvider) {
             if (s.equalsIgnoreCase(name)) {
@@ -43,12 +48,9 @@ public class StorageService {
                 break;
             }
         }
-        if(new File("../splitter/mountscripts/"+name+".ini").exists()){
-            try{
-                setConfig(new Ini(new File("../splitter/mountscripts/"+name+".ini")));
-            } catch(IOException e){
-                System.err.println("StorageService instance "+name+".StorageService(File file): Cannot read ini file ../splitter/mountscripts/"+name+".ini"+" - "+e.getMessage()==null?e.getMessage():"");
-            }
+        file = new File("../splitter/mountscripts/"+name+".ini");
+        if(file.exists()){
+            loadFromFile();
         }
     }
 
@@ -56,17 +58,29 @@ public class StorageService {
      * @param file an ini configuration file for a custom service
      */
     public StorageService(File file) {
-            name = file.getName().split("\\.")[0]; //use the filename as a service name
-            uniqName = name + new Random().nextInt(10000000);
+            this.file = file;
+            String filename = file.getName().split("\\.")[0]; //use the filename as a service name
+            if(filename.matches(".*[0-9]$")){ //filename is already name + number
+                uniqName = filename;
+                name = filename.replace("\\d*$", ""); //remove trailing numbers
+            } else {
+                name = filename;
+                uniqName = name + new Random().nextInt(10000000);
+            }
             type = StorageType.CUSTOM;
             supported = true;
             nrOfBackends = 0;
+            nrOfFilePartsToStore = 1;
             backendServices = new LinkedList<StorageService>();
-            try{
-                setConfig(new Ini(file));
-            } catch(IOException e){
-                System.err.println("StorageService instance "+name+".StorageService(File file): Cannot read ini file "+file.getAbsolutePath()+" - "+e.getMessage()==null?e.getMessage():"");
-            }
+            loadFromFile();
+    }
+
+    public void loadFromFile() {
+        try {
+            setConfig(new Ini(file));
+        } catch (IOException e) {
+            System.err.println("StorageService instance " + name + ".loadFromFile(): Cannot read ini file " + file.getAbsolutePath() + " - " + e.getMessage() == null ? e.getMessage() : "");
+        }
     }
 
     /**@return the configuration file for this service*/
@@ -78,6 +92,18 @@ public class StorageService {
     public void setConfig(Ini config){
         this.config = config;
         if(config != null){
+            try{
+                nrOfFilePartsToStore = config.get("splitter", "fileparts", Integer.class);
+            } catch (NullPointerException e) {
+                System.err.println("StorageService instance "+getName()+".setConfig(Ini config): configuration has no fileparts parameter"+" - "+e.getMessage()==null?e.getMessage():"");
+            }
+            try{
+                int x = config.get("gui", "graphlocationx", Integer.class);
+                int y = config.get("gui", "graphlocationy", Integer.class);
+                graphLocation = new Point(x,y);
+            } catch (NullPointerException e) {
+                System.err.println("StorageService instance "+getName()+".setConfig(Ini config): configuration has no graphlocationx and graphlocationy parameter"+" - "+e.getMessage()==null?e.getMessage():"");
+            }
             try{
                 nrOfBackends = config.get("gui", "nrofbackends", Integer.class);
             } catch (NullPointerException e) {
@@ -198,11 +224,45 @@ public class StorageService {
             if(isBackendModule()){
                 config.put("splitter", "isbackendmodule", true);
             }
+            if(graphLocation != null){
+                config.put("gui", "graphlocationx", graphLocation.x);
+                config.put("gui", "graphlocationy", graphLocation.y);
+            }
+            config.put("splitter", "fileparts", nrOfFilePartsToStore);
             config.store(new File(path));
         } catch(Exception e){
             System.err.println("StorageService.storeConfiguration(StorageService service): Error writing configuration for StorageService instance "+getUniqName()+" - "+e.getMessage()==null?e.getMessage():"");
             return;
         }
     }
-    
+
+    /**
+     * Get the location of the services vertex representation on the graph.
+     * @return the location or null otherwise
+     */
+    public Point getGraphLocation(){
+        return graphLocation;
+    }
+    /**
+     * Set the location of the services vertex representation on the graph.
+     */
+    public void setGraphLocation(Point location){
+        this.graphLocation = location;
+    }
+
+    /**
+     * @return the number of file parts the splitter stores in the module described by this StorageService instance
+     */
+    public Integer getNrOfFilePartsToStore() {
+        return nrOfFilePartsToStore;
+    }
+
+    /**
+     * Set the number of file parts the splitter stores in the module described by this StorageService instance.
+     * @param nrOfFilePartsToStore the nrOfFilePartsToStore to set
+     */
+    public void setNrOfFilePartsToStore(Integer nrOfFilePartsToStore) {
+        this.nrOfFilePartsToStore = nrOfFilePartsToStore;
+    }
+
 }

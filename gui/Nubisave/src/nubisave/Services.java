@@ -190,4 +190,15 @@ public class Services implements Iterable<StorageService>{
         new File(database_directory+"/"+mmServices.get(i).getUniqName()).delete();
         mmServices.remove(i);
     }
+
+    /**
+     * Remove the StorageService instance service. Shifts any subsequent elements to the left (subtracts one from their indices).
+     * Unpersists the store.
+     * @param service
+     */
+    public void remove(StorageService service) {
+        if( mmServices.remove(service) ) {
+            new File(database_directory+"/"+service.getUniqName()).delete();
+        }
+    }
 }
