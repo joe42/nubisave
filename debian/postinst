@@ -26,7 +26,7 @@ case "$1" in
 		for service in /usr/share/nubisave/services/CloudServices/*.wsml; do
 			servicename=$(basename "$service")
 			echo "- registering provider $servicename"
-			conqotool -u nubisave register $service
+			conqotool -u nubisave register $service || true
 		done
 	else
 		echo "Skipping cloud storage provider registration."
