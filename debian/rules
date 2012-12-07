@@ -33,6 +33,8 @@ override_dh_auto_install:
 	##(obsolete?)##sed -i -e 's/splitter_database_location=database_of_splitter/splitter_database_location=\/usr\/share\/nubisave\/splitter\/splitter/' debian/nubisave/usr/share/nubisave/bin/nubi.properties
 	sed -i -e 's/R.File=log/R.File=$${user.home}\/.nubisave\/log/' debian/nubisave/usr/share/nubisave/splitter/log4j.properties
 	sed -i -e 's/CHAINSAW.File=log/CHAINSAW.File=$${user.home}\/.nubisave\/log/' debian/nubisave/usr/share/nubisave/splitter/log4j.properties
+	mkdir -p debian/nubisave/usr/lib/nubisave
+	cp -r debian/data/modules debian/nubisave/usr/lib/nubisave
 	mkdir -p debian/nubisave/usr/bin
 	cp debian/data/nubisave debian/nubisave/usr/bin/
 	cp debian/data/nubisave-mounter debian/nubisave/usr/bin/

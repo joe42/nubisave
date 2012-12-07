@@ -36,6 +36,11 @@ case "$1" in
 	chmod 666 /usr/share/nubisave/bin/nubi.properties
 	# FIXME: auto-add users/primary user or debconf query?
 	#usermod -a -G fuse demo
+	arch=`uname -m`
+	if [ -d /usr/lib/nubisave/modules/$arch ]; then
+		echo "Substitution of architecture-specific Java native modules."
+		cp /usr/lib/nubisave/modules/$arch/libjavafs.so /usr/share/nubisave/fusej/jni/
+	fi
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
