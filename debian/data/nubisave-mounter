@@ -19,12 +19,12 @@ do
 		then
 			paramval=`echo $paramval | cut -d "=" -f 2-`
 			#echo "**$paramval"
-			mount=`echo $mount | sed -e "s&$param&$paramval&"`
+			mount=`echo $mount | sed -e "s& $param& $paramval&"`
 		fi
 	done
 	mountpoint=~/.nubisave/storages/$storage
 	mkdir -p $mountpoint $mountpoint/config
-	mount=`echo $mount | sed -e "s&mountpoint&$mountpoint&"`
+	mount=`echo $mount | sed -e "s& mountpoint& $mountpoint&"`
 	echo "* mount: $mount"
 
 	cd $splitterdir
