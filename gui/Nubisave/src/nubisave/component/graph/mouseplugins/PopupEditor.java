@@ -108,6 +108,17 @@ public class PopupEditor extends AbstractPopupGraphMousePlugin {
                             
                     vv.repaint();
                 }});
+
+                popup.addSeparator();
+
+                popup.add(new AbstractAction("Open Location") {
+                    public void actionPerformed(ActionEvent NubiSaveEdge) {
+                        System.out.println("open location ...");
+                        if (vertex instanceof AbstractNubisaveComponent) {
+                            ((AbstractNubisaveComponent)vertex).openLocation();
+                        }
+                    }
+                });
             } else if(edge != null) {
                 popup.add(new AbstractAction("Delete Edge") {
                     public void actionPerformed(ActionEvent NubiSaveEdge) {

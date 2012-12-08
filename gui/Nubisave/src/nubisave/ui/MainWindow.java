@@ -373,6 +373,13 @@ public class MainWindow extends javax.swing.JFrame {
                 Desktop.getDesktop().open(new File(Nubisave.mainSplitter.getDataDir()));
             } catch (IOException ex) {
                 Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+
+                // Fallback when desktop handlers are not available
+                try {
+                    Runtime.getRuntime().exec(new String[]{"xdg-open", Nubisave.mainSplitter.getDataDir()});
+                } catch (IOException ex2) {
+                    Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex2);
+                }
             }
         }
 }//GEN-LAST:event_openMntDirBtnActionPerformed

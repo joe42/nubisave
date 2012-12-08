@@ -6,6 +6,7 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
+import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -84,6 +85,24 @@ public class GenericNubiSaveComponent extends AbstractNubisaveComponent {
         ServiceParameterDialog editDialog = new ServiceParameterDialog(null, true, component);
         editDialog.setTitle(component.getName());
         editDialog.setVisible(true);
+    }
+
+    @Override
+    public void openLocation() {
+        if (Desktop.isDesktopSupported()) {
+            try {
+                Desktop.getDesktop().open(new File(Nubisave.mainSplitter.getDataDir()));
+            } catch (IOException ex) {
+                Logger.getLogger(GenericNubiSaveComponent.class.getName()).log(Level.SEVERE, null, ex);
+
+                // Fallback when desktop handlers are not available
+                try {
+                    Runtime.getRuntime().exec(new String[]{"xdg-open", Nubisave.mainSplitter.getMountpoint() + "/../storages/" + component.getUniqName() + "/data"});
+                } catch (IOException ex2) {
+                    Logger.getLogger(GenericNubiSaveComponent.class.getName()).log(Level.SEVERE, null, ex2);
+                }
+            }
+        }
     }
 
     public void refreshConfiguration(){
