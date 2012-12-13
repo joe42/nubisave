@@ -31,15 +31,7 @@ public class StorageStrategyFactory {
 	 */
 	public StorageStrategy createStrategy(String strategyName, int redundancy) {
 		StorageStrategy ret = null;
-		if(strategyName.equals("UseAllInParallel")){
-			if(useInParallel == null){
-				useInParallel = new UseAllInParallelStorageStrategy(services);
-			}
-			useInParallel.setRedundancy(redundancy);
-			changeToCurrentStrategy = useInParallel.changeToCurrentStrategy(previousStorageStrategy);
-			previousStorageStrategy = useInParallel;
-			ret = useInParallel;
-		} else { //RoundRobin as default
+		if(strategyName.equals("RoundRobin")){
 			if(roundRobin == null || ! dataDirPaths.equals(new TreeSet<String>(services.getDataDirPaths()))){
 				roundRobin = new RoundRobinStorageStrategy(services);
 			}
@@ -47,6 +39,14 @@ public class StorageStrategyFactory {
 			changeToCurrentStrategy = roundRobin.changeToCurrentStrategy(previousStorageStrategy);
 			previousStorageStrategy = roundRobin;
 			ret = roundRobin;
+		} else { //UseAllInParallel as default
+			if(useInParallel == null){
+				useInParallel = new UseAllInParallelStorageStrategy(services);
+			}
+			useInParallel.setRedundancy(redundancy);
+			changeToCurrentStrategy = useInParallel.changeToCurrentStrategy(previousStorageStrategy);
+			previousStorageStrategy = useInParallel;
+			ret = useInParallel;
 		}
 		return ret;
 	}

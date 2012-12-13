@@ -16,7 +16,7 @@ JNI_COMMON_H := javafs.h
 
 all: java_all jni_all
 	@echo ""
-	@echo "FUSE-J is built."
+	@echo "NubiSave splitter module based on FUSE-J is built."
 	@echo ""
 
 clean: java_clean jni_clean
@@ -51,6 +51,3 @@ jni_clean:
 	${MAKE} -C ../fusej/jni clean
 	rm -f ${JNI_BINDINGS_H} ${JNI_BINDINGS_C}
 	rm -f ../fusej/jvm_ldpath.def
-
-
-

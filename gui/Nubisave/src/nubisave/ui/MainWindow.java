@@ -196,7 +196,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         availabilityLabel.setText("Availability:");
 
-        storageStrategyComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "RoundRobin", "UseAllInParallel" }));
+        storageStrategyComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "UseAllInParallel", "RoundRobin" }));
         storageStrategyComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 storageStrategyComboBoxActionPerformed(evt);
