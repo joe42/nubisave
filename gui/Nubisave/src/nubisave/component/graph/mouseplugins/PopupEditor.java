@@ -119,6 +119,26 @@ public class PopupEditor extends AbstractPopupGraphMousePlugin {
                         }
                     }
                 });
+
+                popup.addSeparator();
+
+                String mount = "Mount";
+                if(((AbstractNubisaveComponent)vertex).isActive()) {
+                    mount = "Unmount";
+                }
+                popup.add(new AbstractAction(mount) {
+                    public void actionPerformed(ActionEvent NubiSaveEdge) {
+                        System.out.println("mount or unmount storage...");
+                        if (vertex instanceof AbstractNubisaveComponent) {
+                            if(((AbstractNubisaveComponent)vertex).isActive()) {
+                                ((AbstractNubisaveComponent)vertex).deactivate();
+                            } else {
+                                ((AbstractNubisaveComponent)vertex).activate();
+                            }
+                            vv.repaint();
+                        }
+                    }
+                });
             } else if(edge != null) {
                 popup.add(new AbstractAction("Delete Edge") {
                     public void actionPerformed(ActionEvent NubiSaveEdge) {
