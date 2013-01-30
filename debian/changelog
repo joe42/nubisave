@@ -1,3 +1,9 @@
+nubisave (0.0~git20130130-1) unstable; urgency=low
+
+  * Another improved package with the jNotify module fix.
+
+ -- Josef Spillner <josef@rumba>  Wed, 30 Jan 2013 16:42:36 +0100
+
 nubisave (0.0~git20121207-1) unstable; urgency=low
 
   * This package version contains the new graphical GUI and the FUSE-J module fix.
