@@ -24,7 +24,9 @@ public class IniUtil {
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
-		} 
+		} finally {
+			temp.delete();
+		}
     	return false;
     }    
 
@@ -35,6 +37,8 @@ public class IniUtil {
 			return temp.getText();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			temp.delete();
 		}
 		return null;
 	}

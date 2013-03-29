@@ -167,6 +167,7 @@ public class ConfigurableFuseBox extends FuseBox  implements StorageService{
 		Ini config = IniUtil.getIni(vtSplitterConfig.getText());
 		config.put("splitter", "availability", getStorageAvailability());
 		vtSplitterConfig.setText(IniUtil.getString(config));
+		config.getFile().delete();
 	}
 
 	private void configureSplitter() throws FuseException {
@@ -189,6 +190,7 @@ public class ConfigurableFuseBox extends FuseBox  implements StorageService{
 			}
 			
 		} catch (IOException e) {
+			config.getFile().delete();
 			throw new FuseException("IO Exception on persisting Splitter's configuration.")
 				.initErrno(FuseException.EIO);
 		}
@@ -196,6 +198,7 @@ public class ConfigurableFuseBox extends FuseBox  implements StorageService{
 		setRedundancy(config.fetch("splitter", "redundancy", Integer.class));
 		setStorageStrategyName(config.fetch("splitter", "storagestrategy", String.class));
 		updateVTSplitterConfigFile();
+		config.getFile().delete();
 	}
 
 	private void reloadDatabase(final Ini config) {

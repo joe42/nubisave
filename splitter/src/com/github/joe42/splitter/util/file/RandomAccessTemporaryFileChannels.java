@@ -23,6 +23,9 @@ public class RandomAccessTemporaryFileChannels {
 	 * @param temp an instance of RandomAccessTemporaryFileChannel to store with key
 	 */
 	public void put(String key, RandomAccessTemporaryFileChannel temp){
+		if(tempMap.get(key) != null){
+			tempMap.get(key).delete();
+		}
 		tempMap.put(key, temp);
 	}
 	

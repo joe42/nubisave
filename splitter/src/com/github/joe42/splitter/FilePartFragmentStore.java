@@ -53,6 +53,9 @@ public class FilePartFragmentStore extends FileFragmentStore{
 			FileChannel temp = tempFiles.getFileChannel(lastFilePartPathWrittenTo);
 			if(temp != null){
 				log.debug("flush lastFilePartPathWrittenTo: "+lastFilePartPathWrittenTo+" size: "+temp.size());
+				if(tempReadChannel != null) {
+					tempReadChannel.delete();
+				}
 				tempReadChannel = null;
 				splitter.splitFile(fileFragmentMetaDataStore, lastFilePartPathWrittenTo, temp);
 				tempFiles.delete(lastFilePartPathWrittenTo);

@@ -161,7 +161,10 @@ public class FileFragmentStore {
 
 	protected void removeCache(String path) {
 		tempFiles.delete(path);
-		tempReadChannel = null;
+		if(tempReadChannel != null) {
+			tempReadChannel.delete();
+		} 
+		tempReadChannel = null;				
 	}
 
 	public void truncate(String path, long size) throws FuseException, IOException {
