@@ -42,3 +42,5 @@ if [ ! -f ../*.orig.tar.gz ]; then
 	cd $origdir
 fi
 debuild
+
+make -f debian/rules clean
