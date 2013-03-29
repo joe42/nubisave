@@ -27,6 +27,8 @@ Configuration file overview
  -> redundancy settings [FIXME: relation to global one in nubi.properties?]
  config/$module
  -> ??? [FIXME: explain relation to $module/config/config and splitter_configuration/$module]
+ data
+ -> the virtual filesystem provided by the Nubisave splitter FUSE module
 
 ~/.nubisave/db/splitter_configuration:
  $module
