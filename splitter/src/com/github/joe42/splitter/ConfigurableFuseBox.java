@@ -57,7 +57,7 @@ public class ConfigurableFuseBox extends FuseBox  implements StorageService{
 	private boolean parallel_execution_of_read;
 	private static final Logger log = Logger.getLogger("FuseBox");
 	
-	public ConfigurableFuseBox(CauchyReedSolomonSplitter splitter, StorageServicesMgr storageServiceMgr) throws IOException{
+	public ConfigurableFuseBox(Splitter splitter, StorageServicesMgr storageServiceMgr) throws IOException{
 		super(new FilePartFragmentStore(splitter));
 		this.storageServiceMgr = storageServiceMgr;
 		virtualFolder = new VirtualFileContainer();
