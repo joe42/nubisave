@@ -1,0 +1,75 @@
+The following table outlines the useful and possibly usable storage
+and modification modules for NubiSave. Sources for updates are:
+- study thesis, table 3.4.1 and section on overlays
+- flexcloud/demonstrators/cloudstorage/web-wrapper/fuse
+- http://sourceforge.net/apps/mediawiki/fuse/index.php?title=NetworkFileSystems
+- KIO slaves: I/O modules in khelpcenter; /usr/share/kde4/services/*.protocol
+- GVFS modules: /usr/share/gvfs/mounts
+- http://en.wikipedia.org/wiki/Filesystem_in_Userspace
+- http://freecode.com/tags/fuse
+
+Several union-like filesystems (mhddfs, muse etc.) may be considered, too.
+The same goes for caching - pCacheFs as overlay.
+Finally, also non-native support to integrate other partitions.
+
+== Storages ==
+
+Provider   | Protocol | FS module(s)       | Package(s) for Debian | Web
+-----------+----------+--------------------+-----------------------+----...
+// local and peripheral devices
+*          | ObexFTP  | obexfs             | obexfs                | http://dev.zuckschwerdt.org/openobex/wiki/ObexFs
+*          | AppleFP  | afpfs-ng           | --                    | http://sourceforge.net/projects/afpfs-ng
+*          | AFC/iP.  | ifuse              | ifuse                 | https://github.com/mcolyer/ifuse
+
+// standard, storage
+*          | SSH      | sshfs              | sshfs                 | http://fuse.sourceforge.net/sshfs.html
+*          | FTP      | curlftpfs          | curlftpfs             | http://curlftpfs.sourceforge.net/
+           |          | lftpfs             | --                    | http://lftpfs.sourceforge.net/
+*          | WebDAV   | fusedav            | fusedav               | http://0pointer.de/lennart/projects/fusedav/
+           |          | davfs2             | davfs2                | http://savannah.nongnu.org/projects/davfs2
+           |          | wdfs               | --                    | http://noedler.de/projekte/wdfs/
+*          | SMB/CIFS | fusesmb            | fusesmb               | http://www.ricardis.tudelft.nl/~vincent/fusesmb/
+           |          | smbnetfs           | smbnetfs              | http://sourceforge.net/projects/smbnetfs
+           |          | usmb               | --                    | http://ametros.net/code.html
+           |          | (kernel)           | (kernel+utils)        | https://wiki.samba.org/index.php/LinuxCIFS_utils
+*          | SFTP     | s3ql               | s3ql                  | http://code.google.com/p/s3ql/
+*          | NFS      | (kernel)           | (kernel+utils)        | http://nfs.sourceforge.net/
+
+// standard, other
+*          | SMTP/POP3| gmailfs            | --                    | http://www.sr71.net/projects/gmailfs/
+           |          | gspacefs           | --                    | https://sites.google.com/site/gsfilesystem/
+*          | IMAP     | imapfs             | --                    | https://github.com/dannymi/IMAPFS
+           |          | imuse              | --                    | https://github.com/rtyler/imuse/tree
+
+// proprietary (or rather: indirect/sync), cloudfusion
+dropbox    | -        | cloudfusion        | (in nubisave)         | https://github.com/joe42/CloudFusion
+sugarsync  | -        | cloudfusion        | (in nubisave)         | ""
+
+// de-facto-standards
+*-s3       | s3       | s3ql               | (see above)           | (see above)
+           |          | s3fs-fuse          | -- (defunct?)         | http://code.google.com/p/s3fs-fuse/
+           |          | s3fs               | --                    | http://code.google.com/p/s3fs/
+
+// proprietary, other
+googlestor.| -        | s3ql               | (see above)           | (see above)
+ostck.swift| -        | s3ql               | (see above)           | (see above)
+rackspacecf| -        | s3ql               | (see above)           | (see above)
+box.net    | -        | boxfs              | --                    | http://code.google.com/p/boxfs/
+wuala      | -        | wuala              | --                    | https://forum.wuala.com/viewtopic.php?f=16&t=86
++ various commercial FUSE implementations for *-s3 etc.
+
+== Overlays ==
+
+Functionality | FS module(s) | Package(s) for Debian | Web
+--------------+--------------+-----------------------+----...
+Compression   | fusecompress | --                    | https://code.google.com/p/fusecompress/
+              | lzopfs       | --                    | https://github.com/vasi/lzopfs
+              | lessfs       | (see below)           | (see below)
+Deduplication | lessfs       | -- (pending)          | http://www.lessfs.com/
+Versioning    | (gitfs)      | --                    | https://github.com/chrisistuff/gitfs [read-only?]
+              | wayback      | --                    | http://wayback.sourceforge.net/
+              | collectfs    | --                    | http://code.google.com/p/collectfs/
+              | copyfs       | copyfs                | http://n0x.org/copyfs/
+Steganography | ??           | --                    |
+Encryption    | encfs        | encfs                 | http://www.arg0.net/encfs
+Filter        | filterfs     | --                    | http://filterfs.sourceforge.net/
