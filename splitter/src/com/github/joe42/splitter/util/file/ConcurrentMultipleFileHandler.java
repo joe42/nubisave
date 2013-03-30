@@ -13,24 +13,21 @@ import org.bouncycastle.crypto.digests.SHA256Digest;
 
 public class ConcurrentMultipleFileHandler implements MultipleFileHandler{
 		private static final Logger  log = Logger.getLogger("concurrent multiple filehandler");
-		private Digest digestFunc;
 		
 		public ConcurrentMultipleFileHandler(Digest digestFunc) {
 			PropertyConfigurator.configure("log4j.properties");
-			this.digestFunc = digestFunc;
 		}
 
 		public ConcurrentMultipleFileHandler() {
 			PropertyConfigurator.configure("log4j.properties");
-			this.digestFunc = new SHA256Digest();
 		}
 		
 		public MultipleFiles writeFilesAsByteArrays(HashMap<String, byte[]> files){
 			return writeFilesAsByteArrays(files, files.keySet().size());
 		}
 		
-		public MultipleFiles writeFilesAsByteArrays(HashMap<String, byte[]> files, int files_needed){
-			MultipleFiles multipleFiles =  new MultipleFiles(files.keySet(), digestFunc);
+		public synchronized MultipleFiles writeFilesAsByteArrays(HashMap<String, byte[]> files, int files_needed){
+			MultipleFiles multipleFiles =  new MultipleFiles(files.keySet(), new SHA256Digest());
 			if(files == null || files.size() == 0){
 				return multipleFiles;
 			}
@@ -69,7 +66,7 @@ public class ConcurrentMultipleFileHandler implements MultipleFileHandler{
 		}
 
 		private void waitForWriteResults(HashMap<String, byte[]> files,
-				MultipleFiles multipleFiles, Map<String, Future<Boolean>> filePathsToFutures) {
+				MultipleFiles multipleFiles, Map<String, Future<Boolean>> filePathsToFutures) { //TODO: Refactor to use ExecutorCompletionService
 			Future<Boolean> future;
 			ArrayList<String> processed = new ArrayList<String>(); //file paths of processed futures
 			for (String filePath : filePathsToFutures.keySet()) {
@@ -137,7 +134,7 @@ public class ConcurrentMultipleFileHandler implements MultipleFileHandler{
 		 * @return a MultipleFiles instance
 		 */
 		public MultipleFiles getFilesAsByteArrays(Map<String, byte[]> filePathsToChecksum, int files_needed){
-			MultipleFiles multipleFiles = new MultipleFiles(filePathsToChecksum, digestFunc);
+			MultipleFiles multipleFiles = new MultipleFiles(filePathsToChecksum, new SHA256Digest());
 			List<String> filePaths = new ArrayList<String>(filePathsToChecksum.keySet());
 			if(filePaths.size() == 0){
 				return multipleFiles;
