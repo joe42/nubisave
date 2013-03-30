@@ -20,7 +20,7 @@ public class Main {
 		FuseBox fuseBox = null;
 		try {
 			StorageServicesMgr storageServiceMgr = new StorageServicesMgr(args[args.length-1]);
-			CauchyReedSolomonSplitter splitter = new CauchyReedSolomonSplitter(storageServiceMgr.getServices());
+			Splitter splitter = new CachingCauchyReedSolomonSplitter( new CauchyReedSolomonSplitter(storageServiceMgr.getServices()) );
 			 fuseBox = new ConfigurableFuseBox(splitter, storageServiceMgr);
 			FuseMount.mount(fuseArgs, fuseBox, LogFactory.getLog("javafs"));
 		} catch (Exception e) {
