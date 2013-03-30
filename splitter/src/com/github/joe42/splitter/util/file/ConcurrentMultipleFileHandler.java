@@ -84,6 +84,7 @@ public class ConcurrentMultipleFileHandler implements MultipleFileHandler{
 					}
 				} catch (TimeoutException e) {
 				} catch (Exception e) { //InterruptedException ExecutionException
+					e.printStackTrace();
 					multipleFiles.addFailedFilePath(filePath);
 					processed.add(filePath);
 				}
@@ -176,6 +177,7 @@ public class ConcurrentMultipleFileHandler implements MultipleFileHandler{
 					processed.add(filePath);
 				} catch (TimeoutException e) {
 				} catch (Exception e) { //InterruptedException ExecutionException
+					e.printStackTrace();
 					multipleFiles.addFailedFilePath(filePath);
 					processed.add(filePath);
 				} 

@@ -306,7 +306,7 @@ public class CauchyReedSolomonSplitter implements Splitter { //Rename to CauchyR
 		InformationDispersalDecoder decoder;
 		try {
 			crsidacodec = getCRSCodec(fragmentPathsToChecksum.size(),	nr_of_redundant_file_fragments); 
-			log.debug(fragmentPathsToChecksum.keySet().toArray(new String[0]) + " "
+			log.debug(Arrays.toString(fragmentPathsToChecksum.keySet().toArray(new String[0])) + " "
 					+ nr_of_redundant_file_fragments);
 			decoder = crsidacodec.getDecoder();
 		} catch (Exception e) {
@@ -320,7 +320,8 @@ public class CauchyReedSolomonSplitter implements Splitter { //Rename to CauchyR
 						nr_of_file_fragments_required);
 		receivedFileSegments = multipleFiles.getSuccessfullyTransferedFiles();
 		log.debug("successfully transfered fragments: "+ receivedFileSegments.size());
-		log.debug("fragments with corrupted content: "+ multipleFiles.getNrOfUnsuccessfullyTransferedFiles());
+		log.debug("not transfered: "+ (multipleFiles.getNrOfUnsuccessfullyTransferedFiles()-multipleFiles.getWrongChecksumFilePaths().size()));
+		log.debug("fragments with corrupted content: "+ multipleFiles.getWrongChecksumFilePaths().size());
 		
 		byte[] recoveredFile = decoder.process(receivedFileSegments);
 		ret.getChannel().write(ByteBuffer.wrap(recoveredFile));
