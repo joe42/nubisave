@@ -1,0 +1,11 @@
+#!/bin/sh
+
+mountpoint=$HOME/.nubisave/nubisavemount
+
+if [ ! -d $mountpoint/data ]; then
+	echo "Error: The Nubisave splitter file system is not mounted yet." >&2
+	exit 1
+fi
+
+cd /usr/share/nubisave/bin
+java -Djava.library.path=lib -jar Nubisave.jar "$mountpoint"
