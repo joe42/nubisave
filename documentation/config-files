@@ -59,10 +59,12 @@ Note: Any sections will be shown in the configuration context dialogue unless #h
 prepends it.
 
 The sections are:
+[module] - human-readable name and description of the module; optional, since 03/2013
 [parameter] - defines variables later used in the mount/unmount calls, e.g. backends
 [mounting] - mount/unmount calls, invoked through the shell
+[gui] - graphical position of the component (optional, added by GUI) and backend infos
+
 [splitter] - weights assigned by the splitter
-[gui] - graphical position of the component; optional
 
 [auth] - specific to CloudFusion modules
 [store] - specific to CloudFusion modules

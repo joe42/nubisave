@@ -1,0 +1,53 @@
+Functionality of the NubiSave splitter
+======================================
+
+A file called
+	NAME
+is split into fragments which are named
+	_NAME#U#C#F
+
+The flags have the following meaning:
+
+F: Fragment number [0..n-1]
+C: File counter, index in the database(?)
+U: ???, should be unique but is 0
+
+For directories, NAME is normalised into one single file name. For
+example, a/b becomes a_b. Non-ASCII symbols are eliminated from NAME.
+
+NAME should probably be turned into a hash value or otherwise be
+obfuscated.
+
+NAME is
+	.nubisave_databaseN
+	.nubisave_session_N_MODULEINSTANCE
+for stored sessions, with just one parameter.
+
+N: Session number [1..9]
+
+Furthermore, there are resulting files with a separate naming scheme
+	.nubisave_database.metaN
+	.nubisave_service_name.sessionN#F
+
+The database meta file format is described below.
+
+Database contents
+-----------------
+
+[splitter]
+redundancy = [0..100]
+availability = [0.0-1.0]
+storagestrategy = RoundRobin|UseAllInParallel
+
+[database]
+path = /.nubisave_databaseN
+size = 49152
+
+[databasePartNr_0]
+name = /.nubisave_databaseN#0#
+nrOfFileFragmentsRequired = [k]
+nrOfFileFragments = [n]
+fileFragmentName_0 = /_.nubisave_databaseN#U#C#0
+fileFragmentNameChecksum_0 = [sha256]
+fileFragmentName_1 = /_.nubisave_databaseN#U#C#1
+fileFragmentNameChecksum_1 = [sha256]
