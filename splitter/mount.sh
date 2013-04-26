@@ -1,15 +1,16 @@
 #!/bin/sh
 #
 # Mounts the NubiSave FUSE module and all subordinate storage FUSE modules (and unmounts them to clean up)
-# Usage: ./mount.sh mountpointfolder storagesfolder
+# Usage: ./mount.sh <mountpointfolder> <storagesfolder>
 
-. ../fusej/build.conf
+# Don't assume build variables at runtime
+#. ../fusej/build.conf
 
 find $2 -mindepth 1 -type d -exec fusermount -u {} -z \;
 fusermount -u $1 -z -q
 mkdir -p ~/.splitter/db/
 
-if [ -d $JDK_HOME ]
+if [ -d $JDK_HOME ] && [ -x $JDK_HOME/bin/java ]
 then
 	java=$JDK_HOME/bin/java
 else
