@@ -10,7 +10,6 @@ import java.util.Set;
 import javax.swing.AbstractAction;
 import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
-
 import org.apache.commons.collections15.Factory;
 
 import nubisave.component.graph.vertice.interfaces.VertexGroup;
@@ -26,6 +25,7 @@ import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.AbstractPopupGraphMousePlugin;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import javax.swing.JOptionPane;
+import javax.swing.JTabbedPane;
 import nubisave.component.graph.vertice.AbstractNubisaveComponent;
 import nubisave.*;
 import nubisave.component.graph.vertice.GenericNubiSaveComponent;
@@ -65,9 +65,11 @@ public class PopupEditor extends AbstractPopupGraphMousePlugin {
                 popup.add(new AbstractAction("Configure Component") {
                     public void actionPerformed(ActionEvent NubiSaveEdge) {
                     	System.out.println("configure component");
-                    	if (vertex instanceof AbstractNubisaveComponent) {
-                            ((AbstractNubisaveComponent)vertex).showConfigurationDialog();
-                            vv.repaint();
+                      
+                         if(vertex instanceof AbstractNubisaveComponent) {
+                       
+                            ((AbstractNubisaveComponent)vertex).showConfigurationDialog();                
+                           vv.repaint(); 
                         }
                     }
                 });

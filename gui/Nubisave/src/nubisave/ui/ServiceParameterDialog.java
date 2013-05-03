@@ -137,6 +137,8 @@ public class ServiceParameterDialog extends javax.swing.JDialog {
     }
 
     private void applyBtnActionPerformed(java.awt.event.ActionEvent evt) {
+        
+        System.out.println("apply button called");
         for(JPanel sectionGroupBox: sectionGroupBoxes){
             String name, value;
             for(int i=0; i< sectionGroupBox.getComponentCount();i+=2 ){
