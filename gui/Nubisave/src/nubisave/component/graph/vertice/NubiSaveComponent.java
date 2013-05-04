@@ -3,6 +3,7 @@ package nubisave.component.graph.vertice;
 import java.awt.Point;
 import java.io.IOException;
 import nubisave.Nubisave;
+import nubisave.ui.NubisaveParameterDialog;
 
 
 public class NubiSaveComponent extends AbstractNubisaveComponent {
@@ -18,7 +19,9 @@ public class NubiSaveComponent extends AbstractNubisaveComponent {
 
     @Override
     public void showConfigurationDialog() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        NubisaveParameterDialog editDialog = new NubisaveParameterDialog(null, true);
+        editDialog.setTitle("Nubisave");
+        editDialog.setVisible(true);
     }
     
     @Override

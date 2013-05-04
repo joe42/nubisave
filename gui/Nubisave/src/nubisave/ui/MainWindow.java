@@ -13,16 +13,7 @@ package nubisave.ui;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JTabbedPane;
 import nubisave.*;
 import nubisave.component.graph.splitteradaption.NubisaveEditor;
 
@@ -42,16 +33,6 @@ public class MainWindow extends javax.swing.JFrame {
     public MainWindow() {
         initComponents();
 
-        mntDirTxtField.setText(Nubisave.mainSplitter.getMountpoint());
-
-        String redundancyStr = Nubisave.properties.getProperty("redundancy");
-        if (redundancyStr == null) {
-            redundancyStr = "100";
-        }
-        int redundancy = Integer.parseInt(redundancyStr);
-        redundancySlider.setValue(redundancy);
-        setAvailability();
-        splitterIsMountedCheckBox.setSelected(Nubisave.mainSplitter.isMounted());
 
         //check to see if system tray is supported on OS.
         if (SystemTray.isSupported()) {
@@ -83,24 +64,12 @@ public class MainWindow extends javax.swing.JFrame {
                System.out.println("System Tray unsupported!");
             }
         }
-        NubisaveEditor d = new NubisaveEditor();
-        jTabbedPane1.addTab("Editor", d);
+        NubisaveEditor editor = new NubisaveEditor();
+        jTabbedPane1.insertTab("Editor", null, editor, null, 0);
+        jTabbedPane1.setSelectedComponent(editor);
 
     }
 
-    private void setIsSplitterMounted() {
-        if (Nubisave.mainSplitter.isMounted()) {
-            splitterIsMountedCheckBox.setText("Unmount Splitter");
-            splitterIsMountedCheckBox.setSelected(true);
-        } else {
-            splitterIsMountedCheckBox.setText("Mount Splitter");
-            splitterIsMountedCheckBox.setSelected(false);
-        }
-    }
-
-    private void setAvailability() {
-        availabilityLabel.setText("Availability: " + Nubisave.mainSplitter.getAvailability() * 100 + "%");
-    }
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -115,24 +84,11 @@ public class MainWindow extends javax.swing.JFrame {
         jOptionPane1 = new javax.swing.JOptionPane();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         optionPanel = new javax.swing.JPanel();
-        mntDirTxtField = new javax.swing.JTextField();
-        jLabel2 = new javax.swing.JLabel();
-        redundancySlider = new javax.swing.JSlider();
-        jLabel3 = new javax.swing.JLabel();
-        openMntDirBtn = new javax.swing.JButton();
         matchMakerLabel = new javax.swing.JLabel();
         matchMakerURLField = new javax.swing.JTextField();
         changeMatchMakerURLBtn = new javax.swing.JButton();
         matchMakerLabel1 = new javax.swing.JLabel();
         matchMakerField = new javax.swing.JTextField();
-        availabilityLabel = new javax.swing.JLabel();
-        storageStrategyComboBox = new javax.swing.JComboBox();
-        jLabel4 = new javax.swing.JLabel();
-        splitterIsMountedCheckBox = new javax.swing.JCheckBox();
-        splitterSessionComboBox = new javax.swing.JComboBox();
-        jLabel5 = new javax.swing.JLabel();
-        saveSessionButton = new javax.swing.JButton();
-        loadSessionButton = new javax.swing.JButton();
 
         customStorageserviceChooser.setCurrentDirectory(new java.io.File("../splitter/mountscripts"));
         customStorageserviceChooser.setDialogTitle("Custom Service");
@@ -144,32 +100,6 @@ public class MainWindow extends javax.swing.JFrame {
         jTabbedPane1.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 jTabbedPane1StateChanged(evt);
-            }
-        });
-
-        mntDirTxtField.setEditable(false);
-        mntDirTxtField.setText("mntDirTxtField");
-        mntDirTxtField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mntDirTxtFieldActionPerformed(evt);
-            }
-        });
-
-        jLabel2.setText("Mount directory");
-
-        redundancySlider.setValue(100);
-        redundancySlider.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                redundancySliderStateChanged(evt);
-            }
-        });
-
-        jLabel3.setText("Redundancy");
-
-        openMntDirBtn.setText("Open");
-        openMntDirBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                openMntDirBtnActionPerformed(evt);
             }
         });
 
@@ -194,41 +124,6 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
-        availabilityLabel.setText("Availability:");
-
-        storageStrategyComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "RoundRobin", "UseAllInParallel" }));
-        storageStrategyComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                storageStrategyComboBoxActionPerformed(evt);
-            }
-        });
-
-        jLabel4.setText("Storage strategy:");
-
-        splitterIsMountedCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                splitterIsMountedCheckBoxActionPerformed(evt);
-            }
-        });
-
-        splitterSessionComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9" }));
-
-        jLabel5.setText("Choose Session:");
-
-        saveSessionButton.setText("Save Session");
-        saveSessionButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveSessionButtonActionPerformed(evt);
-            }
-        });
-
-        loadSessionButton.setText("Load Session");
-        loadSessionButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                loadSessionButtonActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout optionPanelLayout = new javax.swing.GroupLayout(optionPanel);
         optionPanel.setLayout(optionPanelLayout);
         optionPanelLayout.setHorizontalGroup(
@@ -236,72 +131,22 @@ public class MainWindow extends javax.swing.JFrame {
             .addGroup(optionPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(redundancySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 891, Short.MAX_VALUE)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3)
-                    .addGroup(optionPanelLayout.createSequentialGroup()
-                        .addGroup(optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(matchMakerLabel)
-                            .addComponent(matchMakerURLField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 805, Short.MAX_VALUE))
-                        .addGap(36, 36, 36)
-                        .addComponent(changeMatchMakerURLBtn))
-                    .addGroup(optionPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addGap(67, 67, 67)
-                        .addComponent(storageStrategyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 559, Short.MAX_VALUE))
-                    .addGroup(optionPanelLayout.createSequentialGroup()
-                        .addComponent(availabilityLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 816, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, optionPanelLayout.createSequentialGroup()
-                        .addGroup(optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, optionPanelLayout.createSequentialGroup()
-                                .addComponent(splitterIsMountedCheckBox)
-                                .addGap(66, 66, 66)
-                                .addComponent(jLabel5)
-                                .addGap(38, 38, 38)
-                                .addComponent(splitterSessionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 252, Short.MAX_VALUE)
-                                .addComponent(loadSessionButton)
-                                .addGap(68, 68, 68)
-                                .addComponent(saveSessionButton))
-                            .addComponent(mntDirTxtField, javax.swing.GroupLayout.DEFAULT_SIZE, 804, Short.MAX_VALUE))
-                        .addGap(36, 36, 36)
-                        .addComponent(openMntDirBtn)))
-                .addContainerGap())
+                    .addComponent(matchMakerLabel)
+                    .addComponent(matchMakerURLField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 757, Short.MAX_VALUE))
+                .addGap(36, 36, 36)
+                .addComponent(changeMatchMakerURLBtn)
+                .addGap(48, 48, 48))
         );
         optionPanelLayout.setVerticalGroup(
             optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, optionPanelLayout.createSequentialGroup()
-                .addGap(79, 79, 79)
-                .addGroup(optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(splitterIsMountedCheckBox)
-                    .addComponent(jLabel5)
-                    .addComponent(splitterSessionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(saveSessionButton)
-                    .addComponent(loadSessionButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(mntDirTxtField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(openMntDirBtn))
-                .addGap(18, 18, 18)
-                .addComponent(jLabel3)
-                .addComponent(redundancySlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(optionPanelLayout.createSequentialGroup()
+                .addGap(35, 35, 35)
                 .addComponent(matchMakerLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(matchMakerURLField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(changeMatchMakerURLBtn))
-                .addGap(54, 54, 54)
-                .addGroup(optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(storageStrategyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
-                .addGap(40, 40, 40)
-                .addComponent(availabilityLabel)
-                .addContainerGap())
+                .addContainerGap(489, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Options", optionPanel);
@@ -314,50 +159,14 @@ public class MainWindow extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 515, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 616, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void jTabbedPane1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jTabbedPane1StateChanged
-        JTabbedPane pane = (JTabbedPane)evt.getSource();
-        int sel = pane.getSelectedIndex();
-        if(pane.getTitleAt(sel).equals("Options")){
-            setAvailability();
-            setIsSplitterMounted();
-        }
 }//GEN-LAST:event_jTabbedPane1StateChanged
-
-    private void loadSessionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadSessionButtonActionPerformed
-        int sessionNumber = Integer.parseInt((String)splitterSessionComboBox.getSelectedItem());
-        Nubisave.mainSplitter.loadSession(sessionNumber);
-        tableModel.fireTableDataChanged();
-        redundancySlider.setValue(Nubisave.mainSplitter.getRedundancy());
-        storageStrategyComboBox.setSelectedItem(Nubisave.mainSplitter.getStorageStrategy());
-}//GEN-LAST:event_loadSessionButtonActionPerformed
-
-    private void saveSessionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveSessionButtonActionPerformed
-        int sessionNumber = Integer.parseInt((String)splitterSessionComboBox.getSelectedItem());
-        Nubisave.mainSplitter.storeSession(sessionNumber);
-}//GEN-LAST:event_saveSessionButtonActionPerformed
-
-    private void splitterIsMountedCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_splitterIsMountedCheckBoxActionPerformed
-        if(!splitterIsMountedCheckBox.isSelected()){ //the selected state is toggled before entering this method
-            Nubisave.mainSplitter.unmount();
-        } else {
-            Nubisave.mainSplitter.mount();
-        }
-        setIsSplitterMounted();
-        setAvailability();
-}//GEN-LAST:event_splitterIsMountedCheckBoxActionPerformed
-
-    private void storageStrategyComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_storageStrategyComboBoxActionPerformed
-        JComboBox cb = (JComboBox)evt.getSource();
-        String storageStrategy = (String)cb.getSelectedItem();
-        Nubisave.mainSplitter.setStorageStrategy(storageStrategy);
-        setAvailability();
-}//GEN-LAST:event_storageStrategyComboBoxActionPerformed
 
     private void matchMakerFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_matchMakerFieldActionPerformed
         // TODO add your handling code here:
@@ -367,50 +176,17 @@ public class MainWindow extends javax.swing.JFrame {
         Nubisave.properties.setProperty("matchmakerURI", matchMakerURLField.getText());
 }//GEN-LAST:event_changeMatchMakerURLBtnActionPerformed
 
-    private void openMntDirBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openMntDirBtnActionPerformed
-        if (Desktop.isDesktopSupported()) {
-            try {
-                Desktop.getDesktop().open(new File(Nubisave.mainSplitter.getDataDir()));
-            } catch (IOException ex) {
-                Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-}//GEN-LAST:event_openMntDirBtnActionPerformed
-
-    private void redundancySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_redundancySliderStateChanged
-        Nubisave.properties.setProperty("redundancy", String.valueOf(redundancySlider.getValue()));
-        Nubisave.mainSplitter.setRedundancy(redundancySlider.getValue());
-        setAvailability();
-}//GEN-LAST:event_redundancySliderStateChanged
-
-    private void mntDirTxtFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mntDirTxtFieldActionPerformed
-        // TODO add your handling code here:
-}//GEN-LAST:event_mntDirTxtFieldActionPerformed
-
     public NubiTableModel tableModel;
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel availabilityLabel;
     private javax.swing.JButton changeMatchMakerURLBtn;
     private javax.swing.JFileChooser customStorageserviceChooser;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JOptionPane jOptionPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JButton loadSessionButton;
     private javax.swing.JTextField matchMakerField;
     private javax.swing.JLabel matchMakerLabel;
     private javax.swing.JLabel matchMakerLabel1;
     private javax.swing.JTextField matchMakerURLField;
-    private javax.swing.JTextField mntDirTxtField;
-    private javax.swing.JButton openMntDirBtn;
     private javax.swing.JPanel optionPanel;
-    private javax.swing.JSlider redundancySlider;
-    private javax.swing.JButton saveSessionButton;
-    private javax.swing.JCheckBox splitterIsMountedCheckBox;
-    private javax.swing.JComboBox splitterSessionComboBox;
-    private javax.swing.JComboBox storageStrategyComboBox;
     // End of variables declaration//GEN-END:variables
 
     class IniFileFilter extends javax.swing.filechooser.FileFilter {
