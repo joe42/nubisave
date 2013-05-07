@@ -65,8 +65,8 @@ public class MainWindow extends javax.swing.JFrame {
             }
         }
         NubisaveEditor editor = new NubisaveEditor();
-        jTabbedPane1.insertTab("Editor", null, editor, null, 0);
-        jTabbedPane1.setSelectedComponent(editor);
+        setContentPane(editor);
+        setVisible(true);
 
     }
 
@@ -82,13 +82,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         customStorageserviceChooser = new javax.swing.JFileChooser();
         jOptionPane1 = new javax.swing.JOptionPane();
-        jTabbedPane1 = new javax.swing.JTabbedPane();
-        optionPanel = new javax.swing.JPanel();
-        matchMakerLabel = new javax.swing.JLabel();
-        matchMakerURLField = new javax.swing.JTextField();
-        changeMatchMakerURLBtn = new javax.swing.JButton();
-        matchMakerLabel1 = new javax.swing.JLabel();
-        matchMakerField = new javax.swing.JTextField();
+        jPanel1 = new javax.swing.JPanel();
 
         customStorageserviceChooser.setCurrentDirectory(new java.io.File("../splitter/mountscripts"));
         customStorageserviceChooser.setDialogTitle("Custom Service");
@@ -97,96 +91,42 @@ public class MainWindow extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Nubisave");
 
-        jTabbedPane1.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                jTabbedPane1StateChanged(evt);
-            }
-        });
-
-        matchMakerLabel.setText("MatchMaker ");
-
-        matchMakerURLField.setText(Nubisave.properties.getProperty("matchmakerURI"));
-
-        changeMatchMakerURLBtn.setText("Apply");
-        changeMatchMakerURLBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                changeMatchMakerURLBtnActionPerformed(evt);
-            }
-        });
-
-        matchMakerLabel1.setText("MatchMaker ");
-
-        matchMakerField.setEditable(false);
-        matchMakerField.setText("MatchMaker URL");
-        matchMakerField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                matchMakerFieldActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout optionPanelLayout = new javax.swing.GroupLayout(optionPanel);
-        optionPanel.setLayout(optionPanelLayout);
-        optionPanelLayout.setHorizontalGroup(
-            optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(optionPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(matchMakerLabel)
-                    .addComponent(matchMakerURLField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 757, Short.MAX_VALUE))
-                .addGap(36, 36, 36)
-                .addComponent(changeMatchMakerURLBtn)
-                .addGap(48, 48, 48))
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
         );
-        optionPanelLayout.setVerticalGroup(
-            optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(optionPanelLayout.createSequentialGroup()
-                .addGap(35, 35, 35)
-                .addComponent(matchMakerLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(matchMakerURLField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(changeMatchMakerURLBtn))
-                .addContainerGap(489, Short.MAX_VALUE))
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
         );
-
-        jTabbedPane1.addTab("Options", optionPanel);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 911, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(573, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(238, 238, 238))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 616, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(78, 78, 78)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(438, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTabbedPane1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jTabbedPane1StateChanged
-}//GEN-LAST:event_jTabbedPane1StateChanged
-
-    private void matchMakerFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_matchMakerFieldActionPerformed
-        // TODO add your handling code here:
-}//GEN-LAST:event_matchMakerFieldActionPerformed
-
-    private void changeMatchMakerURLBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changeMatchMakerURLBtnActionPerformed
-        Nubisave.properties.setProperty("matchmakerURI", matchMakerURLField.getText());
-}//GEN-LAST:event_changeMatchMakerURLBtnActionPerformed
-
     public NubiTableModel tableModel;
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton changeMatchMakerURLBtn;
     private javax.swing.JFileChooser customStorageserviceChooser;
     private javax.swing.JOptionPane jOptionPane1;
-    private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTextField matchMakerField;
-    private javax.swing.JLabel matchMakerLabel;
-    private javax.swing.JLabel matchMakerLabel1;
-    private javax.swing.JTextField matchMakerURLField;
-    private javax.swing.JPanel optionPanel;
+    private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 
     class IniFileFilter extends javax.swing.filechooser.FileFilter {

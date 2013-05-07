@@ -80,6 +80,9 @@ public class NubisaveParameterDialog extends javax.swing.JDialog {
         jLabel5 = new javax.swing.JLabel();
         saveSessionButton = new javax.swing.JButton();
         loadSessionButton = new javax.swing.JButton();
+        matchMakerURLField = new javax.swing.JTextField();
+        changeMatchMakerURLBtn = new javax.swing.JButton();
+        matchMakerLabel = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -150,21 +153,25 @@ public class NubisaveParameterDialog extends javax.swing.JDialog {
             }
         });
 
-        jButton1.setText("OK");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        matchMakerURLField.setText(Nubisave.properties.getProperty("matchmakerURI"));
+
+        changeMatchMakerURLBtn.setText("Apply");
+        changeMatchMakerURLBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                changeMatchMakerURLBtnActionPerformed(evt);
             }
         });
+
+        matchMakerLabel.setText("MatchMaker ");
 
         javax.swing.GroupLayout optionPanelLayout = new javax.swing.GroupLayout(optionPanel);
         optionPanel.setLayout(optionPanelLayout);
         optionPanelLayout.setHorizontalGroup(
             optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(optionPanelLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(optionPanelLayout.createSequentialGroup()
-                        .addContainerGap()
                         .addGroup(optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, optionPanelLayout.createSequentialGroup()
                                 .addComponent(mntDirTxtField, javax.swing.GroupLayout.DEFAULT_SIZE, 816, Short.MAX_VALUE)
@@ -187,12 +194,15 @@ public class NubisaveParameterDialog extends javax.swing.JDialog {
                                         .addComponent(loadSessionButton))
                                     .addComponent(jLabel2))
                                 .addGap(68, 68, 68)
-                                .addComponent(saveSessionButton))))
+                                .addComponent(saveSessionButton)))
+                        .addContainerGap())
                     .addGroup(optionPanelLayout.createSequentialGroup()
-                        .addGap(403, 403, 403)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(410, 410, 410)))
-                .addContainerGap())
+                        .addGroup(optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(matchMakerLabel)
+                            .addComponent(matchMakerURLField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 757, Short.MAX_VALUE))
+                        .addGap(36, 36, 36)
+                        .addComponent(changeMatchMakerURLBtn)
+                        .addGap(72, 72, 72))))
         );
         optionPanelLayout.setVerticalGroup(
             optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -218,22 +228,39 @@ public class NubisaveParameterDialog extends javax.swing.JDialog {
                     .addComponent(jLabel4))
                 .addGap(30, 30, 30)
                 .addComponent(availabilityLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
-                .addComponent(jButton1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                .addComponent(matchMakerLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(matchMakerURLField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(changeMatchMakerURLBtn))
                 .addContainerGap())
         );
+
+        jButton1.setText("OK");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(optionPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(402, 402, 402)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(423, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(optionPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(28, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jButton1)
+                .addContainerGap(31, Short.MAX_VALUE))
         );
 
         pack();
@@ -286,9 +313,14 @@ public class NubisaveParameterDialog extends javax.swing.JDialog {
         dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void changeMatchMakerURLBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changeMatchMakerURLBtnActionPerformed
+        Nubisave.properties.setProperty("matchmakerURI", matchMakerURLField.getText());
+}//GEN-LAST:event_changeMatchMakerURLBtnActionPerformed
+
    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel availabilityLabel;
+    private javax.swing.JButton changeMatchMakerURLBtn;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -296,7 +328,9 @@ public class NubisaveParameterDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JButton loadSessionButton;
     private javax.swing.JTextField matchMakerField;
+    private javax.swing.JLabel matchMakerLabel;
     private javax.swing.JLabel matchMakerLabel1;
+    private javax.swing.JTextField matchMakerURLField;
     private javax.swing.JTextField mntDirTxtField;
     private javax.swing.JButton openMntDirBtn;
     private javax.swing.JPanel optionPanel;
