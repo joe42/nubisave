@@ -1,0 +1,86 @@
+Scripts and bits from the "tests" folder
+========================================
+
+(see also "raocexperiments" repository for experimental results:
+git clone git://nubisave.org/git/raocexperiments)
+
++++++++ Prerequisite scripts +++++++
+
+FuSim/
+ -> simulates a bandwidth-restricted and quality-constrained network
+    storage
+ => invocation (as FUSE module): python FuSim/fusim.py <options...>
+
++++++++ Data acquisition scripts +++++++
+
+createsamplefiles.sh
+ -> creates files with random contents and varying sizes 4kB to 128MB
+    and their checksums into the git-ignored "samplefiles" folder
+ => invocation: ./createsamplefiles.sh
+
+fuse_tests.sh
+ -> checks various file system operations on a mounted FUSE module
+    such as the Nubisave splitter
+ => invocation: ./fuse_tests.sh <mountpoint> <file-/foldername>
+
+mem.sh
+ -> reports about the memory usage of a mounted Nubisave splitter
+ => invocation [through system_test.sh]: ./mem.sh <logfile>
+
+starttests.sh
+ -> High-level wrapper around createsamplefiles.sh, gengnuplot.sh and
+    nubi3d.dem which measures and visualises read/write performance
+ => invocation: ./starttests.sh
+
+system_test.sh
+ -> wrapper around mem.sh, plot_mem.gnp and various other tests, like Sikuli
+ => invocation: ./system_test.sh <logdir> [<iozonedir>]
+
+scripts/
+ -> various more or less self-explaining test scripts for splitter operations
+
++++++++ Data visualisation scripts +++++++
+
+gengnuplot.sh
+ -> visualises the output of `iozone -a`
+ => invocation [through starttests.sh]: ./gengnuplot.sh <iozonelog> <test>
+
+nubi3d.dem
+ -> Gnuplot wrapper script for various read/write performance metrics,
+    as produced by gengnuplot.sh, into git-ignored SVG files
+ => invocation [through starttests.sh]: gnuplot nubi3d.dem
+
+plot.gnp
+ -> Gnuplot wrapper script for times (???)
+ => invocation [through plot.sh]: gnuplot plot.gnp
+
+plot_mem.gnp
+ -> Gnuplot wrapper script for memory usage
+ => invocation [through system_test.sh]: gnuplot plot_mem.gnp
+
+plot.sh
+ -> convenience script to execute and view resuls of plot.gnp
+ => invocation: ./plot.sh
+
++++++++ Misc scripts, files and folders +++++++
+
+hidrive/
+ -> convenience script for STRATO HiDrive mounting
+ !! not really a test/experiment script
+
+nubisavetest/
+ -> convenience script for T-Online Mediencenter and others - seems to
+    do nothing
+ !! not really a test/experiment script
+
+tonlinetest/
+ -> convenience script for T-Online Mediencenter mounting
+ !! not really a test/experiment script
+
+wualatest/
+ -> convenience script for Wuala mounting
+ !! not really a test/experiment script
+
+systemtest/
+ -> output directory for system_test.sh, explicitly not git-ignored
+
