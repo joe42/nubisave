@@ -33,8 +33,11 @@ public class Services implements Iterable<StorageService>{
      * @param database_directory
      */
     public void loadFromDataBase(String database_directory){
-        if(database_directory == null) return;
-        
+        if(database_directory == null) {
+            System.err.println("warning: could not load database directory");
+            return;
+        }
+
         File dir = new File(database_directory);
         dir.mkdirs();
         if(dir.isDirectory()){

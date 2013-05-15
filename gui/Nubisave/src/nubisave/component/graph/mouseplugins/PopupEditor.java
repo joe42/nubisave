@@ -64,11 +64,9 @@ public class PopupEditor extends AbstractPopupGraphMousePlugin {
             if(vertex != null) {
                 popup.add(new AbstractAction("Configure Component") {
                     public void actionPerformed(ActionEvent NubiSaveEdge) {
-                    	System.out.println("configure component");
-                      
+                    	System.out.println("configure component");   
                          if(vertex instanceof AbstractNubisaveComponent) {
-                       
-                            ((AbstractNubisaveComponent)vertex).showConfigurationDialog();                
+                            ((AbstractNubisaveComponent)vertex).showConfigurationDialog();
                            vv.repaint(); 
                         }
                     }
