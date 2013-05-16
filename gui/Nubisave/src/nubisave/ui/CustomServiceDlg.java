@@ -15,20 +15,17 @@ import java.util.logging.Logger;
 import javax.swing.JPanel;
 import org.ini4j.Ini;
 import org.ini4j.InvalidFileFormatException;
-
 /**
  *
  * @author alok
  */
 public class CustomServiceDlg extends javax.swing.JDialog {
-    
     public String okstatus=null;
     private String dir="/usr/share/nubisave/splitter/mountscripts/";
     private HashMap inimap=new HashMap();
     /**
      * Creates new form CustomServiceDlg
      */
-    
     public CustomServiceDlg(){
         initComponents();
         File fileObj=new File(dir);
@@ -37,21 +34,16 @@ public class CustomServiceDlg extends javax.swing.JDialog {
                        return name.toLowerCase().endsWith(".ini");
             }
         });
-        
-     
         for(File file:files){
             String modulename=getModuleName(file);
             if(modulename!=null){
                 jComboBox1.addItem(modulename);
             } else {
                 jComboBox1.addItem(file.getName().split("\\.")[0]);
-            }
-            
-        }
-        
+            } 
+         }
         jComboBox1.addItem("Custom");
     }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -144,8 +136,7 @@ public class CustomServiceDlg extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    public String getModuleName(File file){
+      public String getModuleName(File file){
         String modulename=null;
         try {
         Ini ini=new Ini(file);
@@ -155,7 +146,6 @@ public class CustomServiceDlg extends javax.swing.JDialog {
         }
         else {
             inimap.put(file.getName().split("\\.")[0], file.getName());
-        
            }
         } catch (InvalidFileFormatException ex) {
                 Logger.getLogger(CustomServiceDlg.class.getName()).log(Level.SEVERE, null, ex);
@@ -164,12 +154,9 @@ public class CustomServiceDlg extends javax.swing.JDialog {
             }
         return modulename;
     }
-    
     public Object getItemName() {
       return jComboBox1.getSelectedItem();
    }
-   
-    
     private void jCancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCancelButtonActionPerformed
         okstatus="False";
         dispose();
@@ -198,7 +185,6 @@ public class CustomServiceDlg extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
-    
     private String modulename;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel desLabel;

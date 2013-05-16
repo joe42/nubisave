@@ -251,7 +251,6 @@ public class NubisaveEditor extends JApplet {
              */
             @Override
             public void actionPerformed(ActionEvent ae) {
-                   
                 CustomServiceDlg cusDlg=new CustomServiceDlg();
                 cusDlg.pack();
                 cusDlg.setLocationRelativeTo(null);
@@ -275,7 +274,6 @@ public class NubisaveEditor extends JApplet {
                         customStorageserviceChooser.setDialogTitle("Custom Service");
                         customStorageserviceChooser.setFileFilter(new IniFileFilter());
                         int returnVal = customStorageserviceChooser.showOpenDialog(null);
-
                         if (returnVal == JFileChooser.APPROVE_OPTION) {
                             File file = customStorageserviceChooser.getSelectedFile();
                             StorageService newService = new StorageService(file);
@@ -290,9 +288,7 @@ public class NubisaveEditor extends JApplet {
                 }
               }
         });
-       
         controls.add(chooseLocalComponent);
-
         JButton searchServiceComponent = new JButton("Search Service Component");
         searchServiceComponent.addActionListener(new ActionListener() {
             /**
@@ -305,7 +301,6 @@ public class NubisaveEditor extends JApplet {
             }
         });
         controls.add(searchServiceComponent);
-
         controls.add(help);
         content.add(controls, BorderLayout.SOUTH);
     }

@@ -41,9 +41,7 @@ public class MainWindow extends javax.swing.JFrame {
     /** Creates new form MainWindow */
     public MainWindow() {
         initComponents();
-
         mntDirTxtField.setText(Nubisave.mainSplitter.getMountpoint());
-
         String redundancyStr = Nubisave.properties.getProperty("redundancy");
         if (redundancyStr == null) {
             redundancyStr = "100";
@@ -52,7 +50,6 @@ public class MainWindow extends javax.swing.JFrame {
         redundancySlider.setValue(redundancy);
         setAvailability();
         splitterIsMountedCheckBox.setSelected(Nubisave.mainSplitter.isMounted());
-
         //check to see if system tray is supported on OS.
         if (SystemTray.isSupported()) {
             setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -86,8 +83,6 @@ public class MainWindow extends javax.swing.JFrame {
         NubisaveEditor d = new NubisaveEditor();
         jTabbedPane1.addTab("Editor", d);
         jTabbedPane1.remove(0);
-            
-        
     }
 
     private void setIsSplitterMounted() {
