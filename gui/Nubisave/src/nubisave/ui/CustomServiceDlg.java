@@ -62,6 +62,9 @@ public class CustomServiceDlg extends javax.swing.JDialog {
         jScrollPane1 = new javax.swing.JScrollPane();
         jmoduledesText = new javax.swing.JTextPane();
 
+        setResizable(false);
+
+        jLabel1.setBackground(new java.awt.Color(221, 40, 85));
         jLabel1.setText("Select Module");
 
         jComboBox1.addActionListener(new java.awt.event.ActionListener() {
@@ -175,7 +178,7 @@ public class CustomServiceDlg extends javax.swing.JDialog {
             inifile=dir+inifile;
             try {
                 Ini ini = new Ini(new File(inifile));
-                String desc=ini.get("module","name");
+                String desc=ini.get("module","desc");
                 jmoduledesText.setText(desc);
             } catch (InvalidFileFormatException ex) {
                 Logger.getLogger(CustomServiceDlg.class.getName()).log(Level.SEVERE, null, ex);
