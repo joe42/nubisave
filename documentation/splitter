@@ -51,3 +51,15 @@ fileFragmentName_0 = /_.nubisave_databaseN#U#C#0
 fileFragmentNameChecksum_0 = [sha256]
 fileFragmentName_1 = /_.nubisave_databaseN#U#C#1
 fileFragmentNameChecksum_1 = [sha256]
+
+Metadata / Fragment store contents
+----------------------------------
+
+The database (~/.nubisave/db.{db,lg}) is of a JDBM H-Tree format which stores
+string-to-object mapping records. The strings are path names, whereas the
+objects are instances of the "vtf" classes.
+The entries exist as maps with names such as:
+	filemap
+	dirmap
+	fileFragmentsMap
+	filenameTofilePartNumbersMap
