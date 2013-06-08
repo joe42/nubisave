@@ -34,6 +34,7 @@ public class MigrationDialog extends javax.swing.JDialog {
     private Timer timer;
     private String previouslySelectedValueInSourceStoreList = null; //current selection is deleted from destination list, to forbid moving a store's data to itself
 
+    
     /** Creates new form MigrationDialog */
     public MigrationDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);

@@ -41,9 +41,7 @@ public class MainWindow extends javax.swing.JFrame {
     /** Creates new form MainWindow */
     public MainWindow() {
         initComponents();
-
         mntDirTxtField.setText(Nubisave.mainSplitter.getMountpoint());
-
         String redundancyStr = Nubisave.properties.getProperty("redundancy");
         if (redundancyStr == null) {
             redundancyStr = "100";
@@ -52,7 +50,6 @@ public class MainWindow extends javax.swing.JFrame {
         redundancySlider.setValue(redundancy);
         setAvailability();
         splitterIsMountedCheckBox.setSelected(Nubisave.mainSplitter.isMounted());
-
         //check to see if system tray is supported on OS.
         if (SystemTray.isSupported()) {
             setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -85,7 +82,7 @@ public class MainWindow extends javax.swing.JFrame {
         }
         NubisaveEditor d = new NubisaveEditor();
         jTabbedPane1.addTab("Editor", d);
-
+        jTabbedPane1.remove(0);
     }
 
     private void setIsSplitterMounted() {
@@ -176,6 +173,11 @@ public class MainWindow extends javax.swing.JFrame {
         matchMakerLabel.setText("MatchMaker ");
 
         matchMakerURLField.setText(Nubisave.properties.getProperty("matchmakerURI"));
+        matchMakerURLField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                matchMakerURLFieldActionPerformed(evt);
+            }
+        });
 
         changeMatchMakerURLBtn.setText("Apply");
         changeMatchMakerURLBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -212,6 +214,11 @@ public class MainWindow extends javax.swing.JFrame {
         });
 
         splitterSessionComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9" }));
+        splitterSessionComboBox.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                splitterSessionComboBoxItemStateChanged(evt);
+            }
+        });
 
         jLabel5.setText("Choose Session:");
 
@@ -237,22 +244,12 @@ public class MainWindow extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(redundancySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 891, Short.MAX_VALUE)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3)
                     .addGroup(optionPanelLayout.createSequentialGroup()
                         .addGroup(optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(matchMakerLabel)
                             .addComponent(matchMakerURLField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 805, Short.MAX_VALUE))
                         .addGap(36, 36, 36)
                         .addComponent(changeMatchMakerURLBtn))
-                    .addGroup(optionPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addGap(67, 67, 67)
-                        .addComponent(storageStrategyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 559, Short.MAX_VALUE))
-                    .addGroup(optionPanelLayout.createSequentialGroup()
-                        .addComponent(availabilityLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 816, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, optionPanelLayout.createSequentialGroup()
                         .addGroup(optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, optionPanelLayout.createSequentialGroup()
@@ -267,13 +264,23 @@ public class MainWindow extends javax.swing.JFrame {
                                 .addComponent(saveSessionButton))
                             .addComponent(mntDirTxtField, javax.swing.GroupLayout.DEFAULT_SIZE, 804, Short.MAX_VALUE))
                         .addGap(36, 36, 36)
-                        .addComponent(openMntDirBtn)))
+                        .addComponent(openMntDirBtn))
+                    .addGroup(optionPanelLayout.createSequentialGroup()
+                        .addGroup(optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3)
+                            .addGroup(optionPanelLayout.createSequentialGroup()
+                                .addComponent(jLabel4)
+                                .addGap(67, 67, 67)
+                                .addComponent(storageStrategyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(availabilityLabel))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         optionPanelLayout.setVerticalGroup(
             optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, optionPanelLayout.createSequentialGroup()
-                .addGap(79, 79, 79)
+                .addGap(49, 49, 49)
                 .addGroup(optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(splitterIsMountedCheckBox)
                     .addComponent(jLabel5)
@@ -288,6 +295,7 @@ public class MainWindow extends javax.swing.JFrame {
                     .addComponent(openMntDirBtn))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel3)
+                .addGap(0, 0, 0)
                 .addComponent(redundancySlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(matchMakerLabel)
@@ -299,7 +307,7 @@ public class MainWindow extends javax.swing.JFrame {
                 .addGroup(optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(storageStrategyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4))
-                .addGap(40, 40, 40)
+                .addGap(49, 49, 49)
                 .addComponent(availabilityLabel)
                 .addContainerGap())
         );
@@ -310,11 +318,11 @@ public class MainWindow extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 911, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 515, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1)
         );
 
         pack();
@@ -393,6 +401,14 @@ public class MainWindow extends javax.swing.JFrame {
     private void mntDirTxtFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mntDirTxtFieldActionPerformed
         // TODO add your handling code here:
 }//GEN-LAST:event_mntDirTxtFieldActionPerformed
+
+    private void matchMakerURLFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_matchMakerURLFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_matchMakerURLFieldActionPerformed
+
+    private void splitterSessionComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_splitterSessionComboBoxItemStateChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_splitterSessionComboBoxItemStateChanged
 
     public NubiTableModel tableModel;
     // Variables declaration - do not modify//GEN-BEGIN:variables

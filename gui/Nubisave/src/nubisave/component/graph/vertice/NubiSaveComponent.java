@@ -3,6 +3,7 @@ package nubisave.component.graph.vertice;
 import java.awt.Point;
 import java.io.IOException;
 import nubisave.Nubisave;
+import nubisave.ui.NubisaveConfigDlg;
 
 
 public class NubiSaveComponent extends AbstractNubisaveComponent {
@@ -18,7 +19,13 @@ public class NubiSaveComponent extends AbstractNubisaveComponent {
 
     @Override
     public void showConfigurationDialog() {
-        throw new UnsupportedOperationException("Not supported yet.");
+     NubisaveConfigDlg nubi=new NubisaveConfigDlg();
+     nubi.setModal(true);
+     nubi.setTitle("Nubisave Component Configuration");
+     nubi.pack();
+     nubi.setLocationRelativeTo(null);
+     nubi.setVisible(true);
+     
     }
     
     @Override
@@ -109,6 +116,11 @@ public class NubiSaveComponent extends AbstractNubisaveComponent {
 
     @Override
     public void setNrOfFilePartsToStore(Integer nrOfFilePartsToStore) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void openLocation() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

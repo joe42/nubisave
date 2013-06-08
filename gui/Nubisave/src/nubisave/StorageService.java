@@ -21,8 +21,6 @@ import org.ini4j.Ini;
  */
 public class StorageService {
     private boolean supported;
-
-
     private String name;
     private String uniqName;
     private StorageType type;

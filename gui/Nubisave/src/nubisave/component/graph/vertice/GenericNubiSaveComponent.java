@@ -71,9 +71,9 @@ public class GenericNubiSaveComponent extends AbstractNubisaveComponent {
     @Override
     public void toggleActivate() {
         System.out.println("toggle activation state");
-        if(! Nubisave.mainSplitter.isModuleMounted(component)){
-            Nubisave.mainSplitter.mountStorageModule(component); // mount the module
-            drawCheckMark(checkLabelHorizontalPos, 0);
+        if(!Nubisave.mainSplitter.isModuleMounted(component)){
+             Nubisave.mainSplitter.mountStorageModule(component); // mount the module
+             drawCheckMark(checkLabelHorizontalPos, 0);
         } else {
             Nubisave.mainSplitter.unmountStorageModule(component); // unmount the module
             undoCheckMark();

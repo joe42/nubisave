@@ -61,9 +61,15 @@ import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import edu.uci.ics.jung.visualization.renderers.Renderer;
 import java.awt.BasicStroke;
+import java.awt.Dialog;
+import java.awt.Dialog.ModalityType;
 import java.awt.Point;
 import java.awt.Stroke;
+import java.awt.Window;
 import java.awt.event.InputEvent;
+import javax.swing.JDialog;
+import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
 import net.contentobjects.jnotify.*;
 import nubisave.Nubisave;
 import nubisave.StorageService;
@@ -78,6 +84,7 @@ import nubisave.component.graph.splitteradaption.ActionKeyAdapter;
 import nubisave.component.graph.vertice.interfaces.NubiSaveVertex;
 import nubisave.component.graph.vertice.interfaces.VertexGroup;
 import nubisave.ui.AddServiceDialog;
+import nubisave.ui.CustomServiceDlg;
 import org.apache.commons.collections15.Predicate;
 import org.apache.commons.collections15.Transformer;
 
@@ -244,25 +251,44 @@ public class NubisaveEditor extends JApplet {
              */
             @Override
             public void actionPerformed(ActionEvent ae) {
-                JFileChooser customStorageserviceChooser = new javax.swing.JFileChooser();
-                customStorageserviceChooser.setCurrentDirectory(new java.io.File(nubisave.Nubisave.mainSplitter.getMountScriptDir()));
-                customStorageserviceChooser.setDialogTitle("Custom Service");
-                customStorageserviceChooser.setFileFilter(new IniFileFilter());
-                int returnVal = customStorageserviceChooser.showOpenDialog(null);
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    File file = customStorageserviceChooser.getSelectedFile();
-                    StorageService newService = new StorageService(file);
-                    try {
-                        vertexFactory.setNextInstance(new GenericNubiSaveComponent(newService));
-                    } catch (IOException ex) {
-                        Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
+                CustomServiceDlg cusDlg=new CustomServiceDlg();
+                cusDlg.pack();
+                cusDlg.setLocationRelativeTo(null);
+                cusDlg.setTitle("Module Selection");
+                cusDlg.setModalityType(Dialog.ModalityType.APPLICATION_MODAL); 
+                cusDlg.setVisible(true);
+                String module=(String) cusDlg.getItemName();
+                if(cusDlg.okstatus=="True") {
+                    if( module!= "Custom"){
+                        StorageService newService = new StorageService(module);
+                        try {
+                            vertexFactory.setNextInstance(new GenericNubiSaveComponent(newService));
+                        } catch (IOException ex) {
+                            Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        nubisave.Nubisave.services.add(newService); 
                     }
-                    nubisave.Nubisave.services.add(newService);
+                    else {
+                        JFileChooser customStorageserviceChooser = new javax.swing.JFileChooser();
+                        customStorageserviceChooser.setCurrentDirectory(new java.io.File(nubisave.Nubisave.mainSplitter.getMountScriptDir()));
+                        customStorageserviceChooser.setDialogTitle("Custom Service");
+                        customStorageserviceChooser.setFileFilter(new IniFileFilter());
+                        int returnVal = customStorageserviceChooser.showOpenDialog(null);
+                        if (returnVal == JFileChooser.APPROVE_OPTION) {
+                            File file = customStorageserviceChooser.getSelectedFile();
+                            StorageService newService = new StorageService(file);
+                            try {
+                                vertexFactory.setNextInstance(new GenericNubiSaveComponent(newService));
+                            } catch (IOException ex) {
+                                Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                            nubisave.Nubisave.services.add(newService);
+                    }
+                    }
                 }
-            }
+              }
         });
         controls.add(chooseLocalComponent);
-
         JButton searchServiceComponent = new JButton("Search Service Component");
         searchServiceComponent.addActionListener(new ActionListener() {
             /**
@@ -275,10 +301,10 @@ public class NubisaveEditor extends JApplet {
             }
         });
         controls.add(searchServiceComponent);
-
         controls.add(help);
         content.add(controls, BorderLayout.SOUTH);
     }
+    
     /**
      * Add {@link Nubisave#services} to graph if they are not yet displayed there.
      */
