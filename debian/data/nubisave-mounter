@@ -6,6 +6,12 @@
 configdir=~/.nubisave/db/splitter_configuration
 splitterdir=/usr/share/nubisave/splitter/
 
+if [ ! -d $configdir ]
+then
+	echo "Error: Configuration directory $configdir does not exist." >&2
+	exit 1
+fi
+
 cd $configdir
 for storage in *
 do
