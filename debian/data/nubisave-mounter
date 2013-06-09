@@ -13,6 +13,12 @@ then
 fi
 
 cd $configdir
+if [ ! -f * ]
+then
+	echo "No storage modules configured, not mounting anything."
+	exit 0
+fi
+
 for storage in *
 do
 	echo "Storage: $storage"
