@@ -244,7 +244,7 @@ public class NubisaveEditor extends JApplet {
         interconnectNubisaveComponents(nubisaveComponentGraph, edgeFactory);
 
         JPanel controls = new JPanel();
-        JButton chooseLocalComponent = new JButton("Local Component");
+        JButton chooseLocalComponent = new JButton("Custom Storage/Modification Module");
         chooseLocalComponent.addActionListener(new ActionListener() {
             /**
              * Create new {@link StorageService} from chosen file and set it as the next Vertex to create in {@link StatefulNubiSaveComponentFactory}
@@ -259,7 +259,7 @@ public class NubisaveEditor extends JApplet {
                 cusDlg.setVisible(true);
                 String module=(String) cusDlg.getItemName();
                 if(cusDlg.okstatus=="True") {
-                    if( module!= "Custom"){
+                    if( module!= "Custom..."){
                         StorageService newService = new StorageService(module);
                         try {
                             vertexFactory.setNextInstance(new GenericNubiSaveComponent(newService));
@@ -289,7 +289,7 @@ public class NubisaveEditor extends JApplet {
               }
         });
         controls.add(chooseLocalComponent);
-        JButton searchServiceComponent = new JButton("Search Service Component");
+        JButton searchServiceComponent = new JButton("Storage Service Directory");
         searchServiceComponent.addActionListener(new ActionListener() {
             /**
              * Create new {@link StorageService} from chosen file and set it as the next Vertex to create in {@link StatefulNubiSaveComponentFactory}
