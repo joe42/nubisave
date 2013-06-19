@@ -189,11 +189,11 @@ public class NubisaveEditor extends JApplet {
                JNotify.FILE_MODIFIED |
                JNotify.FILE_RENAMED;
         boolean watchSubtree = false;
-        try {
-            JNotify.addWatch(Nubisave.mainSplitter.getConfigDir(), mask, watchSubtree, new JNotifyConfigUpdater(dataVertexEdgeFactory, graph, vv));
-        } catch (Exception ex) {
-            Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        try {
+//            JNotify.addWatch(Nubisave.mainSplitter.getConfigDir(), mask, watchSubtree, new JNotifyConfigUpdater(dataVertexEdgeFactory, graph, vv));
+//        } catch (Exception ex) {
+//            Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
+//        }
 
 
         vv.setBackground(Color.white);
@@ -214,16 +214,16 @@ public class NubisaveEditor extends JApplet {
         final StatefulNubiSaveComponentFactory vertexFactory = new StatefulNubiSaveComponentFactory();
         Factory<? extends NubiSaveEdge> edgeFactory = new WeightedNubisaveVertexEdgeFactory();
         PluggableGraphMouse graphMouse = createPluggableGraphMouse(vv.getRenderContext(), vertexFactory, edgeFactory, dataVertexEdgeFactory);
-        try {
-            // the EditingGraphMouse will pass mouse event coordinates to the
-            // vertexLocations function to set the locations of the vertices as
-            // they are created
-            //	        graphMouse.setVertexLocations(vertexLocations);
-            nubiSaveComponent = new NubiSaveComponent();
-            nubiSaveComponent.addToGraph(vv, new java.awt.Point((int)layout.getSize().getHeight()/2,(int)layout.getSize().getWidth()/2));
-        } catch (IOException ex) {
-            Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        try {
+//            // the EditingGraphMouse will pass mouse event coordinates to the
+//            // vertexLocations function to set the locations of the vertices as
+//            // they are created
+//            //	        graphMouse.setVertexLocations(vertexLocations);
+//            nubiSaveComponent = new NubiSaveComponent();
+//            nubiSaveComponent.addToGraph(vv, new java.awt.Point((int)layout.getSize().getHeight()/2,(int)layout.getSize().getWidth()/2));
+//        } catch (IOException ex) {
+//            Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
+//        }
 
         vv.setGraphMouse(graphMouse);
         vv.addKeyListener(new ActionKeyAdapter(vv.getPickedVertexState(), graph));
@@ -234,7 +234,7 @@ public class NubisaveEditor extends JApplet {
                 JOptionPane.showMessageDialog(vv, instructions);
             }
         });
-        addServicesToGraph();
+        //addServicesToGraph();
         Graph<AbstractNubisaveComponent,Object> nubisaveComponentGraph = new VertexPredicateFilter(new Predicate() {
             @Override
             public boolean evaluate(Object vertex){

@@ -41,15 +41,6 @@ public class MainWindow extends javax.swing.JFrame {
     /** Creates new form MainWindow */
     public MainWindow() {
         initComponents();
-        mntDirTxtField.setText(Nubisave.mainSplitter.getMountpoint());
-        String redundancyStr = Nubisave.properties.getProperty("redundancy");
-        if (redundancyStr == null) {
-            redundancyStr = "100";
-        }
-        int redundancy = Integer.parseInt(redundancyStr);
-        redundancySlider.setValue(redundancy);
-        setAvailability();
-        splitterIsMountedCheckBox.setSelected(Nubisave.mainSplitter.isMounted());
         //check to see if system tray is supported on OS.
         if (SystemTray.isSupported()) {
             setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -96,7 +87,7 @@ public class MainWindow extends javax.swing.JFrame {
     }
 
     private void setAvailability() {
-        availabilityLabel.setText("Availability: " + Nubisave.mainSplitter.getAvailability() * 100 + "%");
+       // availabilityLabel.setText("Availability: " + Nubisave.mainSplitter.getAvailability() * 100 + "%");
     }
 
     /** This method is called from within the constructor to
@@ -137,12 +128,6 @@ public class MainWindow extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Nubisave");
-
-        jTabbedPane1.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                jTabbedPane1StateChanged(evt);
-            }
-        });
 
         mntDirTxtField.setEditable(false);
         mntDirTxtField.setText("mntDirTxtField");
@@ -327,15 +312,6 @@ public class MainWindow extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void jTabbedPane1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jTabbedPane1StateChanged
-        JTabbedPane pane = (JTabbedPane)evt.getSource();
-        int sel = pane.getSelectedIndex();
-        if(pane.getTitleAt(sel).equals("Options")){
-            setAvailability();
-            setIsSplitterMounted();
-        }
-}//GEN-LAST:event_jTabbedPane1StateChanged
 
     private void loadSessionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadSessionButtonActionPerformed
         int sessionNumber = Integer.parseInt((String)splitterSessionComboBox.getSelectedItem());
