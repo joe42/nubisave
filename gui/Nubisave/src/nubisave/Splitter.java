@@ -31,6 +31,14 @@ public class Splitter {
         this.dataDir = splitterMountpoint+"/data";
         mountScriptDir = "../splitter/mountscripts";
     }
+    public Splitter(){
+        this.splitterMountpoint = null;
+        this.configurationDirPath = splitterMountpoint+"/config";
+        this.configurationFilePath = splitterMountpoint+"/config/config";
+        this.dataDir = splitterMountpoint+"/data";
+        mountScriptDir = "../splitter/mountscripts";
+    }
+    
     public String getMountpoint(){
         return splitterMountpoint;
     }

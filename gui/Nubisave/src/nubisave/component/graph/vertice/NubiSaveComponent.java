@@ -14,7 +14,7 @@ public class NubiSaveComponent extends AbstractNubisaveComponent {
         addProvidedPort();
         if(Nubisave.mainSplitter.isMounted()){
             drawCheckMark(40, 0);
-        }
+       }
     }
 
     @Override

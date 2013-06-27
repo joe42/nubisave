@@ -189,11 +189,11 @@ public class NubisaveEditor extends JApplet {
                JNotify.FILE_MODIFIED |
                JNotify.FILE_RENAMED;
         boolean watchSubtree = false;
-        try {
-            JNotify.addWatch(Nubisave.mainSplitter.getConfigDir(), mask, watchSubtree, new JNotifyConfigUpdater(dataVertexEdgeFactory, graph, vv));
-        } catch (Exception ex) {
-            Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        try {
+//            JNotify.addWatch(Nubisave.mainSplitter.getConfigDir(), mask, watchSubtree, new JNotifyConfigUpdater(dataVertexEdgeFactory, graph, vv));
+//        } catch (Exception ex) {
+//            Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
+//        }
 
 
         vv.setBackground(Color.white);
@@ -213,18 +213,17 @@ public class NubisaveEditor extends JApplet {
         content.add(panel);
         final StatefulNubiSaveComponentFactory vertexFactory = new StatefulNubiSaveComponentFactory();
         Factory<? extends NubiSaveEdge> edgeFactory = new WeightedNubisaveVertexEdgeFactory();
-        PluggableGraphMouse graphMouse = createPluggableGraphMouse(vv.getRenderContext(), vertexFactory, edgeFactory, dataVertexEdgeFactory);
-        try {
-            // the EditingGraphMouse will pass mouse event coordinates to the
-            // vertexLocations function to set the locations of the vertices as
-            // they are created
-            //	        graphMouse.setVertexLocations(vertexLocations);
-            nubiSaveComponent = new NubiSaveComponent();
-            nubiSaveComponent.addToGraph(vv, new java.awt.Point((int)layout.getSize().getHeight()/2,(int)layout.getSize().getWidth()/2));
-        } catch (IOException ex) {
-            Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
+        final PluggableGraphMouse graphMouse = createPluggableGraphMouse(vv.getRenderContext(), vertexFactory, edgeFactory, dataVertexEdgeFactory);
+//        try {
+//            // the EditingGraphMouse will pass mouse event coordinates to the
+//            // vertexLocations function to set the locations of the vertices as
+//            // they are created
+            	        //graphMouse.setVertexLocations(vertexLocations);
+//            nubiSaveComponent = new NubiSaveComponent();
+//            nubiSaveComponent.addToGraph(vv, new java.awt.Point((int)layout.getSize().getHeight()/2,(int)layout.getSize().getWidth()/2));
+//        } catch (IOException ex) {
+//            Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
+//        }
         vv.setGraphMouse(graphMouse);
         vv.addKeyListener(new ActionKeyAdapter(vv.getPickedVertexState(), graph));
 
@@ -244,7 +243,7 @@ public class NubisaveEditor extends JApplet {
         interconnectNubisaveComponents(nubisaveComponentGraph, edgeFactory);
 
         JPanel controls = new JPanel();
-        JButton chooseLocalComponent = new JButton("Local Component");
+        JButton chooseLocalComponent = new JButton("Custom Storage/Modification Module");
         chooseLocalComponent.addActionListener(new ActionListener() {
             /**
              * Create new {@link StorageService} from chosen file and set it as the next Vertex to create in {@link StatefulNubiSaveComponentFactory}
@@ -259,7 +258,15 @@ public class NubisaveEditor extends JApplet {
                 cusDlg.setVisible(true);
                 String module=(String) cusDlg.getItemName();
                 if(cusDlg.okstatus=="True") {
-                    if( module!= "Custom"){
+                    if( module.equals("NubiSave")) {
+                        try {
+                            nubiSaveComponent = new NubiSaveComponent();
+                            nubiSaveComponent.addToGraph(vv, new java.awt.Point((int)layout.getSize().getHeight()/2,(int)layout.getSize().getWidth()/2));
+                        } catch (IOException ex) {
+                            Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
+                        } 
+                    } else 
+                    if( module!= "Custom..."){
                         StorageService newService = new StorageService(module);
                         try {
                             vertexFactory.setNextInstance(new GenericNubiSaveComponent(newService));
@@ -276,6 +283,14 @@ public class NubisaveEditor extends JApplet {
                         int returnVal = customStorageserviceChooser.showOpenDialog(null);
                         if (returnVal == JFileChooser.APPROVE_OPTION) {
                             File file = customStorageserviceChooser.getSelectedFile();
+                            if (file.getName().equals("Nubisave.ini")){
+                                try {
+                                    nubiSaveComponent = new NubiSaveComponent();
+                                    nubiSaveComponent.addToGraph(vv, new java.awt.Point((int)layout.getSize().getHeight()/2,(int)layout.getSize().getWidth()/2));
+                                } catch (IOException ex) {
+                                    Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
+                                }      
+                            } else {
                             StorageService newService = new StorageService(file);
                             try {
                                 vertexFactory.setNextInstance(new GenericNubiSaveComponent(newService));
@@ -283,13 +298,14 @@ public class NubisaveEditor extends JApplet {
                                 Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
                             }
                             nubisave.Nubisave.services.add(newService);
+                        }
                     }
                     }
                 }
               }
         });
         controls.add(chooseLocalComponent);
-        JButton searchServiceComponent = new JButton("Search Service Component");
+        JButton searchServiceComponent = new JButton("Storage Service Directory");
         searchServiceComponent.addActionListener(new ActionListener() {
             /**
              * Create new {@link StorageService} from chosen file and set it as the next Vertex to create in {@link StatefulNubiSaveComponentFactory}
@@ -423,7 +439,7 @@ public class NubisaveEditor extends JApplet {
                 }
             }
             if (!connected && !component.equals(nubiSaveComponent)) {
-                graph.addEdge(edgeFactory.create(), nubiSaveComponent.getRequiredPorts().iterator().next(), component.getProvidedPorts().iterator().next(), EdgeType.DIRECTED);
+                //graph.addEdge(edgeFactory.create(), nubiSaveComponent.getRequiredPorts().iterator().next(), component.getProvidedPorts().iterator().next(), EdgeType.DIRECTED);
             }
             connected = false;
         }
