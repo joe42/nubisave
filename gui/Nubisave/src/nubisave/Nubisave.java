@@ -62,7 +62,6 @@ public class Nubisave {
 
             @Override
             public void run() {
-                System.out.println(" main function is getting executed.");
                 new nubisave.ui.MainWindow().setVisible(true);
             }
         });
