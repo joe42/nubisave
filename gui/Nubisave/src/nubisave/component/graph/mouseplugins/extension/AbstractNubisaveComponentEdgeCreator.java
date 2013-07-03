@@ -1,9 +1,12 @@
 package nubisave.component.graph.mouseplugins.extension;
 
+import com.github.joe42.splitter.util.file.PropertiesUtil;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import java.awt.event.MouseEvent;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import nubisave.component.graph.mouseplugins.extension.NubisaveGraphEventListener;
 import nubisave.component.graph.splitteradaption.NubisaveEditor.WeightedNubisaveVertexEdgeFactory;
 import nubisave.component.graph.vertice.AbstractNubisaveComponent;
@@ -22,11 +25,13 @@ public class AbstractNubisaveComponentEdgeCreator implements NubisaveGraphEventL
     protected VisualizationViewer<NubiSaveVertex, NubiSaveEdge> vv;
     protected Graph<NubiSaveVertex, NubiSaveEdge> graph;
     protected WeightedNubisaveVertexEdgeFactory edgeFactory;
+    private String database_directory;
 
     public AbstractNubisaveComponentEdgeCreator(VisualizationViewer<NubiSaveVertex, NubiSaveEdge> vv, Graph<NubiSaveVertex, NubiSaveEdge> graph, WeightedNubisaveVertexEdgeFactory edgeFactory){
         this.vv = vv;
         this.graph = graph;
         this.edgeFactory = edgeFactory;
+        database_directory = new PropertiesUtil("nubi.properties").getProperty("splitter_configuration_directory");
     }
 
     @Override
@@ -75,11 +80,11 @@ public class AbstractNubisaveComponentEdgeCreator implements NubisaveGraphEventL
         AbstractNubisaveComponent start = (AbstractNubisaveComponent) ((RequiredPort) startVertex).getParentComponent();
         AbstractNubisaveComponent end = (AbstractNubisaveComponent) ((ProvidedPort) endVertex).getParentComponent();
         if(! isConnected(startVertex, endVertex)) {
-            System.out.println("is not connected");
-            start.connectToProvidedPort(end);
-            WeightedNubisaveVertexEdge edge = edgeFactory.create();
-            edge.setWeight(end.getNrOfFilePartsToStore());
-            graph.addEdge(edge, startVertex, endVertex, EdgeType.DIRECTED);
+                System.out.println("is not connected");
+                start.connectToProvidedPort(end);
+                WeightedNubisaveVertexEdge edge = edgeFactory.create();
+                edge.setWeight(end.getNrOfFilePartsToStore());
+                graph.addEdge(edge, startVertex, endVertex, EdgeType.DIRECTED);
         } else {
             System.out.println("is  connected --> increase weight");
             WeightedNubisaveVertexEdge edge = (WeightedNubisaveVertexEdge) graph.findEdge(startVertex, endVertex);
@@ -101,8 +106,9 @@ public class AbstractNubisaveComponentEdgeCreator implements NubisaveGraphEventL
     protected boolean shouldNotConnect(NubiSaveVertex startVertex, NubiSaveVertex endVertex) {
         boolean shouldNotConnect = hasReachedMaxEdgeNumber(startVertex)
                 || !(startVertex instanceof RequiredPort<?>)
-                || !(endVertex instanceof ProvidedPort<?>)
-                || hasSameVertexGroup(endVertex, startVertex);
+                || !(endVertex instanceof ProvidedPort<?>);
+                //|| hasSameVertexGroup(endVertex, startVertex);
+        
         return shouldNotConnect;
     }
 

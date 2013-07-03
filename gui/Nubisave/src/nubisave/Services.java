@@ -22,10 +22,12 @@ public class Services implements Iterable<StorageService>{
 
     private List<StorageService> mmServices;
     private String database_directory;
+    //private String storage_directory;
 
     public Services() {
         mmServices = new LinkedList<StorageService>();
         database_directory = new PropertiesUtil("nubi.properties").getProperty("splitter_configuration_directory");
+        //storage_directory= new PropertiesUtil("nubi.properties").getProperty("storage_configuration_directory");
     }
 
     /**Load services from database
@@ -37,31 +39,35 @@ public class Services implements Iterable<StorageService>{
             System.err.println("warning: could not load database directory");
             return;
         }
-
+        
         File dir = new File(database_directory);
-        dir.mkdirs();
-        if(dir.isDirectory()){
-            String service_name, unique_name_of_service;
-            for(String file: dir.list()){
-                unique_name_of_service = file;
-                service_name = unique_name_of_service.split("[0-9]")[0]; // remove number
-                if(getByUniqueName(unique_name_of_service) == null){
-                    StorageService newService = new StorageService(new File(dir.getPath()+"/"+file));
-                    newService.setName(service_name);
-                    newService.setUniqName(unique_name_of_service);
-                    mmServices.add(newService);
-                } 
-            }
-            //Configure services again so that backend modules, which did not exist when the constructor was called, can be added
-            for(String file: dir.list()){
-                unique_name_of_service = file;
-                try {
-                    getByUniqueName(unique_name_of_service).setConfig(new Ini(new File(dir.getPath() + "/" + file)));
-                } catch (IOException ex) {
-                    Logger.getLogger(Services.class.getName()).log(Level.SEVERE, null, ex);
+        for(int j=0;j<1;j++){
+            dir.mkdirs();
+            if(dir.isDirectory()){
+                String service_name, unique_name_of_service;
+                for(String file: dir.list()){
+                    unique_name_of_service = file;
+                    service_name = unique_name_of_service.split("[0-9]")[0]; // remove number
+                    if(getByUniqueName(unique_name_of_service) == null){
+                        StorageService newService = new StorageService(new File(dir.getPath()+"/"+file));
+                        newService.setName(service_name);
+                        newService.setUniqName(unique_name_of_service);
+                        mmServices.add(newService);
+                    } 
+                }
+
+                //Configure services again so that backend modules, which did not exist when the constructor was called, can be added
+                for(String file: dir.list()){
+                    unique_name_of_service = file;
+                    try {
+                        getByUniqueName(unique_name_of_service).setConfig(new Ini(new File(dir.getPath() + "/" + file)));
+                    } catch (IOException ex) {
+                        Logger.getLogger(Services.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             }
-        }
+            //dir=new File(storage_directory);
+         }
     }
 
     /**
@@ -72,6 +78,16 @@ public class Services implements Iterable<StorageService>{
         mmServices.add(newService);
         newService.storeConfiguration(database_directory);
     }
+    
+    /**
+     * Add a new Nubisave StorageService instance to the list and persist it. 
+     * @param newService 
+     */
+    
+    /*public void addNubisave(StorageService newService){
+        mmServices.add(newService);
+        newService.storeConfiguration(storage_directory);
+    }*/
 
     /**
      * Add a new StorageService instance to the list and persist it.
@@ -104,6 +120,10 @@ public class Services implements Iterable<StorageService>{
     public void update(StorageService existingService){
         existingService.storeConfiguration(database_directory);
     }
+    
+    /*public void updateNubisave(StorageService existingService){
+        existingService.storeConfiguration(storage_directory);
+    }*/
 
     /**
      * Persists the current services to a directory

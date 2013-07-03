@@ -98,7 +98,6 @@ public class VertexPicker<V, E> extends
             if (e.getModifiers() == modifiers) {
                 //  p is the screen point for the mouse event
                 Point2D ip = e.getPoint();
-
                 vertex = pickSupport.getVertex(layout, ip.getX(), ip.getY());
                 if (vertex != null) {
                     e.consume();

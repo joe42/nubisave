@@ -17,7 +17,6 @@ import javax.swing.UnsupportedLookAndFeelException;
 public class Nubisave {
 
     public static Services services;
-    public static String[] supportedProvider = {"Dropbox","Sugarsync"};
     public static Splitter mainSplitter;
     public static PropertiesUtil properties;
     public Nubisave(){

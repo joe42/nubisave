@@ -9,6 +9,7 @@ package nubisave.component.graph.splitteradaption;
  *
  */
 
+import com.github.joe42.splitter.util.file.PropertiesUtil;
 import nubisave.component.graph.mouseplugins.extension.AbstractNubisaveComponentEdgeCreator;
 import nubisave.component.graph.mouseplugins.extension.PreventEdgeCreationForRestrictedPorts;
 import nubisave.component.graph.mouseplugins.extension.ToggleActivateNubisaveComponentOnDoubleClick;
@@ -72,6 +73,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import net.contentobjects.jnotify.*;
 import nubisave.Nubisave;
+import nubisave.Services;
 import nubisave.StorageService;
 import nubisave.component.graph.mouseplugins.ExtensibleNubisaveComponentMousePlugin;
 import nubisave.component.graph.mouseplugins.VertexPicker;
@@ -87,6 +89,7 @@ import nubisave.ui.AddServiceDialog;
 import nubisave.ui.CustomServiceDlg;
 import org.apache.commons.collections15.Predicate;
 import org.apache.commons.collections15.Transformer;
+import org.ini4j.Ini;
 
 
 /**
@@ -174,7 +177,7 @@ public class NubisaveEditor extends JApplet {
      *
      */
     public NubisaveEditor() {
-       
+        
         // create a simple graph for the demo
         graph = new SortedSparseMultiGraph<NubiSaveVertex,NubiSaveEdge>();
         this.layout = new StaticLayout<NubiSaveVertex,NubiSaveEdge>(graph,
@@ -240,7 +243,7 @@ public class NubisaveEditor extends JApplet {
                 return vertex instanceof AbstractNubisaveComponent;
             }
         }).transform(graph);
-        interconnectNubisaveComponents(nubisaveComponentGraph, edgeFactory);
+        //interconnectNubisaveComponents(nubisaveComponentGraph, edgeFactory);
 
         JPanel controls = new JPanel();
         JButton chooseLocalComponent = new JButton("Custom Storage/Modification Module");
@@ -257,26 +260,33 @@ public class NubisaveEditor extends JApplet {
                 cusDlg.setModalityType(Dialog.ModalityType.APPLICATION_MODAL); 
                 cusDlg.setVisible(true);
                 String module=(String) cusDlg.getItemName();
-                if(cusDlg.okstatus=="True") {
-                    if( module.equals("NubiSave")) {
-                        try {
-                            nubiSaveComponent = new NubiSaveComponent();
-                            nubiSaveComponent.addToGraph(vv, new java.awt.Point((int)layout.getSize().getHeight()/2,(int)layout.getSize().getWidth()/2));
-                        } catch (IOException ex) {
-                            Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
-                        } 
-                    } else 
-                    if( module!= "Custom..."){
-                        StorageService newService = new StorageService(module);
-                        try {
-                            vertexFactory.setNextInstance(new GenericNubiSaveComponent(newService));
-                        } catch (IOException ex) {
-                            Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
+                if (module!=null){
+                    module=module.split("\\.")[0];  
+                }
+                if (module!=null){
+                    if(cusDlg.okstatus=="True"){
+                        if( module.equals("Nubisave") || module.equals("nubisave")){
+                            StorageService newService = new StorageService(module);
+                            try {
+                                vertexFactory.setNextInstance(new NubiSaveComponent(newService));
+                                //nubiSaveComponent.addToGraph(vv, new java.awt.Point((int)layout.getSize().getHeight()/2,(int)layout.getSize().getWidth()/2));
+                            } catch (IOException ex) {
+                                Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                            //nubisave.Nubisave.services.addNubisave(newService); 
+                            nubisave.Nubisave.services.add(newService); 
+                        } else {
+                            StorageService newService = new StorageService(module);
+                            try {
+                                vertexFactory.setNextInstance(new GenericNubiSaveComponent(newService));
+                            } catch (IOException ex) {
+                                Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                            nubisave.Nubisave.services.add(newService); 
                         }
-                        nubisave.Nubisave.services.add(newService); 
                     }
-                    else {
-                        JFileChooser customStorageserviceChooser = new javax.swing.JFileChooser();
+                } else {
+                      JFileChooser customStorageserviceChooser = new javax.swing.JFileChooser();
                         customStorageserviceChooser.setCurrentDirectory(new java.io.File(nubisave.Nubisave.mainSplitter.getMountScriptDir()));
                         customStorageserviceChooser.setDialogTitle("Custom Service");
                         customStorageserviceChooser.setFileFilter(new IniFileFilter());
@@ -284,12 +294,15 @@ public class NubisaveEditor extends JApplet {
                         if (returnVal == JFileChooser.APPROVE_OPTION) {
                             File file = customStorageserviceChooser.getSelectedFile();
                             if (file.getName().equals("Nubisave.ini")){
-                                try {
-                                    nubiSaveComponent = new NubiSaveComponent();
-                                    nubiSaveComponent.addToGraph(vv, new java.awt.Point((int)layout.getSize().getHeight()/2,(int)layout.getSize().getWidth()/2));
-                                } catch (IOException ex) {
-                                    Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
-                                }      
+                                StorageService newService = new StorageService(file);
+                            try {
+                                vertexFactory.setNextInstance(new NubiSaveComponent(newService));
+                                //nubiSaveComponent.addToGraph(vv, new java.awt.Point((int)layout.getSize().getHeight()/2,(int)layout.getSize().getWidth()/2));
+                            } catch (IOException ex) {
+                                Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                            nubisave.Nubisave.services.add(newService);
+                            //nubisave.Nubisave.services.addNubisave(newService);
                             } else {
                             StorageService newService = new StorageService(file);
                             try {
@@ -299,7 +312,6 @@ public class NubisaveEditor extends JApplet {
                             }
                             nubisave.Nubisave.services.add(newService);
                         }
-                    }
                     }
                 }
               }
@@ -325,22 +337,31 @@ public class NubisaveEditor extends JApplet {
      * Add {@link Nubisave#services} to graph if they are not yet displayed there.
      */
     private void addServicesToGraph() {
-        for (int i = 0; i < nubisave.Nubisave.services.size(); i++) {
+         for (int i = 0; i < nubisave.Nubisave.services.size(); i++) {
             StorageService persistedService = nubisave.Nubisave.services.get(i);
-            try {
-                GenericNubiSaveComponent vertex = new GenericNubiSaveComponent(persistedService);
+            AbstractNubisaveComponent vertex=null;
+            if(persistedService.getName().equals("Nubisave")){
+                try {
+                    vertex = new NubiSaveComponent(persistedService);
+                } catch (IOException ex) {
+                    Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else {
+                try {
+                    vertex = new GenericNubiSaveComponent(persistedService);
+                } catch (IOException ex) {
+                    Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
                 Point pos = persistedService.getGraphLocation();
                 if (pos == null) {
                     pos = new Point(new java.awt.Point((int) layout.getSize().getHeight() / 2, (int) layout.getSize().getWidth() / 2 - i * 10-10));
                 }
                 if(!graph.containsVertex(vertex)){
-                    System.out.println("add vertice"+vertex.getUniqueName());
+                    System.out.println("add vertice "+vertex.getUniqueName());
                     vertex.addToGraph(vv, pos);
                     layout.setLocation(vertex, vv.getRenderContext().getMultiLayerTransformer().inverseTransform(pos));
                 }
-            } catch (IOException ex) {
-                Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
-            }
         }
     }
 

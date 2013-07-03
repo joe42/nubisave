@@ -3,13 +3,16 @@ package nubisave.component.graph.vertice;
 import java.awt.Point;
 import java.io.IOException;
 import nubisave.Nubisave;
+import nubisave.StorageService;
 import nubisave.ui.NubisaveConfigDlg;
 
 
 public class NubiSaveComponent extends AbstractNubisaveComponent {
     private Point graphLocation;
-
-    public NubiSaveComponent() throws IOException{
+    protected final StorageService component;
+    
+    public NubiSaveComponent(StorageService component) throws IOException{
+        this.component=component;
         addRequiredPort();
         addProvidedPort();
         if(Nubisave.mainSplitter.isMounted()){
@@ -68,7 +71,10 @@ public class NubiSaveComponent extends AbstractNubisaveComponent {
 
     @Override
     public void setGraphLocation(Point location) {
-        graphLocation = location;
+        //graphLocation = location;
+        component.setGraphLocation(location);
+        //Nubisave.services.updateNubisave(component);
+        Nubisave.services.update(component);
     }
 
     @Override
@@ -111,7 +117,8 @@ public class NubiSaveComponent extends AbstractNubisaveComponent {
 
     @Override
     public int getNrOfFilePartsToStore() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return component.getNrOfFilePartsToStore();
+        //throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
