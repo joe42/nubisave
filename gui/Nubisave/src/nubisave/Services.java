@@ -120,7 +120,11 @@ public class Services implements Iterable<StorageService>{
      * @param existingService the instance to persist
      */
     public void update(StorageService existingService){
-        existingService.storeConfiguration(database_directory);
+        if(existingService.getName().equals("Nubisave")){
+            existingService.storeConfiguration(storage_directory);
+        } else {
+             existingService.storeConfiguration(database_directory);
+        }
     }
     
     public void updateNubisave(StorageService existingService){
@@ -133,8 +137,12 @@ public class Services implements Iterable<StorageService>{
      */
     public void storeToDatabase(String database_directory){
         for(StorageService s: nubisave.Nubisave.services){
-            s.storeConfiguration(database_directory);
+            if(s.getName().equals("Nubisave")){
+                s.storeConfiguration(storage_directory);
+            } else {
+                s.storeConfiguration(database_directory);
         }
+     }
     }
 
     /**

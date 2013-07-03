@@ -207,6 +207,7 @@ public class StorageService {
      * @param directory the directory to store the configuration file
      */
     public void storeConfiguration(String directory) {
+        System.out.println(directory+"  "+getUniqName());
         String path = directory + "/" + getUniqName();
         try{
             int serviceIndex = 1;
