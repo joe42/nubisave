@@ -97,7 +97,8 @@ public class NubiSaveComponent extends AbstractNubisaveComponent {
 
     @Override
     public String getUniqueName() {
-        return "NubiSave";
+        //return "NubiSave";
+        return component.getUniqName();
     }
 
     @Override
