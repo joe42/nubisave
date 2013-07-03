@@ -1,6 +1,8 @@
 package nubisave.component.graph.vertice;
 
+import com.github.joe42.splitter.util.file.PropertiesUtil;
 import java.awt.Point;
+import java.io.File;
 import java.io.IOException;
 import nubisave.Nubisave;
 import nubisave.StorageService;
@@ -10,11 +12,16 @@ import nubisave.ui.NubisaveConfigDlg;
 public class NubiSaveComponent extends AbstractNubisaveComponent {
     private Point graphLocation;
     protected final StorageService component;
+    private String storage_directory;
     
     public NubiSaveComponent(StorageService component) throws IOException{
         this.component=component;
         addRequiredPort();
         addProvidedPort();
+        storage_directory= new PropertiesUtil("nubi.properties").getProperty("storage_configuration_directory");
+        String path=storage_directory.split("\\.")[0]+"."+component.getUniqName();
+        File file=new File(path.toLowerCase());
+        file.mkdirs();
         if(Nubisave.mainSplitter.isMounted()){
             drawCheckMark(40, 0);
        }
@@ -71,10 +78,8 @@ public class NubiSaveComponent extends AbstractNubisaveComponent {
 
     @Override
     public void setGraphLocation(Point location) {
-        //graphLocation = location;
         component.setGraphLocation(location);
-        //Nubisave.services.updateNubisave(component);
-        Nubisave.services.update(component);
+        Nubisave.services.updateNubisave(component);
     }
 
     @Override

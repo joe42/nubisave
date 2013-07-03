@@ -68,6 +68,11 @@ import java.awt.Point;
 import java.awt.Stroke;
 import java.awt.Window;
 import java.awt.event.InputEvent;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.HashMap;
 import javax.swing.JDialog;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
@@ -98,10 +103,9 @@ import org.ini4j.Ini;
 public class NubisaveEditor extends JApplet {
 
     private static final long serialVersionUID = -2023243689258876721L;
-
+    private String storage_directory;
     Graph<NubiSaveVertex,NubiSaveEdge> graph;
     NubiSaveComponent nubiSaveComponent;
-
     AbstractLayout<NubiSaveVertex,NubiSaveEdge> layout;
 
     /**
@@ -184,7 +188,7 @@ public class NubisaveEditor extends JApplet {
                 new Dimension(600,600));
         vv =  new VisualizationViewer<NubiSaveVertex, NubiSaveEdge>(layout);
         dataVertexEdgeFactory = new DataVertexEdgeFactory();
-
+        storage_directory= new PropertiesUtil("nubi.properties").getProperty("storage_configuration_directory");
 
         //Immediate Adaption to external changes
         int mask = JNotify.FILE_CREATED  |
@@ -243,7 +247,8 @@ public class NubisaveEditor extends JApplet {
                 return vertex instanceof AbstractNubisaveComponent;
             }
         }).transform(graph);
-        //interconnectNubisaveComponents(nubisaveComponentGraph, edgeFactory);
+        interconnectNubisaveComponents(nubisaveComponentGraph, edgeFactory);
+        //interconnectNubisaveComponents();
 
         JPanel controls = new JPanel();
         JButton chooseLocalComponent = new JButton("Custom Storage/Modification Module");
@@ -273,8 +278,7 @@ public class NubisaveEditor extends JApplet {
                             } catch (IOException ex) {
                                 Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
                             }
-                            //nubisave.Nubisave.services.addNubisave(newService); 
-                            nubisave.Nubisave.services.add(newService); 
+                            nubisave.Nubisave.services.addNubisave(newService);  
                         } else {
                             StorageService newService = new StorageService(module);
                             try {
@@ -301,8 +305,7 @@ public class NubisaveEditor extends JApplet {
                             } catch (IOException ex) {
                                 Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
                             }
-                            nubisave.Nubisave.services.add(newService);
-                            //nubisave.Nubisave.services.addNubisave(newService);
+                            nubisave.Nubisave.services.addNubisave(newService);
                             } else {
                             StorageService newService = new StorageService(file);
                             try {
@@ -450,20 +453,44 @@ public class NubisaveEditor extends JApplet {
     protected void interconnectNubisaveComponents(Graph<AbstractNubisaveComponent, Object> nubisaveComponentGraph, Factory<? extends NubiSaveEdge> edgeFactory) {
         boolean connected = false;
         WeightedNubisaveVertexEdge edge;
-        for (AbstractNubisaveComponent component : nubisaveComponentGraph.getVertices()) {
-            for (AbstractNubisaveComponent component2 : nubisaveComponentGraph.getVertices()) {
-                if (component.isConnectedToProvidedPort(component2)) {
-                    edge = (WeightedNubisaveVertexEdge) edgeFactory.create();
-                    edge.setWeight(component.getNrOfFilePartsToStore());
-                    graph.addEdge(edge, component2.getRequiredPorts().iterator().next(), component.getProvidedPorts().iterator().next(), EdgeType.DIRECTED);
-                    connected = true;
-                }
-            }
-            if (!connected && !component.equals(nubiSaveComponent)) {
-                //graph.addEdge(edgeFactory.create(), nubiSaveComponent.getRequiredPorts().iterator().next(), component.getProvidedPorts().iterator().next(), EdgeType.DIRECTED);
-            }
-            connected = false;
+        File file = new File(storage_directory+"/"+ "connections.txt");
+        HashMap hh= new HashMap();
+        ArrayList<AbstractNubisaveComponent> myNodeList = new ArrayList<AbstractNubisaveComponent>(nubisaveComponentGraph.getVertices());
+        ArrayList str=new ArrayList();
+        for(int i=0;i<nubisaveComponentGraph.getVertices().size();i++){
+           str.add(myNodeList.get(i).getUniqueName());
         }
+        if(file.exists()){
+            BufferedReader reader = null;
+            try {
+                reader = new BufferedReader(new FileReader(file));
+                String strLine;
+                try {
+                    //Read the text file Line By Line
+                    while ((strLine = reader.readLine()) != null) {
+                    String startVertex=strLine.split(" ")[0];
+                    String endVertex=strLine.split(" ")[1];
+                    hh.put(startVertex,endVertex);
+                                     
+                    for(AbstractNubisaveComponent component:nubisaveComponentGraph.getVertices()){
+                       if(component.getUniqueName().equals(startVertex)){                            
+                           String endpoint=(String) hh.get(startVertex);
+                           int pos=str.indexOf(endpoint);
+                           AbstractNubisaveComponent endcomponent=myNodeList.get(pos);
+                           edge = (WeightedNubisaveVertexEdge) edgeFactory.create();
+                           edge.setWeight(component.getNrOfFilePartsToStore());
+                           graph.addEdge(edge, component.getRequiredPorts().iterator().next(), endcomponent.getProvidedPorts().iterator().next(), EdgeType.DIRECTED);               
+                       }
+                   }
+                  }
+                reader.close();   
+                } catch (IOException ex) {
+                    Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
+            } 
+            }      
     }
 
 }
