@@ -1,7 +1,7 @@
-nubisave (0.0~git20130628-1) UNRELEASED; urgency=low
+nubisave (0.0~git20130703-1) UNRELEASED; urgency=low
 
   * Yet another snapshot, just to catch up with the latest changes.
-  * Contains refactored GUI, module metadata and enhanced documentation.
+  * Contains refactored GUI, module metadata, generic directory and enhanced documentation.
   * Several placeholder module descriptions were added for future work.
 
  -- Josef Spillner <josef@rumba>  Thu, 27 Jun 2013 21:27:24 +0200
