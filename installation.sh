@@ -1,6 +1,8 @@
 #!/bin/bash
 #
 # Installations-Script für NubiSave auf Debian bzw. Derivaten (inkl. Ubuntu)
+#
+# DEPRECATED - use Debian package if possible!
 
 if [ ! -x /usr/bin/sudo ]; then
 	echo "Fehler: sudo muss manuell installiert und konfiguriert werden." >&2

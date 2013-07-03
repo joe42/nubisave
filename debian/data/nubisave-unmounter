@@ -14,7 +14,7 @@ then
 fi
 
 cd $storagedir
-if [ ! -d * ]
+if [ -z "`ls`" ]
 then
 	echo "No storage modules configured and mounted, not unmounting anything."
 	exit 0

@@ -13,7 +13,7 @@ then
 fi
 
 cd $configdir
-if [ ! -f * ]
+if [ -z "`ls`" ]
 then
 	echo "No storage modules configured, not mounting anything."
 	exit 0
@@ -34,7 +34,7 @@ do
 			mount=`echo $mount | sed -e "s& $param& $paramval&"`
 		fi
 	done
-	mountpoint=~/.nubisave/storages/$storage
+	mountpoint=~/.storages/$storage
 	mkdir -p $mountpoint $mountpoint/config
 	mount=`echo $mount | sed -e "s& mountpoint& $mountpoint&"`
 	echo "* mount: $mount"
