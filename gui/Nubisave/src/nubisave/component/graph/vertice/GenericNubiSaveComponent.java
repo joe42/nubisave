@@ -233,7 +233,7 @@ public class GenericNubiSaveComponent extends AbstractNubisaveComponent {
 
     @Override
     public int getNrOfFilePartsToStore() {
-		return component.getNrOfFilePartsToStore();
+	return component.getNrOfFilePartsToStore();
 	}
 
     @Override

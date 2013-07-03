@@ -3,7 +3,7 @@
 echo "Start von NubiSave"
 userdir=$HOME/nubisave
 mountpoint=$HOME/.nubisave/nubisavemount
-storages=$HOME/.nubisave/storages
+storages=$HOME/.storages
 
 mkdir -p "$mountpoint" "$storages"
 scriptpath=`readlink -f $0`

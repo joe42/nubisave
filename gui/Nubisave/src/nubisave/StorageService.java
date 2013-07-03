@@ -30,7 +30,7 @@ public class StorageService {
     private Map<String, String> parameterMap = new HashMap<String, String>();
     private Ini config = null;
     private Point graphLocation;
-	private int nrOfFilePartsToStore;
+    private int nrOfFilePartsToStore;
     private File file;
     
     public StorageService(String name) {
@@ -40,12 +40,6 @@ public class StorageService {
         nrOfBackends = 0;
         nrOfFilePartsToStore = 1;
         backendServices = new LinkedList<StorageService>();
-        for (String s :Nubisave.supportedProvider) {
-            if (s.equalsIgnoreCase(name)) {
-                supported = true;
-                break;
-            }
-        }
         file = new File("../splitter/mountscripts/"+name+".ini");
         if(file.exists()){
             loadFromFile();
@@ -213,6 +207,7 @@ public class StorageService {
      * @param directory the directory to store the configuration file
      */
     public void storeConfiguration(String directory) {
+        System.out.println(directory+"  "+getUniqName());
         String path = directory + "/" + getUniqName();
         try{
             int serviceIndex = 1;
