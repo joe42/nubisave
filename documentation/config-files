@@ -25,8 +25,10 @@ Configuration file overview
  !! should not exist beforehand, as it is created by Nubisave itself
  config/config
  -> redundancy settings [FIXME: relation to global one in nubi.properties?]
+ -> also, strategy and other settings
  config/$module
- -> ??? [FIXME: explain relation to $module/config/config and splitter_configuration/$module]
+ -> copied from db/splitter_configuration/module
+ -> hot plugging for mounting a storage: generates $module/config/config in .nubisave/storages
  data
  -> the virtual filesystem provided by the Nubisave splitter FUSE module
 
@@ -36,8 +38,9 @@ Configuration file overview
 
 ~/.nubisave/storages:
  => one directory for each activated storage module
+ => automatically created by hotplugging through nubisavemount/config/$module
  $module/config/config
- -> corresponds to db/splitter_configuration/$module [FIXME: explain hotplugging]
+ -> corresponds to db/splitter_configuration/$module
  $module/data
  -> symlink to the backend filesystem, either native directory or FUSE mountpoint
 
@@ -51,6 +54,11 @@ redundancy: from 0 to 100
 matchmakerURI: ClientAccess endpoint of the ConQo service registry
 splitter_database_location: path to the splitter metadata file, without .db suffix
 splitter_configuration_directory: path to where all module configuration files are located
+
+Detailed description of nubisavemount/config/config
+---------------------------------------------------
+
+-> see database contents section in the 'splitter' file
 
 Detailed description of $module files
 -------------------------------------
