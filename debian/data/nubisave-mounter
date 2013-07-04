@@ -34,6 +34,11 @@ do
 			mount=`echo $mount | sed -e "s& $param& $paramval&"`
 		fi
 	done
+
+	# Hot-plugging
+	#cp $storage ~/.nubisave/nubisavemount/config
+
+	# Deprecated: Manual mounting
 	mountpoint=~/.storages/$storage
 	mkdir -p $mountpoint $mountpoint/config
 	mount=`echo $mount | sed -e "s& mountpoint& $mountpoint&"`
