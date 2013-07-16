@@ -1,4 +1,6 @@
 #!/bin/sh
+#
+# Starts up the Nubisave GUI on a mounted filesystem
 
 mountpoint=$HOME/.nubisave/nubisavemount
 

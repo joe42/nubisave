@@ -3,6 +3,7 @@
 # Mounts all configured Nubisave directories
 # Useful for headless configurations
 
+storagesdir=~/.storages
 configdir=~/.nubisave/db/splitter_configuration
 splitterdir=/usr/share/nubisave/splitter/
 
@@ -35,16 +36,16 @@ do
 		fi
 	done
 
-	# Hot-plugging
-	#cp $storage ~/.nubisave/nubisavemount/config
-
-	# Deprecated: Manual mounting
-	mountpoint=~/.storages/$storage
-	mkdir -p $mountpoint $mountpoint/config
+	mountpoint=$storagesdir/$storage
 	mount=`echo $mount | sed -e "s& mountpoint& $mountpoint&"`
 	echo "* mount: $mount"
 
-	cd $splitterdir
-	$mount
-	cd $configdir
+	# Hot-plugging for indirect mounting through Nubisave
+	cp $storage ~/.nubisave/nubisavemount/config
+
+	# Deprecated: Manual mounting
+	#mkdir -p $mountpoint $mountpoint/config
+	#cd $splitterdir
+	#$mount
+	#cd $configdir
 done
