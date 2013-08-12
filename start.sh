@@ -28,7 +28,16 @@ then
 	ln -sf "$mountpoint/data" "$userdir"
 fi
 
-if [ "$1" != "headless" ]
+headless=0
+if [ "$1" == "headless" ]
+then
+	headless=1
+elif [ -z $DISPLAY ]
+	echo "- Erzwingung des Headless-Modus!"
+	headless=1
+fi
+
+if [ "$headless" == 1 ]
 then
 	echo "- Start der NubiSave-Konfigurations-GUI"
 	cd bin/
