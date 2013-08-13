@@ -158,7 +158,10 @@ public class CustomServiceDlg extends javax.swing.JDialog {
         return modulename;
     }
     public Object getItemName() {
-      return inimap.get(jComboBox1.getSelectedItem());
+      if(jComboBox1.getSelectedItem().equals("Custom...")) {
+        return null;
+      }
+      return jComboBox1.getSelectedItem();
    }
     private void jCancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCancelButtonActionPerformed
         okstatus="False";

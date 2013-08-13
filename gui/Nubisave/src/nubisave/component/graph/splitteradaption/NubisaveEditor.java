@@ -251,7 +251,7 @@ public class NubisaveEditor extends JApplet {
         //interconnectNubisaveComponents();
 
         JPanel controls = new JPanel();
-        JButton chooseLocalComponent = new JButton("Custom Storage/Modification Module");
+        JButton chooseLocalComponent = new JButton("Custom Storage/Modification/Splitter Module");
         chooseLocalComponent.addActionListener(new ActionListener() {
             /**
              * Create new {@link StorageService} from chosen file and set it as the next Vertex to create in {@link StatefulNubiSaveComponentFactory}
