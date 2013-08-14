@@ -72,7 +72,7 @@ public class MainWindow extends javax.swing.JFrame {
             }
         }
         NubisaveEditor d = new NubisaveEditor();
-        jTabbedPane1.addTab("Editor", d);
+        jTabbedPane1.addTab("Storage Flow Editor", d);
         jTabbedPane1.remove(0);
     }
 
@@ -127,7 +127,7 @@ public class MainWindow extends javax.swing.JFrame {
         customStorageserviceChooser.setFileFilter(new IniFileFilter());
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Nubisave");
+        setTitle("Nubisave Cloud Storage Controller and Storage Flow Editor");
 
         mntDirTxtField.setEditable(false);
         mntDirTxtField.setText("mntDirTxtField");
