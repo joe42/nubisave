@@ -297,7 +297,7 @@ public class NubisaveEditor extends JApplet {
                         int returnVal = customStorageserviceChooser.showOpenDialog(null);
                         if (returnVal == JFileChooser.APPROVE_OPTION) {
                             File file = customStorageserviceChooser.getSelectedFile();
-                            if (file.getName().equals("Nubisave.ini")){
+                            if (file.getName().toLowerCase().equals("nubisave.ini")){
                                 StorageService newService = new StorageService(file);
                             try {
                                 vertexFactory.setNextInstance(new NubiSaveComponent(newService));
@@ -343,7 +343,7 @@ public class NubisaveEditor extends JApplet {
          for (int i = 0; i < nubisave.Nubisave.services.size(); i++) {
             StorageService persistedService = nubisave.Nubisave.services.get(i);
             AbstractNubisaveComponent vertex=null;
-            if(persistedService.getName().equals("Nubisave")){
+            if(persistedService.getName().toLowerCase().equals("nubisave")){
                 try {
                     vertex = new NubiSaveComponent(persistedService);
                 } catch (IOException ex) {

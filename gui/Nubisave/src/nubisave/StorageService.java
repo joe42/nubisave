@@ -207,8 +207,8 @@ public class StorageService {
      * @param directory the directory to store the configuration file
      */
     public void storeConfiguration(String directory) {
-        System.out.println(directory+"  "+getUniqName());
         String path = directory + "/" + getUniqName();
+        System.out.println("Store module configuration to " + path);
         try{
             int serviceIndex = 1;
             for(StorageService s: getBackendServices()){
@@ -226,7 +226,8 @@ public class StorageService {
             config.put("splitter", "fileparts", nrOfFilePartsToStore);
             config.store(new File(path));
         } catch(Exception e){
-            System.err.println("StorageService.storeConfiguration(StorageService service): Error writing configuration for StorageService instance "+getUniqName()+" - "+e.getMessage()==null?e.getMessage():"");
+            System.err.println("Error writing configuration for StorageService instance " + getUniqName());
+            System.err.println("Cause: " + (e.getMessage() != null ? e.getMessage() : "(unknown)"));
             return;
         }
     }
