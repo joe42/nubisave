@@ -29,14 +29,16 @@ public class Splitter {
         this.configurationDirPath = splitterMountpoint+"/config";
         this.configurationFilePath = splitterMountpoint+"/config/config";
         this.dataDir = splitterMountpoint+"/data";
-        mountScriptDir = "../splitter/mountscripts";
+        String nubisavedir = new PropertiesUtil("nubi.properties").getProperty("nubisave_directory");
+        mountScriptDir = nubisavedir + "/splitter/mountscripts";
     }
     public Splitter(){
         this.splitterMountpoint = null;
         this.configurationDirPath = splitterMountpoint+"/config";
         this.configurationFilePath = splitterMountpoint+"/config/config";
         this.dataDir = splitterMountpoint+"/data";
-        mountScriptDir = "../splitter/mountscripts";
+        String nubisavedir = new PropertiesUtil("nubi.properties").getProperty("nubisave_directory");
+        mountScriptDir = nubisavedir + "/splitter/mountscripts";
     }
     
     public String getMountpoint(){
@@ -54,7 +56,7 @@ public class Splitter {
      **/
     public void mount(){
         try {
-            new ProcessBuilder("/bin/bash", "-c", "../start.sh headless > /home/joe/headless").start();
+            new ProcessBuilder("/bin/bash", "-c", "../start.sh headless > /tmp/nubisave_headless").start();
             int timeUsed = 0;
             while(!isMounted() && timeUsed < 1000*10){
                     try {

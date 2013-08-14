@@ -40,7 +40,8 @@ public class StorageService {
         nrOfBackends = 0;
         nrOfFilePartsToStore = 1;
         backendServices = new LinkedList<StorageService>();
-        file = new File("../splitter/mountscripts/"+name+".ini");
+        String nubisavedir = new PropertiesUtil("nubi.properties").getProperty("nubisave_directory");
+        file = new File(nubisavedir + "/splitter/mountscripts/" + name + ".ini");
         if(file.exists()){
             loadFromFile();
         }
