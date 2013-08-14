@@ -92,8 +92,6 @@ public class StorageService {
             try{
                 int x = config.get("gui", "graphlocationx", Integer.class);
                 int y = config.get("gui", "graphlocationy", Integer.class);
-                config.get("gui").putComment("graphlocationx", "hidden");
-                config.get("gui").putComment("graphlocationy", "hidden");
                 graphLocation = new Point(x,y);
             } catch (NullPointerException e) {
                 System.err.println("StorageService instance "+getName()+".setConfig(Ini config): configuration has no graphlocationx and graphlocationy parameter"+" - "+e.getMessage()==null?e.getMessage():"");
@@ -222,6 +220,8 @@ public class StorageService {
             if(graphLocation != null){
                 config.put("gui", "graphlocationx", graphLocation.x);
                 config.put("gui", "graphlocationy", graphLocation.y);
+                config.get("gui").putComment("graphlocationx", "hidden");
+                config.get("gui").putComment("graphlocationy", "hidden");
             }
             config.put("splitter", "fileparts", nrOfFilePartsToStore);
             config.store(new File(path));
