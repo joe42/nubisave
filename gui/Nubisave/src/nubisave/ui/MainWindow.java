@@ -127,7 +127,9 @@ public class MainWindow extends javax.swing.JFrame {
         customStorageserviceChooser.setFileFilter(new IniFileFilter());
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Nubisave Cloud Storage Controller and Storage Flow Editor");
+        setTitle("NubiSave Cloud Storage Controller and Storage Flow Editor");
+
+        jTabbedPane1.setName(""); // NOI18N
 
         mntDirTxtField.setEditable(false);
         mntDirTxtField.setText("mntDirTxtField");
@@ -146,7 +148,7 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
-        jLabel3.setText("Redundancy");
+        jLabel3.setText("RedundancyXXX");
 
         openMntDirBtn.setText("Open");
         openMntDirBtn.addActionListener(new java.awt.event.ActionListener() {

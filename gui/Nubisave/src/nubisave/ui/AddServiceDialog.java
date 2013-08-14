@@ -42,7 +42,6 @@ public class AddServiceDialog extends javax.swing.JDialog {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        setTitle("Storage Service Selection");
 
         jScrollPane1 = new javax.swing.JScrollPane();
         searchResultTable = new javax.swing.JTable();
@@ -75,6 +74,7 @@ public class AddServiceDialog extends javax.swing.JDialog {
         searchBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Storage Service Selection");
 
         searchResultTable.setAutoCreateRowSorter(true);
         searchResultTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -104,7 +104,7 @@ public class AddServiceDialog extends javax.swing.JDialog {
         searchResultTable.setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         jScrollPane1.setViewportView(searchResultTable);
 
-        addBtn.setText("Add selected Services");
+        addBtn.setText("Add selected services");
         addBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addBtnActionPerformed(evt);
@@ -262,7 +262,7 @@ public class AddServiceDialog extends javax.swing.JDialog {
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(cancelBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cancelBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(addBtn))
                     .addComponent(searchBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE))
