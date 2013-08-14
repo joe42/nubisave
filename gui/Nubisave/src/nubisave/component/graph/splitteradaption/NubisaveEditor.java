@@ -270,7 +270,7 @@ public class NubisaveEditor extends JApplet {
                 }
                 if (module!=null){
                     if(cusDlg.okstatus=="True"){
-                        if( module.equals("Nubisave") || module.equals("nubisave")){
+                        if( module.toLowerCase().equals("nubisave")){
                             StorageService newService = new StorageService(module);
                             try {
                                 vertexFactory.setNextInstance(new NubiSaveComponent(newService));

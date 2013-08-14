@@ -134,7 +134,7 @@
   <SubComponents>
     <Component class="javax.swing.JCheckBox" name="splitterIsMountedCheckBox">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Unmount Splitter"/>
+        <Property name="text" type="java.lang.String" value="Splitter mount status"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="splitterIsMountedCheckBoxActionPerformed"/>

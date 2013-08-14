@@ -86,7 +86,7 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
         jSeparator4 = new javax.swing.JSeparator();
         filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
 
-        splitterIsMountedCheckBox.setText("Unmount Splitter");
+        splitterIsMountedCheckBox.setText("Splitter mount status");
         splitterIsMountedCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 splitterIsMountedCheckBoxActionPerformed(evt);
