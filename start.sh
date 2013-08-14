@@ -33,11 +33,12 @@ if [ "$1" == "headless" ]
 then
 	headless=1
 elif [ -z $DISPLAY ]
+then
 	echo "- Erzwingung des Headless-Modus!"
 	headless=1
 fi
 
-if [ "$headless" == 1 ]
+if [ "$headless" == 0 ]
 then
 	echo "- Start der NubiSave-Konfigurations-GUI"
 	cd bin/
