@@ -159,7 +159,7 @@ public class CustomServiceDlg extends javax.swing.JDialog {
       if(jComboBox1.getSelectedItem().equals("Custom...")) {
         return null;
       }
-      return jComboBox1.getSelectedItem();
+      return inimap.get(jComboBox1.getSelectedItem());
    }
     private void jCancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCancelButtonActionPerformed
         okstatus="False";
@@ -173,8 +173,7 @@ public class CustomServiceDlg extends javax.swing.JDialog {
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
         // TODO add your handling code here:
-        String selectedmodule=(String)getItemName();
-        String inifile=(String) inimap.get(selectedmodule);
+        String inifile=(String)getItemName();
         if(inifile!=null) {
             inifile=dir+inifile;
             try {
