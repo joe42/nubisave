@@ -24,6 +24,7 @@ import nubisave.component.graph.vertice.DataVertex;
 import nubisave.component.graph.edge.DataVertexEdge;
 import nubisave.component.graph.vertice.interfaces.NubiSaveVertex;
 import nubisave.ui.ServiceParameterDialog;
+import nubisave.ui.util.SystemIntegration;
 import org.ini4j.Ini;
 
 
@@ -89,20 +90,14 @@ public class GenericNubiSaveComponent extends AbstractNubisaveComponent {
 
     @Override
     public void openLocation() {
-        if (Desktop.isDesktopSupported()) {
-            try {
-                Desktop.getDesktop().open(new File(Nubisave.mainSplitter.getDataDir()));
-            } catch (IOException ex) {
-                Logger.getLogger(GenericNubiSaveComponent.class.getName()).log(Level.SEVERE, null, ex);
+        String location = Nubisave.mainSplitter.getMountpoint() + "/../storages/" + component.getUniqName() + "/data";
+        SystemIntegration.openLocation(location);
+    }
 
-                // Fallback when desktop handlers are not available
-                try {
-                    Runtime.getRuntime().exec(new String[]{"xdg-open", Nubisave.mainSplitter.getMountpoint() + "/../storages/" + component.getUniqName() + "/data"});
-                } catch (IOException ex2) {
-                    Logger.getLogger(GenericNubiSaveComponent.class.getName()).log(Level.SEVERE, null, ex2);
-                }
-            }
-        }
+    @Override
+    public void visualizeLocation() {
+        String location = "http://nubivis/...";
+        SystemIntegration.openLocation(location);
     }
 
     public void refreshConfiguration(){

@@ -179,5 +179,10 @@ public class CompoundNubiSaveComponent extends AbstractNubisaveComponent {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
+    public void visualizeLocation() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
 }
 

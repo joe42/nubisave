@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.swing.AbstractAction;
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import org.apache.commons.collections15.Factory;
 import nubisave.component.graph.vertice.interfaces.VertexGroup;
@@ -106,11 +107,21 @@ public class PopupEditor extends AbstractPopupGraphMousePlugin {
 
                 popup.addSeparator();
 
-                popup.add(new AbstractAction("Open Location") {
+                JMenuItem item = popup.add(new AbstractAction("Open Location") {
                     public void actionPerformed(ActionEvent NubiSaveEdge) {
                         System.out.println("open location ...");
                         if (vertex instanceof AbstractNubisaveComponent) {
                             ((AbstractNubisaveComponent)vertex).openLocation();
+                        }
+                    }
+                });
+                //item.setEnabled(false);
+
+                popup.add(new AbstractAction("Visualize Location") {
+                    public void actionPerformed(ActionEvent NubiSaveEdge) {
+                        System.out.println("visualize location ...");
+                        if (vertex instanceof AbstractNubisaveComponent) {
+                            ((AbstractNubisaveComponent)vertex).visualizeLocation();
                         }
                     }
                 });

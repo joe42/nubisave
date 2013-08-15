@@ -7,6 +7,7 @@ import java.io.IOException;
 import nubisave.Nubisave;
 import nubisave.StorageService;
 import nubisave.ui.NubisaveConfigDlg;
+import nubisave.ui.util.SystemIntegration;
 
 
 public class NubiSaveComponent extends AbstractNubisaveComponent {
@@ -134,7 +135,14 @@ public class NubiSaveComponent extends AbstractNubisaveComponent {
 
     @Override
     public void openLocation() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        String location = Nubisave.mainSplitter.getDataDir();
+        SystemIntegration.openLocation(location);
+    }
+
+    @Override
+    public void visualizeLocation() {
+        String location = "http://nubivis/...";
+        SystemIntegration.openLocation(location);
     }
 
 }
