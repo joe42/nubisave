@@ -149,6 +149,7 @@ do
 	for nr in `seq 1 ${FILE_QUANTITYS_ARR[$i]}`  # from 1 to file quantity
 	do
 		rm "$STORAGE_SERVICE_PATH/${FILE_SIZES_ARR[$i]}MB_$nr"
+		rm "$TEMP_DIR/${FILE_SIZES_ARR[$i]}MB_$nr"
 	done
 
 done   
