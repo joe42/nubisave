@@ -31,7 +31,7 @@ import com.github.joe42.splitter.vtf.FileEntry;
 
 import fuse.FuseException;
 
-public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter and abstract interface
+public class CauchyReedSolomonSplitter implements Splitter { //Rename to CauchyReedSolomonSplitter and abstract interface
 	private static final int CAUCHY_WORD_LENGTH = 4096;
 	private static final Logger  log = Logger.getLogger("CauchyReedSolomonSplitter");
 	private MultipleFileHandler concurrent_multi_file_handler;
@@ -54,18 +54,38 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 		serial_multi_file_handler = new SerialMultipleFileHandler(digestFunc);
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.github.joe42.splitter.Splitter#getRedundancy()
+	 */
+	@Override
 	public int getRedundancy() {
 		return redundancy;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.github.joe42.splitter.Splitter#setRedundancy(int)
+	 */
+	@Override
 	public void setRedundancy(int redundancy) {
 		this.redundancy = redundancy;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.github.joe42.splitter.Splitter#getStorageStrategyName()
+	 */
+	@Override
 	public String getStorageStrategyName() {
 		return storageStrategyName;
 	}
+	
+	public StorageStrategyFactory getStorageStrategyFactory(){
+		return storageStrategyFactory;
+	}
 
+	/* (non-Javadoc)
+	 * @see com.github.joe42.splitter.Splitter#setStorageStrategyName(java.lang.String)
+	 */
+	@Override
 	public void setStorageStrategyName(String storageStrategyName) {
 		if(storageStrategyName == null){
 			storageStrategyName = "";
@@ -73,11 +93,19 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 		this.storageStrategyName = storageStrategyName;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.github.joe42.splitter.Splitter#getBackendServices()
+	 */
+	@Override
 	public BackendServices getBackendServices(){
 		return services;
 	}
 	
-	public void splitFile(FileFragmentMetaDataStore fileFragmentMetaDataStore, String path, FileChannel temp) throws FuseException, IOException {
+	/* (non-Javadoc)
+	 * @see com.github.joe42.splitter.Splitter#splitFile(com.github.joe42.splitter.FileFragmentMetaDataStore, java.lang.String, java.nio.channels.FileChannel)
+	 */
+	@Override
+	public FileFragments splitFile(FileFragmentMetaDataStore fileFragmentMetaDataStore, String path, FileChannel temp) throws FuseException, IOException {
 		
 		int nr_of_file_parts_successfully_stored = 0;
 		HashMap<String, byte[]> fileParts = new HashMap<String, byte[]>();
@@ -133,8 +161,7 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 					"IO error: Not enough file parts could be stored.")
 					.initErrno(FuseException.EIO);
 		} else {
-			//TODO: delete previous Fragments
-			fileFragmentMetaDataStore.setFragments(path, fragmentPaths, nr_of_file_fragments_required, nrOfRequiredSuccessfullyStoredFragments, multipleFiles.getChecksums(fragmentPaths), temp.size());
+			return new FileFragments(fragmentPaths, nr_of_file_fragments_required, nrOfRequiredSuccessfullyStoredFragments, multipleFiles.getChecksums(fragmentPaths), temp.size());
 		}
 	}
 
@@ -231,6 +258,10 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 		return fileParts;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.github.joe42.splitter.Splitter#glueFilesTogether(com.github.joe42.splitter.FileFragmentMetaDataStore, java.lang.String)
+	 */
+	@Override
 	public RandomAccessTemporaryFileChannel glueFilesTogether(FileFragmentMetaDataStore fileFragmentMetaDataStore, String path) throws FuseException {
 		RandomAccessTemporaryFileChannel ret = null;
 		Map<String, byte[]> fragmentPathsToChecksum;
@@ -275,7 +306,7 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 		InformationDispersalDecoder decoder;
 		try {
 			crsidacodec = getCRSCodec(fragmentPathsToChecksum.size(),	nr_of_redundant_file_fragments); 
-			log.debug(fragmentPathsToChecksum.keySet().toArray(new String[0]) + " "
+			log.debug(Arrays.toString(fragmentPathsToChecksum.keySet().toArray(new String[0])) + " "
 					+ nr_of_redundant_file_fragments);
 			decoder = crsidacodec.getDecoder();
 		} catch (Exception e) {
@@ -289,7 +320,8 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 						nr_of_file_fragments_required);
 		receivedFileSegments = multipleFiles.getSuccessfullyTransferedFiles();
 		log.debug("successfully transfered fragments: "+ receivedFileSegments.size());
-		log.debug("fragments with corrupted content: "+ multipleFiles.getNrOfUnsuccessfullyTransferedFiles());
+		log.debug("not transfered: "+ (multipleFiles.getNrOfUnsuccessfullyTransferedFiles()-multipleFiles.getWrongChecksumFilePaths().size()));
+		log.debug("fragments with corrupted content: "+ multipleFiles.getWrongChecksumFilePaths().size());
 		
 		byte[] recoveredFile = decoder.process(receivedFileSegments);
 		ret.getChannel().write(ByteBuffer.wrap(recoveredFile));
@@ -335,12 +367,24 @@ public class CauchyReedSolomonSplitter { //Rename to CauchyReedSolomonSplitter a
 		return ret;
 	}
 
-	/**
-	 * Get the minimal availability of files stored by the current Splitter instance.
-	 * @return the availability in percent
+	/* (non-Javadoc)
+	 * @see com.github.joe42.splitter.Splitter#getStorageAvailability()
 	 */
+	@Override
 	public double getStorageAvailability(){
 		storageStrategy = storageStrategyFactory.createStrategy(storageStrategyName, redundancy);
 		return storageStrategy.getStorageAvailability(); //forward call to the storage strategy factory
+	}
+
+	@Override
+	public void remove(String path) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void rename(String from, String to) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -66,10 +66,10 @@ echo "Installation von CloudFusion"
 git submodule init
 git submodule update
 
-cd CloudFusion/cloudfusion
+cd CloudFusion
 python setup.py build
 sudo python setup.py install
-cd ../..
+cd ..
 
 echo "Installation abgeschlossen"
 

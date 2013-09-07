@@ -46,7 +46,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROCESS_NAME="$2"
 TEST_DIRECTORY="$3"
 FILE_SIZES="$4"
-LOG_DIR="$TEST_DIRECTORY/logs/normal/`date`"
+LOG_DIR="$TEST_DIRECTORY/logs/normal/`date +%Y.%m.%d_%H:%M`"
 SAMPLE_FILES_DIR=samplefiles
 TEMP_DIR=/tmp/storage_service`date +"%s"`
 WRITE_TIME_LOG="$LOG_DIR/write_time_log"
@@ -74,7 +74,12 @@ function log_copy_operation {
 	sleep 2 # wait until logging produces some results to process
     time_before_operation=`date +"%s"`
     time_of_operation=`/usr/bin/time -f "%e" cp "$copy_source" "$copy_destination" 2>&1`
-    time_after_operation=$(($time_before_operation+$time_of_operation))	
+    while ! is_number $time_of_operation;
+    then
+        echo "ERROR: failed to copy file: $time_of_operation"
+        time_of_operation=`/usr/bin/time -f "%e" cp "$copy_source" "$copy_destination" 2>&1`
+    fi
+    time_after_operation=`echo $time_before_operation+$time_of_operation | bc`
 echo time_of_operation $time_of_operation
 	if [ "$STOP_NETWORK_MONITORING_AFTER_FILE_OPERATION" != "yes" ];
 	then

@@ -29,10 +29,10 @@ public class FileFragmentStore {
 	private static final Logger  log = Logger.getLogger("FileFragmentStore");
 	protected RandomAccessTemporaryFileChannels tempFiles;
 	protected RandomAccessTemporaryFileChannel tempReadChannel;
-	protected CauchyReedSolomonSplitter splitter;
+	protected Splitter splitter;
 	protected FileFragmentMetaDataStore fileFragmentMetaDataStore;
 
-	public FileFragmentStore(CauchyReedSolomonSplitter splitter) throws IOException {
+	public FileFragmentStore(Splitter splitter) throws IOException {
 		tempFiles = new RandomAccessTemporaryFileChannels();
 		this.splitter = splitter;
 		this.fileFragmentMetaDataStore = new FileFragmentMetaDataStore();
@@ -161,7 +161,10 @@ public class FileFragmentStore {
 
 	protected void removeCache(String path) {
 		tempFiles.delete(path);
-		tempReadChannel = null;
+		if(tempReadChannel != null) {
+			tempReadChannel.delete();
+		} 
+		tempReadChannel = null;				
 	}
 
 	public void truncate(String path, long size) throws FuseException, IOException {

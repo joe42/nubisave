@@ -1,4 +1,3 @@
 #!/bin/sh
-mkdir -p $1
-mkdir -p .cloudfusion/logs
-python -m cloudfusion.main $1
+#usage: sh mount_cloudfusion.sh mountpoint
+cloudfusion $1
