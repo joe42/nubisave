@@ -8,7 +8,6 @@
 
 find $2 -mindepth 1 -type d -exec fusermount -u {} -z \;
 fusermount -u $1 -z -q
-mkdir -p ~/.splitter/db/
 
 if [ -d $JDK_HOME ] && [ -x $JDK_HOME/bin/java ]
 then

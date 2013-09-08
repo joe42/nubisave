@@ -2,24 +2,38 @@
 #
 # Launches NubiSave. Either the configured instances of the splitter filesystem, or
 # the central configuration GUI, or all of these together.
-# Syntax: nubisave [headless|gui|<instance>|--help]
+# Syntax: nubisave [headless|gui|<instance>|stop|--help]
 
 if [ "$1" == "-h" ] || [ "$1" == "--help" ]
 then
-	echo "Syntax: nubisave [headless|gui|<instance>|--help]"
+	echo "Syntax: nubisave [headless|gui|<instance>|stop|--help]"
 	exit
 fi
 
-echo "Starting NubiSave..."
 userdir=$HOME/nubisave
 instance=$HOME/.nubisave
 storages=$HOME/.storages
 
-if [ "$1" != "headless" ] && [ "$1" != "gui" ]
+if [ "$1" != "headless" ] && [ "$1" != "gui" ] && [ "$1" != "stop" ]
 then
 	instance=$1
 fi
 mountpoint=$instance/nubisavemount
+
+if [ "$1" == "stop" ]
+then
+	echo "Stopping NubiSave..."
+	if [ -d $mountpoint ] && [ -d $mountpoint/data ]
+	then
+		fusermount -u $mountpoint -z
+		exit
+	else
+		echo "Error: The splitter file system is not mounted." >&2
+		exit 1
+	fi
+fi
+
+echo "Starting NubiSave..."
 
 mkdir -p "$mountpoint" "$storages"
 scriptpath=`readlink -f $0`
