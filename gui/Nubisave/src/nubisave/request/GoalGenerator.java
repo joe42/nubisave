@@ -45,14 +45,14 @@ public class GoalGenerator {
         wsmogoal.addInstance(iname);
         wsmogoal.getInstance(iname).addConcept("remoteqosbase#Availability");
         wsmogoal.getInstance(iname).addConcept("qosbase#GoalRequirement");
-        wsmogoal.getInstance(iname).addParam("qosbase#value", dialog.getAvailabilityTextField().getText());
+        wsmogoal.getInstance(iname).addParam("qosbase#value", dialog.getAvailabilityTextField().getValue().toString());
         wsmogoal.getInstance(iname).addParam("qosbase#unit", "qosbase#Percentage");
 
         iname = "instPricePerPeriod";
         wsmogoal.addInstance(iname);
         wsmogoal.getInstance(iname).addConcept("businessbase#PricePerPeriod");
         wsmogoal.getInstance(iname).addConcept("qosbase#GoalRequirement");
-        wsmogoal.getInstance(iname).addParam("qosbase#value", dialog.getPricePerMonthTextField().getText());
+        wsmogoal.getInstance(iname).addParam("qosbase#value", dialog.getPricePerMonthTextField().getValue().toString());
         wsmogoal.getInstance(iname).addParam("qosbase#unit", "qosbase#Euro");
 
         iname = "instPricePeriod";
@@ -67,28 +67,28 @@ public class GoalGenerator {
         wsmogoal.addInstance(iname);
         wsmogoal.getInstance(iname).addConcept("remoteqosbase#Throughput");
         wsmogoal.getInstance(iname).addConcept("qosbase#GoalRequirement");
-        wsmogoal.getInstance(iname).addParam("qosbase#value", dialog.getBandwidthTextField().getText());
+        wsmogoal.getInstance(iname).addParam("qosbase#value", dialog.getBandwidthTextField().getValue().toString());
         wsmogoal.getInstance(iname).addParam("qosbase#unit", "qosbase#"+dialog.getBandwidthUnitCB().getSelectedItem());
 
         iname = "instMaxDownTime";
         wsmogoal.addInstance(iname);
         wsmogoal.getInstance(iname).addConcept("remoteqosbase#MaxDownTime");
         wsmogoal.getInstance(iname).addConcept("qosbase#GoalRequirement");
-        wsmogoal.getInstance(iname).addParam("qosbase#value", dialog.getMaxDownTimeTextField().getText());
+        wsmogoal.getInstance(iname).addParam("qosbase#value", dialog.getMaxDownTimeTextField().getValue().toString());
         wsmogoal.getInstance(iname).addParam("qosbase#unit", "qosbase#"+dialog.getMaxDownTimeUnitCB().getSelectedItem());
 
         iname = "instPricePerData";
         wsmogoal.addInstance(iname);
         wsmogoal.getInstance(iname).addConcept("businessbase#PricePerData");
         wsmogoal.getInstance(iname).addConcept("qosbase#GoalRequirement");
-        wsmogoal.getInstance(iname).addParam("qosbase#value", dialog.getPricePerDataTextField().getText());
+        wsmogoal.getInstance(iname).addParam("qosbase#value", dialog.getPricePerDataTextField().getValue().toString());
         wsmogoal.getInstance(iname).addParam("qosbase#unit", "qosbase#Euro");
 
         iname = "instResponseTime";
         wsmogoal.addInstance(iname);
         wsmogoal.getInstance(iname).addConcept("remoteqosbase#ResponseTime");
         wsmogoal.getInstance(iname).addConcept("qosbase#GoalRequirement");
-        wsmogoal.getInstance(iname).addParam("qosbase#value", dialog.getResponseTimeTextField().getText());
+        wsmogoal.getInstance(iname).addParam("qosbase#value", dialog.getResponseTimeTextField().getValue().toString());
         wsmogoal.getInstance(iname).addParam("qosbase#unit", "qosbase#"+dialog.getResponseTimeUnitCB().getSelectedItem());
 
         iname = "instResponseTimeConfiguration";

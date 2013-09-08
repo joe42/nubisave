@@ -135,22 +135,23 @@ public class AddServiceDialog extends javax.swing.JDialog {
 
         responseTimeCheckBox.setText("Response Time");
 
-        pricePerDataTextField.setText("0.00");
+        pricePerDataTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
+        pricePerDataTextField.setValue(new Float("0.00"));
 
         pricePerMonthTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
-        pricePerMonthTextField.setText("0.00");
+        pricePerMonthTextField.setValue(new Float("0.00"));
 
         availabilityTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
-        availabilityTextField.setText("0.00");
+        availabilityTextField.setValue(new Float("0.00"));
 
         bandwidthTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
-        bandwidthTextField.setText("0.00");
+        bandwidthTextField.setValue(new Float("0.00"));
 
         maxDownTimeTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
-        maxDownTimeTextField.setText("0.00");
+        maxDownTimeTextField.setValue(new Float("0.00"));
 
         responseTimeTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
-        responseTimeTextField.setText("0.00");
+        responseTimeTextField.setValue(new Float("0.00"));
 
         jLabel1.setText("Euro");
 
