@@ -58,6 +58,8 @@ else
 	echo "- Start of the file splitter/dispersion module"
 	cd splitter
 	./mount.sh "$mountpoint" "$storages" &
+	# Workaround for NubiVis!
+	sleep 5 && chmod 666 $instance/db.lg &
 	cd ..
 fi
 
