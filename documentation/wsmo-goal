@@ -1,0 +1,178 @@
+
+
+wsmlVariant _"http://www.wsmo.org/wsml/wsml-syntax/wsml-rule"
+
+namespace { _"http://localhost:8080/Matchmaker/ontologies/goals/Goal1033096.wsml#",
+	dc _"http://purl.org/dc/elements/1.1#",
+	rank _"http://localhost:8080/Matchmaker/ontologies/Common/Ranking.wsml#",
+	cloudstorage _"http://localhost:8080/Matchmaker/ontologies/CloudStorage.wsml#",
+	qosbase _"http://localhost:8080/Matchmaker/ontologies/QoSBase.wsml#",
+	contextbase _"http://localhost:8080/Matchmaker/ontologies/ContextBase.wsml#",
+	remoteqosbase _"http://localhost:8080/Matchmaker/ontologies/RemoteQoSBase.wsml#",
+	businessbase _"http://localhost:8080/Matchmaker/ontologies/BusinessBase.wsml#",
+	wsml _"http://www.wsmo.org/wsml/wsml-syntax#"}
+
+goal Goal1033096
+importsOntology { _"http://localhost:8080/Matchmaker/ontologies/CloudStorage.wsml#" }
+
+capability GoalCapability
+ postcondition definedBy ?serviceType memberOf cloudstorage#CloudStorage .
+
+interface GoalInterface
+	importsOntology { GParam }
+
+ontology GParam
+importsOntology { _"http://localhost:8080/Matchmaker/ontologies/CloudStorage.wsml#",
+        _"http://localhost:8080/Matchmaker/ontologies/RemoteQoSBase.wsml#",
+        _"http://localhost:8080/Matchmaker/ontologies/QoSBase.wsml#",
+        _"http://localhost:8080/Matchmaker/ontologies/ContextBase.wsml#",
+        _"http://localhost:8080/Matchmaker/ontologies/BusinessBase.wsml#",
+	_"http://localhost:8080/Matchmaker/ontologies/Common/Ranking.wsml#" }
+
+instance instEncryptionConfiguration memberOf rank#QoSConceptConfiguration 
+ rank#hasQoSConceptIRI hasValue cloudstorage#Encryption
+ rank#hasMatchingThreshold hasValue 0.0
+ rank#hasReputationScore hasValue 1.0
+ rank#hasWeight hasValue 2.0
+
+instance instBackupPeriod memberOf { cloudstorage#BackupPeriod, qosbase#GoalRequirement } 
+ qosbase#value hasValue 0.0
+ qosbase#unit hasValue qosbase#Hour
+
+instance instFreePeriod memberOf { businessbase#FreePeriod, qosbase#GoalRequirement } 
+ qosbase#value hasValue 0.0
+ qosbase#unit hasValue qosbase#Hour
+
+instance instCapacity memberOf { cloudstorage#Capacity, qosbase#GoalRequirement } 
+ qosbase#value hasValue 2.0
+ qosbase#unit hasValue qosbase#GB
+
+instance instMaxDownTime memberOf { remoteqosbase#MaxDownTime, qosbase#GoalRequirement } 
+ qosbase#value hasValue 0.0
+ qosbase#unit hasValue qosbase#Hour
+
+instance instRedundancyConfiguration memberOf rank#QoSConceptConfiguration 
+ rank#hasQoSConceptIRI hasValue cloudstorage#Redundancy
+ rank#hasMatchingThreshold hasValue 0.0
+ rank#hasReputationScore hasValue 1.0
+ rank#hasWeight hasValue 2.0
+
+instance instResponseTimeConfiguration memberOf rank#QoSConceptConfiguration 
+ rank#hasQoSConceptIRI hasValue remoteqosbase#ResponseTime
+ rank#hasMatchingThreshold hasValue 0.0
+ rank#hasReputationScore hasValue 1.0
+ rank#hasWeight hasValue 2.0
+
+instance instPricePeriod memberOf { businessbase#PricePeriod, qosbase#GoalRequirement } 
+ qosbase#value hasValue 0.0
+ qosbase#unit hasValue qosbase#Hour
+
+instance instMaxDownTimeConfiguration memberOf rank#QoSConceptConfiguration 
+ rank#hasQoSConceptIRI hasValue remoteqosbase#MaxDownTime
+ rank#hasMatchingThreshold hasValue 0.0
+ rank#hasReputationScore hasValue 1.0
+ rank#hasWeight hasValue 2.0
+
+instance instEncryption memberOf { cloudstorage#Encryption, qosbase#GoalRequirement } 
+ qosbase#value hasValue 0.0
+ qosbase#unit hasValue contextbase#Boolean
+
+instance instPricePerDataConfiguration memberOf rank#QoSConceptConfiguration 
+ rank#hasQoSConceptIRI hasValue businessbase#PricePerData
+ rank#hasMatchingThreshold hasValue 0.0
+ rank#hasReputationScore hasValue 1.0
+ rank#hasWeight hasValue 2.0
+
+instance instCapacityConfiguration memberOf rank#QoSConceptConfiguration 
+ rank#hasQoSConceptIRI hasValue cloudstorage#Capacity
+ rank#hasMatchingThreshold hasValue 0.0
+ rank#hasReputationScore hasValue 1.0
+ rank#hasWeight hasValue 2.0
+
+instance instCorrectnessConfiguration memberOf rank#QoSConceptConfiguration 
+ rank#hasQoSConceptIRI hasValue qosbase#Correctness
+ rank#hasMatchingThreshold hasValue 0.0
+ rank#hasReputationScore hasValue 1.0
+ rank#hasWeight hasValue 2.0
+
+instance instThroughput memberOf { remoteqosbase#Throughput, qosbase#GoalRequirement } 
+ qosbase#value hasValue 0.0
+ qosbase#unit hasValue qosbase#Mbps
+
+instance instAvailability memberOf { remoteqosbase#Availability, qosbase#GoalRequirement } 
+ qosbase#value hasValue 99.0
+ qosbase#unit hasValue qosbase#Percentage
+
+instance instBackupPeriodConfiguration memberOf rank#QoSConceptConfiguration 
+ rank#hasQoSConceptIRI hasValue cloudstorage#BackupPeriod
+ rank#hasMatchingThreshold hasValue 0.0
+ rank#hasReputationScore hasValue 1.0
+ rank#hasWeight hasValue 2.0
+
+instance instCorrectness memberOf { qosbase#Correctness, qosbase#GoalRequirement } 
+ qosbase#value hasValue 0.0
+ qosbase#unit hasValue qosbase#Percentage
+
+instance instRedundancy memberOf { cloudstorage#Redundancy, qosbase#GoalRequirement } 
+ qosbase#value hasValue 0.0
+ qosbase#unit hasValue qosbase#Percentage
+
+instance instPricePerPeriod memberOf { businessbase#PricePerPeriod, qosbase#GoalRequirement } 
+ qosbase#value hasValue 0.0
+ qosbase#unit hasValue qosbase#Real
+
+instance instPricePerPeriodConfiguration memberOf rank#QoSConceptConfiguration 
+ rank#hasQoSConceptIRI hasValue businessbase#PricePerPeriod
+ rank#hasMatchingThreshold hasValue 0.0
+ rank#hasReputationScore hasValue 1.0
+ rank#hasWeight hasValue 2.0
+
+instance instThroughputConfiguration memberOf rank#QoSConceptConfiguration 
+ rank#hasQoSConceptIRI hasValue remoteqosbase#Throughput
+ rank#hasMatchingThreshold hasValue 0.0
+ rank#hasReputationScore hasValue 1.0
+ rank#hasWeight hasValue 2.0
+
+instance instSignupPrivacyConfiguration memberOf rank#QoSConceptConfiguration 
+ rank#hasQoSConceptIRI hasValue cloudstorage#SignupPrivacy
+ rank#hasMatchingThreshold hasValue 0.0
+ rank#hasReputationScore hasValue 1.0
+ rank#hasWeight hasValue 2.0
+
+instance instFreePeriodConfiguration memberOf rank#QoSConceptConfiguration 
+ rank#hasQoSConceptIRI hasValue businessbase#FreePeriod
+ rank#hasMatchingThreshold hasValue 0.0
+ rank#hasReputationScore hasValue 1.0
+ rank#hasWeight hasValue 2.0
+
+instance instPricePeriodConfiguration memberOf rank#QoSConceptConfiguration 
+ rank#hasQoSConceptIRI hasValue businessbase#PricePeriod
+ rank#hasMatchingThreshold hasValue 0.0
+ rank#hasReputationScore hasValue 1.0
+ rank#hasWeight hasValue 2.0
+
+instance instPricePerData memberOf { businessbase#PricePerData, qosbase#GoalRequirement } 
+ qosbase#value hasValue 0.0
+ qosbase#unit hasValue qosbase#Real
+
+instance instAvailabilityConfiguration memberOf rank#QoSConceptConfiguration 
+ rank#hasQoSConceptIRI hasValue remoteqosbase#Availability
+ rank#hasMatchingThreshold hasValue 0.0
+ rank#hasReputationScore hasValue 1.0
+ rank#hasWeight hasValue 2.0
+
+instance ranking memberOf rank#QoSRankingScoreThreshold 
+ rank#hasLowerRankThreshold hasValue 0.15
+ rank#hasHigherPartialScore hasValue 3.0
+ rank#hasEqualPartialScore hasValue 1.0
+ rank#hasLowerPartialScore hasValue 0.0
+ rank#hasHigherRankThreshold hasValue 0.15
+
+instance instSignupPrivacy memberOf { cloudstorage#SignupPrivacy, qosbase#GoalRequirement } 
+ qosbase#value hasValue 0.0
+ qosbase#unit hasValue qosbase#Percentage
+
+instance instResponseTime memberOf { remoteqosbase#ResponseTime, qosbase#GoalRequirement } 
+ qosbase#value hasValue 0.0
+ qosbase#unit hasValue qosbase#Hour
+
