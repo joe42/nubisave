@@ -59,7 +59,7 @@ else
 	cd splitter
 	./mount.sh "$mountpoint" "$storages" &
 	# Workaround for NubiVis!
-	sleep 5 && chmod 666 $instance/db.lg &
+	sleep 5 && chmod 666 $instance/db.* &
 	cd ..
 fi
 
