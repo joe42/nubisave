@@ -22,7 +22,7 @@ fi
 for mnt in $mnts
 do
 	echo "- NubiSave mounted at: $mnt"
-	df=`/bin/df | grep "$mnt"`
+	df=`/bin/df | grep "$mnt" | cut -d " " -f 1`
 	if [ $df ]
 	then
 		echo "  * with mounted storages"
