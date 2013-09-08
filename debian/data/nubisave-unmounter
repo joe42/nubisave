@@ -3,7 +3,7 @@
 # Unmounts all configured Nubisave directories
 # Useful for headless configurations
 
-storagesdir=~/.nubisave/storages
+storagesdir=~/.storages
 configdir=~/.nubisave/db/splitter_configuration
 splitterdir=/usr/share/nubisave/splitter/
 
@@ -41,7 +41,7 @@ do
 	echo "* unmount: $unmount"
 
 	# Hot-plugging for indirect unmounting through Nubisave
-	rm $storage
+	rm ~/.nubisave/nubisavemount/config/$storage
 
 	# Deprecated: Manual unmounting
 	#cd $splitterdir
