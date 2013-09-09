@@ -80,6 +80,7 @@ import net.contentobjects.jnotify.*;
 import nubisave.Nubisave;
 import nubisave.Services;
 import nubisave.StorageService;
+import nubisave.MatchmakerService;
 import nubisave.component.graph.mouseplugins.ExtensibleNubisaveComponentMousePlugin;
 import nubisave.component.graph.mouseplugins.VertexPicker;
 import nubisave.component.graph.pickedvertexlistener.BufferedImageDelegatorHighlighter;
@@ -329,6 +330,14 @@ public class NubisaveEditor extends JApplet {
             public void actionPerformed(ActionEvent ae) {
                 AddServiceDialog addServiceDlg = new AddServiceDialog(null, true);
                 addServiceDlg.setVisible(true);
+
+                for(MatchmakerService newService : addServiceDlg.getSelectedServices()) {
+                    try {
+                        vertexFactory.setNextInstance(new GenericNubiSaveComponent(newService));
+                    } catch (IOException ex) {
+                        Logger.getLogger(AddServiceDialog.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
             }
         });
         controls.add(searchServiceComponent);

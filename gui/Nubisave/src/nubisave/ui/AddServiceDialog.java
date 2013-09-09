@@ -11,6 +11,7 @@
 package nubisave.ui;
 
 import java.util.List;
+import java.util.ArrayList;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
@@ -26,6 +27,7 @@ public class AddServiceDialog extends javax.swing.JDialog {
 
     private Searcher searcher;
     private List<MatchmakerService> services;
+    private List<MatchmakerService> selectedservices = new ArrayList<MatchmakerService>();
 
     /** Creates new form AddServiceDialog */
     public AddServiceDialog(java.awt.Frame parent, boolean modal) {
@@ -440,13 +442,17 @@ public class AddServiceDialog extends javax.swing.JDialog {
         return responseTimeWeightCB;
     }
 
-    
+    public List<MatchmakerService> getSelectedServices() {
+        return selectedservices;
+    }
+
     private void addBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBtnActionPerformed
         for (int i : searchResultTable.getSelectedRows()) {
             MatchmakerService newService = new MatchmakerService((String) searchResultTable.getModel().getValueAt(i, 0));
+            selectedservices.add(newService);
             Nubisave.services.add(newService);
         }
-        ((MainWindow) getParent()).tableModel.fireTableDataChanged();
+        // adding vertice to the graph view (getParent(), SwingUtilities$SharedOwnerFrame) is now performed in NubisaveEditor
         dispose();
     }//GEN-LAST:event_addBtnActionPerformed
 

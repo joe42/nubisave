@@ -46,7 +46,8 @@ public class Services implements Iterable<StorageService>{
             if(dir.isDirectory()){
                 String service_name, unique_name_of_service;
                 for(String file: dir.list()){
-                   if (file.endsWith(".txt")) continue;
+                    if(file.endsWith(".txt")) continue;
+                    if(new File(dir.getPath() + "/" + file).isDirectory()) continue;
                     unique_name_of_service = file;
                     service_name = unique_name_of_service.split("[0-9]")[0]; // remove number
                     if(getByUniqueName(unique_name_of_service) == null){
@@ -54,12 +55,13 @@ public class Services implements Iterable<StorageService>{
                         newService.setName(service_name);
                         newService.setUniqName(unique_name_of_service);
                         mmServices.add(newService);
-                    } 
+                    }
                 }
 
                 //Configure services again so that backend modules, which did not exist when the constructor was called, can be added
                 for(String file: dir.list()){
-                    if (file.endsWith(".txt")) continue;
+                    if(file.endsWith(".txt")) continue;
+                    if(new File(dir.getPath() + "/" + file).isDirectory()) continue;
                     unique_name_of_service = file;
                     try {
                         getByUniqueName(unique_name_of_service).setConfig(new Ini(new File(dir.getPath() + "/" + file)));

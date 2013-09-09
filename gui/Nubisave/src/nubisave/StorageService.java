@@ -211,6 +211,13 @@ public class StorageService {
     public void storeConfiguration(String directory) {
         String path = directory + "/" + getUniqName();
         System.out.println("Store module configuration to " + path);
+        if(config == null) {
+            try {
+                config = new Ini();
+            } catch(Exception e) {
+                System.err.println("Configuration issue: " + e.toString());
+            }
+        }
         try{
             int serviceIndex = 1;
             for(StorageService s: getBackendServices()){
@@ -229,7 +236,8 @@ public class StorageService {
             config.store(new File(path));
         } catch(Exception e){
             System.err.println("Error writing configuration for StorageService instance " + getUniqName());
-            System.err.println("Cause: " + (e.getMessage() != null ? e.getMessage() : "(unknown)"));
+            System.err.println("Cause: " + e.toString());
+            System.err.println("Cause detail: " + (e.getMessage() != null ? e.getMessage() : "(unknown)"));
             return;
         }
     }
