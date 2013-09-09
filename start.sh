@@ -14,7 +14,7 @@ userdir=$HOME/nubisave
 instance=$HOME/.nubisave
 storages=$HOME/.storages
 
-if [ "$1" != "headless" ] && [ "$1" != "gui" ] && [ "$1" != "stop" ]
+if [ ! -z $1 ] && [ "$1" != "headless" ] && [ "$1" != "gui" ] && [ "$1" != "stop" ]
 then
 	instance=$1
 fi
