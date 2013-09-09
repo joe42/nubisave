@@ -90,13 +90,13 @@ public class GenericNubiSaveComponent extends AbstractNubisaveComponent {
 
     @Override
     public void openLocation() {
-        String location = Nubisave.mainSplitter.getMountpoint() + "/../storages/" + component.getUniqName() + "/data";
+        String location = Nubisave.mainSplitter.getMountpoint() + "/../../.storages/" + component.getUniqName() + "/data";
         SystemIntegration.openLocation(location);
     }
 
     @Override
     public void visualizeLocation() {
-        String location = "http://nubivis/...";
+        String location = "http://localhost/nubivis/";
         SystemIntegration.openLocation(location);
     }
 

@@ -44,21 +44,25 @@ public class Nubisave {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-//        if (args.length < 1) {
-//            System.out.println("Must specify mountpoint of splitter module");
-//            System.exit(-1);
-//        }
-          properties = new PropertiesUtil("nubi.properties");
-//       String splitterMountpoint = args[0];
-//       Nubisave.mainSplitter = new Splitter(splitterMountpoint);
-         Nubisave.mainSplitter = new Splitter();
-         Nubisave.mainSplitter.setRedundancy(Integer.parseInt(properties.getProperty("redundancy")));
-         Nubisave nubi = new Nubisave();
-         nubi.initalize();
+        if (args.length == 1) {
+            if(args[0].equals("-h") || args[0].equals("--help")) {
+                System.out.println("Syntax: ");
+                System.exit(0);
+            }
+        }
+        properties = new PropertiesUtil("nubi.properties");
+        if(args.length < 1) {
+            Nubisave.mainSplitter = new Splitter();
+        } else {
+            String splitterMountpoint = args[0];
+            Nubisave.mainSplitter = new Splitter(splitterMountpoint);
+        }
+        Nubisave.mainSplitter.setRedundancy(Integer.parseInt(properties.getProperty("redundancy")));
+        Nubisave nubi = new Nubisave();
+        nubi.initalize();
         //new CoreReader().readExistingServices();
-        
-        java.awt.EventQueue.invokeLater(new Runnable() {
 
+        java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
                 new nubisave.ui.MainWindow().setVisible(true);

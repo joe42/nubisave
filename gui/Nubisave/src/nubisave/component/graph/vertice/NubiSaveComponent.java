@@ -141,7 +141,7 @@ public class NubiSaveComponent extends AbstractNubisaveComponent {
 
     @Override
     public void visualizeLocation() {
-        String location = "http://nubivis/...";
+        String location = "http://localhost/nubivis/";
         SystemIntegration.openLocation(location);
     }
 
