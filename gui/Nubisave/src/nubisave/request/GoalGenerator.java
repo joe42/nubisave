@@ -59,8 +59,8 @@ public class GoalGenerator {
         wsmogoal.addInstance(iname);
         wsmogoal.getInstance(iname).addConcept("businessbase#PricePeriod");
         wsmogoal.getInstance(iname).addConcept("qosbase#GoalRequirement");
-        wsmogoal.getInstance(iname).addParam("qosbase#value", "0.0");
-        wsmogoal.getInstance(iname).addParam("qosbase#unit", "qosbase#Hour");
+        wsmogoal.getInstance(iname).addParam("qosbase#value", "1.0");
+        wsmogoal.getInstance(iname).addParam("qosbase#unit", "qosbase#Month");
         // FIXME: introduce dialog.getPricePeriodCB() and dialog.getPricePerPeriodUnitDB()
 
         iname = "instThroughput";
@@ -121,7 +121,7 @@ public class GoalGenerator {
         wsmogoal.getInstance(iname).addParam("rank#hasReputationScore", "1.0");
         wsmogoal.getInstance(iname).addParam("rank#hasQoSConceptIRI", "remoteqosbase#MaxDownTime");
         wsmogoal.getInstance(iname).addParam("rank#hasWeight", dialog.getMaxDownTimeWeightCB().getSelectedIndex()+1+".0");
-        wsmogoal.getInstance(iname).addParam("rank#hasMatchingThreshold", dialog.getPricePerMonthCheckBox().isSelected()?"1.0":"0.0");
+        wsmogoal.getInstance(iname).addParam("rank#hasMatchingThreshold", dialog.getMaxDownTimeCheckBox().isSelected()?"1.0":"0.0");
 
         iname = "instAvailabilityConfiguration";
         wsmogoal.addInstance(iname);
