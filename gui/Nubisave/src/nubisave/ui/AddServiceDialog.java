@@ -44,39 +44,404 @@ public class AddServiceDialog extends javax.swing.JDialog {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
+        pricePerDataCheckBox = new javax.swing.JCheckBox();
+        pricePerDataTextField = new javax.swing.JFormattedTextField();
+        downTimeUnitCB = new javax.swing.JComboBox();
+        pricePerDataWeightCB = new javax.swing.JComboBox();
+        pricePerPeriodCheckBox = new javax.swing.JCheckBox();
+        availabilityCheckBox = new javax.swing.JCheckBox();
+        downTimeTextField = new javax.swing.JFormattedTextField();
+        pricePerPeriodTextField = new javax.swing.JFormattedTextField();
+        throughputCheckBox = new javax.swing.JCheckBox();
+        downTimeCheckBox = new javax.swing.JCheckBox();
+        responseTimeCheckBox = new javax.swing.JCheckBox();
+        availabilityTextField = new javax.swing.JFormattedTextField();
+        throughputTextField = new javax.swing.JFormattedTextField();
+        responseTimeTextField = new javax.swing.JFormattedTextField();
+        signupPrivacyLabel = new javax.swing.JLabel();
+        throughputUnitCB = new javax.swing.JComboBox();
+        responseTimeUnitCB = new javax.swing.JComboBox();
+        throughputWeightCB = new javax.swing.JComboBox();
+        downTimeWeightCB = new javax.swing.JComboBox();
+        responseTimeWeightCB = new javax.swing.JComboBox();
+        availabilityWeightCB = new javax.swing.JComboBox();
+        pricePerPeriodWeightCB = new javax.swing.JComboBox();
+        searchBtn = new javax.swing.JButton();
+        pricePerDataUnitCB = new javax.swing.JComboBox();
+        signupPrivacyCheckBox = new javax.swing.JCheckBox();
+        capacityCheckBox = new javax.swing.JCheckBox();
+        redundancyCheckBox = new javax.swing.JCheckBox();
+        encryptionCheckBox = new javax.swing.JCheckBox();
+        cancelBtn = new javax.swing.JToggleButton();
+        signupPrivacyTextField = new javax.swing.JFormattedTextField();
+        capacityTextField = new javax.swing.JFormattedTextField();
+        redundancyTextField = new javax.swing.JFormattedTextField();
+        encryptionTextField = new javax.swing.JFormattedTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         searchResultTable = new javax.swing.JTable();
         addBtn = new javax.swing.JToggleButton();
-        cancelBtn = new javax.swing.JToggleButton();
-        pricePerDataCheckBox = new javax.swing.JCheckBox();
-        pricePerMonthCheckBox = new javax.swing.JCheckBox();
-        availabilityCheckBox = new javax.swing.JCheckBox();
-        bandwidthCheckBox = new javax.swing.JCheckBox();
-        maxDownTimeCheckBox = new javax.swing.JCheckBox();
-        responseTimeCheckBox = new javax.swing.JCheckBox();
-        pricePerDataTextField = new javax.swing.JFormattedTextField();
-        pricePerMonthTextField = new javax.swing.JFormattedTextField();
-        availabilityTextField = new javax.swing.JFormattedTextField();
-        bandwidthTextField = new javax.swing.JFormattedTextField();
-        maxDownTimeTextField = new javax.swing.JFormattedTextField();
-        responseTimeTextField = new javax.swing.JFormattedTextField();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        bandwidthUnitCB = new javax.swing.JComboBox();
-        maxDownTimeUnitCB = new javax.swing.JComboBox();
-        responseTimeUnitCB = new javax.swing.JComboBox();
-        bandwidthWeightCB = new javax.swing.JComboBox();
-        maxDownTimeWeightCB = new javax.swing.JComboBox();
-        responseTimeWeightCB = new javax.swing.JComboBox();
-        availabilityWeightCB = new javax.swing.JComboBox();
-        pricePerMonthWeightCB = new javax.swing.JComboBox();
-        pricePerDataWeightCB = new javax.swing.JComboBox();
-        searchBtn = new javax.swing.JButton();
+        availabilityLabel = new javax.swing.JLabel();
+        signupPrivacyWeightCB = new javax.swing.JComboBox();
+        capacityWeightCB = new javax.swing.JComboBox();
+        capacityUnitCB = new javax.swing.JComboBox();
+        redundancyLabel = new javax.swing.JLabel();
+        encryptionLabel = new javax.swing.JLabel();
+        redundancyWeightCB = new javax.swing.JComboBox();
+        encryptionWeightCB = new javax.swing.JComboBox();
+        propertyLabel = new javax.swing.JLabel();
+        valueLabel = new javax.swing.JLabel();
+        unitLabel = new javax.swing.JLabel();
+        priorityLabel = new javax.swing.JLabel();
+        jComboBox1 = new javax.swing.JComboBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Storage Service Selection");
+        setPreferredSize(new java.awt.Dimension(510, 520));
+        java.awt.GridBagLayout layout = new java.awt.GridBagLayout();
+        layout.columnWidths = new int[] {0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0};
+        layout.rowHeights = new int[] {0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0, 5, 0};
+        getContentPane().setLayout(layout);
+
+        pricePerDataCheckBox.setText("Price per Data/GB");
+        pricePerDataCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pricePerDataCheckBoxActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        getContentPane().add(pricePerDataCheckBox, gridBagConstraints);
+
+        pricePerDataTextField.setText("0.00");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        getContentPane().add(pricePerDataTextField, gridBagConstraints);
+
+        downTimeUnitCB.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Hour", "Minute", "Second", "MilliSecond" }));
+        downTimeUnitCB.setSelectedIndex(1);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 12;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        getContentPane().add(downTimeUnitCB, gridBagConstraints);
+
+        pricePerDataWeightCB.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Low", "Medium", "High" }));
+        pricePerDataWeightCB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pricePerDataWeightCBActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 8;
+        gridBagConstraints.gridy = 4;
+        getContentPane().add(pricePerDataWeightCB, gridBagConstraints);
+
+        pricePerPeriodCheckBox.setText("Price per Period/Month");
+        pricePerPeriodCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pricePerPeriodCheckBoxActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        getContentPane().add(pricePerPeriodCheckBox, gridBagConstraints);
+
+        availabilityCheckBox.setText("Availability");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 10;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        getContentPane().add(availabilityCheckBox, gridBagConstraints);
+
+        downTimeTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
+        downTimeTextField.setText("0.00");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 12;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        getContentPane().add(downTimeTextField, gridBagConstraints);
+
+        pricePerPeriodTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
+        pricePerPeriodTextField.setText("0.00");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        getContentPane().add(pricePerPeriodTextField, gridBagConstraints);
+
+        throughputCheckBox.setText("Throughput");
+        throughputCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                throughputCheckBoxActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        getContentPane().add(throughputCheckBox, gridBagConstraints);
+
+        downTimeCheckBox.setText("Downtime");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 12;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        getContentPane().add(downTimeCheckBox, gridBagConstraints);
+
+        responseTimeCheckBox.setText("Response Time");
+        responseTimeCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                responseTimeCheckBoxActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 14;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        getContentPane().add(responseTimeCheckBox, gridBagConstraints);
+
+        availabilityTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
+        availabilityTextField.setText("0.00");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 10;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        getContentPane().add(availabilityTextField, gridBagConstraints);
+
+        throughputTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
+        throughputTextField.setText("0.00");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        getContentPane().add(throughputTextField, gridBagConstraints);
+
+        responseTimeTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
+        responseTimeTextField.setText("0.00");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 14;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        getContentPane().add(responseTimeTextField, gridBagConstraints);
+
+        signupPrivacyLabel.setText("%");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 16;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        getContentPane().add(signupPrivacyLabel, gridBagConstraints);
+
+        throughputUnitCB.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Gbps", "Mbps", "Kbps" }));
+        throughputUnitCB.setSelectedIndex(1);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        getContentPane().add(throughputUnitCB, gridBagConstraints);
+
+        responseTimeUnitCB.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Hour", "Minute", "Second", "MilliSecond" }));
+        responseTimeUnitCB.setSelectedIndex(2);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 14;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        getContentPane().add(responseTimeUnitCB, gridBagConstraints);
+
+        throughputWeightCB.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Low", "Medium", "High" }));
+        throughputWeightCB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                throughputWeightCBActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 8;
+        gridBagConstraints.gridy = 8;
+        getContentPane().add(throughputWeightCB, gridBagConstraints);
+
+        downTimeWeightCB.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Low", "Medium", "High" }));
+        downTimeWeightCB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                downTimeWeightCBActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 8;
+        gridBagConstraints.gridy = 12;
+        getContentPane().add(downTimeWeightCB, gridBagConstraints);
+
+        responseTimeWeightCB.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Low", "Medium", "High" }));
+        responseTimeWeightCB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                responseTimeWeightCBActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 8;
+        gridBagConstraints.gridy = 14;
+        getContentPane().add(responseTimeWeightCB, gridBagConstraints);
+
+        availabilityWeightCB.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Low", "Medium", "High" }));
+        availabilityWeightCB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                availabilityWeightCBActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 8;
+        gridBagConstraints.gridy = 10;
+        getContentPane().add(availabilityWeightCB, gridBagConstraints);
+
+        pricePerPeriodWeightCB.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Low", "Medium", "High" }));
+        pricePerPeriodWeightCB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pricePerPeriodWeightCBActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 8;
+        gridBagConstraints.gridy = 6;
+        getContentPane().add(pricePerPeriodWeightCB, gridBagConstraints);
+
+        searchBtn.setText("Search");
+        searchBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchBtnActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 24;
+        gridBagConstraints.gridwidth = 7;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        getContentPane().add(searchBtn, gridBagConstraints);
+
+        pricePerDataUnitCB.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Euro", "USDollar", "BritishPound", "Real" }));
+        pricePerDataUnitCB.setEnabled(false);
+        pricePerDataUnitCB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pricePerDataUnitCBActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        getContentPane().add(pricePerDataUnitCB, gridBagConstraints);
+
+        signupPrivacyCheckBox.setText("Signup Privacy");
+        signupPrivacyCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                signupPrivacyCheckBoxActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 16;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        getContentPane().add(signupPrivacyCheckBox, gridBagConstraints);
+
+        capacityCheckBox.setText("Capacity");
+        capacityCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                capacityCheckBoxActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 18;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        getContentPane().add(capacityCheckBox, gridBagConstraints);
+
+        redundancyCheckBox.setText("Redundancy");
+        redundancyCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                redundancyCheckBoxActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 20;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        getContentPane().add(redundancyCheckBox, gridBagConstraints);
+
+        encryptionCheckBox.setText("Encryption");
+        encryptionCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                encryptionCheckBoxActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 22;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        getContentPane().add(encryptionCheckBox, gridBagConstraints);
+
+        cancelBtn.setText("Cancel");
+        cancelBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelBtnActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 8;
+        gridBagConstraints.gridy = 28;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        getContentPane().add(cancelBtn, gridBagConstraints);
+
+        signupPrivacyTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
+        signupPrivacyTextField.setText("0.00");
+        signupPrivacyTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                signupPrivacyTextFieldActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 16;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        getContentPane().add(signupPrivacyTextField, gridBagConstraints);
+
+        capacityTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
+        capacityTextField.setText("0.00");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 18;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        getContentPane().add(capacityTextField, gridBagConstraints);
+
+        redundancyTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
+        redundancyTextField.setText("0.00");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 20;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        getContentPane().add(redundancyTextField, gridBagConstraints);
+
+        encryptionTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
+        encryptionTextField.setText("0.00");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 22;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        getContentPane().add(encryptionTextField, gridBagConstraints);
 
         searchResultTable.setAutoCreateRowSorter(true);
         searchResultTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -84,14 +449,14 @@ public class AddServiceDialog extends javax.swing.JDialog {
 
             },
             new String [] {
-                "Name", "P/D", "P/M", "A", "BW", "DT", "RT"
+                "Name", "Pr/GB", "Pr/Mo", "Av", "Th", "Dt", "Rt", "SP", "Ca", "Re", "En"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class
+                java.lang.String.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -102,9 +467,19 @@ public class AddServiceDialog extends javax.swing.JDialog {
                 return canEdit [columnIndex];
             }
         });
-        searchResultTable.setRowHeight(25);
+        searchResultTable.setMinimumSize(new java.awt.Dimension(0, 0));
+        searchResultTable.setPreferredSize(new java.awt.Dimension(0, 0));
+        searchResultTable.setRowHeight(20);
         searchResultTable.setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         jScrollPane1.setViewportView(searchResultTable);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 26;
+        gridBagConstraints.gridwidth = 7;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weighty = 0.5;
+        getContentPane().add(jScrollPane1, gridBagConstraints);
 
         addBtn.setText("Add selected services");
         addBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -112,218 +487,120 @@ public class AddServiceDialog extends javax.swing.JDialog {
                 addBtnActionPerformed(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 28;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        getContentPane().add(addBtn, gridBagConstraints);
 
-        cancelBtn.setText("Cancel");
-        cancelBtn.addActionListener(new java.awt.event.ActionListener() {
+        availabilityLabel.setText("%");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 10;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        getContentPane().add(availabilityLabel, gridBagConstraints);
+
+        signupPrivacyWeightCB.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Low", "Medium", "High" }));
+        signupPrivacyWeightCB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelBtnActionPerformed(evt);
+                signupPrivacyWeightCBActionPerformed(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 8;
+        gridBagConstraints.gridy = 16;
+        getContentPane().add(signupPrivacyWeightCB, gridBagConstraints);
 
-        pricePerDataCheckBox.setText("Price per Data");
-
-        pricePerMonthCheckBox.setText("Price per Month");
-        pricePerMonthCheckBox.addActionListener(new java.awt.event.ActionListener() {
+        capacityWeightCB.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Low", "Medium", "High" }));
+        capacityWeightCB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                pricePerMonthCheckBoxActionPerformed(evt);
+                capacityWeightCBActionPerformed(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 8;
+        gridBagConstraints.gridy = 18;
+        getContentPane().add(capacityWeightCB, gridBagConstraints);
 
-        availabilityCheckBox.setText("Availability");
+        capacityUnitCB.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "TB", "GB", "MB" }));
+        capacityUnitCB.setSelectedIndex(1);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 18;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        getContentPane().add(capacityUnitCB, gridBagConstraints);
 
-        bandwidthCheckBox.setText("Bandwidth");
+        redundancyLabel.setText("%");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 20;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        getContentPane().add(redundancyLabel, gridBagConstraints);
 
-        maxDownTimeCheckBox.setText("max. Down Time");
+        encryptionLabel.setText("0/1");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 22;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        getContentPane().add(encryptionLabel, gridBagConstraints);
 
-        responseTimeCheckBox.setText("Response Time");
-
-        pricePerDataTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
-        pricePerDataTextField.setValue(new Float("0.00"));
-
-        pricePerMonthTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
-        pricePerMonthTextField.setValue(new Float("0.00"));
-
-        availabilityTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
-        availabilityTextField.setValue(new Float("0.00"));
-
-        bandwidthTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
-        bandwidthTextField.setValue(new Float("0.00"));
-
-        maxDownTimeTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
-        maxDownTimeTextField.setValue(new Float("0.00"));
-
-        responseTimeTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
-        responseTimeTextField.setValue(new Float("0.00"));
-
-        jLabel1.setText("Euro");
-
-        jLabel2.setText("Euro");
-
-        jLabel3.setText("%");
-
-        bandwidthUnitCB.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Mbps", "Kbps" }));
-
-        maxDownTimeUnitCB.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Minute", "Second", "MilliSecond" }));
-
-        responseTimeUnitCB.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Minute", "Second", "MilliSecond" }));
-
-        bandwidthWeightCB.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Low", "Medium", "High" }));
-        bandwidthWeightCB.addActionListener(new java.awt.event.ActionListener() {
+        redundancyWeightCB.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Low", "Medium", "High" }));
+        redundancyWeightCB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bandwidthWeightCBActionPerformed(evt);
+                redundancyWeightCBActionPerformed(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 8;
+        gridBagConstraints.gridy = 20;
+        getContentPane().add(redundancyWeightCB, gridBagConstraints);
 
-        maxDownTimeWeightCB.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Low", "Medium", "High" }));
-        maxDownTimeWeightCB.addActionListener(new java.awt.event.ActionListener() {
+        encryptionWeightCB.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Low", "Medium", "High" }));
+        encryptionWeightCB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                maxDownTimeWeightCBActionPerformed(evt);
+                encryptionWeightCBActionPerformed(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 8;
+        gridBagConstraints.gridy = 22;
+        getContentPane().add(encryptionWeightCB, gridBagConstraints);
 
-        responseTimeWeightCB.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Low", "Medium", "High" }));
-        responseTimeWeightCB.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                responseTimeWeightCBActionPerformed(evt);
-            }
-        });
+        propertyLabel.setFont(new java.awt.Font("Dialog", 3, 12)); // NOI18N
+        propertyLabel.setText("Property");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 2;
+        getContentPane().add(propertyLabel, gridBagConstraints);
 
-        availabilityWeightCB.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Low", "Medium", "High" }));
-        availabilityWeightCB.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                availabilityWeightCBActionPerformed(evt);
-            }
-        });
+        valueLabel.setFont(new java.awt.Font("Dialog", 3, 12)); // NOI18N
+        valueLabel.setText("Value");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 2;
+        getContentPane().add(valueLabel, gridBagConstraints);
 
-        pricePerMonthWeightCB.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Low", "Medium", "High" }));
-        pricePerMonthWeightCB.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                pricePerMonthWeightCBActionPerformed(evt);
-            }
-        });
+        unitLabel.setFont(new java.awt.Font("Dialog", 3, 12)); // NOI18N
+        unitLabel.setText("Unit");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 2;
+        getContentPane().add(unitLabel, gridBagConstraints);
 
-        pricePerDataWeightCB.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Low", "Medium", "High" }));
-        pricePerDataWeightCB.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                pricePerDataWeightCBActionPerformed(evt);
-            }
-        });
+        priorityLabel.setFont(new java.awt.Font("Dialog", 3, 12)); // NOI18N
+        priorityLabel.setText("Priority");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 8;
+        gridBagConstraints.gridy = 2;
+        getContentPane().add(priorityLabel, gridBagConstraints);
 
-        searchBtn.setText("Search");
-        searchBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                searchBtnActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(maxDownTimeCheckBox)
-                                            .addComponent(bandwidthCheckBox)
-                                            .addComponent(availabilityCheckBox))
-                                        .addGap(18, 18, 18)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(availabilityTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 121, Short.MAX_VALUE)
-                                            .addComponent(responseTimeTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 121, Short.MAX_VALUE)
-                                            .addComponent(maxDownTimeTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 121, Short.MAX_VALUE)
-                                            .addComponent(bandwidthTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 121, Short.MAX_VALUE)
-                                            .addComponent(pricePerMonthTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 121, Short.MAX_VALUE)
-                                            .addComponent(pricePerDataTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 121, Short.MAX_VALUE)))
-                                    .addComponent(responseTimeCheckBox))
-                                .addGap(6, 6, 6))
-                            .addComponent(pricePerDataCheckBox)
-                            .addComponent(pricePerMonthCheckBox))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel3)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(responseTimeUnitCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(bandwidthUnitCB, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(maxDownTimeUnitCB, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                            .addComponent(jLabel1))
-                        .addGap(11, 11, 11)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(pricePerDataWeightCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(pricePerMonthWeightCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(availabilityWeightCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(maxDownTimeWeightCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(bandwidthWeightCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(responseTimeWeightCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(cancelBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(addBtn))
-                    .addComponent(searchBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(pricePerDataCheckBox)
-                            .addComponent(pricePerDataWeightCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel1)
-                            .addComponent(pricePerDataTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(pricePerMonthCheckBox)
-                                .addComponent(pricePerMonthTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jLabel2)))
-                    .addComponent(pricePerMonthWeightCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(availabilityCheckBox)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(availabilityWeightCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel3)
-                        .addComponent(availabilityTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(bandwidthCheckBox)
-                    .addComponent(bandwidthUnitCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(bandwidthWeightCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(bandwidthTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(maxDownTimeCheckBox)
-                    .addComponent(maxDownTimeWeightCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(maxDownTimeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(maxDownTimeUnitCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(responseTimeCheckBox)
-                    .addComponent(responseTimeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(responseTimeWeightCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(responseTimeUnitCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(searchBtn)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(addBtn)
-                    .addComponent(cancelBtn))
-                .addContainerGap())
-        );
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Euro", "USDollar", "BritishPound", "Real" }));
+        jComboBox1.setEnabled(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        getContentPane().add(jComboBox1, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -371,35 +648,35 @@ public class AddServiceDialog extends javax.swing.JDialog {
     }
 
     public JCheckBox getBandwidthCheckBox() {
-        return bandwidthCheckBox;
+        return throughputCheckBox;
     }
 
     public JFormattedTextField getBandwidthTextField() {
-        return bandwidthTextField;
+        return throughputTextField;
     }
 
     public JComboBox getBandwidthUnitCB() {
-        return bandwidthUnitCB;
+        return throughputUnitCB;
     }
 
     public JComboBox getBandwidthWeightCB() {
-        return bandwidthWeightCB;
+        return throughputWeightCB;
     }
 
     public JCheckBox getMaxDownTimeCheckBox() {
-        return maxDownTimeCheckBox;
+        return downTimeCheckBox;
     }
 
     public JFormattedTextField getMaxDownTimeTextField() {
-        return maxDownTimeTextField;
+        return downTimeTextField;
     }
 
     public JComboBox getMaxDownTimeUnitCB() {
-        return maxDownTimeUnitCB;
+        return downTimeUnitCB;
     }
 
     public JComboBox getMaxDownTimeWeightCB() {
-        return maxDownTimeWeightCB;
+        return downTimeWeightCB;
     }
 
     public JCheckBox getPricePerDataCheckBox() {
@@ -411,19 +688,19 @@ public class AddServiceDialog extends javax.swing.JDialog {
     }
 
     public JComboBox getPricePerDataWeightCB() {
-        return pricePerDataWeightCB;
+        return encryptionWeightCB;
     }
 
     public JCheckBox getPricePerMonthCheckBox() {
-        return pricePerMonthCheckBox;
+        return pricePerPeriodCheckBox;
     }
 
     public JFormattedTextField getPricePerMonthTextField() {
-        return pricePerMonthTextField;
+        return pricePerPeriodTextField;
     }
 
     public JComboBox getPricePerMonthWeightCB() {
-        return pricePerMonthWeightCB;
+        return pricePerPeriodWeightCB;
     }
 
     public JCheckBox getResponseTimeCheckBox() {
@@ -440,6 +717,58 @@ public class AddServiceDialog extends javax.swing.JDialog {
 
     public JComboBox getResponseTimeWeightCB() {
         return responseTimeWeightCB;
+    }
+
+    public JCheckBox getSignupPrivacyCheckBox() {
+        return signupPrivacyCheckBox;
+    }
+
+    public JFormattedTextField getSignupPrivacyTextField() {
+        return signupPrivacyTextField;
+    }
+
+    public JComboBox getSignupPrivacyWeightCB() {
+        return signupPrivacyWeightCB;
+    }
+
+    public JCheckBox getCapacityCheckBox() {
+        return capacityCheckBox;
+    }
+
+    public JFormattedTextField getCapacityTextField() {
+        return capacityTextField;
+    }
+
+    public JComboBox getCapacityUnitCB() {
+        return capacityUnitCB;
+    }
+
+    public JComboBox getCapacityWeightCB() {
+        return capacityWeightCB;
+    }
+
+    public JCheckBox getRedundancyCheckBox() {
+        return redundancyCheckBox;
+    }
+
+    public JFormattedTextField getRedundancyTextField() {
+        return redundancyTextField;
+    }
+
+    public JComboBox getRedundancyWeightCB() {
+        return redundancyWeightCB;
+    }
+
+    public JCheckBox getEncryptionCheckBox() {
+        return encryptionCheckBox;
+    }
+
+    public JFormattedTextField getEncryptionTextField() {
+        return encryptionTextField;
+    }
+
+    public JComboBox getEncryptionWeightCB() {
+        return encryptionWeightCB;
     }
 
     public List<MatchmakerService> getSelectedServices() {
@@ -460,13 +789,13 @@ public class AddServiceDialog extends javax.swing.JDialog {
         dispose();
     }//GEN-LAST:event_cancelBtnActionPerformed
 
-    private void bandwidthWeightCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bandwidthWeightCBActionPerformed
+    private void throughputWeightCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_throughputWeightCBActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_bandwidthWeightCBActionPerformed
+    }//GEN-LAST:event_throughputWeightCBActionPerformed
 
-    private void maxDownTimeWeightCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_maxDownTimeWeightCBActionPerformed
+    private void downTimeWeightCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downTimeWeightCBActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_maxDownTimeWeightCBActionPerformed
+    }//GEN-LAST:event_downTimeWeightCBActionPerformed
 
     private void responseTimeWeightCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_responseTimeWeightCBActionPerformed
         // TODO add your handling code here:
@@ -476,50 +805,123 @@ public class AddServiceDialog extends javax.swing.JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_availabilityWeightCBActionPerformed
 
-    private void pricePerMonthWeightCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pricePerMonthWeightCBActionPerformed
+    private void pricePerPeriodWeightCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pricePerPeriodWeightCBActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_pricePerMonthWeightCBActionPerformed
+    }//GEN-LAST:event_pricePerPeriodWeightCBActionPerformed
+
+    private void encryptionWeightCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_encryptionWeightCBActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_encryptionWeightCBActionPerformed
+
+    private void pricePerPeriodCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pricePerPeriodCheckBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_pricePerPeriodCheckBoxActionPerformed
+
+    private void searchBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBtnActionPerformed
+        searcher.find(this);
+    }//GEN-LAST:event_searchBtnActionPerformed
+
+private void pricePerDataUnitCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pricePerDataUnitCBActionPerformed
+// TODO add your handling code here:
+}//GEN-LAST:event_pricePerDataUnitCBActionPerformed
+
+private void throughputCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_throughputCheckBoxActionPerformed
+// TODO add your handling code here:
+}//GEN-LAST:event_throughputCheckBoxActionPerformed
+
+private void signupPrivacyCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signupPrivacyCheckBoxActionPerformed
+// TODO add your handling code here:
+}//GEN-LAST:event_signupPrivacyCheckBoxActionPerformed
+
+private void capacityCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_capacityCheckBoxActionPerformed
+// TODO add your handling code here:
+}//GEN-LAST:event_capacityCheckBoxActionPerformed
+
+private void redundancyCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_redundancyCheckBoxActionPerformed
+// TODO add your handling code here:
+}//GEN-LAST:event_redundancyCheckBoxActionPerformed
+
+private void encryptionCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_encryptionCheckBoxActionPerformed
+// TODO add your handling code here:
+}//GEN-LAST:event_encryptionCheckBoxActionPerformed
+
+private void signupPrivacyWeightCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signupPrivacyWeightCBActionPerformed
+// TODO add your handling code here:
+}//GEN-LAST:event_signupPrivacyWeightCBActionPerformed
+
+private void capacityWeightCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_capacityWeightCBActionPerformed
+// TODO add your handling code here:
+}//GEN-LAST:event_capacityWeightCBActionPerformed
+
+private void signupPrivacyTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signupPrivacyTextFieldActionPerformed
+// TODO add your handling code here:
+}//GEN-LAST:event_signupPrivacyTextFieldActionPerformed
+
+    private void redundancyWeightCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_redundancyWeightCBActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_redundancyWeightCBActionPerformed
 
     private void pricePerDataWeightCBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pricePerDataWeightCBActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_pricePerDataWeightCBActionPerformed
 
-    private void pricePerMonthCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pricePerMonthCheckBoxActionPerformed
+    private void responseTimeCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_responseTimeCheckBoxActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_pricePerMonthCheckBoxActionPerformed
+    }//GEN-LAST:event_responseTimeCheckBoxActionPerformed
 
-    private void searchBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBtnActionPerformed
-        searcher.find(this);
-    }//GEN-LAST:event_searchBtnActionPerformed
+    private void pricePerDataCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pricePerDataCheckBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_pricePerDataCheckBoxActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton addBtn;
     private javax.swing.JCheckBox availabilityCheckBox;
+    private javax.swing.JLabel availabilityLabel;
     private javax.swing.JFormattedTextField availabilityTextField;
     private javax.swing.JComboBox availabilityWeightCB;
-    private javax.swing.JCheckBox bandwidthCheckBox;
-    private javax.swing.JFormattedTextField bandwidthTextField;
-    private javax.swing.JComboBox bandwidthUnitCB;
-    private javax.swing.JComboBox bandwidthWeightCB;
     private javax.swing.JToggleButton cancelBtn;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
+    private javax.swing.JCheckBox capacityCheckBox;
+    private javax.swing.JFormattedTextField capacityTextField;
+    private javax.swing.JComboBox capacityUnitCB;
+    private javax.swing.JComboBox capacityWeightCB;
+    private javax.swing.JCheckBox downTimeCheckBox;
+    private javax.swing.JFormattedTextField downTimeTextField;
+    private javax.swing.JComboBox downTimeUnitCB;
+    private javax.swing.JComboBox downTimeWeightCB;
+    private javax.swing.JCheckBox encryptionCheckBox;
+    private javax.swing.JLabel encryptionLabel;
+    private javax.swing.JFormattedTextField encryptionTextField;
+    private javax.swing.JComboBox encryptionWeightCB;
+    private javax.swing.JComboBox jComboBox1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JCheckBox maxDownTimeCheckBox;
-    private javax.swing.JFormattedTextField maxDownTimeTextField;
-    private javax.swing.JComboBox maxDownTimeUnitCB;
-    private javax.swing.JComboBox maxDownTimeWeightCB;
     private javax.swing.JCheckBox pricePerDataCheckBox;
     private javax.swing.JFormattedTextField pricePerDataTextField;
+    private javax.swing.JComboBox pricePerDataUnitCB;
     private javax.swing.JComboBox pricePerDataWeightCB;
-    private javax.swing.JCheckBox pricePerMonthCheckBox;
-    private javax.swing.JFormattedTextField pricePerMonthTextField;
-    private javax.swing.JComboBox pricePerMonthWeightCB;
+    private javax.swing.JCheckBox pricePerPeriodCheckBox;
+    private javax.swing.JFormattedTextField pricePerPeriodTextField;
+    private javax.swing.JComboBox pricePerPeriodWeightCB;
+    private javax.swing.JLabel priorityLabel;
+    private javax.swing.JLabel propertyLabel;
+    private javax.swing.JCheckBox redundancyCheckBox;
+    private javax.swing.JLabel redundancyLabel;
+    private javax.swing.JFormattedTextField redundancyTextField;
+    private javax.swing.JComboBox redundancyWeightCB;
     private javax.swing.JCheckBox responseTimeCheckBox;
     private javax.swing.JFormattedTextField responseTimeTextField;
     private javax.swing.JComboBox responseTimeUnitCB;
     private javax.swing.JComboBox responseTimeWeightCB;
     private javax.swing.JButton searchBtn;
     private javax.swing.JTable searchResultTable;
+    private javax.swing.JCheckBox signupPrivacyCheckBox;
+    private javax.swing.JLabel signupPrivacyLabel;
+    private javax.swing.JFormattedTextField signupPrivacyTextField;
+    private javax.swing.JComboBox signupPrivacyWeightCB;
+    private javax.swing.JCheckBox throughputCheckBox;
+    private javax.swing.JFormattedTextField throughputTextField;
+    private javax.swing.JComboBox throughputUnitCB;
+    private javax.swing.JComboBox throughputWeightCB;
+    private javax.swing.JLabel unitLabel;
+    private javax.swing.JLabel valueLabel;
     // End of variables declaration//GEN-END:variables
 }

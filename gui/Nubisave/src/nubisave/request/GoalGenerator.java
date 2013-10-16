@@ -61,7 +61,6 @@ public class GoalGenerator {
         wsmogoal.getInstance(iname).addConcept("qosbase#GoalRequirement");
         wsmogoal.getInstance(iname).addParam("qosbase#value", "1.0");
         wsmogoal.getInstance(iname).addParam("qosbase#unit", "qosbase#Month");
-        // FIXME: introduce dialog.getPricePeriodCB() and dialog.getPricePerPeriodUnitDB()
 
         iname = "instThroughput";
         wsmogoal.addInstance(iname);
@@ -90,6 +89,34 @@ public class GoalGenerator {
         wsmogoal.getInstance(iname).addConcept("qosbase#GoalRequirement");
         wsmogoal.getInstance(iname).addParam("qosbase#value", dialog.getResponseTimeTextField().getValue().toString());
         wsmogoal.getInstance(iname).addParam("qosbase#unit", "qosbase#"+dialog.getResponseTimeUnitCB().getSelectedItem());
+
+        iname = "instSignupPrivacy";
+        wsmogoal.addInstance(iname);
+        wsmogoal.getInstance(iname).addConcept("cloudstorage#SignupPrivacy");
+        wsmogoal.getInstance(iname).addConcept("qosbase#GoalRequirement");
+        wsmogoal.getInstance(iname).addParam("qosbase#value", dialog.getSignupPrivacyTextField().getValue().toString());
+        wsmogoal.getInstance(iname).addParam("qosbase#unit", "qosbase#Percentage");
+
+        iname = "instCapacity";
+        wsmogoal.addInstance(iname);
+        wsmogoal.getInstance(iname).addConcept("cloudstorage#Capacity");
+        wsmogoal.getInstance(iname).addConcept("qosbase#GoalRequirement");
+        wsmogoal.getInstance(iname).addParam("qosbase#value", dialog.getCapacityTextField().getValue().toString());
+        wsmogoal.getInstance(iname).addParam("qosbase#unit", "qosbase#"+dialog.getCapacityUnitCB().getSelectedItem());
+
+        iname = "instRedundancy";
+        wsmogoal.addInstance(iname);
+        wsmogoal.getInstance(iname).addConcept("cloudstorage#Redundancy");
+        wsmogoal.getInstance(iname).addConcept("qosbase#GoalRequirement");
+        wsmogoal.getInstance(iname).addParam("qosbase#value", dialog.getRedundancyTextField().getValue().toString());
+        wsmogoal.getInstance(iname).addParam("qosbase#unit", "qosbase#Percentage");
+
+        iname = "instEncryption";
+        wsmogoal.addInstance(iname);
+        wsmogoal.getInstance(iname).addConcept("cloudstorage#Encryption");
+        wsmogoal.getInstance(iname).addConcept("qosbase#GoalRequirement");
+        wsmogoal.getInstance(iname).addParam("qosbase#value", dialog.getEncryptionTextField().getValue().toString());
+        wsmogoal.getInstance(iname).addParam("qosbase#unit", "contextbase#BooleanUnit");
 
         iname = "instResponseTimeConfiguration";
         wsmogoal.addInstance(iname);
@@ -146,6 +173,38 @@ public class GoalGenerator {
         wsmogoal.getInstance(iname).addParam("rank#hasQoSConceptIRI", "remoteqosbase#Throughput");
         wsmogoal.getInstance(iname).addParam("rank#hasWeight", dialog.getBandwidthWeightCB().getSelectedIndex()+1+".0");
         wsmogoal.getInstance(iname).addParam("rank#hasMatchingThreshold", dialog.getBandwidthCheckBox().isSelected()?"1.0":"0.0");
+
+        iname = "instSignupPrivacyConfiguration";
+        wsmogoal.addInstance(iname);
+        wsmogoal.getInstance(iname).addConcept("rank#QoSConceptConfiguration");
+        wsmogoal.getInstance(iname).addParam("rank#hasReputationScore", "1.0");
+        wsmogoal.getInstance(iname).addParam("rank#hasQoSConceptIRI", "cloudstorage#SignupPrivacy");
+        wsmogoal.getInstance(iname).addParam("rank#hasWeight", dialog.getSignupPrivacyWeightCB().getSelectedIndex()+1+".0");
+        wsmogoal.getInstance(iname).addParam("rank#hasMatchingThreshold", dialog.getSignupPrivacyCheckBox().isSelected()?"1.0":"0.0");
+
+        iname = "instCapacityConfiguration";
+        wsmogoal.addInstance(iname);
+        wsmogoal.getInstance(iname).addConcept("rank#QoSConceptConfiguration");
+        wsmogoal.getInstance(iname).addParam("rank#hasReputationScore", "1.0");
+        wsmogoal.getInstance(iname).addParam("rank#hasQoSConceptIRI", "cloudstorage#Capacity");
+        wsmogoal.getInstance(iname).addParam("rank#hasWeight", dialog.getCapacityWeightCB().getSelectedIndex()+1+".0");
+        wsmogoal.getInstance(iname).addParam("rank#hasMatchingThreshold", dialog.getCapacityCheckBox().isSelected()?"1.0":"0.0");
+
+        iname = "instRedundancyConfiguration";
+        wsmogoal.addInstance(iname);
+        wsmogoal.getInstance(iname).addConcept("rank#QoSConceptConfiguration");
+        wsmogoal.getInstance(iname).addParam("rank#hasReputationScore", "1.0");
+        wsmogoal.getInstance(iname).addParam("rank#hasQoSConceptIRI", "cloudstorage#Redundancy");
+        wsmogoal.getInstance(iname).addParam("rank#hasWeight", dialog.getRedundancyWeightCB().getSelectedIndex()+1+".0");
+        wsmogoal.getInstance(iname).addParam("rank#hasMatchingThreshold", dialog.getRedundancyCheckBox().isSelected()?"1.0":"0.0");
+
+        iname = "instEncryptionConfiguration";
+        wsmogoal.addInstance(iname);
+        wsmogoal.getInstance(iname).addConcept("rank#QoSConceptConfiguration");
+        wsmogoal.getInstance(iname).addParam("rank#hasReputationScore", "1.0");
+        wsmogoal.getInstance(iname).addParam("rank#hasQoSConceptIRI", "cloudstorage#Encryption");
+        wsmogoal.getInstance(iname).addParam("rank#hasWeight", dialog.getEncryptionWeightCB().getSelectedIndex()+1+".0");
+        wsmogoal.getInstance(iname).addParam("rank#hasMatchingThreshold", dialog.getEncryptionCheckBox().isSelected()?"1.0":"0.0");
 
         iname = "ranking";
         wsmogoal.addInstance(iname);

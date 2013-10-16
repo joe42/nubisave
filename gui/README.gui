@@ -1,0 +1,6 @@
+The Storage Flow Editor and Configuration GUI
+of NubiSave is developed with Java Swing and AWT
+components as well as external libraries such as
+Jung.
+
+For the Swing/AWT forms, NetBeans 7.4 is essential!
