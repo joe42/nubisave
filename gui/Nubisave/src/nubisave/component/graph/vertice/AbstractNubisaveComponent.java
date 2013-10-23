@@ -263,6 +263,8 @@ public abstract class AbstractNubisaveComponent implements VertexGroup<NubiSaveV
 
     public abstract void openLocation();
 
+    public abstract void visualizeLocation();
+
     /**
      * Deactivate the component instance
      */

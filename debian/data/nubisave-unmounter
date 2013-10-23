@@ -1,0 +1,50 @@
+#!/bin/sh
+#
+# Unmounts all configured Nubisave directories
+# Useful for headless configurations
+
+storagesdir=~/.storages
+configdir=~/.nubisave/db/splitter_configuration
+splitterdir=/usr/share/nubisave/splitter/
+
+if [ ! -d $configdir ] || [ ! -d $storagesdir ]
+then
+	echo "Error: Configuration directory $configdir and/or storage directory $storagesdir does not exist." >&2
+	exit 1
+fi
+
+cd $storagesdir
+if [ -z "`ls`" ]
+then
+	echo "No storage modules configured and mounted, not unmounting anything."
+	exit 0
+fi
+
+for storage in *
+do
+	echo "Storage: $storage"
+	unmount=`grep ^unmountcommand $configdir/$storage | cut -d "=" -f 2-`
+	for param in $mount
+	do
+		#echo "--param:$param"
+		paramval=`grep ^$param $configdir/$storage`
+		if [ $? = 0 ]
+		then
+			paramval=`echo $paramval | cut -d "=" -f 2-`
+			#echo "**$paramval"
+			unmount=`echo $mount | sed -e "s& $param& $paramval&"`
+		fi
+	done
+
+	mountpoint=$storagesdir/$storage
+	unmount=`echo $unmount | sed -e "s& mountpoint& $mountpoint&"`
+	echo "* unmount: $unmount"
+
+	# Hot-plugging for indirect unmounting through Nubisave
+	rm ~/.nubisave/nubisavemount/config/$storage
+
+	# Deprecated: Manual unmounting
+	#cd $splitterdir
+	#$unmount
+	#cd $configdir
+done

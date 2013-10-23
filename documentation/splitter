@@ -1,0 +1,71 @@
+Functionality of the NubiSave splitter
+======================================
+
+A file called
+	NAME
+is split into fragments which are named
+	_NAME#U#C#F
+
+The flags have the following meaning:
+
+U: Chunk counter, for every ~3 MB, always 0 for smaller files
+C: File and chunk counter, alias globally unique index in the database
+F: Fragment number [0..n-1]
+
+For directories, NAME is normalised into one single file name. For
+example, a/b becomes a_b. Non-ASCII symbols are eliminated from NAME.
+
+NAME should probably be turned into a hash value or otherwise be
+obfuscated.
+
+NAME is
+	.nubisave_databaseN
+	.nubisave_session_N_MODULEINSTANCE
+for stored sessions, with just one parameter.
+
+N: Session number [1..9]
+
+Furthermore, there are resulting files with a separate naming scheme
+	.nubisave_database.metaN
+	.nubisave_service_name.sessionN#F
+
+The database meta file format is described below.
+The [splitter] section also corresponds to the configuration in the
+'nubisavemount/config/config' file. Changes to the 'config' file
+are applied immediately, similar to activated module files next
+to 'config'.
+Redundancy and Storagestrategy are configurable.
+Availability is calculated and updated automatically by NubiSave.
+
+Database contents
+-----------------
+
+[splitter]
+redundancy = [0..100]
+availability = [0.0-1.0]
+storagestrategy = RoundRobin|UseAllInParallel
+
+[database]
+path = /.nubisave_databaseN
+size = 49152
+
+[databasePartNr_0]
+name = /.nubisave_databaseN#0#
+nrOfFileFragmentsRequired = [k]
+nrOfFileFragments = [n]
+fileFragmentName_0 = /_.nubisave_databaseN#U#C#0
+fileFragmentNameChecksum_0 = [sha256]
+fileFragmentName_1 = /_.nubisave_databaseN#U#C#1
+fileFragmentNameChecksum_1 = [sha256]
+
+Metadata / Fragment store contents
+----------------------------------
+
+The database (~/.nubisave/db.{db,lg}) is of a JDBM H-Tree format which stores
+string-to-object mapping records. The strings are path names, whereas the
+objects are instances of the "vtf" classes.
+The entries exist as maps with names such as:
+	filemap
+	dirmap
+	fileFragmentsMap
+	filenameTofilePartNumbersMap

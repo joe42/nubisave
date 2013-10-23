@@ -9,6 +9,7 @@ package nubisave.component.graph.splitteradaption;
  *
  */
 
+import com.github.joe42.splitter.util.file.PropertiesUtil;
 import nubisave.component.graph.mouseplugins.extension.AbstractNubisaveComponentEdgeCreator;
 import nubisave.component.graph.mouseplugins.extension.PreventEdgeCreationForRestrictedPorts;
 import nubisave.component.graph.mouseplugins.extension.ToggleActivateNubisaveComponentOnDoubleClick;
@@ -61,12 +62,25 @@ import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import edu.uci.ics.jung.visualization.renderers.Renderer;
 import java.awt.BasicStroke;
+import java.awt.Dialog;
+import java.awt.Dialog.ModalityType;
 import java.awt.Point;
 import java.awt.Stroke;
+import java.awt.Window;
 import java.awt.event.InputEvent;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import javax.swing.JDialog;
+import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
 import net.contentobjects.jnotify.*;
 import nubisave.Nubisave;
+import nubisave.Services;
 import nubisave.StorageService;
+import nubisave.MatchmakerService;
 import nubisave.component.graph.mouseplugins.ExtensibleNubisaveComponentMousePlugin;
 import nubisave.component.graph.mouseplugins.VertexPicker;
 import nubisave.component.graph.pickedvertexlistener.BufferedImageDelegatorHighlighter;
@@ -78,8 +92,10 @@ import nubisave.component.graph.splitteradaption.ActionKeyAdapter;
 import nubisave.component.graph.vertice.interfaces.NubiSaveVertex;
 import nubisave.component.graph.vertice.interfaces.VertexGroup;
 import nubisave.ui.AddServiceDialog;
+import nubisave.ui.CustomServiceDlg;
 import org.apache.commons.collections15.Predicate;
 import org.apache.commons.collections15.Transformer;
+import org.ini4j.Ini;
 
 
 /**
@@ -88,10 +104,9 @@ import org.apache.commons.collections15.Transformer;
 public class NubisaveEditor extends JApplet {
 
     private static final long serialVersionUID = -2023243689258876721L;
-
+    private String storage_directory;
     Graph<NubiSaveVertex,NubiSaveEdge> graph;
     NubiSaveComponent nubiSaveComponent;
-
     AbstractLayout<NubiSaveVertex,NubiSaveEdge> layout;
 
     /**
@@ -167,14 +182,14 @@ public class NubisaveEditor extends JApplet {
      *
      */
     public NubisaveEditor() {
-       
+        
         // create a simple graph for the demo
         graph = new SortedSparseMultiGraph<NubiSaveVertex,NubiSaveEdge>();
         this.layout = new StaticLayout<NubiSaveVertex,NubiSaveEdge>(graph,
                 new Dimension(600,600));
         vv =  new VisualizationViewer<NubiSaveVertex, NubiSaveEdge>(layout);
         dataVertexEdgeFactory = new DataVertexEdgeFactory();
-
+        storage_directory= new PropertiesUtil("nubi.properties").getProperty("storage_configuration_directory");
 
         //Immediate Adaption to external changes
         int mask = JNotify.FILE_CREATED  |
@@ -182,11 +197,11 @@ public class NubisaveEditor extends JApplet {
                JNotify.FILE_MODIFIED |
                JNotify.FILE_RENAMED;
         boolean watchSubtree = false;
-        try {
-            JNotify.addWatch(Nubisave.mainSplitter.getConfigDir(), mask, watchSubtree, new JNotifyConfigUpdater(dataVertexEdgeFactory, graph, vv));
-        } catch (Exception ex) {
-            Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        try {
+//            JNotify.addWatch(Nubisave.mainSplitter.getConfigDir(), mask, watchSubtree, new JNotifyConfigUpdater(dataVertexEdgeFactory, graph, vv));
+//        } catch (Exception ex) {
+//            Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
+//        }
 
 
         vv.setBackground(Color.white);
@@ -206,18 +221,17 @@ public class NubisaveEditor extends JApplet {
         content.add(panel);
         final StatefulNubiSaveComponentFactory vertexFactory = new StatefulNubiSaveComponentFactory();
         Factory<? extends NubiSaveEdge> edgeFactory = new WeightedNubisaveVertexEdgeFactory();
-        PluggableGraphMouse graphMouse = createPluggableGraphMouse(vv.getRenderContext(), vertexFactory, edgeFactory, dataVertexEdgeFactory);
-        try {
-            // the EditingGraphMouse will pass mouse event coordinates to the
-            // vertexLocations function to set the locations of the vertices as
-            // they are created
-            //	        graphMouse.setVertexLocations(vertexLocations);
-            nubiSaveComponent = new NubiSaveComponent();
-            nubiSaveComponent.addToGraph(vv, new java.awt.Point((int)layout.getSize().getHeight()/2,(int)layout.getSize().getWidth()/2));
-        } catch (IOException ex) {
-            Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
+        final PluggableGraphMouse graphMouse = createPluggableGraphMouse(vv.getRenderContext(), vertexFactory, edgeFactory, dataVertexEdgeFactory);
+//        try {
+//            // the EditingGraphMouse will pass mouse event coordinates to the
+//            // vertexLocations function to set the locations of the vertices as
+//            // they are created
+            	        //graphMouse.setVertexLocations(vertexLocations);
+//            nubiSaveComponent = new NubiSaveComponent();
+//            nubiSaveComponent.addToGraph(vv, new java.awt.Point((int)layout.getSize().getHeight()/2,(int)layout.getSize().getWidth()/2));
+//        } catch (IOException ex) {
+//            Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
+//        }
         vv.setGraphMouse(graphMouse);
         vv.addKeyListener(new ActionKeyAdapter(vv.getPickedVertexState(), graph));
 
@@ -235,35 +249,79 @@ public class NubisaveEditor extends JApplet {
             }
         }).transform(graph);
         interconnectNubisaveComponents(nubisaveComponentGraph, edgeFactory);
+        //interconnectNubisaveComponents();
 
         JPanel controls = new JPanel();
-        JButton chooseLocalComponent = new JButton("Local Component");
+        JButton chooseLocalComponent = new JButton("Custom Storage/Modification/Splitter Module");
         chooseLocalComponent.addActionListener(new ActionListener() {
             /**
              * Create new {@link StorageService} from chosen file and set it as the next Vertex to create in {@link StatefulNubiSaveComponentFactory}
              */
             @Override
             public void actionPerformed(ActionEvent ae) {
-                JFileChooser customStorageserviceChooser = new javax.swing.JFileChooser();
-                customStorageserviceChooser.setCurrentDirectory(new java.io.File(nubisave.Nubisave.mainSplitter.getMountScriptDir()));
-                customStorageserviceChooser.setDialogTitle("Custom Service");
-                customStorageserviceChooser.setFileFilter(new IniFileFilter());
-                int returnVal = customStorageserviceChooser.showOpenDialog(null);
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    File file = customStorageserviceChooser.getSelectedFile();
-                    StorageService newService = new StorageService(file);
-                    try {
-                        vertexFactory.setNextInstance(new GenericNubiSaveComponent(newService));
-                    } catch (IOException ex) {
-                        Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    nubisave.Nubisave.services.add(newService);
+                CustomServiceDlg cusDlg=new CustomServiceDlg();
+                cusDlg.pack();
+                cusDlg.setLocationRelativeTo(null);
+                cusDlg.setTitle("Module Selection");
+                cusDlg.setModalityType(Dialog.ModalityType.APPLICATION_MODAL); 
+                cusDlg.setVisible(true);
+                String module=(String) cusDlg.getItemName();
+                if (module!=null){
+                    module=module.split("\\.")[0];  
                 }
-            }
+                if (module!=null){
+                    if(cusDlg.okstatus=="True"){
+                        if( module.toLowerCase().equals("nubisave")){
+                            StorageService newService = new StorageService(module);
+                            try {
+                                vertexFactory.setNextInstance(new NubiSaveComponent(newService));
+                                //nubiSaveComponent.addToGraph(vv, new java.awt.Point((int)layout.getSize().getHeight()/2,(int)layout.getSize().getWidth()/2));
+                            } catch (IOException ex) {
+                                Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                            nubisave.Nubisave.services.addNubisave(newService);  
+                        } else {
+                            StorageService newService = new StorageService(module);
+                            try {
+                                vertexFactory.setNextInstance(new GenericNubiSaveComponent(newService));
+                            } catch (IOException ex) {
+                                Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                            nubisave.Nubisave.services.add(newService); 
+                        }
+                    }
+                } else {
+                      JFileChooser customStorageserviceChooser = new javax.swing.JFileChooser();
+                        customStorageserviceChooser.setCurrentDirectory(new java.io.File(nubisave.Nubisave.mainSplitter.getMountScriptDir()));
+                        customStorageserviceChooser.setDialogTitle("Custom Service");
+                        customStorageserviceChooser.setFileFilter(new IniFileFilter());
+                        int returnVal = customStorageserviceChooser.showOpenDialog(null);
+                        if (returnVal == JFileChooser.APPROVE_OPTION) {
+                            File file = customStorageserviceChooser.getSelectedFile();
+                            if (file.getName().toLowerCase().equals("nubisave.ini")){
+                                StorageService newService = new StorageService(file);
+                            try {
+                                vertexFactory.setNextInstance(new NubiSaveComponent(newService));
+                                //nubiSaveComponent.addToGraph(vv, new java.awt.Point((int)layout.getSize().getHeight()/2,(int)layout.getSize().getWidth()/2));
+                            } catch (IOException ex) {
+                                Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                            nubisave.Nubisave.services.addNubisave(newService);
+                            } else {
+                            StorageService newService = new StorageService(file);
+                            try {
+                                vertexFactory.setNextInstance(new GenericNubiSaveComponent(newService));
+                            } catch (IOException ex) {
+                                Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                            nubisave.Nubisave.services.add(newService);
+                        }
+                    }
+                }
+              }
         });
         controls.add(chooseLocalComponent);
-
-        JButton searchServiceComponent = new JButton("Search Service Component");
+        JButton searchServiceComponent = new JButton("Storage Service Directory");
         searchServiceComponent.addActionListener(new ActionListener() {
             /**
              * Create new {@link StorageService} from chosen file and set it as the next Vertex to create in {@link StatefulNubiSaveComponentFactory}
@@ -272,33 +330,50 @@ public class NubisaveEditor extends JApplet {
             public void actionPerformed(ActionEvent ae) {
                 AddServiceDialog addServiceDlg = new AddServiceDialog(null, true);
                 addServiceDlg.setVisible(true);
+
+                for(MatchmakerService newService : addServiceDlg.getSelectedServices()) {
+                    try {
+                        vertexFactory.setNextInstance(new GenericNubiSaveComponent(newService));
+                    } catch (IOException ex) {
+                        Logger.getLogger(AddServiceDialog.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
             }
         });
         controls.add(searchServiceComponent);
-
         controls.add(help);
         content.add(controls, BorderLayout.SOUTH);
     }
+    
     /**
      * Add {@link Nubisave#services} to graph if they are not yet displayed there.
      */
     private void addServicesToGraph() {
-        for (int i = 0; i < nubisave.Nubisave.services.size(); i++) {
+         for (int i = 0; i < nubisave.Nubisave.services.size(); i++) {
             StorageService persistedService = nubisave.Nubisave.services.get(i);
-            try {
-                GenericNubiSaveComponent vertex = new GenericNubiSaveComponent(persistedService);
+            AbstractNubisaveComponent vertex=null;
+            if(persistedService.getName().toLowerCase().equals("nubisave")){
+                try {
+                    vertex = new NubiSaveComponent(persistedService);
+                } catch (IOException ex) {
+                    Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else {
+                try {
+                    vertex = new GenericNubiSaveComponent(persistedService);
+                } catch (IOException ex) {
+                    Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
                 Point pos = persistedService.getGraphLocation();
                 if (pos == null) {
                     pos = new Point(new java.awt.Point((int) layout.getSize().getHeight() / 2, (int) layout.getSize().getWidth() / 2 - i * 10-10));
                 }
                 if(!graph.containsVertex(vertex)){
-                    System.out.println("add vertice"+vertex.getUniqueName());
+                    System.out.println("add vertice "+vertex.getUniqueName());
                     vertex.addToGraph(vv, pos);
                     layout.setLocation(vertex, vv.getRenderContext().getMultiLayerTransformer().inverseTransform(pos));
                 }
-            } catch (IOException ex) {
-                Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
-            }
         }
     }
 
@@ -387,20 +462,44 @@ public class NubisaveEditor extends JApplet {
     protected void interconnectNubisaveComponents(Graph<AbstractNubisaveComponent, Object> nubisaveComponentGraph, Factory<? extends NubiSaveEdge> edgeFactory) {
         boolean connected = false;
         WeightedNubisaveVertexEdge edge;
-        for (AbstractNubisaveComponent component : nubisaveComponentGraph.getVertices()) {
-            for (AbstractNubisaveComponent component2 : nubisaveComponentGraph.getVertices()) {
-                if (component.isConnectedToProvidedPort(component2)) {
-                    edge = (WeightedNubisaveVertexEdge) edgeFactory.create();
-                    edge.setWeight(component.getNrOfFilePartsToStore());
-                    graph.addEdge(edge, component2.getRequiredPorts().iterator().next(), component.getProvidedPorts().iterator().next(), EdgeType.DIRECTED);
-                    connected = true;
-                }
-            }
-            if (!connected && !component.equals(nubiSaveComponent)) {
-                graph.addEdge(edgeFactory.create(), nubiSaveComponent.getRequiredPorts().iterator().next(), component.getProvidedPorts().iterator().next(), EdgeType.DIRECTED);
-            }
-            connected = false;
+        File file = new File(storage_directory+"/"+ "connections.txt");
+        HashMap hh= new HashMap();
+        ArrayList<AbstractNubisaveComponent> myNodeList = new ArrayList<AbstractNubisaveComponent>(nubisaveComponentGraph.getVertices());
+        ArrayList str=new ArrayList();
+        for(int i=0;i<nubisaveComponentGraph.getVertices().size();i++){
+           str.add(myNodeList.get(i).getUniqueName());
         }
+        if(file.exists()){
+            BufferedReader reader = null;
+            try {
+                reader = new BufferedReader(new FileReader(file));
+                String strLine;
+                try {
+                    //Read the text file Line By Line
+                    while ((strLine = reader.readLine()) != null) {
+                    String startVertex=strLine.split(" ")[0];
+                    String endVertex=strLine.split(" ")[1];
+                    hh.put(startVertex,endVertex);
+                                     
+                    for(AbstractNubisaveComponent component:nubisaveComponentGraph.getVertices()){
+                       if(component.getUniqueName().equals(startVertex)){                            
+                           String endpoint=(String) hh.get(startVertex);
+                           int pos=str.indexOf(endpoint);
+                           AbstractNubisaveComponent endcomponent=myNodeList.get(pos);
+                           edge = (WeightedNubisaveVertexEdge) edgeFactory.create();
+                           edge.setWeight(component.getNrOfFilePartsToStore());
+                           graph.addEdge(edge, component.getRequiredPorts().iterator().next(), endcomponent.getProvidedPorts().iterator().next(), EdgeType.DIRECTED);               
+                       }
+                   }
+                  }
+                reader.close();   
+                } catch (IOException ex) {
+                    Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
+            } 
+            }      
     }
 
 }

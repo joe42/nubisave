@@ -1,6 +1,8 @@
 #!/bin/bash
 #
 # Installations-Script für NubiSave auf Debian bzw. Derivaten (inkl. Ubuntu)
+#
+# DEPRECATED - use Debian package if possible!
 
 if [ ! -x /usr/bin/sudo ]; then
 	echo "Fehler: sudo muss manuell installiert und konfiguriert werden." >&2
@@ -64,10 +66,10 @@ echo "Installation von CloudFusion"
 git submodule init
 git submodule update
 
-cd CloudFusion/cloudfusion
+cd CloudFusion
 python setup.py build
 sudo python setup.py install
-cd ../..
+cd ..
 
 echo "Installation abgeschlossen"
 

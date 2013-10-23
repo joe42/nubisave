@@ -57,3 +57,10 @@ function wait_until_transfer_is_complete {
 	echo $stagnated
 }
 
+function is_number {
+    # @param 1: string
+	./number.py "$1"
+}
+
+
+

@@ -9,12 +9,12 @@ override_dh_auto_configure override_dh_auto_test:
 
 override_dh_auto_build:
 	cd splitter && make
-	cd CloudFusion/cloudfusion && python setup.py build
+	cd CloudFusion && python setup.py build
 
 override_dh_auto_clean:
 	cd splitter && make clean
-	cd CloudFusion/cloudfusion && python setup.py clean
-	cd CloudFusion/cloudfusion && rm -rf CloudFusion.egg-info/ build/ dist/
+	cd CloudFusion && python setup.py clean
+	cd CloudFusion && rm -rf CloudFusion.egg-info/ build/ dist/
 	rm -f debian/files
 
 override_dh_auto_install:
@@ -27,7 +27,7 @@ override_dh_auto_install:
 	rm -rf debian/nubisave/usr/share/nubisave/jigdfs/src
 	rm -rf debian/nubisave/usr/share/nubisave/fusej/src
 	rm -rf debian/nubisave/usr/share/nubisave/splitter/src
-	cp -r CloudFusion/cloudfusion/cloudfusion/config debian/nubisave/usr/share/nubisave/
+	cp -r CloudFusion/cloudfusion/config debian/nubisave/usr/share/nubisave/
 	##(obsolete)##touch debian/nubisave/usr/share/nubisave/splitter/splitter.db
 	##(obsolete)##touch debian/nubisave/usr/share/nubisave/splitter/splitter.lg
 	# FIXME: interpret ${user.home} values in nubi.properties
@@ -39,13 +39,14 @@ override_dh_auto_install:
 	mkdir -p debian/nubisave/usr/bin
 	cp debian/data/nubisave debian/nubisave/usr/bin/
 	cp debian/data/nubisave-mounter debian/nubisave/usr/bin/
-	cp debian/data/nubisave-gui debian/nubisave/usr/bin/
 	cp debian/data/devscripts/nubisave-reset debian/nubisave/usr/bin/
+	cp debian/data/nubisave-unmounter debian/nubisave/usr/bin/
+	cp debian/data/nubisave-status debian/nubisave/usr/bin/
 	mkdir -p debian/nubisave/var/lib/tomcat6/webapps/Matchmaker/ontologies
 	cp services/CloudStorage.wsml debian/nubisave/var/lib/tomcat6/webapps/Matchmaker/ontologies/
 	mkdir -p debian/nubisave/lib/python2.7/site-packages
 	mkdir -p debian/nubisave/lib/python2.6/site-packages
-	cd CloudFusion/cloudfusion && PYTHONPATH="../../debian/nubisave/lib/python2.7/site-packages:../../debian/nubisave/lib/python2.6/site-packages" python setup.py install --prefix ../../debian/nubisave
+	cd CloudFusion && PYTHONPATH="../debian/nubisave/lib/python2.7/site-packages:../debian/nubisave/lib/python2.6/site-packages" python setup.py install --prefix ../debian/nubisave
 	# FIXME: In wheezy, this becomes the 'python-poster' dependency
 	PYTHONPATH="debian/nubisave/lib/python2.7/site-packages:debian/nubisave/lib/python2.6/site-packages" easy_install --prefix debian/nubisave 'http://pypi.python.org/packages/2.6/p/poster/poster-0.4-py2.6.egg#md5=f69a6be30737ad5d652a602f3af005ac'
 

@@ -24,7 +24,7 @@ public class SerialMultipleFileHandler implements MultipleFileHandler {
 		this.digestFunc = digestFunc;
 	}
 
-	public MultipleFiles writeFilesAsByteArrays(HashMap<String, byte[]> files){
+	public synchronized MultipleFiles writeFilesAsByteArrays(HashMap<String, byte[]> files){
 		MultipleFiles multipleFiles = new MultipleFiles(files.keySet(), digestFunc);
 		if(files == null || files.size() == 0){
 			return multipleFiles;
@@ -52,7 +52,7 @@ public class SerialMultipleFileHandler implements MultipleFileHandler {
 		}
 		return true;
 	}
-	public MultipleFiles getFilesAsByteArrays(Map<String, byte[]> filePathsToChecksum, int files_needed){
+	public synchronized MultipleFiles getFilesAsByteArrays(Map<String, byte[]> filePathsToChecksum, int files_needed){
 		MultipleFiles multipleFiles = new MultipleFiles(filePathsToChecksum, digestFunc);
 		List<String> filePaths = new ArrayList<String>(filePathsToChecksum.keySet());
 		if(filePathsToChecksum.size() == 0){
@@ -74,7 +74,7 @@ public class SerialMultipleFileHandler implements MultipleFileHandler {
 		return multipleFiles;
 	}
 	
-	public MultipleFiles getFilesAsByteArrays(Map<String, byte[]> filePathsToChecksum){
+	public synchronized MultipleFiles getFilesAsByteArrays(Map<String, byte[]> filePathsToChecksum){
 		return getFilesAsByteArrays(filePathsToChecksum, filePathsToChecksum.size());
 	}
 

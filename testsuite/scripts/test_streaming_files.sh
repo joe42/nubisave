@@ -51,7 +51,7 @@ FILE_SIZES="$4"
 FILE_QUANTITYS="$5"
 FILE_SIZES_ARR=(`echo "$4"`)
 FILE_QUANTITYS_ARR=(`echo "$5"`)
-LOG_DIR="$TEST_DIRECTORY/logs/streaming/`date`"
+LOG_DIR="$TEST_DIRECTORY/logs/streaming/`date +%Y.%m.%d_%H:%M`"
 SAMPLE_FILES_DIR=samplefiles
 TEMP_DIR=/tmp/storage_service`date +"%s"`
 WRITE_TIME_LOG="$LOG_DIR/write_time_log"
@@ -149,6 +149,7 @@ do
 	for nr in `seq 1 ${FILE_QUANTITYS_ARR[$i]}`  # from 1 to file quantity
 	do
 		rm "$STORAGE_SERVICE_PATH/${FILE_SIZES_ARR[$i]}MB_$nr"
+		rm "$TEMP_DIR/${FILE_SIZES_ARR[$i]}MB_$nr"
 	done
 
 done   
