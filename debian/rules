@@ -39,6 +39,7 @@ override_dh_auto_install:
 	mkdir -p debian/nubisave/usr/bin
 	cp debian/data/nubisave debian/nubisave/usr/bin/
 	cp debian/data/nubisave-mounter debian/nubisave/usr/bin/
+	cp debian/data/devscripts/nubisave-reset debian/nubisave/usr/bin/
 	cp debian/data/nubisave-unmounter debian/nubisave/usr/bin/
 	cp debian/data/nubisave-status debian/nubisave/usr/bin/
 	mkdir -p debian/nubisave/var/lib/tomcat6/webapps/Matchmaker/ontologies
