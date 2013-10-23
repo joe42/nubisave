@@ -1,0 +1,14 @@
+#!/bin/sh
+
+echo "This script is going to nuke your entire NubiSave configuration."
+read -p "Proceed (yes/no)? " proceed
+
+if [ "$proceed" = "yes" ]
+then
+	echo "You had been warned!..."
+	nubisave stop
+	rm -rf ~/.nubisave* ~/.storages
+	nubisave &
+else
+	echo "You are lucky."
+fi
