@@ -22,6 +22,13 @@ mountpoint=$instance/nubisavemount
 
 if [ "$1" == "stop" ]
 then
+	echo "Stopping NubiSave GUI"
+	pids=`ps w | grep Nubisave.jar | grep -v grep | cut -d " " -f 1`
+	for pid in $pids
+	do
+		kill $pid
+	done
+
 	echo "Stopping NubiSave..."
 	if [ -d $mountpoint ] && [ -d $mountpoint/data ]
 	then
