@@ -183,6 +183,13 @@ public class PopupEditor extends AbstractPopupGraphMousePlugin {
                         }
                     }
                 });
+
+                item = popup.add(new AbstractAction("Assign execution node") {
+                    public void actionPerformed(ActionEvent NubiSaveEdge) {
+                        System.out.println("assign execution node...");
+                    }
+                });
+                item.setEnabled(false);
             } else if(edge != null) {
                 popup.add(new AbstractAction("Delete Edge") {
                     public void actionPerformed(ActionEvent NubiSaveEdge) {
