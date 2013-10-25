@@ -122,6 +122,7 @@ public class AddServiceDialog extends javax.swing.JDialog {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         getContentPane().add(pricePerDataCheckBox, gridBagConstraints);
 
+        pricePerDataTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
         pricePerDataTextField.setText("0.00");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
