@@ -27,7 +27,7 @@ override_dh_auto_install:
 	rm -rf debian/nubisave/usr/share/nubisave/jigdfs/src
 	rm -rf debian/nubisave/usr/share/nubisave/fusej/src
 	rm -rf debian/nubisave/usr/share/nubisave/splitter/src
-	cp -r CloudFusion/cloudfusion/config debian/nubisave/usr/share/nubisave/
+	##(obsolete)##cp -r CloudFusion/cloudfusion/config debian/nubisave/usr/share/nubisave/
 	##(obsolete)##touch debian/nubisave/usr/share/nubisave/splitter/splitter.db
 	##(obsolete)##touch debian/nubisave/usr/share/nubisave/splitter/splitter.lg
 	# FIXME: interpret ${user.home} values in nubi.properties
