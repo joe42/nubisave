@@ -59,7 +59,6 @@ import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
 import edu.uci.ics.jung.visualization.renderers.Renderer;
 
 import java.awt.BasicStroke;
-import java.awt.Dialog;
 import java.awt.Point;
 import java.awt.Stroke;
 import java.awt.event.InputEvent;
@@ -244,10 +243,6 @@ public class NubisaveEditor extends JApplet {
 					return;
 				}
 				CustomServiceDlg cusDlg = new CustomServiceDlg();
-				cusDlg.pack();
-				cusDlg.setLocationRelativeTo(null);
-				cusDlg.setTitle("Module Selection");
-				cusDlg.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
 				cusDlg.setVisible(true);
 				String module = (String) cusDlg.getItemName();
 				if (CustomServiceDlg.okstatus == true) {

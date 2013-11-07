@@ -38,6 +38,8 @@ public class AddServiceDialog extends javax.swing.JDialog {
         super(parent, modal);
         searcher = new Searcher();
         initComponents();
+        this.setSize(500, 600);
+        this.setLocationRelativeTo(null);
     }
 
     /** This method is called from within the constructor to
