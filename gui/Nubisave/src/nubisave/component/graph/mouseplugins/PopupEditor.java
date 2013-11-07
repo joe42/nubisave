@@ -65,12 +65,12 @@ public class PopupEditor extends AbstractPopupGraphMousePlugin {
                 popup.add(new AbstractAction("Delete Component") {
                     public void actionPerformed(ActionEvent NubiSaveEdge) {
                         Set<NubiSaveVertex> verticesToRemove = new HashSet<NubiSaveVertex>();
-                        System.out.println("remove vertex");
+                        System.out.println("delete vertex");
                         if (vertex instanceof AbstractNubisaveComponent) {
-                            String[] options = {"No", "Remove"};
+                            String[] options = {"Cancel", "Delete"};
                             int n = JOptionPane.showOptionDialog(null,
-                                    "Remove and unmount " + ((AbstractNubisaveComponent)vertex).getName() + "?",
-                                    "Remove?",
+                                    "Delete component " + ((AbstractNubisaveComponent)vertex).getName() + " Permanently?",
+                                    "Deletion confirmation",
                                     JOptionPane.YES_NO_OPTION,
                                     JOptionPane.QUESTION_MESSAGE,
                                     null,
@@ -81,21 +81,25 @@ public class PopupEditor extends AbstractPopupGraphMousePlugin {
                                 ((AbstractNubisaveComponent)vertex).remove();
                                 verticesToRemove = ((VertexGroup<NubiSaveVertex>) vertex).getVertexGroupMembers();
                                 System.out.println("\n\nremove vertex group of "+verticesToRemove.size());
-
+                                
+                                if (vertex instanceof VertexGroup<?>) {
+                                    verticesToRemove = ((VertexGroup<NubiSaveVertex>) vertex).getVertexGroupMembers();
+                                } else {
+                                    verticesToRemove.add(vertex);
+                                }
+                                for (NubiSaveVertex NubiSaveVertex : verticesToRemove) {
+                                    System.out.println("\nremove vertex: "+NubiSaveVertex);
+                                    pickedVertexState.pick(NubiSaveVertex, false);
+                                    System.out.println("removal successful: "+graph.removeVertex(NubiSaveVertex));
+                                }
                             }
-                            vv.repaint();
+                            else {
+                            	System.out.println("deletion cancelled.");
+                            }
                         }
-                        if (vertex instanceof VertexGroup<?>) {
-                            verticesToRemove = ((VertexGroup<NubiSaveVertex>) vertex).getVertexGroupMembers();
-                        } else {
-                            verticesToRemove.add(vertex);
-                        }
-                        for (NubiSaveVertex NubiSaveVertex : verticesToRemove) {
-                            System.out.println("\nremove vertex: "+NubiSaveVertex);
-                            pickedVertexState.pick(NubiSaveVertex, false);
-                            System.out.println("removal successful: "+graph.removeVertex(NubiSaveVertex));
-                        }
-                            
+                        else {
+                        	System.err.println("unknown vertex type. deletion fail.");
+                        }   
                     vv.repaint();
                 }});
 
