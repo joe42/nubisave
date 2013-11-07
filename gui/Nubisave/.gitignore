@@ -1,4 +1,7 @@
 catalog.xml
 build
 dist
+.classpath
+.project
+.settings
 nbproject/private

@@ -25,7 +25,11 @@ import nubisave.request.Searcher;
  */
 public class AddServiceDialog extends javax.swing.JDialog {
 
-    private Searcher searcher;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -2905385550306636119L;
+	private Searcher searcher;
     private List<MatchmakerService> services;
     private List<MatchmakerService> selectedservices = new ArrayList<MatchmakerService>();
 

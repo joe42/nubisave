@@ -7,24 +7,18 @@ import java.awt.geom.Point2D;
 import java.util.HashSet;
 import java.util.Set;
 import javax.swing.AbstractAction;
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import org.apache.commons.collections15.Factory;
 import nubisave.component.graph.vertice.interfaces.VertexGroup;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.algorithms.layout.Layout;
-import edu.uci.ics.jung.graph.DirectedGraph;
 import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.UndirectedGraph;
-import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.AbstractPopupGraphMousePlugin;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import javax.swing.JOptionPane;
-import javax.swing.JTabbedPane;
 import nubisave.component.graph.vertice.AbstractNubisaveComponent;
-import nubisave.*;
 import nubisave.component.graph.vertice.GenericNubiSaveComponent;
 import nubisave.component.graph.edge.NubiSaveEdge;
 import nubisave.component.graph.vertice.interfaces.NubiSaveVertex;
@@ -41,7 +35,7 @@ public class PopupEditor extends AbstractPopupGraphMousePlugin {
         this.edgeFactory = edgeFactory;
     }
     
-    @SuppressWarnings({ "unchecked", "serial", "serial" })
+    @SuppressWarnings({ "unchecked", "serial" })
     protected void handlePopup(MouseEvent NubiSaveEdge) {
         final VisualizationViewer<NubiSaveVertex,NubiSaveEdge> vv =
             (VisualizationViewer<NubiSaveVertex,NubiSaveEdge>)NubiSaveEdge.getSource();
@@ -115,7 +109,7 @@ public class PopupEditor extends AbstractPopupGraphMousePlugin {
                         }
                     }
                 });
-                //item.setEnabled(false);
+                item.setEnabled(true);
 
                 popup.add(new AbstractAction("Visualize Location") {
                     public void actionPerformed(ActionEvent NubiSaveEdge) {

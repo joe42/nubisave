@@ -1,73 +1,111 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- You may freely edit this file. See commented blocks below for -->
-<!-- some examples of how to customize the build. -->
-<!-- (If you delete it and reopen the project it will be recreated.) -->
-<!-- By default, only the Clean and Build commands use this build script. -->
-<!-- Commands such as Run, Debug, and Test only use this build script if -->
-<!-- the Compile on Save feature is turned off for the project. -->
-<!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
-<!-- in the project's Project Properties dialog box.-->
-<project name="NubiSave_Configuration_GUI" default="default" basedir=".">
-    <description>Builds, tests, and runs the project NubiSave Configuration GUI.</description>
-    <import file="nbproject/build-impl.xml"/>
-    <!--
-
-    There exist several targets which are by default empty and which can be 
-    used for execution of your tasks. These targets are usually executed 
-    before and after some main targets. They are: 
-
-      -pre-init:                 called before initialization of project properties
-      -post-init:                called after initialization of project properties
-      -pre-compile:              called before javac compilation
-      -post-compile:             called after javac compilation
-      -pre-compile-single:       called before javac compilation of single file
-      -post-compile-single:      called after javac compilation of single file
-      -pre-compile-test:         called before javac compilation of JUnit tests
-      -post-compile-test:        called after javac compilation of JUnit tests
-      -pre-compile-test-single:  called before javac compilation of single JUnit test
-      -post-compile-test-single: called after javac compilation of single JUunit test
-      -pre-jar:                  called before JAR building
-      -post-jar:                 called after JAR building
-      -post-clean:               called after cleaning build products
-
-    (Targets beginning with '-' are not intended to be called on their own.)
-
-    Example of inserting an obfuscator after compilation could look like this:
-
-        <target name="-post-compile">
-            <obfuscate>
-                <fileset dir="${build.classes.dir}"/>
-            </obfuscate>
-        </target>
-
-    For list of available properties check the imported 
-    nbproject/build-impl.xml file. 
-
-
-    Another way to customize the build is by overriding existing main targets.
-    The targets of interest are: 
-
-      -init-macrodef-javac:     defines macro for javac compilation
-      -init-macrodef-junit:     defines macro for junit execution
-      -init-macrodef-debug:     defines macro for class debugging
-      -init-macrodef-java:      defines macro for class execution
-      -do-jar:                  JAR building
-      run:                      execution of project 
-      -javadoc-build:           Javadoc generation
-      test-report:              JUnit report generation
-
-    An example of overriding the target for project execution could look like this:
-
-        <target name="run" depends="NubiSave_Configuration_GUI-impl.jar">
-            <exec dir="bin" executable="launcher.exe">
-                <arg file="${dist.jar}"/>
-            </exec>
-        </target>
-
-    Notice that the overridden target depends on the jar target and not only on 
-    the compile target as the regular run target does. Again, for a list of available 
-    properties which you can use, check the target you are overriding in the
-    nbproject/build-impl.xml file. 
-
-    -->
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. -->
+<project basedir="." default="build" name="Nubisave">
+    <property environment="env"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.7"/>
+    <property name="source" value="1.7"/>
+    <property name="main-class"  value="nubisave.Nubisave"/>
+    <property name="run-dest"  value="/usr/share/nubisave"/>
+    <property name="jar.class.path" value="lib/beansbinding-1.2.1.jar lib/ini4j-0.5.2.jar lib/Splitter.jar lib/commons-collections-3.2.1.jar lib/commons-configuration-1.7.jar lib/commons-lang-2.6.jar lib/commons-logging-1.0.4.jar lib/nubisaveclient.jar lib/ConQoXMLParser.jar lib/jnotify-0.94.jar lib/jung-graph-impl-2.0.1.jar lib/jung-algorithms-2.0.1.jar lib/jung-visualization-2.0.1.jar lib/beautyeye_lnf.jar"/>
+    <path id="NubiSave.classpath">
+        <pathelement location="bin"/>
+        <pathelement location="lib/collections-generic-4.01.jar"/>
+        <pathelement location="lib/colt-1.2.0.jar"/>
+        <pathelement location="lib/commons-logging-1.0.4.jar"/>
+        <pathelement location="lib/concurrent-1.3.4.jar"/>
+        <pathelement location="lib/ConQoXMLParser.jar"/>
+        <pathelement location="lib/j3d-core-1.3.1.jar"/>
+        <pathelement location="lib/jnotify.jar"/>
+        <pathelement location="lib/jung-3d-2.0.1.jar"/>
+        <pathelement location="lib/jung-3d-demos-2.0.1.jar"/>
+        <pathelement location="lib/jung-algorithms-2.0.1-sources.jar"/>
+        <pathelement location="lib/jung-algorithms-2.0.1.jar"/>
+        <pathelement location="lib/jung-api-2.0.1-sources.jar"/>
+        <pathelement location="lib/jung-api-2.0.1.jar"/>
+        <pathelement location="lib/jung-graph-impl-2.0.1-sources.jar"/>
+        <pathelement location="lib/jung-graph-impl-2.0.1.jar"/>
+        <pathelement location="lib/jung-io-2.0.1.jar"/>
+        <pathelement location="lib/jung-jai-2.0.1.jar"/>
+        <pathelement location="lib/jung-jai-samples-2.0.1-sources.jar"/>
+        <pathelement location="lib/jung-jai-samples-2.0.1.jar"/>
+        <pathelement location="lib/jung-samples-2.0.1-sources.jar"/>
+        <pathelement location="lib/jung-samples-2.0.1.jar"/>
+        <pathelement location="lib/jung-visualization-2.0.1-sources.jar"/>
+        <pathelement location="lib/jung-visualization-2.0.1.jar"/>
+        <pathelement location="lib/nubisaveclient.jar"/>
+        <pathelement location="lib/stax-api-1.0.1.jar"/>
+        <pathelement location="lib/vecmath-1.3.1.jar"/>
+        <pathelement location="lib/wstx-asl-3.2.6.jar"/>
+        <pathelement location="lib/beansbinding-1.2.1.jar"/>
+        <pathelement location="lib/commons-collections-3.2.1.jar"/>
+        <pathelement location="lib/commons-configuration-1.7.jar"/>
+        <pathelement location="lib/commons-lang-2.6.jar"/>
+        <pathelement location="lib/ini4j-0.5.2.jar"/>
+        <pathelement location="lib/jdbm-1.0.jar"/>
+        <pathelement location="lib/jnotify-0.94.jar"/>
+        <pathelement location="lib/log4j-1.2.15.jar"/>
+        <pathelement location="lib/beautyeye_lnf.jar"/>
+        <pathelement location="lib/Splitter.jar"/>
+    </path>
+    <target name="init">
+        <delete dir="bin"/>
+        <mkdir dir="bin"/>
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="src">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="clean" depends="build-jar">
+        <delete dir="bin"/>
+    </target>
+    <target depends="clean" name="cleanall"/>
+    <target depends="build-subprojects,build-project,cleanall,deploy-jar" name="build"/>
+    <target name="build-subprojects"/>
+    <target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
+            <src path="src"/>
+            <classpath refid="NubiSave.classpath"/>
+        </javac>
+    </target>
+    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
+    <target name="NubisaveEditor">
+        <java classname="sun.applet.AppletViewer" dir="." failonerror="true" fork="yes">
+            <arg line="NubisaveEditor.html"/>
+            <classpath refid="NubiSave.classpath"/>
+        </java>
+    </target>
+    <target name="Nubisave">
+        <java classname="nubisave.Nubisave" failonerror="true" fork="yes">
+            <classpath refid="NubiSave.classpath"/>
+        </java>
+    </target>
+    <target name="build-jar" depends="build-project">
+        <jar destfile="Nubisave.jar" basedir="bin">
+            <manifest>
+                <attribute name="Main-Class" value="${main-class}"/>
+                <attribute name="Class-Path" value="${jar.class.path}"/>
+            </manifest>
+        </jar>
+    </target>
+    <target name="clean-dest" depends="build-jar">
+        <delete file="${run-dest}/bin/Nubisave.jar"/>
+        <delete file="${run-dest}/bin/nubi.properties"/>
+    </target>
+    <target name="deploy-jar" depends="clean-dest">
+        <copy file="Nubisave.jar" tofile="${run-dest}/bin/Nubisave.jar"/>
+        <copy file="nubi.properties" tofile="${run-dest}/bin/nubi.properties"/>
+    </target>
+    <target name="run" depends="deploy-jar">
+        <exec executable="sh">
+            <arg value="${run-dest}/start.sh"/>
+        </exec>
+    </target>
 </project>
