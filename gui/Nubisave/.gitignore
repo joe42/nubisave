@@ -1,7 +1,5 @@
-catalog.xml
-build
-dist
+Nubisave.jar
 .classpath
 .project
 .settings
-nbproject/private
+bin
