@@ -4,15 +4,14 @@
 
 package nubisave;
 
-import com.github.joe42.splitter.backend.BackendService;
 import com.github.joe42.splitter.util.file.FileUtil;
-import com.github.joe42.splitter.util.file.PropertiesUtil;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.ini4j.Ini;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  *
@@ -29,16 +28,14 @@ public class Splitter {
         this.configurationDirPath = splitterMountpoint+"/config";
         this.configurationFilePath = splitterMountpoint+"/config/config";
         this.dataDir = splitterMountpoint+"/data";
-        String nubisavedir = new PropertiesUtil("nubi.properties").getProperty("nubisave_directory");
-        mountScriptDir = nubisavedir + "/splitter/mountscripts";
+        this.mountScriptDir = Nubisave.properties.getProperty("mount_script_directory");
     }
     public Splitter(){
         this.splitterMountpoint = null;
         this.configurationDirPath = splitterMountpoint+"/config";
         this.configurationFilePath = splitterMountpoint+"/config/config";
         this.dataDir = splitterMountpoint+"/data";
-        String nubisavedir = new PropertiesUtil("nubi.properties").getProperty("nubisave_directory");
-        mountScriptDir = nubisavedir + "/splitter/mountscripts";
+        this.mountScriptDir = Nubisave.properties.getProperty("mount_script_directory");
     }
     
     public String getMountpoint(){
@@ -223,7 +220,7 @@ public class Splitter {
             File dir = new File(dataDir+"/.nubisave_session_"+sessionNumber);
             dir.mkdirs();
             Nubisave.services.storeToDatabase(dataDir+"/.nubisave_session_"+sessionNumber);
-            FileUtil.copy(new File(new PropertiesUtil("nubi.properties").getProperty("splitter_database_location")+".db"), new File(dbPath));
+            FileUtil.copy(new File(Nubisave.properties.getProperty("splitter_database_location")+".db"), new File(dbPath));
             Ini splitterConfig = new Ini(new File(configurationFilePath));
             splitterConfig.put("splitter", "save", sessionNumber);
             System.out.println( "gui db path: "+"/.nubisave_database"+sessionNumber);

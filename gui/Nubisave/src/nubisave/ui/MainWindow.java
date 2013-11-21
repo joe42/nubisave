@@ -30,6 +30,7 @@ public class MainWindow extends javax.swing.JFrame {
     /** Creates new form MainWindow */
     public MainWindow() {
         initComponents();
+        this.setLocationRelativeTo(null);
         //check to see if system tray is supported on OS.
         if (SystemTray.isSupported()) {
             setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);

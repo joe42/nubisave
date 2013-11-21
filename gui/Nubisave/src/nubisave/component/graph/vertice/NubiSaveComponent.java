@@ -1,9 +1,11 @@
 package nubisave.component.graph.vertice;
 
 import com.github.joe42.splitter.util.file.PropertiesUtil;
+
 import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
+
 import nubisave.Nubisave;
 import nubisave.StorageService;
 import nubisave.ui.NubisaveConfigDlg;
@@ -141,8 +143,20 @@ public class NubiSaveComponent extends AbstractNubisaveComponent {
 
     @Override
     public void visualizeLocation() {
-        String location = "http://localhost/nubivis/";
-        SystemIntegration.openLocation(location);
+    	String location = Nubisave.properties.getProperty("nubivis_URL");
+		try {
+			if (java.awt.Desktop.isDesktopSupported()) {
+				java.net.URI uri = java.net.URI.create(location);
+				java.awt.Desktop dp = java.awt.Desktop.getDesktop();
+				if (dp.isSupported(java.awt.Desktop.Action.BROWSE)) {
+					dp.browse(uri);
+				}
+			} else {
+				SystemIntegration.openLocation(location);
+			}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}   
     }
 
 }

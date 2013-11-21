@@ -43,7 +43,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import nubisave.component.graph.edge.NubiSaveEdge;
 import nubisave.component.graph.edge.WeightedNubisaveVertexEdge;
-import sun.org.mozilla.javascript.ast.CatchClause;
+//import sun.org.mozilla.javascript.ast.CatchClause;
 
 /**
  * A plugin that can create vertices, and edges using mouse gestures.

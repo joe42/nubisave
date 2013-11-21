@@ -7,14 +7,11 @@ package nubisave;
 import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
+
 import org.ini4j.Ini;
-import com.github.joe42.splitter.util.file.PropertiesUtil;
 
 /**
  *
@@ -28,7 +25,7 @@ public class StorageService {
     private int nrOfBackends;
     private boolean isBackendModule;
     private LinkedList<StorageService> backendServices;
-    private Map<String, String> parameterMap = new HashMap<String, String>();
+//    private Map<String, String> parameterMap = new HashMap<String, String>();
     private Ini config = null;
     private Point graphLocation;
     private int nrOfFilePartsToStore;
@@ -41,11 +38,15 @@ public class StorageService {
         nrOfBackends = 0;
         nrOfFilePartsToStore = 1;
         backendServices = new LinkedList<StorageService>();
-        String nubisavedir = new PropertiesUtil("nubi.properties").getProperty("nubisave_directory");
-        file = new File(nubisavedir + "/splitter/mountscripts/" + name + ".ini");
-        if(file.exists()){
-            loadFromFile();
-        }
+		String mountScriptPath = Nubisave.properties.getProperty("mount_script_directory") + name + ".ini";
+		file = new File(mountScriptPath);
+		// test
+		System.out.println("torageService " + mountScriptPath);
+		if (file.exists()) {
+			// test
+			System.out.println("new configuration file:" + mountScriptPath + "/splitter/mountscripts/" + name + ".ini");
+			loadFromFile();
+		}
     }
 
     /**

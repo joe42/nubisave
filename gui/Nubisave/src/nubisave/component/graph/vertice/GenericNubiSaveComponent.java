@@ -3,6 +3,7 @@ package nubisave.component.graph.vertice;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
+
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
@@ -16,15 +17,18 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.imageio.ImageIO;
 import javax.swing.JLabel;
 import javax.swing.Timer;
+
 import nubisave.*;
 import nubisave.component.graph.vertice.DataVertex;
 import nubisave.component.graph.edge.DataVertexEdge;
 import nubisave.component.graph.vertice.interfaces.NubiSaveVertex;
 import nubisave.ui.ServiceParameterDialog;
 import nubisave.ui.util.SystemIntegration;
+
 import org.ini4j.Ini;
 
 
@@ -96,8 +100,21 @@ public class GenericNubiSaveComponent extends AbstractNubisaveComponent {
 
     @Override
     public void visualizeLocation() {
-        String location = "http://localhost/nubivis/";
-        SystemIntegration.openLocation(location);
+    	String location = Nubisave.properties.getProperty("nubivis_URL");
+    	location += "?provider="+this.getUniqueName();
+		try {
+			if (java.awt.Desktop.isDesktopSupported()) {
+				java.net.URI uri = java.net.URI.create(location);
+				java.awt.Desktop dp = java.awt.Desktop.getDesktop();
+				if (dp.isSupported(java.awt.Desktop.Action.BROWSE)) {
+					dp.browse(uri);
+				}
+			} else {
+				SystemIntegration.openLocation(location);
+			}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}   
     }
 
     public void refreshConfiguration(){

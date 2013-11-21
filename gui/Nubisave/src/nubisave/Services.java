@@ -4,7 +4,7 @@
  */
 package nubisave;
 
-import com.github.joe42.splitter.util.file.PropertiesUtil;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
@@ -12,8 +12,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.ini4j.Ini;
-import org.ini4j.InvalidFileFormatException;
 
 /**
  * Persistently manages the current list of StorageServices. They can be added, removed, iterated over and retrieved by index or name.
@@ -26,8 +26,8 @@ public class Services implements Iterable<StorageService>{
 
     public Services() {
         mmServices = new LinkedList<StorageService>();
-        database_directory = new PropertiesUtil("nubi.properties").getProperty("splitter_configuration_directory");
-        storage_directory= new PropertiesUtil("nubi.properties").getProperty("storage_configuration_directory");
+        database_directory = Nubisave.properties.getProperty("splitter_configuration_directory");
+        storage_directory= Nubisave.properties.getProperty("storage_configuration_directory");
     }
 
     /**Load services from database
