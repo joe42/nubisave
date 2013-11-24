@@ -26,6 +26,21 @@ do
 	if [ $df ]
 	then
 		echo "  * with mounted storages"
+
+		ifs=IFS
+		IFS="
+"
+		for line in `cat $storagesdir/connections.txt`; do
+			nubi=`echo $line | cut -d " " -f 1`
+			storage=`echo $line | cut -d " " -f 2`
+			x=" "
+			# TODO: This should be equivalent with -f nubisavemount/config/$storage
+			if [ -d $storagesdir/$storage ]; then
+				x="x"
+			fi
+			echo "    [$x] $storage"
+		done
+		IFS=$ifs
 	else
 		echo "  * without mounted storages"
 	fi
