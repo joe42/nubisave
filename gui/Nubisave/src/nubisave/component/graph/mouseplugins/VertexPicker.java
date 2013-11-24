@@ -17,8 +17,13 @@ import java.util.Set;
 
 import javax.swing.JComponent;
 
-import nubisave.component.graph.vertice.interfaces.VertexGroup;
+import org.apache.commons.collections15.Factory;
 
+import nubisave.component.graph.edge.NubiSaveEdge;
+import nubisave.component.graph.vertice.AbstractNubisaveComponent;
+import nubisave.component.graph.vertice.interfaces.NubiSaveVertex;
+import nubisave.component.graph.vertice.interfaces.VertexGroup;
+import nubisave.ui.CustomServiceDlg;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
@@ -34,154 +39,205 @@ import edu.uci.ics.jung.visualization.picking.PickedState;
  * 
  * @author joe
  */
-public class VertexPicker<V, E> extends
-		AbstractGraphMousePlugin implements MouseListener, MouseMotionListener {
+public class VertexPicker<V, E> extends AbstractGraphMousePlugin implements MouseListener, MouseMotionListener {
 
-    /**
-     * the picked Vertex, if any
-     */
-    protected V vertex;
+	/**
+	 * the picked Vertex, if any
+	 */
+	protected V vertex;
 
-    /**
-     * the picked Edge, if any
-     */
-    protected E edge;
+	/**
+	 * the picked Edge, if any
+	 */
+	protected E edge;
 
+	/**
+	 * additional modifiers for the action of adding to an existing selection
+	 */
+	protected int addToSelectionModifiers;
 
-    /**
-     * additional modifiers for the action of adding to an existing selection
-     */
-    protected int addToSelectionModifiers;
+	/**
+	 * create an instance with default settings
+	 */
+	public VertexPicker() {
+		this(InputEvent.BUTTON1_MASK, InputEvent.BUTTON1_MASK | InputEvent.SHIFT_MASK);
+	}
 
-    /**
-     * create an instance with default settings
-     */
-    public VertexPicker() {
-        this(InputEvent.BUTTON1_MASK, InputEvent.BUTTON1_MASK
-                        | InputEvent.SHIFT_MASK);
-    }
+	/**
+	 * Vertex factory to create new component
+	 */
+	public Factory<AbstractNubisaveComponent> vertexFactory;
 
-    /**
-     *
-     * @param selectionModifiers
-     *            for primary selection
-     * @param addToSelectionModifiers
-     *            for additional selection
-     */
-    public VertexPicker(int selectionModifiers,
-                    int addToSelectionModifiers) {
-        super(selectionModifiers);
-        this.addToSelectionModifiers = addToSelectionModifiers;
-        this.cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
-    }
+	/**
+	 * new vertex
+	 */
+	public AbstractNubisaveComponent newVertex = null;
 
-    /**
-     * For primary modifiers (default, MouseButton1): pick a single Vertex or
-     * Edge that is under the mouse pointer. If no Vertex or edge is under the
-     * pointer, unselect all picked Vertices and edges. For additional selection
-     * (default Shift+MouseButton1): Add to the selection, a single Vertex or
-     * Edge that is under the mouse pointer.
-     *
-     * @param e the event
-     */
-    @SuppressWarnings("unchecked")
-    public void mousePressed(MouseEvent e) {
-        System.out.println("trying to pick");
-        down = e.getPoint();
-        VisualizationViewer<V, E> vv = (VisualizationViewer) e.getSource();
-        GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
-        PickedState<V> pickedVertexState = vv.getPickedVertexState();
-        PickedState<E> pickedEdgeState = vv.getPickedEdgeState();
-        Set<V> picked = new HashSet<V>();
-        if (pickSupport != null && pickedVertexState != null) {
-            Layout<V, E> layout = vv.getGraphLayout();
-            if (e.getModifiers() == modifiers) {
-                //  p is the screen point for the mouse event
-                Point2D ip = e.getPoint();
-                vertex = pickSupport.getVertex(layout, ip.getX(), ip.getY());
-                if (vertex != null) {
-                    e.consume();
-                    System.out.println("getroffen");
-                    if (pickedVertexState.isPicked(vertex) == false) {
-                        System.out.println("picked");
-                        pickedVertexState.clear();
-                        if (vertex instanceof VertexGroup<?>) {
-                                picked = ((VertexGroup<V>) vertex)
-                                                .getVertexGroupMembers();
-                        } else {
-                                picked.add(vertex);
-                        }
-                        for (V v : picked) {
-                            if (pickedVertexState.isPicked(v) == false) {
-                                    assert false: "the vertex group should either be picked or not picked";
-                            }
-                            pickedVertexState.pick(v, true);
-                            layout.transform(v);
-                        }
-                    }
-                } else if ((edge = pickSupport.getEdge(layout, ip.getX(), ip.getY())) != null) {
-                    e.consume();
-                    System.out.println("daneben");
-                    pickedEdgeState.clear();
-                    pickedEdgeState.pick(edge, true);
-                }
-            }
-        }
-    }
+	/**
+	 * new vertex position
+	 */
+	public Point newVertexPos = null;
 
-    /**
-     * clean up settings from mousePressed
-     */
-    @SuppressWarnings("unchecked")
-    public void mouseReleased(MouseEvent e) {
-        down = null;
-        vertex = null;
-        edge = null;
-    }
+	/**
+	 * 
+	 * @param selectionModifiers
+	 *            for primary selection
+	 * @param addToSelectionModifiers
+	 *            for additional selection
+	 */
+	public VertexPicker(int selectionModifiers, int addToSelectionModifiers) {
+		super(selectionModifiers);
+		this.addToSelectionModifiers = addToSelectionModifiers;
+		this.cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
+	}
 
-    /**
-     * If the mouse is over a picked vertex, drag the picked vertex with the mouse
-     * plus all vertexes in its group, if the vertex implements the interface VertexGroup.
-     */
-    @SuppressWarnings("unchecked")
-    public void mouseDragged(MouseEvent e) {
-        VisualizationViewer<V, E> vv = (VisualizationViewer) e.getSource();
-        if (vertex != null) {
-            e.consume();
-            Point p = e.getPoint();
-            Point2D graphPoint = vv.getRenderContext()
-                            .getMultiLayerTransformer().inverseTransform(p);
-            Point2D graphDown = vv.getRenderContext()
-                            .getMultiLayerTransformer().inverseTransform(down);
-            Layout<V, E> layout = vv.getGraphLayout();
-            double dx = graphPoint.getX() - graphDown.getX();
-            double dy = graphPoint.getY() - graphDown.getY();
-            PickedState<V> ps = vv.getPickedVertexState();
+	/**
+	 * For primary modifiers (default, MouseButton1): pick a single Vertex or
+	 * Edge that is under the mouse pointer. If no Vertex or edge is under the
+	 * pointer, unselect all picked Vertices and edges. For additional selection
+	 * (default Shift+MouseButton1): Add to the selection, a single Vertex or
+	 * Edge that is under the mouse pointer.
+	 * 
+	 * @param e
+	 *            the event
+	 */
+	@SuppressWarnings("unchecked")
+	public void mousePressed(MouseEvent e) {
+		System.out.println("trying to pick");
+		down = e.getPoint();
+		VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
+		GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
+		PickedState<V> pickedVertexState = vv.getPickedVertexState();
+		PickedState<E> pickedEdgeState = vv.getPickedEdgeState();
+		Set<V> picked = new HashSet<V>();
+		if (pickSupport != null && pickedVertexState != null) {
+			Layout<V, E> layout = vv.getGraphLayout();
+			if (e.getModifiers() == modifiers) {
+				// p is the screen point for the mouse event
+				Point2D ip = e.getPoint();
+				vertex = pickSupport.getVertex(layout, ip.getX(), ip.getY());
+				if (vertex != null) {
+					e.consume();
+					System.out.println("getroffen");
+					if (pickedVertexState.isPicked(vertex) == false) {
+						System.out.println("picked");
+						pickedVertexState.clear();
+						if (vertex instanceof VertexGroup<?>) {
+							picked = ((VertexGroup<V>) vertex).getVertexGroupMembers();
+						} else {
+							picked.add(vertex);
+						}
+						for (V v : picked) {
+							if (pickedVertexState.isPicked(v) == false) {
+								assert false : "the vertex group should either be picked or not picked";
+							}
+							pickedVertexState.pick(v, true);
+							layout.transform(v);
+						}
+					}
+				} else if ((edge = pickSupport.getEdge(layout, ip.getX(), ip.getY())) != null) {
+					e.consume();
+					System.out.println("daneben");
+					pickedEdgeState.clear();
+					pickedEdgeState.pick(edge, true);
+				}
+			}
+		}
+	}
 
-            for (V v : ps.getPicked()) {
-                Point2D vp = layout.transform(v);
-                vp.setLocation(vp.getX() + dx, vp.getY() + dy);
-                layout.setLocation(v, vp);
-            }
-            down = p;
-        }
-        vv.repaint();
-    }
+	/**
+	 * clean up settings from mousePressed
+	 */
+	public void mouseReleased(MouseEvent e) {
+		System.out.println("mouseReleased");
+		down = null;
+		vertex = null;
+		edge = null;
+		newVertex = null;
+		CustomServiceDlg.okstatus = false;
+	}
 
-    public void mouseClicked(MouseEvent e) {
-    }
+	/**
+	 * If the mouse is over a picked vertex, drag the picked vertex with the
+	 * mouse plus all vertexes in its group, if the vertex implements the
+	 * interface VertexGroup.
+	 */
+	@SuppressWarnings("unchecked")
+	public void mouseDragged(MouseEvent e) {
+		VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
+		if (vertex != null) {
+			e.consume();
+			Point p = e.getPoint();
+			Point2D graphPoint = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(p);
+			Point2D graphDown = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(down);
+			Layout<V, E> layout = vv.getGraphLayout();
+			double dx = graphPoint.getX() - graphDown.getX();
+			double dy = graphPoint.getY() - graphDown.getY();
+			PickedState<V> ps = vv.getPickedVertexState();
 
-    public void mouseEntered(MouseEvent e) {
-        JComponent c = (JComponent) e.getSource();
-        c.setCursor(cursor);
-    }
+			for (V v : ps.getPicked()) {
+				Point2D vp = layout.transform(v);
+				vp.setLocation(vp.getX() + dx, vp.getY() + dy);
+				layout.setLocation(v, vp);
+			}
+			down = p;
+		}
+		vv.repaint();
+	}
 
-    public void mouseExited(MouseEvent e) {
-        JComponent c = (JComponent) e.getSource();
-        c.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-    }
+	public void mouseClicked(MouseEvent e) {
+	}
 
-    public void mouseMoved(MouseEvent e) {
-    }
+	public void mouseEntered(MouseEvent e) {
+		JComponent c = (JComponent) e.getSource();
+		c.setCursor(cursor);
+	}
+
+	public void mouseExited(MouseEvent e) {
+		JComponent c = (JComponent) e.getSource();
+		c.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+	}
+
+	@SuppressWarnings("unchecked")
+	public void mouseMoved(MouseEvent e) {
+		if (CustomServiceDlg.okstatus == true) {
+			VisualizationViewer<V, E> vv = (VisualizationViewer<V, E>) e.getSource();
+			Layout<V, E> layout = vv.getGraphLayout();
+
+			if (newVertex == null) {
+				newVertex = vertexFactory.create();
+				if (newVertex != null) {
+					newVertex.addToGraph((VisualizationViewer<NubiSaveVertex, NubiSaveEdge>) vv, e.getPoint());
+					newVertexPos = e.getPoint();
+					PickedState<NubiSaveVertex> pickedVertexState = (PickedState<NubiSaveVertex>) vv.getPickedVertexState();
+					pickedVertexState.clear();
+					Set<NubiSaveVertex> picked = ((VertexGroup<NubiSaveVertex>) newVertex).getVertexGroupMembers();
+					for (NubiSaveVertex v : picked) {
+						pickedVertexState.pick((NubiSaveVertex) v, true);
+					}
+				}
+				vv.repaint();
+				return;
+			}
+			GraphElementAccessor<V, E> pickSupport = vv.getPickSupport();
+			vertex = pickSupport.getVertex(layout, newVertexPos.getX(), newVertexPos.getY());
+			if (vertex != null) {
+				Point p = e.getPoint();
+				Point2D graphPoint = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(p);
+				Point2D graphDown = vv.getRenderContext().getMultiLayerTransformer().inverseTransform(newVertexPos);
+				double dx = graphPoint.getX() - graphDown.getX();
+				double dy = graphPoint.getY() - graphDown.getY();
+				PickedState<V> ps = vv.getPickedVertexState();
+
+				for (V v : ps.getPicked()) {
+					Point2D vp = layout.transform(v);
+					vp.setLocation(vp.getX() + dx, vp.getY() + dy);
+					layout.setLocation(v, vp);
+				}
+				newVertexPos = p;
+			}
+			vv.repaint();
+		}
+	}
 
 }

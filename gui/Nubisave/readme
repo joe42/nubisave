@@ -1,0 +1,9 @@
+build:
+// compile porject via ant. Nubisave.jar will be gererated.
+$ ant
+
+deploy:
+// mannually copy Nubisave.jar and nubi.properties into runtime folder which contains essential libraries.
+// or modify build.xml at line 13, set a new value for property "run-dest", which represent destnation folder to deploy. then ensure target "build" depends on "deploy-jar". finnaly, re-build via ant.
+
+

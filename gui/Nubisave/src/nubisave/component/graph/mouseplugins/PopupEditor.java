@@ -7,24 +7,18 @@ import java.awt.geom.Point2D;
 import java.util.HashSet;
 import java.util.Set;
 import javax.swing.AbstractAction;
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import org.apache.commons.collections15.Factory;
 import nubisave.component.graph.vertice.interfaces.VertexGroup;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.algorithms.layout.Layout;
-import edu.uci.ics.jung.graph.DirectedGraph;
 import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.UndirectedGraph;
-import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.AbstractPopupGraphMousePlugin;
 import edu.uci.ics.jung.visualization.picking.PickedState;
 import javax.swing.JOptionPane;
-import javax.swing.JTabbedPane;
 import nubisave.component.graph.vertice.AbstractNubisaveComponent;
-import nubisave.*;
 import nubisave.component.graph.vertice.GenericNubiSaveComponent;
 import nubisave.component.graph.edge.NubiSaveEdge;
 import nubisave.component.graph.vertice.interfaces.NubiSaveVertex;
@@ -41,7 +35,7 @@ public class PopupEditor extends AbstractPopupGraphMousePlugin {
         this.edgeFactory = edgeFactory;
     }
     
-    @SuppressWarnings({ "unchecked", "serial", "serial" })
+    @SuppressWarnings({ "unchecked", "serial" })
     protected void handlePopup(MouseEvent NubiSaveEdge) {
         final VisualizationViewer<NubiSaveVertex,NubiSaveEdge> vv =
             (VisualizationViewer<NubiSaveVertex,NubiSaveEdge>)NubiSaveEdge.getSource();
@@ -71,12 +65,12 @@ public class PopupEditor extends AbstractPopupGraphMousePlugin {
                 popup.add(new AbstractAction("Delete Component") {
                     public void actionPerformed(ActionEvent NubiSaveEdge) {
                         Set<NubiSaveVertex> verticesToRemove = new HashSet<NubiSaveVertex>();
-                        System.out.println("remove vertex");
+                        System.out.println("delete vertex");
                         if (vertex instanceof AbstractNubisaveComponent) {
-                            String[] options = {"No", "Remove"};
+                            String[] options = {"Cancel", "Delete"};
                             int n = JOptionPane.showOptionDialog(null,
-                                    "Remove and unmount " + ((AbstractNubisaveComponent)vertex).getName() + "?",
-                                    "Remove?",
+                                    "Delete component " + ((AbstractNubisaveComponent)vertex).getName() + " Permanently?",
+                                    "Deletion confirmation",
                                     JOptionPane.YES_NO_OPTION,
                                     JOptionPane.QUESTION_MESSAGE,
                                     null,
@@ -87,21 +81,25 @@ public class PopupEditor extends AbstractPopupGraphMousePlugin {
                                 ((AbstractNubisaveComponent)vertex).remove();
                                 verticesToRemove = ((VertexGroup<NubiSaveVertex>) vertex).getVertexGroupMembers();
                                 System.out.println("\n\nremove vertex group of "+verticesToRemove.size());
-
+                                
+                                if (vertex instanceof VertexGroup<?>) {
+                                    verticesToRemove = ((VertexGroup<NubiSaveVertex>) vertex).getVertexGroupMembers();
+                                } else {
+                                    verticesToRemove.add(vertex);
+                                }
+                                for (NubiSaveVertex NubiSaveVertex : verticesToRemove) {
+                                    System.out.println("\nremove vertex: "+NubiSaveVertex);
+                                    pickedVertexState.pick(NubiSaveVertex, false);
+                                    System.out.println("removal successful: "+graph.removeVertex(NubiSaveVertex));
+                                }
                             }
-                            vv.repaint();
+                            else {
+                            	System.out.println("deletion cancelled.");
+                            }
                         }
-                        if (vertex instanceof VertexGroup<?>) {
-                            verticesToRemove = ((VertexGroup<NubiSaveVertex>) vertex).getVertexGroupMembers();
-                        } else {
-                            verticesToRemove.add(vertex);
-                        }
-                        for (NubiSaveVertex NubiSaveVertex : verticesToRemove) {
-                            System.out.println("\nremove vertex: "+NubiSaveVertex);
-                            pickedVertexState.pick(NubiSaveVertex, false);
-                            System.out.println("removal successful: "+graph.removeVertex(NubiSaveVertex));
-                        }
-                            
+                        else {
+                        	System.err.println("unknown vertex type. deletion fail.");
+                        }   
                     vv.repaint();
                 }});
 
@@ -115,7 +113,7 @@ public class PopupEditor extends AbstractPopupGraphMousePlugin {
                         }
                     }
                 });
-                //item.setEnabled(false);
+                item.setEnabled(true);
 
                 popup.add(new AbstractAction("Visualize Location") {
                     public void actionPerformed(ActionEvent NubiSaveEdge) {
