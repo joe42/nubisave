@@ -473,11 +473,13 @@ public class NubisaveEditor extends JApplet {
 							if (component.getUniqueName().equals(startVertex)) {
 								String endpoint = (String) hh.get(startVertex);
 								int pos = str.indexOf(endpoint);
-								AbstractNubisaveComponent endcomponent = myNodeList.get(pos);
-								edge = (WeightedNubisaveVertexEdge) edgeFactory.create();
-								edge.setWeight(component.getNrOfFilePartsToStore());
-								graph.addEdge(edge, component.getRequiredPorts().iterator().next(), endcomponent.getProvidedPorts().iterator().next(),
+								if(pos >= 0) {
+									AbstractNubisaveComponent endcomponent = myNodeList.get(pos);
+									edge = (WeightedNubisaveVertexEdge) edgeFactory.create();
+									edge.setWeight(component.getNrOfFilePartsToStore());
+									graph.addEdge(edge, component.getRequiredPorts().iterator().next(), endcomponent.getProvidedPorts().iterator().next(),
 										EdgeType.DIRECTED);
+								}
 							}
 						}
 					}
