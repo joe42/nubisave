@@ -28,7 +28,7 @@ public class CobraTest {
 			.setLevel(Level.WARNING);
 
 		// Open a connection on the URL we want to render first.
-		String uri = "http://www.google.com";
+		String uri = "http://localhost/nubivis";
 		URL url = new URL(uri);
 		URLConnection connection = url.openConnection();
 		InputStream in = connection.getInputStream();
