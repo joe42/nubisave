@@ -135,7 +135,7 @@ def main():
         os.makedirs(storage_path)
     os.makedirs(temp_dir)
     with open(log_directory+'/diff', 'w') as f:
-        f.write(git('--no-pager', 'diff').stdout)
+        f.write(git('--no-pager', 'diff', '--no-color').stdout)
         
     if os.path.exists(storage_path+'/../config/config'):
         shutil.copyfile(storage_path+'/../config/config', log_directory+'/config')
