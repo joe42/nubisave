@@ -18,35 +18,27 @@ override_dh_auto_clean:
 	rm -f debian/files
 
 override_dh_auto_install:
-	mkdir -p debian/nubisave/usr/share/applications
-	cp debian/data/nubisave.desktop debian/nubisave/usr/share/applications/
-	mkdir -p debian/nubisave/usr/share/pixmaps
-	cp debian/data/nubilogo.png debian/nubisave/usr/share/pixmaps/
-	mkdir -p debian/nubisave/usr/share/nubisave
-	cp -r bin splitter jigdfs fusej services start.sh debian/nubisave/usr/share/nubisave/
-	rm -rf debian/nubisave/usr/share/nubisave/jigdfs/src
-	rm -rf debian/nubisave/usr/share/nubisave/fusej/src
-	rm -rf debian/nubisave/usr/share/nubisave/splitter/src
-	##(obsolete)##cp -r CloudFusion/cloudfusion/config debian/nubisave/usr/share/nubisave/
-	##(obsolete)##touch debian/nubisave/usr/share/nubisave/splitter/splitter.db
-	##(obsolete)##touch debian/nubisave/usr/share/nubisave/splitter/splitter.lg
-	# FIXME: interpret ${user.home} values in nubi.properties
-	##(obsolete?)##sed -i -e 's/splitter_database_location=database_of_splitter/splitter_database_location=\/usr\/share\/nubisave\/splitter\/splitter/' debian/nubisave/usr/share/nubisave/bin/nubi.properties
-	sed -i -e 's/R.File=log/R.File=$${user.home}\/.nubisave\/log/' debian/nubisave/usr/share/nubisave/splitter/log4j.properties
-	sed -i -e 's/CHAINSAW.File=log/CHAINSAW.File=$${user.home}\/.nubisave\/log/' debian/nubisave/usr/share/nubisave/splitter/log4j.properties
-	mkdir -p debian/nubisave/usr/lib/nubisave
-	cp -r debian/data/modules debian/nubisave/usr/lib/nubisave
-	mkdir -p debian/nubisave/usr/bin
-	cp debian/data/nubisave debian/nubisave/usr/bin/
-	cp debian/data/nubisave-mounter debian/nubisave/usr/bin/
-	cp debian/data/devscripts/nubisave-reset debian/nubisave/usr/bin/
-	cp debian/data/nubisave-unmounter debian/nubisave/usr/bin/
-	cp debian/data/nubisave-status debian/nubisave/usr/bin/
-	mkdir -p debian/nubisave/var/lib/tomcat6/webapps/Matchmaker/ontologies
-	cp services/CloudStorage.wsml debian/nubisave/var/lib/tomcat6/webapps/Matchmaker/ontologies/
-	mkdir -p debian/nubisave/usr/lib/python2.7/site-packages
-	mkdir -p debian/nubisave/usr/lib/python2.6/site-packages
-	cd CloudFusion && PYTHONPATH="../debian/nubisave/usr/lib/python2.7/site-packages:../debian/nubisave/usr/lib/python2.6/site-packages" python setup.py install --prefix ../debian/nubisave/usr
-	# FIXME: In wheezy, this becomes the 'python-poster' dependency
-	#####PYTHONPATH="debian/nubisave/lib/python2.7/site-packages:debian/nubisave/lib/python2.6/site-packages" easy_install --prefix debian/nubisave 'http://pypi.python.org/packages/2.6/p/poster/poster-0.4-py2.6.egg#md5=f69a6be30737ad5d652a602f3af005ac'
-
+	mkdir -p debian/tmp/usr/share/applications
+	cp debian/data/nubisave.desktop debian/tmp/usr/share/applications/
+	mkdir -p debian/tmp/usr/share/pixmaps
+	cp debian/data/nubilogo.png debian/tmp/usr/share/pixmaps/
+	mkdir -p debian/tmp/usr/share/nubisave
+	cp -r bin splitter jigdfs fusej services start.sh debian/tmp/usr/share/nubisave/
+	rm -rf debian/tmp/usr/share/nubisave/jigdfs/src
+	rm -rf debian/tmp/usr/share/nubisave/fusej/src
+	rm -rf debian/tmp/usr/share/nubisave/splitter/src
+	sed -i -e 's/R.File=log/R.File=$${user.home}\/.nubisave\/log/' debian/tmp/usr/share/nubisave/splitter/log4j.properties
+	sed -i -e 's/CHAINSAW.File=log/CHAINSAW.File=$${user.home}\/.nubisave\/log/' debian/tmp/usr/share/nubisave/splitter/log4j.properties
+	mkdir -p debian/tmp/usr/lib/nubisave
+	cp -r debian/data/modules debian/tmp/usr/lib/nubisave
+	mkdir -p debian/tmp/usr/bin
+	cp debian/data/nubisave debian/tmp/usr/bin/
+	cp debian/data/nubisave-mounter debian/tmp/usr/bin/
+	cp debian/data/devscripts/nubisave-reset debian/tmp/usr/bin/
+	cp debian/data/nubisave-unmounter debian/tmp/usr/bin/
+	cp debian/data/nubisave-status debian/tmp/usr/bin/
+	mkdir -p debian/tmp/var/lib/tomcat6/webapps/Matchmaker/ontologies
+	cp services/CloudStorage.wsml debian/tmp/var/lib/tomcat6/webapps/Matchmaker/ontologies/
+	mkdir -p debian/tmp/usr/lib/python2.7/site-packages
+	mkdir -p debian/tmp/usr/lib/python2.6/site-packages
+	cd CloudFusion && PYTHONPATH="../debian/tmp/usr/lib/python2.7/site-packages:../debian/tmp/usr/lib/python2.6/site-packages" python setup.py install --prefix ../debian/tmp/usr
