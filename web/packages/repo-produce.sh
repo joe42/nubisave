@@ -9,5 +9,7 @@ path=../../..
 
 mkdir -p packages/$pkgbranch/{sources,binary-all}
 
+cp Release.head packages
+
 cp $path/*.{dsc,tar.gz} packages/$pkgbranch/sources/
 cp $path/*_all.deb packages/$pkgbranch/binary-all/

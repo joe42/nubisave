@@ -1,0 +1,5 @@
+Archive: nubisave
+Component: main
+Origin: nubisave.org
+Label: Debian/Ubuntu packages for the NubiSave cloud storage controller
+Architecture: all
