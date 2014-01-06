@@ -1,5 +1,7 @@
 debian/tmp/usr/bin/nubisave
+debian/tmp/usr/lib/nubisave/modules
 debian/tmp/usr/share/nubisave/fusej
 debian/tmp/usr/share/nubisave/jigdfs
 debian/tmp/usr/share/nubisave/splitter
 debian/tmp/usr/share/nubisave/bin
+debian/tmp/usr/share/nubisave/start.sh
