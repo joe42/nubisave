@@ -1,0 +1,3 @@
+debian/nubisave/usr/share/applications/*
+debian/nubisave/usr/share/menu/*
+debian/nubisave/usr/share/pixmaps
