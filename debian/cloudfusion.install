@@ -1,3 +1,2 @@
 debian/nubisave/usr/bin/cloudfusion
 debian/nubisave/usr/bin/nosetests*
-debian/nubisave/usr/share/python-support
