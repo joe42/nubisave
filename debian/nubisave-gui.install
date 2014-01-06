@@ -1,2 +1,2 @@
-debian/nubisave/usr/share/applications/*
-debian/nubisave/usr/share/pixmaps
+debian/tmp/usr/share/applications/*
+debian/tmp/usr/share/pixmaps

@@ -1,2 +1,2 @@
-debian/nubisave/var/*
-debian/nubisave/usr/share/nubisave/services
+debian/tmp/var/*
+debian/tmp/usr/share/nubisave/services

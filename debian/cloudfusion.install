@@ -1,2 +1,2 @@
-debian/nubisave/usr/bin/cloudfusion
-debian/nubisave/usr/bin/nosetests*
+debian/tmp/usr/bin/cloudfusion
+debian/tmp/usr/bin/nosetests*
