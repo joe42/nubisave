@@ -68,7 +68,9 @@ public class ButtonEditor extends DefaultCellEditor {
                     String type = (String) owner.tableModel.getValueAt(row, NubiTableModel.Headers.TYPE.ordinal());
                     if ("Service".equals(type) || "Custom".equals(type)) {
                         StorageService service = Nubisave.services.get(row);
-                        ServiceParameterDialog editDialog = new ServiceParameterDialog(owner, true, service);
+                        //Use factory method to create a custom configuration dialog from the backendconfig package,
+                        //or the generic ServiceParameterDialog superclass.
+                        ServiceParameterDialog editDialog = ServiceParameterDialog.getInstance(owner, true, service);
                         editDialog.setTitle(service.getName());
                         editDialog.setVisible(true);
                     } 

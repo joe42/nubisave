@@ -19,6 +19,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.Timer;
 
@@ -87,7 +88,9 @@ public class GenericNubiSaveComponent extends AbstractNubisaveComponent {
 
     @Override
     public void showConfigurationDialog() {
-        ServiceParameterDialog editDialog = new ServiceParameterDialog(null, true, component);
+        //Use factory method to create a custom configuration dialog from the backendconfig package,
+        //or the generic ServiceParameterDialog 
+        JDialog editDialog = ServiceParameterDialog.getInstance(null, true, component);
         editDialog.setTitle(component.getName());
         editDialog.setVisible(true);
     }

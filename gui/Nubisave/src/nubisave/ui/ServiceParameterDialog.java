@@ -16,25 +16,59 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.util.Map.Entry;
 import nubisave.StorageService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.jar.JarFile;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
+import nubisave.ui.backendconfig.*;
 import org.ini4j.Ini;
 
 
 public class ServiceParameterDialog extends javax.swing.JDialog {
 
-    private StorageService service;
+    protected StorageService service;
     private javax.swing.JButton applyBtn;
     private javax.swing.JButton cancelBtn;
-    private Ini config;
+    protected Ini config;
     private List<JPanel> sectionGroupBoxes;
     
-    /** Creates new form ServiceParameterDialog */
+    /**
+     * Factory method to create an appropriate instance of a graphical configuration dialogu.
+     * If service has a name that corresponds to a class in the backendconfig subpackage
+     * it is used. Otherwise this class is used. I.e. if service.getName() equals directory.ini,
+     * Directory.java is used instead of this class.
+     * @param parent
+     * @param modal
+     * @param service
+     * @return An instance of ServiceParameterDialog
+     */
+    public static JDialog getInstance(java.awt.Frame parent, boolean modal,StorageService service)  {
+        System.out.println("getinstance");
+        try {
+            String serviceName = service.getName();
+            String targetClassName = serviceName.substring(0, 1).toUpperCase() + serviceName.substring(1); //Capitalize first character
+            Class targetClass = Class.forName("nubisave.ui.backendconfig."+targetClassName); //create the class through reflection
+            Constructor constructor = targetClass.getConstructor(java.awt.Frame.class, boolean.class, StorageService.class);
+            return (JDialog) constructor.newInstance(parent, modal, service);
+        } catch (ClassNotFoundException ex) {} 
+          catch (NoSuchMethodException ex) {}
+          catch (InstantiationException ex) {}
+          catch (IllegalAccessException ex) {}
+          catch (IllegalArgumentException ex) {}
+          catch (InvocationTargetException ex) {}
+        return new ServiceParameterDialog(parent, modal, service); //if an exception occured, use this class instead
+    }
+                
+    /** Creates new generic ServiceParameterDialog form */
     public ServiceParameterDialog(java.awt.Frame parent, boolean modal,StorageService service) {
         super(parent, modal);
         this.service = service;
