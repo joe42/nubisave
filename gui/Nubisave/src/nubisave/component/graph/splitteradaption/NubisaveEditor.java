@@ -35,8 +35,10 @@ import java.util.logging.Logger;
 import javax.swing.JApplet;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import org.apache.commons.collections15.Factory;
 
@@ -82,9 +84,15 @@ import nubisave.component.graph.splitteradaption.ActionKeyAdapter;
 import nubisave.component.graph.vertice.interfaces.NubiSaveVertex;
 import nubisave.ui.AddServiceDialog;
 import nubisave.ui.CustomServiceDlg;
+import nubisave.web.DJNativeSwingBrowser;
+import nubisave.web.NativeSwingBrowser;
 
 import org.apache.commons.collections15.Predicate;
 import org.apache.commons.collections15.Transformer;
+
+import chrriis.common.UIUtils;
+import chrriis.dj.nativeswing.NativeSwing;
+import chrriis.dj.nativeswing.swtimpl.NativeInterface;
 
 /**
  *
@@ -94,6 +102,8 @@ public class NubisaveEditor extends JApplet {
 	private static final long serialVersionUID = -2023243689258876721L;
 
 	private String storage_directory;
+	
+	public static DJNativeSwingBrowser browser;
 
 	Graph<NubiSaveVertex, NubiSaveEdge> graph;
 
@@ -323,6 +333,29 @@ public class NubisaveEditor extends JApplet {
 			}
 		});
 		controls.add(searchServiceComponent);
+		
+		JButton browserButton = new JButton("Nubivis");
+		NativeSwing.initialize();
+		NativeInterface.open();
+		browserButton.addActionListener(new ActionListener() {
+			/**
+			 * Create new {@link StorageService} from chosen file and set it as
+			 * the next Vertex to create in
+			 * {@link StatefulNubiSaveComponentFactory}
+			 */
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				if(NubisaveEditor.browser == null) {
+					NubisaveEditor.browser = new DJNativeSwingBrowser();
+				}
+				JPanel bro_panel = new NativeSwingBrowser("http://localhost/nubivis/index.html");
+				NubisaveEditor.browser.setContentPane(bro_panel);
+				NubisaveEditor.browser.setSize(800, 600);
+				NubisaveEditor.browser.setVisible(true);
+			}
+		});
+		controls.add(browserButton);
+		
 		controls.add(help);
 		content.add(controls, BorderLayout.SOUTH);
 	}

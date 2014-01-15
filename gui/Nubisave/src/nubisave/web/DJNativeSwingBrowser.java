@@ -7,24 +7,36 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+
 import chrriis.dj.nativeswing.swtimpl.NativeInterface;
 import chrriis.dj.nativeswing.swtimpl.components.JWebBrowser;
 
-public class DJNativeSwingBrowser implements AbstractBrowser{
+
+public class DJNativeSwingBrowser extends javax.swing.JDialog implements AbstractBrowser{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@Override
 	public void start(final String url) {
 		NativeInterface.open();
 		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {       
-				JFrame frame = new JFrame("NubiSave Web Browser");
-				//frame.setUndecorated(true);
-				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-				frame.getContentPane().add(new DJNativeSwing(url),BorderLayout.CENTER);
-				frame.setSize(800, 600);
-				frame.setMenuBar(null);
-				frame.setLocationByPlatform(true);
-				frame.setVisible(true);
+			public void run() {
+				JPanel panel = new DJNativeSwing(url);
+				DJNativeSwingBrowser dialog = new DJNativeSwingBrowser();
+				dialog.setContentPane(panel);
+				dialog.setSize(800, 600);
+				dialog.setVisible(true);
+//				JFrame frame = new JFrame("NubiSave Web Browser");
+//				//frame.setUndecorated(true);
+//				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//				frame.getContentPane().add(new DJNativeSwing(url),BorderLayout.CENTER);
+//				frame.setSize(800, 600);
+//				frame.setMenuBar(null);
+//				frame.setLocationByPlatform(true);
+//				frame.setVisible(true);
 			}
 		});
 		NativeInterface.runEventPump();

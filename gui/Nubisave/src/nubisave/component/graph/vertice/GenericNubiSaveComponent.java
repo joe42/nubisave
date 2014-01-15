@@ -104,6 +104,7 @@ public class GenericNubiSaveComponent extends AbstractNubisaveComponent {
     	location += "?provider="+this.getUniqueName();
 		try {
 			if (SystemIntegration.isAvailable()) {
+				System.out.println("open: "+location);
 				SystemIntegration.openLocationbyBrowser(location);
 			} else {
 				if (java.awt.Desktop.isDesktopSupported()) {

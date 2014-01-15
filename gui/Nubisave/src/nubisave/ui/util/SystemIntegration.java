@@ -11,8 +11,16 @@ import java.awt.Desktop;
 import java.io.IOException;
 import java.io.File;
 
+import javax.swing.JButton;
+import javax.swing.JPanel;
+
+import chrriis.dj.nativeswing.NativeSwing;
+import chrriis.dj.nativeswing.swtimpl.NativeInterface;
+import nubisave.component.graph.splitteradaption.NubisaveEditor;
 import nubisave.web.AbstractBrowser;
 import nubisave.web.BrowserFactory;
+import nubisave.web.DJNativeSwingBrowser;
+import nubisave.web.NativeSwingBrowser;
 
 public class SystemIntegration {
     public final static void openLocation(String location) {
@@ -32,12 +40,20 @@ public class SystemIntegration {
         }
     }
     
-    public static void openLocationbyBrowser(String location) {
-    	AbstractBrowser browser =  BrowserFactory.getBrowser("DJNativeSwing");
-		browser.start(location);
+    public final static void openLocationbyBrowser(String location) {
+		NativeSwing.initialize();
+		NativeInterface.open();
+		
+		if(NubisaveEditor.browser == null) {
+			NubisaveEditor.browser = new DJNativeSwingBrowser();
+		}
+		JPanel bro_panel = new NativeSwingBrowser(location);
+		NubisaveEditor.browser.setContentPane(bro_panel);
+		NubisaveEditor.browser.setSize(800, 600);
+		NubisaveEditor.browser.setVisible(true);
     }
     
-    public static boolean isAvailable() {
+    public final static boolean isAvailable() {
     	return true;
     }
 }
