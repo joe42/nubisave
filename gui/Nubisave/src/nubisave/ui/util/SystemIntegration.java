@@ -11,6 +11,9 @@ import java.awt.Desktop;
 import java.io.IOException;
 import java.io.File;
 
+import nubisave.web.AbstractBrowser;
+import nubisave.web.BrowserFactory;
+
 public class SystemIntegration {
     public final static void openLocation(String location) {
         if (Desktop.isDesktopSupported()) {
@@ -27,5 +30,14 @@ public class SystemIntegration {
                 }
             }
         }
+    }
+    
+    public static void openLocationbyBrowser(String location) {
+    	AbstractBrowser browser =  BrowserFactory.getBrowser("DJNativeSwing");
+		browser.start(location);
+    }
+    
+    public static boolean isAvailable() {
+    	return true;
     }
 }

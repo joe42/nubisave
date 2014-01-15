@@ -103,14 +103,18 @@ public class GenericNubiSaveComponent extends AbstractNubisaveComponent {
     	String location = Nubisave.properties.getProperty("nubivis_URL");
     	location += "?provider="+this.getUniqueName();
 		try {
-			if (java.awt.Desktop.isDesktopSupported()) {
-				java.net.URI uri = java.net.URI.create(location);
-				java.awt.Desktop dp = java.awt.Desktop.getDesktop();
-				if (dp.isSupported(java.awt.Desktop.Action.BROWSE)) {
-					dp.browse(uri);
-				}
+			if (SystemIntegration.isAvailable()) {
+				SystemIntegration.openLocationbyBrowser(location);
 			} else {
-				SystemIntegration.openLocation(location);
+				if (java.awt.Desktop.isDesktopSupported()) {
+					java.net.URI uri = java.net.URI.create(location);
+					java.awt.Desktop dp = java.awt.Desktop.getDesktop();
+					if (dp.isSupported(java.awt.Desktop.Action.BROWSE)) {
+						dp.browse(uri);
+					}
+				} else {
+					SystemIntegration.openLocation(location);
+				}
 			}
 		} catch (Exception e) {
 			System.out.println(e.getMessage());

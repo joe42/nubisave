@@ -1,14 +1,12 @@
 package nubisave.web.test;
 
-import chrriis.dj.nativeswing.NativeSwing;
+import nubisave.web.*;
 
 public class NativeSwingTest {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-//		NativeSwing.initialize();
-		chrriis.dj.nativeswing.swtimpl.demo.DemoFrame df = new chrriis.dj.nativeswing.swtimpl.demo.DemoFrame();
-		df.main(args);
+		AbstractBrowser browser =  BrowserFactory.getBrowser("DJNativeSwing");
+		browser.start("http://localhost/nubivis/index.html");
 	}
 
 }
