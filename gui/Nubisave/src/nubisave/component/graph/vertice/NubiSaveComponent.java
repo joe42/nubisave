@@ -112,4 +112,10 @@ public class NubiSaveComponent extends AbstractNubisaveComponent {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+	@Override
+	public void openLocation() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

@@ -47,13 +47,13 @@ public class FuseBox implements Filesystem3, XattrSupport {
 	}
 
 	@Override
-	public int chmod(String path, int mode) throws FuseException {
-		throw new FuseException("Read Only").initErrno(FuseException.EACCES);
+	public int chmod(String path, int mode) throws FuseException {		
+		return changeAttr(path, -1, -1, -1, -1, mode);
 	}
 
 	@Override
 	public int chown(String path, int uid, int gid) throws FuseException {
-		throw new FuseException("Read Only").initErrno(FuseException.EACCES);
+		return changeAttr(path, -1, -1, uid, gid, -1);
 	}
 	@Override
 	public int getattr(String path, FuseGetattrSetter getattrSetter) throws FuseException {
@@ -278,9 +278,48 @@ public class FuseBox implements Filesystem3, XattrSupport {
 		}
 	}
 
+	private int changeAttr(String path, int atime, int mtime, int uid, int gid, int mode) {
+		//TODO I don't understand why path has extra "/data" prefix here - Bug in FUSE-J?
+				path = path.substring(5);
+				log.debug("change Attr of " +  path + " at " + atime + " mt " + mtime + " uid " + uid + " gid " + gid + " mode " + mode );
+				Entry entry = null;
+				boolean isFolder = false;
+				try {
+					entry = metaDataStore.getFileEntry(path);			
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				if(entry == null) {
+					try {
+						entry = metaDataStore.getFolderEntry(path);
+						isFolder = true;
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				if(entry != null) {
+					if(atime >= 0) entry.atime = atime;
+					if(mtime >= 0) entry.mtime = mtime;
+					if(gid >= 0) entry.gid = gid;
+					if(uid >= 0) entry.uid = uid;
+					if(mode >= 0) entry.mode = mode;
+					try {
+					if(isFolder) {
+						metaDataStore.putFolderEntry(path, (FolderEntry) entry);
+						metaDataStore.commit();
+					} else
+						metaDataStore.putFileEntry(path, (FileEntry) entry);
+					} catch(IOException e) {
+						e.printStackTrace();
+					}
+				} else {
+					log.debug("Could not get Entry!");
+				}
+		return 0;
+	}
 	@Override
 	public int utime(String path, int atime, int mtime) throws FuseException {
-		return 0;
+		return changeAttr(path, atime, mtime, -1, -1, -1);
 	}
 
 	@Override
