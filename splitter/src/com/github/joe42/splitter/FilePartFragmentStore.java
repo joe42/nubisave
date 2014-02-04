@@ -18,7 +18,7 @@ public class FilePartFragmentStore extends FileFragmentStore{
 	private String lastFilePartPathWrittenTo = null;
 	private String lastFilePartPathReadFrom = null;
 	
-	public FilePartFragmentStore(CauchyReedSolomonSplitter splitter) throws IOException {
+	public FilePartFragmentStore(Splitter splitter) throws IOException {
 		super(splitter);
 		fileFragmentMetaDataStore = new FilePartFragmentMetaDataStore(MAX_FILESIZE);
 	}
@@ -53,8 +53,17 @@ public class FilePartFragmentStore extends FileFragmentStore{
 			FileChannel temp = tempFiles.getFileChannel(lastFilePartPathWrittenTo);
 			if(temp != null){
 				log.debug("flush lastFilePartPathWrittenTo: "+lastFilePartPathWrittenTo+" size: "+temp.size());
+				if(tempReadChannel != null) {
+					tempReadChannel.delete();
+				}
 				tempReadChannel = null;
-				splitter.splitFile(fileFragmentMetaDataStore, lastFilePartPathWrittenTo, temp);
+				FileFragments fileFragments = splitter.splitFile(fileFragmentMetaDataStore, lastFilePartPathWrittenTo, temp);
+				//TODO: delete previous Fragments when changing storage strategy midway 
+				synchronized (fileFragmentMetaDataStore) {
+					if(fileFragments != null && fileFragmentMetaDataStore.getFragmentsChecksums(lastFilePartPathWrittenTo) == null){ //only if checksums not yet up to date
+						fileFragmentMetaDataStore.setFragments(lastFilePartPathWrittenTo, fileFragments.getPaths(), fileFragments.getNrOfRequiredFragments(), fileFragments.getNrOfRequiredSuccessfullyStoredFragments(), fileFragments.getChecksums(), fileFragments.getFilesize());
+					}
+				}
 				tempFiles.delete(lastFilePartPathWrittenTo);
 			}
 			lastFilePartPathWrittenTo = currentFilePartPath;
@@ -138,13 +147,21 @@ public class FilePartFragmentStore extends FileFragmentStore{
 	}
 
 	public void rename(String from, String to) throws IOException, FuseException {
+		for(int filePartNumber: ((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).getFilePartNumbers(from)){
+			splitter.rename(from+"#"+filePartNumber+"#", to+"#"+filePartNumber+"#"); //TODO: rename files in cache in superclass
+		}
 		remove(to);
 		flushCache(from);
 		((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).renameFileParts(from, to);
 	}
 
 	public void remove(String path) throws IOException {
+		for (String filePartName : ((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).getFilePartPaths(path)) {
+			splitter.remove(filePartName);
+		}
 		for (String fragmentName : ((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).getFragments(path)) {
+			//TODO: remove all filparts from splitter cache && if not in cache actually remove them -- splitter.remove(fragmentName);
+			//TODO: same for superclass
 			new File(fragmentName).delete();
 		}
 		fileFragmentMetaDataStore.remove(path);
@@ -154,7 +171,14 @@ public class FilePartFragmentStore extends FileFragmentStore{
 		for(String filePartPath:  ((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).getFilePartPaths(path)){
 			log.debug("filePartPath to flush: "+filePartPath);
 			if(! hasFlushedFilePart(filePartPath)){
-				splitter.splitFile(fileFragmentMetaDataStore, filePartPath, tempFiles.getFileChannel(filePartPath));
+
+				FileFragments fileFragments = splitter.splitFile(fileFragmentMetaDataStore, filePartPath, tempFiles.getFileChannel(filePartPath));
+				//TODO: delete previous Fragments when changing storage strategy midway 
+				synchronized (fileFragmentMetaDataStore) {
+					if(fileFragments != null && fileFragmentMetaDataStore.getFragmentsChecksums(lastFilePartPathWrittenTo) == null){ //only if checksums not yet up to date
+						fileFragmentMetaDataStore.setFragments(lastFilePartPathWrittenTo, fileFragments.getPaths(), fileFragments.getNrOfRequiredFragments(), fileFragments.getNrOfRequiredSuccessfullyStoredFragments(), fileFragments.getChecksums(), fileFragments.getFilesize());
+					}
+				}
 				removeCache(filePartPath);
 			}
 		}
@@ -178,7 +202,9 @@ public class FilePartFragmentStore extends FileFragmentStore{
 
 	private void removeFilePart(String path, String filePartPath,
 			int filePartNumber) throws IOException {
+		splitter.remove(path+"#"+filePartNumber+"#");
 		if(((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).hasFilePartFragments(filePartPath)){
+			//delete from splitter cache && if not in cache
 			for(String filePartFragment: ((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).getFilePartFragments(filePartPath)) {
 				new File(filePartFragment).delete();
 			}

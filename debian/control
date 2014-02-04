@@ -11,7 +11,7 @@ Vcs-Browser: http://nubisave.org/cgi-bin/gitweb.cgi?p=nubisave
 # FIXME: python-poster for wheezy
 Package: nubisave
 Architecture: all
-Depends: ${misc:Depends}, openjdk-7-jre | openjdk-6-jre, libfuse-dev, python-simplejson, python-oauth, python-httplib2, fuse-utils, davfs2, sshfs, cifs-utils, ssh-askpass, encfs, fusedav
+Depends: ${misc:Depends}, openjdk-7-jre | openjdk-6-jre, libfuse-dev, python-simplejson, python-oauth, python-httplib2, fuse-utils, davfs2, sshfs, cifs-utils, ssh-askpass, encfs, fusedav, curlftpfs
 Recommends: conqo, conqotool, mysql-server, mysql-client
 Description: Cloud/RAOC storage controller
  NubiSave is a flexible higher-level storage controller for the

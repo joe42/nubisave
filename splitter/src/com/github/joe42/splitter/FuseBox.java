@@ -37,7 +37,7 @@ public class FuseBox implements Filesystem3, XattrSupport {
 	protected int UID;
 	protected int GID;
 
-	public FuseBox(FilePartFragmentStore fileStore) throws IOException {
+	public FuseBox(FileFragmentStore fileStore) throws IOException {
 		PropertyConfigurator.configure("log4j.properties");
 		
 		metaDataStore = new FileMetaDataStore();

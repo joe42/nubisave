@@ -11,6 +11,7 @@
 package nubisave.ui;
 
 import java.util.List;
+import java.util.ArrayList;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
@@ -26,6 +27,7 @@ public class AddServiceDialog extends javax.swing.JDialog {
 
     private Searcher searcher;
     private List<MatchmakerService> services;
+    private List<MatchmakerService> selectedservices = new ArrayList<MatchmakerService>();
 
     /** Creates new form AddServiceDialog */
     public AddServiceDialog(java.awt.Frame parent, boolean modal) {
@@ -74,6 +76,7 @@ public class AddServiceDialog extends javax.swing.JDialog {
         searchBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Storage Service Selection");
 
         searchResultTable.setAutoCreateRowSorter(true);
         searchResultTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -103,14 +106,14 @@ public class AddServiceDialog extends javax.swing.JDialog {
         searchResultTable.setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         jScrollPane1.setViewportView(searchResultTable);
 
-        addBtn.setText("Add selected Services");
+        addBtn.setText("Add selected services");
         addBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addBtnActionPerformed(evt);
             }
         });
 
-        cancelBtn.setText("cancel");
+        cancelBtn.setText("Cancel");
         cancelBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelBtnActionPerformed(evt);
@@ -134,22 +137,23 @@ public class AddServiceDialog extends javax.swing.JDialog {
 
         responseTimeCheckBox.setText("Response Time");
 
-        pricePerDataTextField.setText("0.00");
+        pricePerDataTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
+        pricePerDataTextField.setValue(new Float("0.00"));
 
         pricePerMonthTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
-        pricePerMonthTextField.setText("0.00");
+        pricePerMonthTextField.setValue(new Float("0.00"));
 
         availabilityTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
-        availabilityTextField.setText("0.00");
+        availabilityTextField.setValue(new Float("0.00"));
 
         bandwidthTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
-        bandwidthTextField.setText("0.00");
+        bandwidthTextField.setValue(new Float("0.00"));
 
         maxDownTimeTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
-        maxDownTimeTextField.setText("0.00");
+        maxDownTimeTextField.setValue(new Float("0.00"));
 
         responseTimeTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
-        responseTimeTextField.setText("0.00");
+        responseTimeTextField.setValue(new Float("0.00"));
 
         jLabel1.setText("Euro");
 
@@ -258,12 +262,13 @@ public class AddServiceDialog extends javax.swing.JDialog {
                                 .addComponent(maxDownTimeWeightCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(bandwidthWeightCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(responseTimeWeightCB, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 508, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(cancelBtn)
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(cancelBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(addBtn))
-                    .addComponent(searchBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 508, Short.MAX_VALUE))
+                    .addComponent(searchBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -437,13 +442,17 @@ public class AddServiceDialog extends javax.swing.JDialog {
         return responseTimeWeightCB;
     }
 
-    
+    public List<MatchmakerService> getSelectedServices() {
+        return selectedservices;
+    }
+
     private void addBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBtnActionPerformed
         for (int i : searchResultTable.getSelectedRows()) {
             MatchmakerService newService = new MatchmakerService((String) searchResultTable.getModel().getValueAt(i, 0));
+            selectedservices.add(newService);
             Nubisave.services.add(newService);
         }
-        ((MainWindow) getParent()).tableModel.fireTableDataChanged();
+        // adding vertice to the graph view (getParent(), SwingUtilities$SharedOwnerFrame) is now performed in NubisaveEditor
         dispose();
     }//GEN-LAST:event_addBtnActionPerformed
 

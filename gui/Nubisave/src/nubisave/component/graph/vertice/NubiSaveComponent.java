@@ -1,24 +1,42 @@
 package nubisave.component.graph.vertice;
 
+import com.github.joe42.splitter.util.file.PropertiesUtil;
 import java.awt.Point;
+import java.io.File;
 import java.io.IOException;
 import nubisave.Nubisave;
+import nubisave.StorageService;
+import nubisave.ui.NubisaveConfigDlg;
+import nubisave.ui.util.SystemIntegration;
 
 
 public class NubiSaveComponent extends AbstractNubisaveComponent {
     private Point graphLocation;
-
-    public NubiSaveComponent() throws IOException{
+    protected final StorageService component;
+    private String storage_directory;
+    
+    public NubiSaveComponent(StorageService component) throws IOException{
+        this.component=component;
         addRequiredPort();
         addProvidedPort();
+        storage_directory= new PropertiesUtil("nubi.properties").getProperty("storage_configuration_directory");
+        String path=storage_directory.split("\\.")[0]+"."+component.getUniqName();
+        File file=new File(path.toLowerCase());
+        file.mkdirs();
         if(Nubisave.mainSplitter.isMounted()){
             drawCheckMark(40, 0);
-        }
+       }
     }
 
     @Override
     public void showConfigurationDialog() {
-        throw new UnsupportedOperationException("Not supported yet.");
+     NubisaveConfigDlg nubi=new NubisaveConfigDlg();
+     nubi.setModal(true);
+     nubi.setTitle("Nubisave Component Configuration");
+     nubi.pack();
+     nubi.setLocationRelativeTo(null);
+     nubi.setVisible(true);
+     
     }
     
     @Override
@@ -61,7 +79,8 @@ public class NubiSaveComponent extends AbstractNubisaveComponent {
 
     @Override
     public void setGraphLocation(Point location) {
-        graphLocation = location;
+        component.setGraphLocation(location);
+        Nubisave.services.updateNubisave(component);
     }
 
     @Override
@@ -84,7 +103,8 @@ public class NubiSaveComponent extends AbstractNubisaveComponent {
 
     @Override
     public String getUniqueName() {
-        return "NubiSave";
+        //return "NubiSave";
+        return component.getUniqName();
     }
 
     @Override
@@ -104,7 +124,8 @@ public class NubiSaveComponent extends AbstractNubisaveComponent {
 
     @Override
     public int getNrOfFilePartsToStore() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return component.getNrOfFilePartsToStore();
+        //throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -112,10 +133,16 @@ public class NubiSaveComponent extends AbstractNubisaveComponent {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-	@Override
-	public void openLocation() {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void openLocation() {
+        String location = Nubisave.mainSplitter.getDataDir();
+        SystemIntegration.openLocation(location);
+    }
+
+    @Override
+    public void visualizeLocation() {
+        String location = "http://localhost/nubivis/";
+        SystemIntegration.openLocation(location);
+    }
 
 }

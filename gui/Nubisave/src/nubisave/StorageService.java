@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import org.ini4j.Ini;
+import com.github.joe42.splitter.util.file.PropertiesUtil;
 
 /**
  *
@@ -21,8 +22,6 @@ import org.ini4j.Ini;
  */
 public class StorageService {
     private boolean supported;
-
-
     private String name;
     private String uniqName;
     private StorageType type;
@@ -32,7 +31,7 @@ public class StorageService {
     private Map<String, String> parameterMap = new HashMap<String, String>();
     private Ini config = null;
     private Point graphLocation;
-	private int nrOfFilePartsToStore;
+    private int nrOfFilePartsToStore;
     private File file;
     
     public StorageService(String name) {
@@ -42,13 +41,8 @@ public class StorageService {
         nrOfBackends = 0;
         nrOfFilePartsToStore = 1;
         backendServices = new LinkedList<StorageService>();
-        for (String s :Nubisave.supportedProvider) {
-            if (s.equalsIgnoreCase(name)) {
-                supported = true;
-                break;
-            }
-        }
-        file = new File("../splitter/mountscripts/"+name+".ini");
+        String nubisavedir = new PropertiesUtil("nubi.properties").getProperty("nubisave_directory");
+        file = new File(nubisavedir + "/splitter/mountscripts/" + name + ".ini");
         if(file.exists()){
             loadFromFile();
         }
@@ -216,6 +210,14 @@ public class StorageService {
      */
     public void storeConfiguration(String directory) {
         String path = directory + "/" + getUniqName();
+        System.out.println("Store module configuration to " + path);
+        if(config == null) {
+            try {
+                config = new Ini();
+            } catch(Exception e) {
+                System.err.println("Configuration issue: " + e.toString());
+            }
+        }
         try{
             int serviceIndex = 1;
             for(StorageService s: getBackendServices()){
@@ -227,11 +229,15 @@ public class StorageService {
             if(graphLocation != null){
                 config.put("gui", "graphlocationx", graphLocation.x);
                 config.put("gui", "graphlocationy", graphLocation.y);
+                config.get("gui").putComment("graphlocationx", "hidden");
+                config.get("gui").putComment("graphlocationy", "hidden");
             }
             config.put("splitter", "fileparts", nrOfFilePartsToStore);
             config.store(new File(path));
         } catch(Exception e){
-            System.err.println("StorageService.storeConfiguration(StorageService service): Error writing configuration for StorageService instance "+getUniqName()+" - "+e.getMessage()==null?e.getMessage():"");
+            System.err.println("Error writing configuration for StorageService instance " + getUniqName());
+            System.err.println("Cause: " + e.toString());
+            System.err.println("Cause detail: " + (e.getMessage() != null ? e.getMessage() : "(unknown)"));
             return;
         }
     }

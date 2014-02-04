@@ -44,7 +44,7 @@ fi
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROCESS_NAME="$2"
 TEST_DIRECTORY="$3"
-LOG_DIR="$TEST_DIRECTORY/logs/sparse/`date`"
+LOG_DIR="$TEST_DIRECTORY/logs/sparse/`date +%Y.%m.%d_%H:%M`"
 SAMPLE_FILES_DIR=samplefiles
 TEMP_DIR="/tmp/storage_service`date +"%s"`"
 TIME_LOG_SPARSE_1GB="$LOG_DIR/sparse_time_log_1gb"

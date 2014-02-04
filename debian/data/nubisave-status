@@ -1,0 +1,32 @@
+#!/bin/bash
+#
+# Informs about the status of Nubisave instances
+
+storagesdir=~/.storages
+
+nubilist=`ls $storagesdir/Nubisave* 2>/dev/null`
+if [ -z $nubilist ]
+then
+	echo "! No NubiSave instances configured."
+fi
+for nubi in $nubilist
+do
+	echo "- NubiSave configured at: $nubi"
+done
+
+mnts=`mount | grep nubisave | awk '{print $3}'`
+if [ -z $mnts ]
+then
+	echo "! No NubiSave instances mounted."
+fi
+for mnt in $mnts
+do
+	echo "- NubiSave mounted at: $mnt"
+	df=`/bin/df | grep "$mnt" | cut -d " " -f 1`
+	if [ $df ]
+	then
+		echo "  * with mounted storages"
+	else
+		echo "  * without mounted storages"
+	fi
+done

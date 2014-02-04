@@ -1,8 +1,8 @@
 #!/bin/bash
 
-echo "Start des Splitter Modules"
+echo "Unmount aller Storages"
 mountpoint=$HOME/.nubisave/nubisavemount
-storages=$HOME/.nubisave/storages
+storages=$HOME/.storages
 
-find "$storages" -type d -exec fusermount -u {} -z \; 
+find "$storages" -type d -exec fusermount -u {} -z \;
 fusermount -u "$mountpoint"  -z;

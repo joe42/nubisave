@@ -1,8 +1,12 @@
-nubisave (0.0~git20130329-1) unstable; urgency=low
+nubisave (0.0~git20130909-1) unstable; urgency=low
 
   * Yet another snapshot, just to catch up with the latest changes.
+  * Contains refactored GUI, module metadata, generic directory and enhanced documentation.
+  * Splitter fixes.
+  * Cloudfusion update.
+  * Several placeholder module descriptions were added for future work.
 
- -- Josef Spillner <josef@rumba>  Fri, 29 Mar 2013 12:43:29 +0100
+ -- Josef Spillner <josef@rumba>  Mon, 09 Sep 2013 08:41:14 +0200
 
 nubisave (0.0~git20130130-1) unstable; urgency=low
 

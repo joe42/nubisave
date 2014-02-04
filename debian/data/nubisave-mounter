@@ -3,10 +3,23 @@
 # Mounts all configured Nubisave directories
 # Useful for headless configurations
 
+storagesdir=~/.storages
 configdir=~/.nubisave/db/splitter_configuration
 splitterdir=/usr/share/nubisave/splitter/
 
+if [ ! -d $configdir ]
+then
+	echo "Error: Configuration directory $configdir does not exist." >&2
+	exit 1
+fi
+
 cd $configdir
+if [ -z "`ls`" ]
+then
+	echo "No storage modules configured, not mounting anything."
+	exit 0
+fi
+
 for storage in *
 do
 	echo "Storage: $storage"
@@ -22,12 +35,17 @@ do
 			mount=`echo $mount | sed -e "s& $param& $paramval&"`
 		fi
 	done
-	mountpoint=~/.nubisave/storages/$storage
-	mkdir -p $mountpoint $mountpoint/config
+
+	mountpoint=$storagesdir/$storage
 	mount=`echo $mount | sed -e "s& mountpoint& $mountpoint&"`
 	echo "* mount: $mount"
 
-	cd $splitterdir
-	$mount
-	cd $configdir
+	# Hot-plugging for indirect mounting through Nubisave
+	cp $storage ~/.nubisave/nubisavemount/config
+
+	# Deprecated: Manual mounting
+	#mkdir -p $mountpoint $mountpoint/config
+	#cd $splitterdir
+	#$mount
+	#cd $configdir
 done

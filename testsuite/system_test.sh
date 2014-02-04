@@ -15,7 +15,7 @@ CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 NUBISAVE_DIR="$CURRENT_DIR/.."
 MOUNTPOINT=~/nubisavemount
 IOZONE_DIR="$2"
-STORAGES_DIR=~/.nubisave/storages
+STORAGES_DIR=~/.storages
 CONFIGURATION_DIR=~/.nubisave/db/splitter_configuration
 
 cd systemtest
