@@ -82,7 +82,7 @@ public class MultipleFiles{
 	}
 	/**
 	 * Get the files that were successfully transfered by the invoked method in random order.
-	 * @return the file paths of the files that were successfully transfered
+	 * @return the contents of the files that were successfully transfered
 	 */
 	public List<byte[]> getSuccessfullyTransferedFiles() {
 		return new ArrayList<byte[]>(successfullyTransferedFilePathsToFiles.values());

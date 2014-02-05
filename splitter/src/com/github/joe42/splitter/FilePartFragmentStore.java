@@ -14,7 +14,7 @@ import fuse.FuseException;
 
 public class FilePartFragmentStore extends FileFragmentStore{
 	private static final Logger log = Logger.getLogger("FilePartFragmentStore");
-	private static final long MAX_FILESIZE = 4096*1000*1000; //4GB
+	private static final long MAX_FILESIZE = 4096*1000; //4GB //(fragmentsize % (packetsize * w)) == 0
 	private String lastFilePartPathWrittenTo = null;
 	private String lastFilePartPathReadFrom = null;
 	
@@ -52,11 +52,13 @@ public class FilePartFragmentStore extends FileFragmentStore{
 		} else if( ! lastFilePartPathWrittenTo.equals(currentFilePartPath) ){
 			FileChannel temp = tempFiles.getFileChannel(lastFilePartPathWrittenTo);
 			if(temp != null){
-				log.debug("flush lastFilePartPathWrittenTo: "+lastFilePartPathWrittenTo+" size: "+temp.size());
+				int size = (int)temp.size();
+				log.debug("flush lastFilePartPathWrittenTo: "+lastFilePartPathWrittenTo+" size: "+size);
 				if(tempReadChannel != null) {
 					tempReadChannel.delete();
 				}
 				tempReadChannel = null;
+
 				FileFragments fileFragments = splitter.splitFile(fileFragmentMetaDataStore, lastFilePartPathWrittenTo, temp);
 				//TODO: delete previous Fragments when changing storage strategy midway 
 				synchronized (fileFragmentMetaDataStore) {
@@ -171,6 +173,8 @@ public class FilePartFragmentStore extends FileFragmentStore{
 		for(String filePartPath:  ((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).getFilePartPaths(path)){
 			log.debug("filePartPath to flush: "+filePartPath);
 			if(! hasFlushedFilePart(filePartPath)){
+				
+				
 
 				FileFragments fileFragments = splitter.splitFile(fileFragmentMetaDataStore, filePartPath, tempFiles.getFileChannel(filePartPath));
 				//TODO: delete previous Fragments when changing storage strategy midway 

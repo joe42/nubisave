@@ -9,13 +9,6 @@ import org.apache.log4j.Logger;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.digests.MD5Digest;
 import org.bouncycastle.crypto.digests.SHA256Digest;
-import org.jigdfs.ida.base.InformationDispersalCodec;
-import org.jigdfs.ida.base.InformationDispersalDecoder;
-import org.jigdfs.ida.base.InformationDispersalEncoder;
-import org.jigdfs.ida.cauchyreedsolomon.CauchyInformationDispersalCodec;
-import org.jigdfs.ida.exception.IDADecodeException;
-import org.jigdfs.ida.exception.IDAInvalidParametersException;
-import org.jigdfs.ida.exception.IDANotInitializedException;
 
 import com.github.joe42.splitter.backend.BackendService;
 import com.github.joe42.splitter.backend.BackendServices;
@@ -30,6 +23,10 @@ import com.github.joe42.splitter.util.file.SerialMultipleFileHandler;
 import com.github.joe42.splitter.vtf.FileEntry;
 
 import fuse.FuseException;
+import eu.vandertil.jerasure.jni.Cauchy;
+import eu.vandertil.jerasure.jni.Jerasure;
+
+
 
 public class CauchyReedSolomonSplitter implements Splitter { //Rename to CauchyReedSolomonSplitter and abstract interface
 	private static final int CAUCHY_WORD_LENGTH = 4096;
@@ -42,9 +39,12 @@ public class CauchyReedSolomonSplitter implements Splitter { //Rename to CauchyR
 	private StorageStrategyFactory storageStrategyFactory;
 	private BackendServices services;
 	private Digest digestFunc;
-	private InformationDispersalCodec crsidacodec;
+	//private InformationDispersalCodec crsidacodec;
+	
+	
 	
 	public CauchyReedSolomonSplitter(BackendServices services){
+		System.loadLibrary("Jerasure.jni");
 		this.services = services;
 		redundancy = 50;
 		storageStrategyName = "";
@@ -168,47 +168,60 @@ public class CauchyReedSolomonSplitter implements Splitter { //Rename to CauchyR
 	private void crsSplitFile(FileChannel temp, HashMap<String, byte[]> fileParts, List<String> fragmentFileNames, 
 			int nr_of_file_fragments, int nr_of_redundant_fragments) throws FuseException {
 		String fragment_name;
-		InformationDispersalEncoder encoder;
+		int w = 8; 
+		int[] matrix;
+	   	int[] bitmatrix; //keep matrices local for multithreaded access
+	   	byte[][] coding_ptrs;
+	   	byte[][] data_ptrs;
+		int nrOfDataElements= nr_of_file_fragments - nr_of_redundant_fragments;
+		
 		try {
-			crsidacodec = getCRSCodec(nr_of_file_fragments,	nr_of_redundant_fragments);
-			encoder = crsidacodec.getEncoder();
+			int fragmentsize = (int) temp.size()/nrOfDataElements;//size of all data elements in bytes, divisible by 8: (fragmentsize % (packetsize * w)) == 0
+			//fill chunk to:
+			//(fragmentsize % (packetsize * w)) == 0
+			int diff = fragmentsize % (512 * w);
+			if(diff != 0) { 
+				fragmentsize += (512 * w) - diff;
+			}
+			
+			matrix= Cauchy.cauchy_good_general_coding_matrix(nrOfDataElements, nr_of_redundant_fragments, w);
+			bitmatrix = Jerasure.jerasure_matrix_to_bitmatrix(nrOfDataElements, nr_of_redundant_fragments, w, matrix);
+			
+			coding_ptrs = new byte[nr_of_redundant_fragments][fragmentsize];
+			data_ptrs = new byte[nrOfDataElements][fragmentsize];
+			
+			try {
+				for (int fragment_nr = 0; fragment_nr < nrOfDataElements; fragment_nr++) {
+					temp.read(ByteBuffer.wrap(data_ptrs[fragment_nr]));
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new FuseException("IO error: " + e.toString(), e)
+						.initErrno(FuseException.EIO);																		
+			}												
+			//finally encode data, which means generating additional coding elements in coding_ptrs (512 is codingblock size) 
+			Jerasure.jerasure_bitmatrix_encode(nrOfDataElements, nr_of_redundant_fragments, w, bitmatrix, data_ptrs, coding_ptrs, fragmentsize, 512);
+			
+			int fragment_nr = 0;
+			for(byte[] data: data_ptrs) {
+				fragment_name = fragmentFileNames.get(fragment_nr);
+				log.debug("write: " + fragment_name);
+				fileParts.put(fragment_name, data); //return  data parts 
+				fragment_nr++;
+			}
+			for(byte[] data: coding_ptrs) {
+				fragment_name = fragmentFileNames.get(fragment_nr);
+				log.debug("write: " + fragment_name);
+				fileParts.put(fragment_name, data); //return  coding parts
+				fragment_nr++;
+			}
+		
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new FuseException("IDA could not be initialized")
 					.initErrno(FuseException.EACCES);
 		}
-		try {
-			byte[] arr = new byte[(int) temp.size()];
-			temp.read(ByteBuffer.wrap(arr));
-			List<byte[]> result = encoder.process(arr);
-			for (int fragment_nr = 0; fragment_nr < nr_of_file_fragments; fragment_nr++) {
-				fragment_name = fragmentFileNames.get(fragment_nr);
-				log.debug("write: " + fragment_name);
-				byte[] b = result.get(fragment_nr);
-				fileParts.put(fragment_name, b);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new FuseException("IO error: " + e.toString(), e)
-					.initErrno(FuseException.EIO);
-		}
-	}
-
-	/**
-	 * Gets a Cauchy Reed Solomon codec. 
-	 * Caches the last codec.
-	 * @param nr_of_file_fragments
-	 * @param nr_of_redundant_fragments
-	 * @return a codec with the above parameters
-	 * @throws IDAInvalidParametersException
-	 */
-	private InformationDispersalCodec getCRSCodec(int nr_of_file_fragments,
-			int nr_of_redundant_fragments) throws IDAInvalidParametersException {
-		if(crsidacodec != null && crsidacodec.getNumSlices() == nr_of_file_fragments && crsidacodec.getThreshold() == nr_of_redundant_fragments){
-			return crsidacodec;
-		}
-		crsidacodec = new CauchyInformationDispersalCodec(nr_of_file_fragments, nr_of_redundant_fragments, CAUCHY_WORD_LENGTH);
-		return crsidacodec;
+		
 	}
 
 	private HashMap<String, byte[]> simpleSplitFile(FileChannel temp, List<String> fragmentFileNames) throws IOException {
@@ -287,7 +300,7 @@ public class CauchyReedSolomonSplitter implements Splitter { //Rename to CauchyR
 			}else {
 				
 				return crsGlueFilesTogether(nr_of_redundant_fragments,
-						nr_of_file_fragments_required, fragmentPathsToChecksum);
+						nr_of_file_fragments_required, fragmentNames, fragmentPathsToChecksum, (int) fileFragmentMetaDataStore.getFragmentsSize(path));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -295,36 +308,77 @@ public class CauchyReedSolomonSplitter implements Splitter { //Rename to CauchyR
 		}
 	}
 
-	private RandomAccessTemporaryFileChannel crsGlueFilesTogether(int nr_of_redundant_file_fragments,
-			int nr_of_file_fragments_required,
-			Map<String, byte[]> fragmentPathsToChecksum)
-			throws FuseException, IOException, IDADecodeException,
-			IDANotInitializedException {
-
-		RandomAccessTemporaryFileChannel ret;
-		List<byte[]> receivedFileSegments;
-		InformationDispersalDecoder decoder;
-		try {
-			crsidacodec = getCRSCodec(fragmentPathsToChecksum.size(),	nr_of_redundant_file_fragments); 
-			log.debug(Arrays.toString(fragmentPathsToChecksum.keySet().toArray(new String[0])) + " "
-					+ nr_of_redundant_file_fragments);
-			decoder = crsidacodec.getDecoder();
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new FuseException("IDA could not be initialized")
-					.initErrno(FuseException.EACCES);
+	private RandomAccessTemporaryFileChannel crsGlueFilesTogether(int nr_of_redundant_fragments,
+			int nrOfDataElements,
+			List<String> fragmentNames, Map<String, byte[]> fragmentPathsToChecksum, int filesize)
+			throws FuseException, IOException {
+	
+		int nrOfFragments = nr_of_redundant_fragments + nrOfDataElements;
+		int w = 8; 
+		int[] matrix;
+	   	int[] bitmatrix; //keep matrices local for multithreaded access
+	   	byte[][] coding_ptrs;
+	   	byte[][] data_ptrs;
+	   	/**The values of the array are the number of the lost (erased) elements. 
+	   	 * The elements are numbered from 0 to n, according to the order of the arrays used in the encoding step for the data, and coding elements.
+	   	 * The count begins with 0 beginning with the data elements, then proceeds with the coding elements.
+	   	 **/ 
+	   	int [] erasures;
+	   	RandomAccessTemporaryFileChannel ret; //decoded file (chunk)
+	   	List<byte[]> receivedFileSegments; //the erasure code elements except erased ones
+		//fill chunk to:
+		//(fragmentsize % (packetsize * w)) == 0
+	   	int fragmentsize = filesize/nrOfFragments;
+		int diff = fragmentsize % (512 * w);
+		if(diff != 0) { 
+			fragmentsize += (512 * w) - diff;
 		}
-		ret = new RandomAccessTemporaryFileChannel();
+		
+
+		matrix= Cauchy.cauchy_good_general_coding_matrix(nrOfDataElements, nr_of_redundant_fragments, w);
+		bitmatrix = Jerasure.jerasure_matrix_to_bitmatrix(nrOfDataElements, nr_of_redundant_fragments, w, matrix);
+		erasures = new int [nrOfFragments+1];
+		
+		coding_ptrs = new byte[nr_of_redundant_fragments][fragmentsize];
+		data_ptrs = new byte[nrOfDataElements][fragmentsize];
+		
+		log.debug(Arrays.toString(fragmentPathsToChecksum.keySet().toArray(new String[0])) + " "
+				+ nr_of_redundant_fragments);
+		
+		//use utility class to read several files into byte arrays concurrently
 		MultipleFiles multipleFiles = ((ConcurrentMultipleFileHandler) concurrent_multi_file_handler)
 				.getFilesAsByteArrays(fragmentPathsToChecksum,
-						nr_of_file_fragments_required);
+						nrOfDataElements);
+		
+		
 		receivedFileSegments = multipleFiles.getSuccessfullyTransferedFiles();
 		log.debug("successfully transfered fragments: "+ receivedFileSegments.size());
 		log.debug("not transfered: "+ (multipleFiles.getNrOfUnsuccessfullyTransferedFiles()-multipleFiles.getWrongChecksumFilePaths().size()));
 		log.debug("fragments with corrupted content: "+ multipleFiles.getWrongChecksumFilePaths().size());
 		
-		byte[] recoveredFile = decoder.process(receivedFileSegments);
-		ret.getChannel().write(ByteBuffer.wrap(recoveredFile));
+		
+		int erased = 0;
+		for (int i=0; i<nrOfFragments; i++){
+			if(multipleFiles.getSuccessfullyTransferedFile(fragmentNames.get(i)) == null) {
+				erasures[erased] = i;
+				erased++;
+				continue;
+			}
+			if(i<nrOfDataElements){
+				data_ptrs[i] = multipleFiles.getSuccessfullyTransferedFile(fragmentNames.get(i));
+			} else {
+				coding_ptrs[i-nrOfDataElements] = multipleFiles.getSuccessfullyTransferedFile(fragmentNames.get(i));
+			}
+		}
+		erasures[erased] = -1;
+		//finally decode data (recreate erased data elements); if no parts were erased, nothing needs to be done
+		Jerasure.jerasure_bitmatrix_decode(nrOfDataElements, nr_of_redundant_fragments, w, bitmatrix, false, erasures, data_ptrs, coding_ptrs, fragmentsize, 512);
+
+		ret = new RandomAccessTemporaryFileChannel(); //put data elements together into a single file
+		FileChannel fchan = ret.getChannel();
+		for(byte[] data: data_ptrs){
+			fchan.write(ByteBuffer.wrap(data));
+		}
 		return ret;
 	}
 
