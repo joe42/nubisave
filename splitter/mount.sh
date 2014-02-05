@@ -18,8 +18,8 @@ fi
 
 fuseopts=big_writes,max_read=131072,max_write=131072,allow_other
 
-LD_LIBRARY_PATH=../fusej/jni:$FUSE_HOME/lib $java \
-   -classpath ./build:./lib/*:../jigdfs/lib/*:../fusej/lib/* \
+LD_LIBRARY_PATH=../fusej/jni:$FUSE_HOME/lib:../bin/lib/ $java \
+   -classpath ./build:../fusej/lib/*:../bin/lib/* \
    -Dorg.apache.commons.logging.Log=fuse.logging.FuseLog \
    -Dfuse.logging.level=INFO \
    com.github.joe42.splitter.Main -f -s -o$fuseopts $1 $2

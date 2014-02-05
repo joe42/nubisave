@@ -4,9 +4,9 @@ include build.conf
 JAVAC := javac
 JAVA := java
 
-BUILD_CLASSPATH := ./build:./lib/*:../jigdfs/lib/*:../fusej/lib/*
+BUILD_CLASSPATH := ./build:../bin/lib/*:../fusej/lib/*
 
-JAVASRC := $(shell find src -name '*.java') $(shell find ../jigdfs/src -name '*.java') $(shell find ../fusej/src -name '*.java')
+JAVASRC := $(shell find src -name '*.java') $(shell find ../Jerasure/java -name '*.java') $(shell find ../fusej/src -name '*.java')
 JNI_BINDINGS_H := ../fusej/jni/javafs_bindings.h
 JNI_BINDINGS_C := ../fusej/jni/javafs_bindings.c
 JNI_COMMON_H := javafs.h
@@ -26,7 +26,7 @@ clean: java_clean jni_clean
 
 java_all: ${JAVASRC}
 	mkdir -p build
-	${JAVAC} -Xlint -source 5 -classpath "${BUILD_CLASSPATH}" -d build ${JAVASRC}
+	${JAVAC} -nowarn -source 5 -classpath "${BUILD_CLASSPATH}" -d build ${JAVASRC}
 
 java_clean:
 	rm -rf build/*
