@@ -1,19 +1,17 @@
-PREFIX=${HOME}/local
-BINDIR=${PREFIX}/bin
-LIBDIR=${PREFIX}/lib
+PREFIX=/usr/lib/jvm/java-7-openjdk-amd64
+LIBDIR=../bin/lib
 INCDIR=${PREFIX}/include
 
 all: lib/libJerasure.so lib/libJerasure.jni.so
-	make -C Examples
+	cp -P lib/libJerasure.jni.so.0 ${LIBDIR}/libJerasure.so
 
 clean:
-	make -C jni clean
+	make -C jni clean PREFIX=${PREFIX}
 	make -C src clean
-	make -C Examples clean
 	rm -rf include
 
 install: lib/libJerasure.so
-	cp -P lib/libJerasure.so* ${LIBDIR}
+	
 	mkdir -p ${INCDIR}/jerasure
 	cp include/* ${INCDIR}/jerasure
 
