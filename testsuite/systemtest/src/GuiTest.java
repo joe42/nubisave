@@ -5,7 +5,7 @@ import java.util.NoSuchElementException;
 
 import org.python.modules.math;
 import org.sikuli.script.*;
-public class GuiTest implements Constants {
+public class GuiTest extends Constants {
 
 	
 	Screen screen;
