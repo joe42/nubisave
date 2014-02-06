@@ -4,3 +4,4 @@ debian/tmp/usr/share/nubisave/fusej
 debian/tmp/usr/share/nubisave/jigdfs
 debian/tmp/usr/share/nubisave/splitter
 debian/tmp/usr/share/nubisave/start.sh
+debian/tmp/usr/share/nubisave/bin/nubi.properties
