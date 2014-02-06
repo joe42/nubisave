@@ -55,11 +55,11 @@
 			(lucid, maverick, natty) and <a href="http://spaceflight.serviceplatform.org/">SPACEflight</a> (1.0 beta5/6/7).
 			The packages are designed to work on all architectures, but currently contain libraries specific to x86 and x86_64.
 			<div class="pre">
-wget -O- http://nubisave.org/downloads/nubisave.key | sudo apt-key add -
+<pre>wget -O- http://nubisave.org/downloads/nubisave.key | sudo apt-key add -
 echo "deb http://nubisave.org/packages/ ./" | sudo tee -a /etc/apt/sources.list
 sudo apt-get update
 sudo apt-get install nubisave # complete set
-sudo apt-get install nubisave-cli nubisave-splitter cloudfusion # headless setup
+sudo apt-get install nubisave-cli nubisave-splitter cloudfusion # headless setup</pre>
 			</div>
 			<ul>
 			<li>Signature key fingerprint: <i>5FE5 4798 19A6 7579 D5B3  52A6 3D29 91A5 CCF0 E02E</i> (OpenPGP key <a href="downloads/nubisave.key">download</a>)</li>
