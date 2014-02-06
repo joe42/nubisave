@@ -1,3 +1,9 @@
+nubisave (0.0~git20140206-1) unstable; urgency=low
+
+  * Second split packaging iteration, including changes from several branches.
+
+ -- Josef Spillner <josef@rumba>  Thu, 06 Feb 2014 14:43:49 +0100
+
 nubisave (0.0~git20140106-1) unstable; urgency=low
 
   * Split packaging introduced by new year's resolution.
