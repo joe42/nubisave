@@ -1,4 +1,10 @@
-nubisave (0.0~git20131023-1) UNRELEASED; urgency=low
+nubisave (0.0~git20140106-1) unstable; urgency=low
+
+  * Split packaging introduced by new year's resolution.
+
+ -- Josef Spillner <josef@rumba>  Mon, 06 Jan 2014 18:42:50 +0100
+
+nubisave (0.0~git20131130-1) unstable; urgency=low
 
   * Work on post-Service Summer tutorial snapshot begins.
   * Convenient 'nubisave-reset' script.

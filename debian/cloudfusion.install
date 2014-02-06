@@ -1,0 +1,3 @@
+debian/tmp/usr/bin/cloudfusion
+debian/tmp/usr/bin/nosetests*
+debian/tmp/usr/lib/python*
