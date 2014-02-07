@@ -47,7 +47,7 @@ echo
 echo
 echo "Installiere Entwicklerpakete (openJDK, FUSE, ...)"
 
-sudo apt-get install openjdk-6-jdk libfuse-dev python-simplejson python-setuptools python-oauth python-httplib2
+sudo apt-get install openjdk-7-jdk libfuse-dev python-simplejson python-setuptools python-oauth python-httplib2
 
 sudo easy_install 'http://pypi.python.org/packages/2.6/p/poster/poster-0.4-py2.6.egg#md5=f69a6be30737ad5d652a602f3af005ac'
 
