@@ -1,6 +1,8 @@
 
 include build.conf
 
+PREFIX=/usr/lib/jvm/java-7-openjdk-amd64
+
 JAVAC := javac
 JAVA := java
 
@@ -35,7 +37,7 @@ java_clean:
 
 # JNI part
 
-jni_all: ${JNI_BINDINGS_H} ${JNI_BINDINGS_C} ../fusej/jvm_ldpath.def
+jni_all: ${JNI_BINDINGS_H} ${JNI_BINDINGS_C} ../fusej/jvm_ldpath.def jerasure_jni
 	${MAKE} -C ../fusej/jni all
 
 ${JNI_BINDINGS_H} ${JNI_BINDINGS_C}: ${JAVASRC}
@@ -51,3 +53,10 @@ jni_clean:
 	${MAKE} -C ../fusej/jni clean
 	rm -f ${JNI_BINDINGS_H} ${JNI_BINDINGS_C}
 	rm -f ../fusej/jvm_ldpath.def
+	make -C ../Jerasure clean PREFIX=${PREFIX}
+
+jerasure_jni:
+	make -C ../Jerasure PREFIX=${PREFIX}
+
+
+
