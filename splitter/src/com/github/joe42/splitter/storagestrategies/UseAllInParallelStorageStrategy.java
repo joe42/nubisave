@@ -8,12 +8,24 @@ import java.util.Observer;
 import java.util.Set;
 import java.util.HashSet;
 
+import org.python.core.PyFloat;
+import org.python.core.PyInstance;  
+import org.python.core.PyList;
+import org.python.core.PyObject;
+import org.python.core.PyInteger;
+import org.python.core.PyTuple;
+import org.python.util.PythonInterpreter;  
+
 import org.apache.log4j.Logger;
 
 
 import com.github.joe42.splitter.backend.BackendService;
 import com.github.joe42.splitter.backend.BackendServices;
 import com.github.joe42.splitter.util.math.SetUtil;
+
+interface PyAvailabilityCalculator{
+    public double getAvailability(PyInteger k, PyList availabilityList);
+}
 
 /**
  * Uses all potential storage directories.
@@ -24,6 +36,7 @@ public class UseAllInParallelStorageStrategy  implements StorageStrategy, Observ
 	protected int redundancy;
 	protected long filesize;
 	protected BackendServices services;
+	PyAvailabilityCalculator availabilityCalculator;
 	
 	
 	/**
@@ -35,6 +48,15 @@ public class UseAllInParallelStorageStrategy  implements StorageStrategy, Observ
 		storageServices.addObserver(this);
 		update();
 		redundancy = 50;
+
+		PythonInterpreter interpreter;
+		PythonInterpreter.initialize(System.getProperties(), System.getProperties(), new String[0]); 
+		interpreter = new PythonInterpreter(); 
+
+		interpreter.exec("import sys\nsys.path.append('.')\nfrom availability import *");
+
+		PyObject getAvailability = interpreter.get("get_availability");
+		availabilityCalculator = (PyAvailabilityCalculator) getAvailability.__tojava__(PyAvailabilityCalculator.class);
 	}
 	
 	/**
@@ -56,19 +78,15 @@ public class UseAllInParallelStorageStrategy  implements StorageStrategy, Observ
 	 */
 	@Override
 	public double getStorageAvailability(){
-		double availability = 0;
 		if(potentialStorageDirectories.size() == 0) {
 			return 0;
 		}		
 		Set<BackendService> storageServices = new HashSet<BackendService>(services.getFrontEndStorageServices());
-		for(Set<BackendService> storageServiceCombination: SetUtil.powerSet(storageServices)){
-			if(BackendServices.getNrOfFilePartsOfCombination(storageServiceCombination) >= getNrOfFilePartsNeededToReconstructFile()){
-				log.debug("combination:"+storageServiceCombination+ " fileparts:"+BackendServices.getNrOfFilePartsOfCombination(storageServiceCombination)+ " needed:"+getNrOfFilePartsNeededToReconstructFile());
-				availability += BackendServices.getExclusiveAvailabilityOfStorageCombination(storageServiceCombination, new HashSet<BackendService>(services.getFrontEndStorageServices()));
-			}
+		PyList availabilityList = new PyList();
+		for(BackendService s: storageServices){
+			availabilityList.add(new PyTuple(new PyFloat(s.getAvailability()), new PyInteger(s.getNrOfFilePartsToStore())));
 		}
-		log.debug("storage availability:"+availability);
-		return availability;
+		return availabilityCalculator.getAvailability(new PyInteger(getNrOfFilePartsNeededToReconstructFile()), availabilityList);
 	}
 
 	private int getNrOfFilePartsNeededToReconstructFile() {
