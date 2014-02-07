@@ -9,6 +9,7 @@ clean:
 	make -C jni clean PREFIX=${PREFIX}
 	make -C src clean
 	rm -rf include
+	rm -f ${LIBDIR}/libJerasure.so
 
 install: lib/libJerasure.so
 	
