@@ -12,7 +12,7 @@ all: ../lib/libJerasure.jni.so
 
 ../lib/libJerasure.jni.so.0: $(OBJS)
 	$(CC) -shared -Wl,-soname,libJerasure.jni.s0.0 \
-		-o ../lib/libJerasure.jni.so.0 $(OBJS)
+		-o ../lib/libJerasure.jni.so.0 $(OBJS) -Wl,-L../lib -Wl,-lJerasure
 
 clean: 
 	rm -f ../lib/libJerasure.jni.so* $(OBJS)
