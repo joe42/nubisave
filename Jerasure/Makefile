@@ -3,7 +3,7 @@ LIBDIR=../bin/lib
 INCDIR=${PREFIX}/include
 
 all: lib/libJerasure.so lib/libJerasure.jni.so
-	cp -P lib/libJerasure.jni.so.0 ${LIBDIR}/libJerasure.so
+	cp -P lib/* ${LIBDIR}
 
 clean:
 	make -C jni clean PREFIX=${PREFIX}
