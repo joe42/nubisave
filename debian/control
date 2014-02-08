@@ -24,7 +24,8 @@ Description: Cloud/RAOC storage controller
 
 Package: nubisave-splitter
 Architecture: all
-Depends: ${misc:Depends}, openjdk-7-jre-headless | openjdk-6-jre-headless, libfuse-dev, fuse-utils, davfs2, sshfs, cifs-utils, ssh-askpass, encfs, fusedav, curlftpfs
+Depends: ${misc:Depends}, openjdk-7-jre-headless | openjdk-6-jre-headless, libfuse-dev, fuse-utils | fuse
+Recommends: davfs2, sshfs, cifs-utils, ssh-askpass, encfs, fusedav, curlftpfs
 Description: Cloud/RAOC storage controller
  NubiSave is a flexible higher-level storage controller for the
  cloud, in particular for Redundant Arrays of Optimal Cloud
