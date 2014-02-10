@@ -39,6 +39,7 @@ public class CauchyReedSolomonSplitter implements Splitter { //Rename to CauchyR
 	private StorageStrategyFactory storageStrategyFactory;
 	private BackendServices services;
 	private Digest digestFunc;
+	private HashMap<Integer,int[]> bitmatrixCache;
 	//private InformationDispersalCodec crsidacodec;
 	
 	
@@ -49,6 +50,7 @@ public class CauchyReedSolomonSplitter implements Splitter { //Rename to CauchyR
 		redundancy = 50;
 		storageStrategyName = "";
 		digestFunc = new SHA256Digest();
+		bitmatrixCache = new HashMap<Integer, int[]>();
 		storageStrategyFactory = new StorageStrategyFactory(services);
 		concurrent_multi_file_handler = new ConcurrentMultipleFileHandler(digestFunc);
 		serial_multi_file_handler = new SerialMultipleFileHandler(digestFunc);
@@ -169,7 +171,6 @@ public class CauchyReedSolomonSplitter implements Splitter { //Rename to CauchyR
 			int nr_of_file_fragments, int nr_of_redundant_fragments) throws FuseException {
 		String fragment_name;
 		int w = 8; 
-		int[] matrix;
 	   	int[] bitmatrix; //keep matrices local for multithreaded access
 	   	byte[][] coding_ptrs;
 	   	byte[][] data_ptrs;
@@ -184,8 +185,7 @@ public class CauchyReedSolomonSplitter implements Splitter { //Rename to CauchyR
 				fragmentsize += (512 * w) - diff;
 			}
 			
-			matrix= Cauchy.cauchy_good_general_coding_matrix(nrOfDataElements, nr_of_redundant_fragments, w);
-			bitmatrix = Jerasure.jerasure_matrix_to_bitmatrix(nrOfDataElements, nr_of_redundant_fragments, w, matrix);
+			bitmatrix = getBitMatrix(nrOfDataElements, nr_of_redundant_fragments, w);
 			
 			coding_ptrs = new byte[nr_of_redundant_fragments][fragmentsize];
 			data_ptrs = new byte[nrOfDataElements][fragmentsize];
@@ -315,8 +315,8 @@ public class CauchyReedSolomonSplitter implements Splitter { //Rename to CauchyR
 	
 		int nrOfFragments = nr_of_redundant_fragments + nrOfDataElements;
 		int w = 8; 
-		int[] matrix;
 	   	int[] bitmatrix; //keep matrices local for multithreaded access
+	   	
 	   	byte[][] coding_ptrs;
 	   	byte[][] data_ptrs;
 	   	/**The values of the array are the number of the lost (erased) elements. 
@@ -334,9 +334,8 @@ public class CauchyReedSolomonSplitter implements Splitter { //Rename to CauchyR
 			fragmentsize += (512 * w) - diff;
 		}
 		
-
-		matrix= Cauchy.cauchy_good_general_coding_matrix(nrOfDataElements, nr_of_redundant_fragments, w);
-		bitmatrix = Jerasure.jerasure_matrix_to_bitmatrix(nrOfDataElements, nr_of_redundant_fragments, w, matrix);
+		bitmatrix = getBitMatrix(nrOfDataElements, nr_of_redundant_fragments, w);
+		
 		erasures = new int [nrOfFragments+1];
 		
 		coding_ptrs = new byte[nr_of_redundant_fragments][fragmentsize];
@@ -380,6 +379,19 @@ public class CauchyReedSolomonSplitter implements Splitter { //Rename to CauchyR
 			fchan.write(ByteBuffer.wrap(data));
 		}
 		return ret;
+	}
+
+	private int[] getBitMatrix(int k, int m, int w) {
+		int[] bitmatrix; //keep matrices local for multithreaded access
+		int hash = Arrays.hashCode(new int[]{k,m,w});
+		bitmatrix = bitmatrixCache.get(hash);
+		if(bitmatrix == null) {
+			int[] matrix;
+			matrix= Cauchy.cauchy_good_general_coding_matrix(k, m, w);
+			bitmatrix = Jerasure.jerasure_matrix_to_bitmatrix(k, m, w, matrix);
+			bitmatrixCache.put(hash, bitmatrix);
+		}
+		return bitmatrix;
 	}
 
 	/**
