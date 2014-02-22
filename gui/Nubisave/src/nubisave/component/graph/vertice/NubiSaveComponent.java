@@ -6,6 +6,8 @@ import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
 
+import org.ini4j.Ini;
+
 import nubisave.Nubisave;
 import nubisave.StorageService;
 import nubisave.ui.NubisaveConfigDlg;
@@ -19,6 +21,9 @@ public class NubiSaveComponent extends AbstractNubisaveComponent {
     
     public NubiSaveComponent(StorageService component) throws IOException{
         this.component=component;
+        
+        Ini config = this.component.getConfig();
+        this.name = config.get("module", "name");
         addRequiredPort();
         addProvidedPort();
         storage_directory= new PropertiesUtil("nubi.properties").getProperty("storage_configuration_directory");

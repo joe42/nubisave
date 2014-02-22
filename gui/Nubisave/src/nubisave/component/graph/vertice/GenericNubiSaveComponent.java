@@ -44,7 +44,12 @@ public class GenericNubiSaveComponent extends AbstractNubisaveComponent {
         if(component.getNrOfBackends() > 0) { 
             addRequiredPort(component.getNrOfBackends());
         }
+        
         this.component = component;
+        
+        Ini config = this.component.getConfig();
+        this.name = config.get("module", "name");
+        
         JLabel l = new JLabel(getName());
         l.setFont(new Font("Helvetica", Font.PLAIN, 12));
         Dimension d = l.getPreferredSize();
@@ -90,6 +95,11 @@ public class GenericNubiSaveComponent extends AbstractNubisaveComponent {
         ServiceParameterDialog editDialog = new ServiceParameterDialog(null, true, component);
         editDialog.setTitle(component.getName());
         editDialog.setVisible(true);
+        if(editDialog.getApplyStatus()){
+        	//get and update latest name.
+        	Ini config = this.component.getConfig();
+            this.name = config.get("module", "name");
+        }
     }
 
     @Override
