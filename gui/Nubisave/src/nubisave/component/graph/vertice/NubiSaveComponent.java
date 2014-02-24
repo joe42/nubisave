@@ -11,6 +11,7 @@ import org.ini4j.Ini;
 import nubisave.Nubisave;
 import nubisave.StorageService;
 import nubisave.ui.NubisaveConfigDlg;
+import nubisave.ui.PolicySelectionDlg;
 import nubisave.ui.util.SystemIntegration;
 
 
@@ -18,6 +19,7 @@ public class NubiSaveComponent extends AbstractNubisaveComponent {
     private Point graphLocation;
     protected final StorageService component;
     private String storage_directory;
+    private PolicySelectionDlg policy = new PolicySelectionDlg();
     
     public NubiSaveComponent(StorageService component) throws IOException{
         this.component=component;
@@ -94,18 +96,47 @@ public class NubiSaveComponent extends AbstractNubisaveComponent {
     public Point getGraphLocation() {
         return graphLocation;
     }
+    
+    public void selectPolicy() {
+//    	PolicySelectionDlg policy=new PolicySelectionDlg();
+    	policy.setVisible(true);
+//    	policy.setModal(true);
+//    	policy.setTitle("Nubisave Policy Selection");
+//    	//policy.pack();
+//    	//policy.setLocationRelativeTo(null);
+//    	policy.setVisible(true);
+    }
 
     @Override
     public void connectToProvidedPort(AbstractNubisaveComponent abstractNubiSaveComponent) {
+          System.out.println("connected!!!");
+//        if(abstractNubiSaveComponent instanceof DataDirectoryComponent){
+//            component.addBackendService(((DataDirectoryComponent)abstractNubiSaveComponent).component);
+//            //Nubisave.services.update();
+//            System.out.println(component.getName()+" adds "+((DataDirectoryComponent)abstractNubiSaveComponent).component.getName()+" as backend service");
+//        }
     }
 
     @Override
     public void removeConnectionTo(AbstractNubisaveComponent abstractNubiSaveComponent) {
+//        if(abstractNubiSaveComponent instanceof DataDirectoryComponent){
+//            ((DataDirectoryComponent)abstractNubiSaveComponent).component.removeBackendService(component);
+//            //Nubisave.services.update();
+//            System.out.println("unconnected");
+//        }
     }
 
     @Override
     public boolean isConnectedToProvidedPort(AbstractNubisaveComponent abstractNubiSaveComponent) {
-        return false;
+//        if(abstractNubiSaveComponent instanceof DataDirectoryComponent){
+//            for(StorageService backendServices: ((DataDirectoryComponent)abstractNubiSaveComponent).component.getBackendServices()){
+//                if(backendServices.equals(component)){
+//                    return true;
+//                }
+//            }
+//        }
+//        return abstractNubiSaveComponent instanceof NubiSaveComponent && ! component.isBackendModule();
+    	return false;
     }
 
     @Override

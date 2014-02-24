@@ -16,6 +16,7 @@ import nubisave.component.graph.mouseplugins.StorageServicePicker;
 import nubisave.component.graph.mouseplugins.PopupEditor;
 import nubisave.component.graph.vertice.NubiSaveComponent;
 import nubisave.component.graph.vertice.GenericNubiSaveComponent;
+import nubisave.component.graph.vertice.DataDirectoryComponent;
 import nubisave.component.graph.mouseplugins.extension.DataVertexEdgeCreator;
 import nubisave.component.graph.edge.WeightedNubisaveVertexEdge;
 import nubisave.component.graph.edge.NubiSaveEdge;
@@ -270,7 +271,25 @@ public class NubisaveEditor extends JApplet {
 								Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
 							}
 							nubisave.Nubisave.services.addNubisave(newService);
-						} else {
+						} else if (module.toLowerCase().equals("datadir")){
+							if(DataDirectoryComponent.has()) {
+								CustomServiceDlg.okstatus =false;
+								return;
+							}
+								
+							StorageService newService = new StorageService(module);
+							newService.setUniqName(newService.getName());
+							newService.setBackendModule(false);
+							
+							System.out.println("newService.getName():"+ newService.getName());
+							System.out.println("newService.getUniqueName():"+ newService.getUniqName());
+							try {
+								vertexFactory.setNextInstance(new DataDirectoryComponent(newService));
+							} catch (IOException ex) {
+								Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
+							}
+							nubisave.Nubisave.services.addDataDir(newService);
+						}else {
 							StorageService newService = new StorageService(module);
 							try {
 								vertexFactory.setNextInstance(new GenericNubiSaveComponent(newService));
@@ -371,6 +390,13 @@ public class NubisaveEditor extends JApplet {
 			if (persistedService.getName().toLowerCase().equals("nubisave")) {
 				try {
 					vertex = new NubiSaveComponent(persistedService);
+				} catch (IOException ex) {
+					Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
+				}
+			} else if (persistedService.getName().toLowerCase().equals("datadir")) {
+				System.out.print("new DataDirectoryComponent...");
+				try {
+					vertex = new DataDirectoryComponent(persistedService);
 				} catch (IOException ex) {
 					Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
 				}
@@ -501,9 +527,12 @@ public class NubisaveEditor extends JApplet {
 						String startVertex = strLine.split(" ")[0];
 						String endVertex = strLine.split(" ")[1];
 						hh.put(startVertex, endVertex);
+						 System.out.println("startVertex: "+startVertex);
+						 System.out.println("endVertex: "+endVertex);
 
 						for (AbstractNubisaveComponent component : nubisaveComponentGraph.getVertices()) {
-							if (component.getUniqueName().equals(startVertex)) {
+							
+							if (component.getUniqueName() != null && component.getUniqueName().equals(startVertex)) {
 								String endpoint = (String) hh.get(startVertex);
 								int pos = str.indexOf(endpoint);
 								if(pos >= 0) {
