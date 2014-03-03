@@ -7,7 +7,7 @@ LIB_SO := libjavafs.so
 
 INCLUDES := -I${FUSE_HOME}/include -I${JDK_HOME}/include -I${JDK_HOME}/include/linux
 
-LDPATH := ${LDPATH} -L${FUSE_HOME}/lib -L/usr/lib/x86_64-linux-gnu/gcj-4.6-12/
+LDPATH := ${LDPATH} -L${FUSE_HOME}/lib -L${JDK_HOME}/jre/lib/i386 -L${JDK_HOME}/jre/lib/i386/server -L${JDK_HOME}/jre/lib/amd64 -L${JDK_HOME}/jre/lib/amd64/server
 
 
 all: ${LIB_SO}

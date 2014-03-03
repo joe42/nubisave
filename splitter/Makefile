@@ -1,10 +1,10 @@
 
 include build.conf
 
-PREFIX=/usr/lib/jvm/java-7-openjdk-amd64
+JAVA:=$(shell which java)
+JAVAC:=$(shell which javac)
 
-JAVAC := javac
-JAVA := java
+PREFIX:=$(shell readlink -f ${JAVAC} | sed "s:bin/javac::")
 
 BUILD_CLASSPATH := ./build:../bin/lib/*:../fusej/lib/*
 
@@ -38,7 +38,7 @@ java_clean:
 # JNI part
 
 jni_all: ${JNI_BINDINGS_H} ${JNI_BINDINGS_C} ../fusej/jvm_ldpath.def jerasure_jni
-	${MAKE} -C ../fusej/jni all
+	${MAKE} -C ../fusej/jni all JDK_HOME=${PREFIX}
 
 ${JNI_BINDINGS_H} ${JNI_BINDINGS_C}: ${JAVASRC}
 	${JAVA} -classpath build java2c.CAPIGenerator \
