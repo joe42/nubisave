@@ -77,7 +77,7 @@ Description: Cloud/RAOC storage controller
 
 Package: cloudfusion
 Architecture: all
-Depends: ${misc:Depends}, python-simplejson, python-oauth, python-httplib2, python-poster
+Depends: ${misc:Depends}, python-simplejson, python-oauth, python-httplib2, python-poster, python-requests, python-mechanize
 Description: Cloud/RAOC storage controller
  NubiSave is a flexible higher-level storage controller for the
  cloud, in particular for Redundant Arrays of Optimal Cloud
