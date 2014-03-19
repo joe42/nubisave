@@ -155,7 +155,6 @@ public class CauchyReedSolomonSplitter implements Splitter { //Rename to CauchyR
 		MultipleFiles multipleFiles = concurrent_multi_file_handler.writeFilesAsByteArrays(fileParts);
 		nr_of_file_parts_successfully_stored = multipleFiles.getNrOfSuccessfullyTransferedFiles();
 
-		//if (log.isDebugEnabled())
 		  log.debug("nr_of_file_parts_successfully_stored: "+nr_of_file_parts_successfully_stored+" - MAX_FILE_FRAGMENTS_NEEDED "+nr_of_file_fragments_required);
 		//TODO: replace with nrOfRequiredSuccessfullyStoredFragments
 		if (nr_of_file_parts_successfully_stored < nr_of_file_fragments_required) {
@@ -328,7 +327,7 @@ public class CauchyReedSolomonSplitter implements Splitter { //Rename to CauchyR
 	   	List<byte[]> receivedFileSegments; //the erasure code elements except erased ones
 		//fill chunk to:
 		//(fragmentsize % (packetsize * w)) == 0
-	   	int fragmentsize = filesize/nrOfFragments;
+	   	int fragmentsize = filesize/nrOfDataElements;
 		int diff = fragmentsize % (512 * w);
 		if(diff != 0) { 
 			fragmentsize += (512 * w) - diff;
@@ -361,6 +360,11 @@ public class CauchyReedSolomonSplitter implements Splitter { //Rename to CauchyR
 			if(multipleFiles.getSuccessfullyTransferedFile(fragmentNames.get(i)) == null) {
 				erasures[erased] = i;
 				erased++;
+				if(i<nrOfDataElements){
+					data_ptrs[i] = new byte[fragmentsize];
+				} else {
+					coding_ptrs[i-nrOfDataElements] = new byte[fragmentsize];
+				}
 				continue;
 			}
 			if(i<nrOfDataElements){
@@ -378,6 +382,7 @@ public class CauchyReedSolomonSplitter implements Splitter { //Rename to CauchyR
 		for(byte[] data: data_ptrs){
 			fchan.write(ByteBuffer.wrap(data));
 		}
+		fchan.truncate(filesize);
 		return ret;
 	}
 
