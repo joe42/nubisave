@@ -106,12 +106,7 @@ public class FilePartFragmentStore extends FileFragmentStore{
 		if(buf.position() == buf.limit() || ! ((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).hasNextFilePart(path, offset)){
 			return;
 		}
-		//important for sparse files: add null bytes to fill up file parts smaller than MAX_FILESIZE 
-		long nrOfNullBytes = MAX_FILESIZE - tempReadChannel.getChannel().size();
-		while(nrOfNullBytes > 0 && buf.position() < buf.limit()){
-			buf.put((byte) 0);
-			nrOfNullBytes--;
-		}		
+		fillSparseFilePart(buf);		
 		log.debug("buf.limit(): "+buf.limit()+" buf.position(): "+buf.position()+" "+"file size: "+((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).getSize(path)+" offset: "+offset+" end of read: "+(offset+buf.limit()));
 		if(buf.position() == buf.limit()){
 			return;
@@ -125,6 +120,15 @@ public class FilePartFragmentStore extends FileFragmentStore{
 		tempReadChannel.getChannel().read(bb,0);
 		bb.flip(); //prepare for reading from it; setting the limit at the curent position == the last byte
 		buf.put(bb);
+	}
+
+	private void fillSparseFilePart(ByteBuffer buf) throws IOException {
+		//important for sparse files: add null bytes to fill up file parts smaller than MAX_FILESIZE 
+		long nrOfNullBytes = MAX_FILESIZE - tempReadChannel.getChannel().size();
+		while(nrOfNullBytes > 0 && buf.position() < buf.limit()){
+			buf.put((byte) 0);
+			nrOfNullBytes--;
+		}
 	}
 
 	/**
