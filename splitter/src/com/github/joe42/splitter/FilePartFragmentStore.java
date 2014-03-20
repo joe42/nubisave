@@ -122,9 +122,8 @@ public class FilePartFragmentStore extends FileFragmentStore{
 		tempReadChannel = getFilePart(filePartPath);
 		lastFilePartPathReadFrom = filePartPath;
 		ByteBuffer bb = ByteBuffer.allocate(buf.remaining());
-		tempReadChannel.getChannel().read(bb, 0);
-		log.debug("buf.position(); "+buf.position());
-		bb.position(0);
+		tempReadChannel.getChannel().read(bb,0);
+		bb.flip(); //prepare for reading from it; setting the limit at the curent position == the last byte
 		buf.put(bb);
 	}
 
