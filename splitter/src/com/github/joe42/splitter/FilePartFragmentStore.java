@@ -51,7 +51,6 @@ public class FilePartFragmentStore extends FileFragmentStore{
 				((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).put(path, offset);
 				tempFiles.putNewFileChannel(filePartPath);
 			} else {
-				log.debug("Get existing filePartPath: "+filePartPath);
 				tempFiles.put(filePartPath, getFilePart(filePartPath));
 			}
 		}
@@ -71,7 +70,6 @@ public class FilePartFragmentStore extends FileFragmentStore{
 			FileChannel temp = tempFiles.getFileChannel(lastFilePartPathWrittenTo);
 			if(temp != null){
 				int size = (int)temp.size();
-				log.debug("flush lastFilePartPathWrittenTo: "+lastFilePartPathWrittenTo+" size: "+size);
 				if(tempReadChannel != null) {
 					tempReadChannel.delete();
 				}
@@ -100,14 +98,13 @@ public class FilePartFragmentStore extends FileFragmentStore{
 			tempReadChannel = getFilePart(filePartPath);
 			 lastFilePartPathReadFrom = filePartPath;
 		}
-		log.debug("has next: "+((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).hasNextFilePart(path, offset));
+		log.debug("read: "+filePartPath);
 		
 		tempReadChannel.getChannel().read(buf, offset%MAX_FILESIZE);
 		if(buf.position() == buf.limit() || ! ((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).hasNextFilePart(path, offset)){
 			return;
 		}
 		fillSparseFilePart(buf);		
-		log.debug("buf.limit(): "+buf.limit()+" buf.position(): "+buf.position()+" "+"file size: "+((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).getSize(path)+" offset: "+offset+" end of read: "+(offset+buf.limit()));
 		if(buf.position() == buf.limit()){
 			return;
 		}
