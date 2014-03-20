@@ -191,22 +191,7 @@ public class FilePartFragmentStore extends FileFragmentStore{
 	}
 
 	public void flushCache(String path) throws IOException, FuseException {
-		for(String filePartPath:  ((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).getFilePartPaths(path)){
-			log.debug("filePartPath to flush: "+filePartPath);
-			if(! hasFlushedFilePart(filePartPath)){
-				
-				
-
-				FileFragments fileFragments = splitter.splitFile(fileFragmentMetaDataStore, filePartPath, tempFiles.getFileChannel(filePartPath));
-				//TODO: delete previous Fragments when changing storage strategy midway 
-				synchronized (fileFragmentMetaDataStore) {
-					if(fileFragments != null && fileFragmentMetaDataStore.getFragmentsChecksums(lastFilePartPathWrittenTo) == null){ //only if checksums not yet up to date
-						fileFragmentMetaDataStore.setFragments(lastFilePartPathWrittenTo, fileFragments.getPaths(), fileFragments.getNrOfRequiredFragments(), fileFragments.getNrOfRequiredSuccessfullyStoredFragments(), fileFragments.getChecksums(), fileFragments.getFilesize());
-					}
-				}
-				removeCache(filePartPath);
-			}
-		}
+		flushLastFilePartFromCache(""); //flush last file part
 	}
 
 	public void truncate(String path, long size) throws IOException, FuseException {
