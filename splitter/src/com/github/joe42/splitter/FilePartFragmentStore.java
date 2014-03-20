@@ -24,6 +24,26 @@ public class FilePartFragmentStore extends FileFragmentStore{
 	}
 
 	public void write(String path, ByteBuffer buf, long offset) throws IOException, FuseException {
+		String filePartPath = getFilePartPath(path, offset);
+		FileChannel wChannel = tempFiles.getFileChannel(filePartPath);
+		int newLimit = (int) (MAX_FILESIZE - (offset % MAX_FILESIZE)); //write at most max_filesize bytes
+		int originalLimit = buf.limit();
+		if(newLimit<buf.capacity()){
+			buf.limit(newLimit);
+		}
+		wChannel.write(buf,offset % MAX_FILESIZE);	
+		flushLastFilePartFromCache(filePartPath);
+		buf.limit(originalLimit); 
+		if(buf.remaining()==0)
+			return;
+		//write excess to next filepart:
+		filePartPath = getFilePartPath(path, offset + buf.position());
+		wChannel = tempFiles.getFileChannel(filePartPath);
+		wChannel.write(buf);
+	}
+
+	private String getFilePartPath(String path, long offset)
+			throws IOException, FuseException {
 		String filePartPath = ((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).getFilePartPath(path, offset);
 		if (tempFiles.getFileChannel(filePartPath) == null) {
 			if( ! ((FilePartFragmentMetaDataStore)fileFragmentMetaDataStore).hasFilePartFragments(filePartPath) ){
@@ -35,9 +55,7 @@ public class FilePartFragmentStore extends FileFragmentStore{
 				tempFiles.put(filePartPath, getFilePart(filePartPath));
 			}
 		}
-		FileChannel wChannel = tempFiles.getFileChannel(filePartPath);
-		wChannel.write(buf,offset % MAX_FILESIZE);		
-		flushLastFilePartFromCache(filePartPath);
+		return filePartPath;
 	}
 	
 	/**
