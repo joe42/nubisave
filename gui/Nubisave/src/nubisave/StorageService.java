@@ -233,7 +233,9 @@ public class StorageService {
                 config.get("gui").putComment("graphlocationx", "hidden");
                 config.get("gui").putComment("graphlocationy", "hidden");
             }
-            config.put("splitter", "fileparts", nrOfFilePartsToStore);
+            if(!this.name.equals("datadir")){
+            	config.put("splitter", "fileparts", nrOfFilePartsToStore);
+            }
             config.store(new File(path));
         } catch(Exception e){
             System.err.println("Error writing configuration for StorageService instance " + getUniqName());

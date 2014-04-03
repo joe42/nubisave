@@ -16,6 +16,7 @@ import nubisave.component.graph.mouseplugins.StorageServicePicker;
 import nubisave.component.graph.mouseplugins.PopupEditor;
 import nubisave.component.graph.vertice.NubiSaveComponent;
 import nubisave.component.graph.vertice.GenericNubiSaveComponent;
+import nubisave.component.graph.vertice.DataDirectoryComponent;
 import nubisave.component.graph.mouseplugins.extension.DataVertexEdgeCreator;
 import nubisave.component.graph.edge.WeightedNubisaveVertexEdge;
 import nubisave.component.graph.edge.NubiSaveEdge;
@@ -35,8 +36,10 @@ import java.util.logging.Logger;
 import javax.swing.JApplet;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import org.apache.commons.collections15.Factory;
 
@@ -82,9 +85,15 @@ import nubisave.component.graph.splitteradaption.ActionKeyAdapter;
 import nubisave.component.graph.vertice.interfaces.NubiSaveVertex;
 import nubisave.ui.AddServiceDialog;
 import nubisave.ui.CustomServiceDlg;
+import nubisave.web.DJNativeSwingBrowser;
+import nubisave.web.NativeSwingBrowser;
 
 import org.apache.commons.collections15.Predicate;
 import org.apache.commons.collections15.Transformer;
+
+import chrriis.common.UIUtils;
+import chrriis.dj.nativeswing.NativeSwing;
+import chrriis.dj.nativeswing.swtimpl.NativeInterface;
 
 /**
  *
@@ -94,6 +103,8 @@ public class NubisaveEditor extends JApplet {
 	private static final long serialVersionUID = -2023243689258876721L;
 
 	private String storage_directory;
+	
+	public static DJNativeSwingBrowser browser;
 
 	Graph<NubiSaveVertex, NubiSaveEdge> graph;
 
@@ -260,7 +271,25 @@ public class NubisaveEditor extends JApplet {
 								Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
 							}
 							nubisave.Nubisave.services.addNubisave(newService);
-						} else {
+						} else if (module.toLowerCase().equals("datadir")){
+							if(DataDirectoryComponent.has()) {
+								CustomServiceDlg.okstatus =false;
+								return;
+							}
+								
+							StorageService newService = new StorageService(module);
+							newService.setUniqName(newService.getName());
+							newService.setBackendModule(false);
+							
+							System.out.println("newService.getName():"+ newService.getName());
+							System.out.println("newService.getUniqueName():"+ newService.getUniqName());
+							try {
+								vertexFactory.setNextInstance(new DataDirectoryComponent(newService));
+							} catch (IOException ex) {
+								Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
+							}
+							nubisave.Nubisave.services.addDataDir(newService);
+						}else {
 							StorageService newService = new StorageService(module);
 							try {
 								vertexFactory.setNextInstance(new GenericNubiSaveComponent(newService));
@@ -323,6 +352,29 @@ public class NubisaveEditor extends JApplet {
 			}
 		});
 		controls.add(searchServiceComponent);
+		
+		JButton browserButton = new JButton("Nubivis");
+		NativeSwing.initialize();
+		NativeInterface.open();
+		browserButton.addActionListener(new ActionListener() {
+			/**
+			 * Create new {@link StorageService} from chosen file and set it as
+			 * the next Vertex to create in
+			 * {@link StatefulNubiSaveComponentFactory}
+			 */
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				if(NubisaveEditor.browser == null) {
+					NubisaveEditor.browser = new DJNativeSwingBrowser();
+				}
+				JPanel bro_panel = new NativeSwingBrowser("http://localhost/nubivis/index.html");
+				NubisaveEditor.browser.setContentPane(bro_panel);
+				NubisaveEditor.browser.setSize(800, 600);
+				NubisaveEditor.browser.setVisible(true);
+			}
+		});
+		controls.add(browserButton);
+		
 		controls.add(help);
 		content.add(controls, BorderLayout.SOUTH);
 	}
@@ -338,6 +390,13 @@ public class NubisaveEditor extends JApplet {
 			if (persistedService.getName().toLowerCase().equals("nubisave")) {
 				try {
 					vertex = new NubiSaveComponent(persistedService);
+				} catch (IOException ex) {
+					Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
+				}
+			} else if (persistedService.getName().toLowerCase().equals("datadir")) {
+				System.out.print("new DataDirectoryComponent...");
+				try {
+					vertex = new DataDirectoryComponent(persistedService);
 				} catch (IOException ex) {
 					Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
 				}
@@ -468,16 +527,21 @@ public class NubisaveEditor extends JApplet {
 						String startVertex = strLine.split(" ")[0];
 						String endVertex = strLine.split(" ")[1];
 						hh.put(startVertex, endVertex);
+						 System.out.println("startVertex: "+startVertex);
+						 System.out.println("endVertex: "+endVertex);
 
 						for (AbstractNubisaveComponent component : nubisaveComponentGraph.getVertices()) {
-							if (component.getUniqueName().equals(startVertex)) {
+							
+							if (component.getUniqueName() != null && component.getUniqueName().equals(startVertex)) {
 								String endpoint = (String) hh.get(startVertex);
 								int pos = str.indexOf(endpoint);
-								AbstractNubisaveComponent endcomponent = myNodeList.get(pos);
-								edge = (WeightedNubisaveVertexEdge) edgeFactory.create();
-								edge.setWeight(component.getNrOfFilePartsToStore());
-								graph.addEdge(edge, component.getRequiredPorts().iterator().next(), endcomponent.getProvidedPorts().iterator().next(),
+								if(pos >= 0) {
+									AbstractNubisaveComponent endcomponent = myNodeList.get(pos);
+									edge = (WeightedNubisaveVertexEdge) edgeFactory.create();
+									edge.setWeight(component.getNrOfFilePartsToStore());
+									graph.addEdge(edge, component.getRequiredPorts().iterator().next(), endcomponent.getProvidedPorts().iterator().next(),
 										EdgeType.DIRECTED);
+								}
 							}
 						}
 					}

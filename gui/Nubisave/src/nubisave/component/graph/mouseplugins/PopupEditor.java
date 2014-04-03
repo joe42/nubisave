@@ -6,10 +6,13 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.swing.AbstractAction;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+
 import org.apache.commons.collections15.Factory;
+
 import nubisave.component.graph.vertice.interfaces.VertexGroup;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.algorithms.layout.Layout;
@@ -17,9 +20,13 @@ import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.AbstractPopupGraphMousePlugin;
 import edu.uci.ics.jung.visualization.picking.PickedState;
+
 import javax.swing.JOptionPane;
+
 import nubisave.component.graph.vertice.AbstractNubisaveComponent;
+import nubisave.component.graph.vertice.DataDirectoryComponent;
 import nubisave.component.graph.vertice.GenericNubiSaveComponent;
+import nubisave.component.graph.vertice.NubiSaveComponent;
 import nubisave.component.graph.edge.NubiSaveEdge;
 import nubisave.component.graph.vertice.interfaces.NubiSaveVertex;
 
@@ -102,7 +109,8 @@ public class PopupEditor extends AbstractPopupGraphMousePlugin {
                         }   
                     vv.repaint();
                 }});
-
+                
+                
                 popup.addSeparator();
 
                 JMenuItem item = popup.add(new AbstractAction("Open Location") {
@@ -114,6 +122,14 @@ public class PopupEditor extends AbstractPopupGraphMousePlugin {
                     }
                 });
                 item.setEnabled(true);
+                
+                if(vertex instanceof DataDirectoryComponent){
+                    if(popup.getComponentCount() > 0) {
+                        popup.show(vv, NubiSaveEdge.getX(), NubiSaveEdge.getY());
+                    }
+                    vv.repaint();
+                    return;
+                }
 
                 popup.add(new AbstractAction("Visualize Location") {
                     public void actionPerformed(ActionEvent NubiSaveEdge) {
@@ -125,6 +141,17 @@ public class PopupEditor extends AbstractPopupGraphMousePlugin {
                 });
 
                 popup.addSeparator();
+                
+                if(vertex instanceof NubiSaveComponent){
+                	popup.add(new AbstractAction("Select Policy") {
+                        public void actionPerformed(ActionEvent NubiSaveEdge) {
+                            System.out.println("Policy Selection...");
+                            ((NubiSaveComponent)vertex).selectPolicy();
+                        }
+                    });
+                	
+                	popup.addSeparator();
+                }
 
                 String mount = "Mount";
                 if(((AbstractNubisaveComponent)vertex).isActive()) {

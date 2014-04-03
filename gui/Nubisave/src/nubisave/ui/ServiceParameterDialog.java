@@ -20,7 +20,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.Map.Entry;
+
 import nubisave.StorageService;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +42,8 @@ public class ServiceParameterDialog extends javax.swing.JDialog {
     private javax.swing.JButton cancelBtn;
     protected Ini config;
     private List<JPanel> sectionGroupBoxes;
-    
+    private boolean applyStatus;
+
     /**
      * Factory method to create an appropriate instance of a graphical configuration dialogu.
      * If service has a name that corresponds to a class in the backendconfig subpackage
@@ -69,9 +72,17 @@ public class ServiceParameterDialog extends javax.swing.JDialog {
     }
                 
     /** Creates new generic ServiceParameterDialog form */
+
+    public boolean getApplyStatus() {
+		return applyStatus;
+	}
+
+	/** Creates new form ServiceParameterDialog */
+
     public ServiceParameterDialog(java.awt.Frame parent, boolean modal,StorageService service) {
         super(parent, modal);
         this.service = service;
+        this.applyStatus = false;
         initComponents();
         sectionGroupBoxes = new ArrayList<JPanel>();
 
@@ -107,11 +118,16 @@ public class ServiceParameterDialog extends javax.swing.JDialog {
 
             cntMainGridLine++;
 
+//            test
+//            System.out.println(parameter.getKey());
+//            System.out.println("name is: "+config.get("module", "name"));
+            
             int cntGroupBoxLine = 0;
             for (Map.Entry<String, String> parameter : config.get(section).entrySet()){
                 if(isHiddenParameter(parameter, section)){
                     continue;
                 }
+                
                 label = new JLabel(parameter.getKey());
                 c = new GridBagConstraints();
                 c.fill = GridBagConstraints.HORIZONTAL;
@@ -183,10 +199,12 @@ public class ServiceParameterDialog extends javax.swing.JDialog {
             }
         }
         dispose();
+        this.applyStatus = true;
     }
 
     private void cancelBtnActionPerformed(java.awt.event.ActionEvent evt) {
         dispose();
+        this.applyStatus = false;
     }
     /** This method is called from within the constructor to
      * initialize the form.

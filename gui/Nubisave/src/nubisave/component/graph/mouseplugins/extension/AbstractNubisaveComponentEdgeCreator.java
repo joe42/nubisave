@@ -1,9 +1,11 @@
 package nubisave.component.graph.mouseplugins.extension;
 
 import com.github.joe42.splitter.util.file.PropertiesUtil;
+
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
+
 import java.awt.event.MouseEvent;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -11,11 +13,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import nubisave.component.graph.mouseplugins.extension.NubisaveGraphEventListener;
 import nubisave.component.graph.splitteradaption.NubisaveEditor.WeightedNubisaveVertexEdgeFactory;
 import nubisave.component.graph.vertice.AbstractNubisaveComponent;
 import nubisave.component.graph.edge.NubiSaveEdge;
 import nubisave.component.graph.vertice.interfaces.NubiSaveVertex;
+import nubisave.component.graph.vertice.DataDirectoryComponent;
 import nubisave.component.graph.vertice.ProvidedPort;
 import nubisave.component.graph.vertice.RequiredPort;
 import nubisave.component.graph.edge.RestrictedEdgeVertex;
@@ -49,7 +53,8 @@ public class AbstractNubisaveComponentEdgeCreator implements NubisaveGraphEventL
     @Override
     public void processCreateNubisaveEdge(NubiSaveVertex startVertex, NubiSaveVertex endVertex, MouseEvent e) {
         if (endVertex instanceof RequiredPort) { //switch required port to startVertex (=sourceVertex)
-            NubiSaveVertex tmp = startVertex;
+        	System.out.println("reverse connection.");
+        	NubiSaveVertex tmp = startVertex;
             startVertex = endVertex;
             endVertex = tmp;
         }
@@ -83,6 +88,12 @@ public class AbstractNubisaveComponentEdgeCreator implements NubisaveGraphEventL
         }
         AbstractNubisaveComponent start = (AbstractNubisaveComponent) ((RequiredPort) startVertex).getParentComponent();
         AbstractNubisaveComponent end = (AbstractNubisaveComponent) ((ProvidedPort) endVertex).getParentComponent();
+        
+        System.out.println("start:"+start.getName());
+        System.out.println("end:"+end.getName());
+        
+        
+        
         if(! isConnected(startVertex, endVertex)) {     
                 BufferedWriter writer = null ;
             try {
@@ -101,6 +112,11 @@ public class AbstractNubisaveComponentEdgeCreator implements NubisaveGraphEventL
                 writer.write(end.getUniqueName());
                 writer.newLine();
                 writer.close();
+                
+                if((((ProvidedPort) endVertex).getParentComponent() instanceof DataDirectoryComponent )){
+                	((DataDirectoryComponent)((ProvidedPort) endVertex).getParentComponent()).setConnected(true);
+                }
+                
             } catch (IOException ex) {
                 Logger.getLogger(AbstractNubisaveComponentEdgeCreator.class.getName()).log(Level.SEVERE, null, ex);
             } finally {
@@ -133,7 +149,15 @@ public class AbstractNubisaveComponentEdgeCreator implements NubisaveGraphEventL
         boolean shouldNotConnect = hasReachedMaxEdgeNumber(startVertex)
                 || !(startVertex instanceof RequiredPort<?>)
                 || !(endVertex instanceof ProvidedPort<?>);
-                //|| hasSameVertexGroup(endVertex, startVertex);
+        		//|| hasSameVertexGroup(endVertex, startVertex);
+        if(shouldNotConnect) {
+        	return shouldNotConnect;
+        } else {
+        	if((((ProvidedPort) endVertex).getParentComponent() instanceof DataDirectoryComponent )){
+        		shouldNotConnect = shouldNotConnect || ((DataDirectoryComponent)((ProvidedPort) endVertex).getParentComponent()).isConnected();
+        	}
+        }
+                
         
         return shouldNotConnect;
     }

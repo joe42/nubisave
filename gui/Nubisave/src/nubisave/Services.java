@@ -92,6 +92,16 @@ public class Services implements Iterable<StorageService>{
         mmServices.add(newService);
         newService.storeConfiguration(storage_directory);
     }
+    
+    /**
+     * Add a new StorageService instance to the list and persist it.
+     * @param newService the instance to add
+     * @param index the position to add the service to
+     */
+    public void addDataDir(StorageService newService){
+        mmServices.add(newService);
+        newService.storeConfiguration(storage_directory);
+    }
 
     /**
      * Add a new StorageService instance to the list and persist it.
@@ -124,7 +134,10 @@ public class Services implements Iterable<StorageService>{
     public void update(StorageService existingService){
         if(existingService.getName().toLowerCase().equals("nubisave")){
             existingService.storeConfiguration(storage_directory);
-        } else {
+        }else if(existingService.getName().toLowerCase().equals("datadir")){
+            existingService.storeConfiguration(storage_directory);
+       } 
+        else {
              existingService.storeConfiguration(database_directory);
         }
     }
@@ -237,5 +250,17 @@ public class Services implements Iterable<StorageService>{
         if( mmServices.remove(service) ) {
             new File(database_directory+"/"+service.getUniqName()).delete();
         }
+    }
+    
+    /**
+     * Remove the StorageService instance service. Shifts any subsequent elements to the left (subtracts one from their indices).
+     * Unpersists the store.
+     * @param service
+     */
+    public void removeDataDir(StorageService service) {
+    	String rmvDataDir= storage_directory+"/"+service.getUniqName();
+    	System.out.println("removeDataDir"+rmvDataDir);
+        new File(storage_directory+"/"+service.getUniqName()).delete();
+        mmServices.remove(service);
     }
 }

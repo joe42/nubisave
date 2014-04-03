@@ -34,8 +34,8 @@ import org.ini4j.Ini;
 
 
 public class GenericNubiSaveComponent extends AbstractNubisaveComponent {
-    protected final StorageService component;
-    protected final int checkLabelHorizontalPos;
+    protected  final StorageService component;
+    protected  final int checkLabelHorizontalPos;
     private DataVertex dataVertex;
     protected Timer timer;
 
@@ -45,7 +45,14 @@ public class GenericNubiSaveComponent extends AbstractNubisaveComponent {
         if(component.getNrOfBackends() > 0) { 
             addRequiredPort(component.getNrOfBackends());
         }
+        
         this.component = component;
+        
+        Ini config = this.component.getConfig();
+        this.name = config.get("module", "name");
+        
+        System.out.println("this.name: "+this.name);
+        
         JLabel l = new JLabel(getName());
         l.setFont(new Font("Helvetica", Font.PLAIN, 12));
         Dimension d = l.getPreferredSize();
@@ -54,6 +61,7 @@ public class GenericNubiSaveComponent extends AbstractNubisaveComponent {
             drawCheckMark(checkLabelHorizontalPos, 0);
         }
     }
+    
 
     /**
      * Adds data vertex for visually moving data between components.
@@ -64,7 +72,9 @@ public class GenericNubiSaveComponent extends AbstractNubisaveComponent {
         Graph<NubiSaveVertex, E> graph = vv.getModel().getGraphLayout().getGraph();
         Layout <NubiSaveVertex, E> layout = vv.getModel().getGraphLayout();
         try {
-            setDataVertex(new DataVertex(this, ImageIO.read(AbstractNubisaveComponent.class.getResource("/nubisave/images/data.png"))));
+        	if(this.getDataVertex()==null){
+        		setDataVertex(new DataVertex(this, ImageIO.read(AbstractNubisaveComponent.class.getResource("/nubisave/images/data.png"))));
+        	}
             graph.addVertex(getDataVertex());
             Point dataVertexPos = (Point) location.clone();
             dataVertexPos.translate(visualRepresentation.getWidth()-getDataVertex().getBufferedImage().getWidth(), -visualRepresentation.getHeight()+getDataVertex().getBufferedImage().getHeight());
@@ -93,6 +103,11 @@ public class GenericNubiSaveComponent extends AbstractNubisaveComponent {
         JDialog editDialog = ServiceParameterDialog.getInstance(null, true, component);
         editDialog.setTitle(component.getName());
         editDialog.setVisible(true);
+        if(editDialog.getApplyStatus()){
+        	//get and update latest name.
+        	Ini config = this.component.getConfig();
+            this.name = config.get("module", "name");
+        }
     }
 
     @Override
@@ -106,14 +121,19 @@ public class GenericNubiSaveComponent extends AbstractNubisaveComponent {
     	String location = Nubisave.properties.getProperty("nubivis_URL");
     	location += "?provider="+this.getUniqueName();
 		try {
-			if (java.awt.Desktop.isDesktopSupported()) {
-				java.net.URI uri = java.net.URI.create(location);
-				java.awt.Desktop dp = java.awt.Desktop.getDesktop();
-				if (dp.isSupported(java.awt.Desktop.Action.BROWSE)) {
-					dp.browse(uri);
-				}
+			if (SystemIntegration.isAvailable()) {
+				System.out.println("open: "+location);
+				SystemIntegration.openLocationbyBrowser(location);
 			} else {
-				SystemIntegration.openLocation(location);
+				if (java.awt.Desktop.isDesktopSupported()) {
+					java.net.URI uri = java.net.URI.create(location);
+					java.awt.Desktop dp = java.awt.Desktop.getDesktop();
+					if (dp.isSupported(java.awt.Desktop.Action.BROWSE)) {
+						dp.browse(uri);
+					}
+				} else {
+					SystemIntegration.openLocation(location);
+				}
 			}
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -147,6 +167,7 @@ public class GenericNubiSaveComponent extends AbstractNubisaveComponent {
 
     @Override
     public void remove() {
+    	System.out.println("removing???");
         Nubisave.services.remove(component);
     }
 
