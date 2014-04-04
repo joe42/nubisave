@@ -15,10 +15,17 @@ import com.github.joe42.splitter.backend.BackendServices;
 public class StorageStrategyFactory {
 	private RoundRobinStorageStrategy roundRobin = null;
 	private UseAllInParallelStorageStrategy useInParallel = null;
+	private OptimalRedundancyStategy optimalRedundancy = null;
 	private BackendServices services;
 	private boolean changeToCurrentStrategy = true;
 	private StorageStrategy previousStorageStrategy = null;
 	private Set<String> dataDirPaths = new TreeSet<String>();
+	public static class StrategyNames {
+		public static final String 
+				ROUNDROBIN = "RoundRobin", 
+				USEALLINPARALLEL = "UseAllInParallel", 
+				OPTIMALREDUNDANCY = "OptimalRedundancy";
+	}
 	public StorageStrategyFactory(BackendServices services){
 		this.services = services;
 	}
@@ -31,7 +38,7 @@ public class StorageStrategyFactory {
 	 */
 	public StorageStrategy createStrategy(String strategyName, int redundancy) {
 		StorageStrategy ret = null;
-		if(strategyName.equals("RoundRobin")){
+		if(strategyName.equalsIgnoreCase(StrategyNames.ROUNDROBIN)){
 			if(roundRobin == null || ! dataDirPaths.equals(new TreeSet<String>(services.getDataDirPaths()))){
 				roundRobin = new RoundRobinStorageStrategy(services);
 			}
@@ -39,7 +46,7 @@ public class StorageStrategyFactory {
 			changeToCurrentStrategy = roundRobin.changeToCurrentStrategy(previousStorageStrategy);
 			previousStorageStrategy = roundRobin;
 			ret = roundRobin;
-		} else { //UseAllInParallel as default
+		} else if(strategyName.equalsIgnoreCase(StrategyNames.USEALLINPARALLEL))  { 
 			if(useInParallel == null){
 				useInParallel = new UseAllInParallelStorageStrategy(services);
 			}
@@ -47,6 +54,14 @@ public class StorageStrategyFactory {
 			changeToCurrentStrategy = useInParallel.changeToCurrentStrategy(previousStorageStrategy);
 			previousStorageStrategy = useInParallel;
 			ret = useInParallel;
+		} else {
+			if(optimalRedundancy == null){
+				optimalRedundancy = new OptimalRedundancyStategy(services);
+			}
+			optimalRedundancy.setRedundancy(redundancy);
+			changeToCurrentStrategy = optimalRedundancy.changeToCurrentStrategy(previousStorageStrategy);
+			previousStorageStrategy = optimalRedundancy;
+			ret = optimalRedundancy;
 		}
 		return ret;
 	}
