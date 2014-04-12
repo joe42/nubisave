@@ -172,4 +172,9 @@ public class UseAllInParallelStorageStrategy  implements StorageStrategy, Observ
 	public void update(Observable storageServices, Object arg1) {
 		update(); // update possible changes to services 
 	}
+
+	@Override
+	public double getStorageRedundancy() {
+		return 1+1d*getNrOfRedundantFragments()/getNrOfFilePartsNeededToReconstructFile();
+	}
 }

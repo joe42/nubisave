@@ -40,5 +40,11 @@ public interface Splitter {
 	public void remove(String path);
 
 	public abstract void rename(String from, String to);
+	
+	/**
+	 * Get estimated redundancy factor for the data stored.
+	 * @return the redundancy factor, which is one if the size of the data stored remains the same as the original data's size
+	 */
+	public abstract double getStorageRedundancy();
 
 }

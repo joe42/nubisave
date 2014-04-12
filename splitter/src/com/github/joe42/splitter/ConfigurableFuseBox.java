@@ -49,6 +49,12 @@ import fuse.FuseStatfs;
 import fuse.FuseStatfsSetter;
 import fuse.compat.FuseDirEnt;
 import fuse.compat.FuseStat;
+
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.Duration;
+
 public class ConfigurableFuseBox extends FuseBox  implements StorageService{
 
 	private VirtualFileContainer virtualFolder;
@@ -165,7 +171,21 @@ public class ConfigurableFuseBox extends FuseBox  implements StorageService{
 
 	private void updateVTSplitterConfigFile() {
 		Ini config = IniUtil.getIni(vtSplitterConfig.getText());
+		double availability = getStorageAvailability();
 		config.put("splitter", "availability", getStorageAvailability());
+		long MILLISECONDS_IN_YEAR = 31556952000L;
+		long diffTime = (long) (MILLISECONDS_IN_YEAR * availability);
+		Duration duration = null;
+		try {
+			duration = DatatypeFactory.newInstance().newDuration(0);
+			duration = DatatypeFactory.newInstance().newDuration(diffTime);
+		} catch (DatatypeConfigurationException e) {
+			e.printStackTrace();
+		}
+
+		String unavailabilityDurationPerYear = String.format("%02d days, %02d hours, %02d minutes, and %02d seconds", duration.getDays(), duration.getHours(), duration.getMinutes(), duration.getSeconds());
+		config.put("splitter", "unavailability per year", unavailabilityDurationPerYear);
+		config.put("splitter", "redundancy factor", getStorageRedundancy());
 		vtSplitterConfig.setText(IniUtil.getString(config));
 		config.getFile().delete();
 	}

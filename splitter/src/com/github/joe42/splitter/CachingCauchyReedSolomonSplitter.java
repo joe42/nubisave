@@ -81,4 +81,9 @@ public class CachingCauchyReedSolomonSplitter implements Splitter {
 	public void rename(String from, String to) {
 		splittingQueue.rename(from, to);
 	}
+
+	@Override
+	public double getStorageRedundancy() {
+		return core.getStorageRedundancy();
+	}
 }

@@ -405,6 +405,15 @@ public class FuseBox implements Filesystem3, XattrSupport {
 		return fileStore.getStorageAvailability(); //forward call to the file store
 	}
 	
+
+	/**
+	 * Get estimated redundancy factor for the current fuse box.
+	 * @return the redundancy factor, which is one if the size of the data stored remains the same as the original data's size
+	 */
+	public double getStorageRedundancy(){
+		return fileStore.getStorageRedundancy(); //forward call to the file store
+	}
+	
 	@Override
 	public int release(String path, Object fh, int flags) throws FuseException {
 		return 0;

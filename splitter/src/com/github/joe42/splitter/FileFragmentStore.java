@@ -204,4 +204,12 @@ public class FileFragmentStore {
 	public double getStorageAvailability() {
 		return splitter.getStorageAvailability(); //forward call to the splitter
 	}
+	
+	/**
+	 * Get estimated redundancy factor for the data stored.
+	 * @return the redundancy factor, which is one if the size of the data stored remains the same as the original data's size
+	 */
+	public double getStorageRedundancy() {
+		return splitter.getStorageRedundancy(); //forward call to the splitter
+	}
 }

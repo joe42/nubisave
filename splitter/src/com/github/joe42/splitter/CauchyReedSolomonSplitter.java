@@ -458,4 +458,9 @@ public class CauchyReedSolomonSplitter implements Splitter { //Rename to CauchyR
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public double getStorageRedundancy() {
+		return storageStrategy.getStorageRedundancy();
+	}
 }

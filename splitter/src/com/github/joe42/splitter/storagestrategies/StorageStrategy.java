@@ -54,4 +54,10 @@ public interface StorageStrategy {
 	 * @return the availability in percent
 	 */
 	public double getStorageAvailability();
+
+	/**
+	 * Get estimated redundancy factor for the data stored.
+	 * @return the redundancy factor, which is one if the size of the data stored remains the same as the original data's size
+	 */
+	public double getStorageRedundancy();
 }
