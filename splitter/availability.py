@@ -72,7 +72,7 @@ def powerset(some_list, k, m):
         for subset in combinations(some_list, r):
             if m>k and not has_k_elements(k, subset):
                 yield map(lambda x: x[0], subset)
-            elif has_k_elements(k, subset):
+            elif m<=k and has_k_elements(k, subset):
                 yield map(lambda x: x[0], subset)
 
 def has_k_elements(k, store_list):
