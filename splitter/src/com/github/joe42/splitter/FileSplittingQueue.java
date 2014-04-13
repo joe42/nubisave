@@ -13,6 +13,7 @@ import jdbm.RecordManagerFactory;
 import jdbm.helper.FastIterator;
 import jdbm.htree.HTree;
 
+import com.github.joe42.splitter.storagestrategies.OptimalRedundancyStategy;
 import com.github.joe42.splitter.storagestrategies.StorageStrategy;
 import com.github.joe42.splitter.storagestrategies.StorageStrategyFactory;
 import com.github.joe42.splitter.util.StringUtil;
@@ -131,12 +132,18 @@ public class FileSplittingQueue {
 		int nr_of_redundant_fragments;
 		int nr_of_file_fragments_required;
 		int nrOfRequiredSuccessfullyStoredFragments;
+		int nrOfElements; 
 		String fragment_name;
 		if(! fileFragmentMetaDataStore.hasFragments(path) || storageStrategyFactory.changeToCurrentStrategy()){
 			List<String> fragmentDirectories;
 			StorageStrategy storageStrategy = storageStrategyFactory.createStrategy(core.getStorageStrategyName(), core.getRedundancy());
-			 fragmentDirectories = storageStrategy.getFragmentDirectories();
-			 nr_of_file_fragments = fragmentDirectories.size();
+			fragmentDirectories = storageStrategy.getFragmentDirectories();
+			nr_of_file_fragments = fragmentDirectories.size();
+			if(storageStrategy instanceof OptimalRedundancyStategy){
+				nrOfElements = ((OptimalRedundancyStategy)storageStrategy).getNrOfElements();
+			} else {
+				nrOfElements = nr_of_file_fragments;
+			}
 			String uniquePath, uniqueFileName;
 			uniquePath = StringUtil.getUniqueAsciiString(path);
 			uniqueFileName = uniquePath.replaceAll("/", "_");
@@ -146,7 +153,7 @@ public class FileSplittingQueue {
 				fragmentPaths.add(fragment_name);
 			}
 			nr_of_redundant_fragments =  storageStrategy.getNrOfRedundantFragments();
-			nr_of_file_fragments_required =  nr_of_file_fragments - nr_of_redundant_fragments;
+			nr_of_file_fragments_required =  nrOfElements - nr_of_redundant_fragments;
 			nrOfRequiredSuccessfullyStoredFragments = storageStrategy.getNrOfRequiredSuccessfullyStoredFragments();
 		} else {
 			fragmentPaths = fileFragmentMetaDataStore.getFragments(path);
