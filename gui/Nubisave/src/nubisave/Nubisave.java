@@ -28,6 +28,7 @@ public class Nubisave {
 	private static void initalizeServices() {
 		Nubisave.services = new Services();
 		String database_directory = Nubisave.properties.getProperty("splitter_configuration_directory");
+		Nubisave.services.initializeEntranceComponent();
 		Nubisave.services.loadFromDataBase(database_directory);
 	}
 

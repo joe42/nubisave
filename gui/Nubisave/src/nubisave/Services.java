@@ -98,7 +98,7 @@ public class Services implements Iterable<StorageService>{
      * @param newService the instance to add
      * @param index the position to add the service to
      */
-    public void addDataDir(StorageService newService){
+    public void addCloudEntrance(StorageService newService){
         mmServices.add(newService);
         newService.storeConfiguration(storage_directory);
     }
@@ -132,17 +132,19 @@ public class Services implements Iterable<StorageService>{
      * @param existingService the instance to persist
      */
     public void update(StorageService existingService){
-        if(existingService.getName().toLowerCase().equals("nubisave")){
+        if(existingService.getName().toLowerCase().equals("nubisave") || existingService.getName().toLowerCase().equals("cloudentrance")){
             existingService.storeConfiguration(storage_directory);
-        }else if(existingService.getName().toLowerCase().equals("datadir")){
-            existingService.storeConfiguration(storage_directory);
-       } 
+        }
         else {
              existingService.storeConfiguration(database_directory);
         }
     }
     
     public void updateNubisave(StorageService existingService){
+        existingService.storeConfiguration(storage_directory);
+    }
+    
+    public void updateCloudEntrance(StorageService existingService){
         existingService.storeConfiguration(storage_directory);
     }
 
@@ -152,9 +154,10 @@ public class Services implements Iterable<StorageService>{
      */
     public void storeToDatabase(String database_directory){
         for(StorageService s: nubisave.Nubisave.services){
-            if(s.getName().toLowerCase().equals("nubisave")){
+            if(s.getName().toLowerCase().equals("nubisave") || s.getName().toLowerCase().equals("cloudentrance")){
                 s.storeConfiguration(storage_directory);
-            } else {
+            }
+            else {
                 s.storeConfiguration(database_directory);
         }
      }
@@ -253,14 +256,48 @@ public class Services implements Iterable<StorageService>{
     }
     
     /**
-     * Remove the StorageService instance service. Shifts any subsequent elements to the left (subtracts one from their indices).
-     * Unpersists the store.
-     * @param service
+     * Initialize the cloud entrance configuration file.
+     * 
      */
-    public void removeDataDir(StorageService service) {
-    	String rmvDataDir= storage_directory+"/"+service.getUniqName();
-    	System.out.println("removeDataDir"+rmvDataDir);
-        new File(storage_directory+"/"+service.getUniqName()).delete();
-        mmServices.remove(service);
+    public void initializeEntranceComponent() {
+    	if(!isEntranceConfigExist())
+    		createEntranceConfig();
+    }
+    
+    /**
+     * Check if there is a cloud entrance configuration file.
+     * 
+     */
+    public boolean isEntranceConfigExist() {
+    	 File entranceConfig = new File(storage_directory+"/CloudEntrance");
+    	 return entranceConfig.exists();
+    }
+    
+    /**
+     * Create a new configuration file for the cloud entrance component.
+     * 
+     */
+    public void createEntranceConfig() {
+    	Ini config = null;
+		try {
+			config = new Ini();
+		} catch (Exception e) {
+			System.err.println("Configuration issue: " + e.toString());
+		}
+		try {
+			System.out.println("creating the cloud entrance config...");
+			config.put("module", "name", "Cloud Entrance");
+			config.put("module", "desc", "The access point of the cloud storage.");
+			config.put("parameter", "path", "~/.nubisave/nubisavemount/data");
+			config.put("gui", "graphlocationx", 800);
+            config.put("gui", "graphlocationy", 150);
+            config.get("gui").putComment("graphlocationx", "hidden");
+            config.get("gui").putComment("graphlocationy", "hidden");
+            config.store(new File(storage_directory+"/CloudEntrance"));
+		} catch(Exception e){
+            System.err.println("Cause: " + e.toString());
+            System.err.println("Cause detail: " + (e.getMessage() != null ? e.getMessage() : "(unknown)"));
+            return;
+        }
     }
 }

@@ -1,72 +1,100 @@
 package nubisave.web;
 
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-
+import nubisave.ui.util.SystemIntegration;
+import nubisave.web.interfaces.Browser;
+import chrriis.dj.nativeswing.NSComponentOptions;
 import chrriis.dj.nativeswing.swtimpl.NativeInterface;
 import chrriis.dj.nativeswing.swtimpl.components.JWebBrowser;
 
 
-public class DJNativeSwingBrowser extends javax.swing.JDialog implements AbstractBrowser{
+public class NubiSaveWeb extends javax.swing.JDialog{
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	private boolean isInitialized;
+	
+	private Browser browser = null;
+	
+	private String defaultBrowserName = null;
+	
+	public NubiSaveWeb() {
+		defaultBrowserName = getDefaultBrowserName();
+		if(!defaultBrowserName.equals(""))
+			initialize();
+	}
 
-	@Override
-	public void start(final String url) {
+	public void openURL(final String url) {
 		NativeInterface.open();
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				JPanel panel = new DJNativeSwing(url);
-				DJNativeSwingBrowser dialog = new DJNativeSwingBrowser();
-				dialog.setContentPane(panel);
-				dialog.setSize(800, 600);
+				NubiSaveWeb dialog = new NubiSaveWeb();
+				JPanel buttonPanel = new JPanel();
+				JButton buttonBrowser = new JButton("System browser");
+				JButton buttonReload = new JButton("Reload page");
+				buttonBrowser.addActionListener(new ActionListener() {
+			        public void actionPerformed(ActionEvent e) {
+			          // open system default web browser
+			        	SystemIntegration.openLocation(url.toString());
+//			        	SystemIntegration.openLocationbyBrowser(url.toString());
+			        }
+			      });
+				buttonReload.addActionListener(new ActionListener() {
+			        public void actionPerformed(ActionEvent e) {
+			        	browser.reloadPage();
+			        }
+			      });
+				buttonPanel.add(buttonReload);
+				buttonPanel.add(buttonBrowser);
+				browser.browseTo(url);
+				
+				dialog.add((JPanel)browser,BorderLayout.CENTER);
+				dialog.add(buttonPanel,BorderLayout.SOUTH);
 				dialog.setVisible(true);
-//				JFrame frame = new JFrame("NubiSave Web Browser");
-//				//frame.setUndecorated(true);
-//				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//				frame.getContentPane().add(new DJNativeSwing(url),BorderLayout.CENTER);
-//				frame.setSize(800, 600);
-//				frame.setMenuBar(null);
-//				frame.setLocationByPlatform(true);
-//				frame.setVisible(true);
 			}
 		});
 		NativeInterface.runEventPump();
-		
+	}
+
+	public void initialize() {
+		if (!isInitialized) {
+			this.browser =  BrowserFactory.getBrowser(defaultBrowserName);
+//			this.browser.initialize();
+			setStyle();
+//			setButtons();
+//			setLayout();
+			isInitialized = true;
+			}
 	}
 	
-	class DJNativeSwing extends JPanel{
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 1L;
-		
-		public DJNativeSwing() {
-			super(new BorderLayout());
-			JPanel webBrowserPanel = new JPanel(new BorderLayout());
-			//webBrowserPanel.setBorder(BorderFactory.createTitledBorder("Native Web Browser component"));
-			final JWebBrowser webBrowser = new JWebBrowser();
-			webBrowser.navigate("http://localhost/nubivis/index.html");
-			webBrowserPanel.add(webBrowser, BorderLayout.CENTER);
-			add(webBrowserPanel, BorderLayout.CENTER);
+	public void setStyle() {
+		this.setLayout(new BorderLayout());
+		this.setTitle("NubiVis - Visualization of distributed data.");
+		this.setSize(800, 600);
+	}
+	
+	public String getDefaultBrowserName() {
+		String browserConfig = readBrowserConfig();
+		if(!browserConfig.equals("")) {
+			return browserConfig;
 		}
-		public DJNativeSwing(String url) {
-			super(new BorderLayout());
-			JPanel webBrowserPanel = new JPanel(new BorderLayout());
-			webBrowserPanel.setBorder(BorderFactory.createTitledBorder("Native Web Browser component"));
-			final JWebBrowser webBrowser = new JWebBrowser();
-			webBrowser.navigate(url);
-			webBrowserPanel.add(webBrowser, BorderLayout.CENTER);
-			add(webBrowserPanel, BorderLayout.CENTER);
-		}	
+		return "";
 	}
 	
+	public String readBrowserConfig() {
+		return "DJNativeSwing";
+	}
 }

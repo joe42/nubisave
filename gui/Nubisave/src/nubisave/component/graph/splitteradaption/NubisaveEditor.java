@@ -16,7 +16,7 @@ import nubisave.component.graph.mouseplugins.StorageServicePicker;
 import nubisave.component.graph.mouseplugins.PopupEditor;
 import nubisave.component.graph.vertice.NubiSaveComponent;
 import nubisave.component.graph.vertice.GenericNubiSaveComponent;
-import nubisave.component.graph.vertice.DataDirectoryComponent;
+import nubisave.component.graph.vertice.CloudEntranceComponent;
 import nubisave.component.graph.mouseplugins.extension.DataVertexEdgeCreator;
 import nubisave.component.graph.edge.WeightedNubisaveVertexEdge;
 import nubisave.component.graph.edge.NubiSaveEdge;
@@ -69,6 +69,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 
 import net.contentobjects.jnotify.*;
@@ -85,8 +86,9 @@ import nubisave.component.graph.splitteradaption.ActionKeyAdapter;
 import nubisave.component.graph.vertice.interfaces.NubiSaveVertex;
 import nubisave.ui.AddServiceDialog;
 import nubisave.ui.CustomServiceDlg;
-import nubisave.web.DJNativeSwingBrowser;
-import nubisave.web.NativeSwingBrowser;
+import nubisave.ui.util.SystemIntegration;
+import nubisave.web.NubiSaveWeb;
+import nubisave.web.test.NativeSwingTest;
 
 import org.apache.commons.collections15.Predicate;
 import org.apache.commons.collections15.Transformer;
@@ -104,7 +106,7 @@ public class NubisaveEditor extends JApplet {
 
 	private String storage_directory;
 	
-	public static DJNativeSwingBrowser browser;
+	public static NubiSaveWeb browser;
 
 	Graph<NubiSaveVertex, NubiSaveEdge> graph;
 
@@ -271,11 +273,12 @@ public class NubisaveEditor extends JApplet {
 								Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
 							}
 							nubisave.Nubisave.services.addNubisave(newService);
-						} else if (module.toLowerCase().equals("datadir")){
-							if(DataDirectoryComponent.has()) {
-								CustomServiceDlg.okstatus =false;
-								return;
-							}
+						}
+						else if (module.toLowerCase().equals("cloudentrance")){
+//							if(DataDirectoryComponent.has()) {
+//								CustomServiceDlg.okstatus =false;
+//								return;
+//							}
 								
 							StorageService newService = new StorageService(module);
 							newService.setUniqName(newService.getName());
@@ -284,11 +287,11 @@ public class NubisaveEditor extends JApplet {
 							System.out.println("newService.getName():"+ newService.getName());
 							System.out.println("newService.getUniqueName():"+ newService.getUniqName());
 							try {
-								vertexFactory.setNextInstance(new DataDirectoryComponent(newService));
+								vertexFactory.setNextInstance(new CloudEntranceComponent(newService));
 							} catch (IOException ex) {
 								Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
 							}
-							nubisave.Nubisave.services.addDataDir(newService);
+							nubisave.Nubisave.services.addCloudEntrance(newService);
 						}else {
 							StorageService newService = new StorageService(module);
 							try {
@@ -304,7 +307,11 @@ public class NubisaveEditor extends JApplet {
 						customStorageserviceChooser.setDialogTitle("Custom Service");
 						customStorageserviceChooser.setFileFilter(new IniFileFilter());
 						int returnVal = customStorageserviceChooser.showOpenDialog(null);
+						//test
+						System.out.println("returnVal:"+returnVal);
+						System.out.println("JFileChooser.APPROVE_OPTION:"+JFileChooser.APPROVE_OPTION);
 						if (returnVal == JFileChooser.APPROVE_OPTION) {
+							
 							File file = customStorageserviceChooser.getSelectedFile();
 							if (file.getName().toLowerCase().equals("nubisave.ini")) {
 								StorageService newService = new StorageService(file);
@@ -325,6 +332,10 @@ public class NubisaveEditor extends JApplet {
 								}
 								nubisave.Nubisave.services.add(newService);
 							}
+						}
+						else {
+							CustomServiceDlg.okstatus =false;
+							return;
 						}
 					}
 				}
@@ -353,9 +364,8 @@ public class NubisaveEditor extends JApplet {
 		});
 		controls.add(searchServiceComponent);
 		
-		JButton browserButton = new JButton("Nubivis");
-		NativeSwing.initialize();
-		NativeInterface.open();
+		JButton browserButton = new JButton("Visualization");
+		
 		browserButton.addActionListener(new ActionListener() {
 			/**
 			 * Create new {@link StorageService} from chosen file and set it as
@@ -364,13 +374,16 @@ public class NubisaveEditor extends JApplet {
 			 */
 			@Override
 			public void actionPerformed(ActionEvent ae) {
-				if(NubisaveEditor.browser == null) {
-					NubisaveEditor.browser = new DJNativeSwingBrowser();
-				}
-				JPanel bro_panel = new NativeSwingBrowser("http://localhost/nubivis/index.html");
-				NubisaveEditor.browser.setContentPane(bro_panel);
-				NubisaveEditor.browser.setSize(800, 600);
-				NubisaveEditor.browser.setVisible(true);
+//				if(NubisaveEditor.browser == null) {
+//					NubisaveEditor.browser = new NubiSaveWebBrowser();
+//				}
+//				Thread queryThread = new Thread() {
+//				      public void run() {
+//				  		browser.openURL("http://localhost/nubivis/index.html");
+//				      }
+//				    };
+//				queryThread.start();
+				SystemIntegration.openLocationbyBrowser("http://localhost/nubivis/index.html");
 			}
 		});
 		controls.add(browserButton);
@@ -393,10 +406,9 @@ public class NubisaveEditor extends JApplet {
 				} catch (IOException ex) {
 					Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
 				}
-			} else if (persistedService.getName().toLowerCase().equals("datadir")) {
-				System.out.print("new DataDirectoryComponent...");
+			} else if (persistedService.getName().toLowerCase().equals("cloudentrance")) {
 				try {
-					vertex = new DataDirectoryComponent(persistedService);
+					vertex = new CloudEntranceComponent(persistedService);
 				} catch (IOException ex) {
 					Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
 				}

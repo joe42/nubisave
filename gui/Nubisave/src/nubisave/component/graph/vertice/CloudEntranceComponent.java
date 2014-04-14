@@ -5,11 +5,13 @@ import java.awt.Font;
 import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 import javax.swing.JLabel;
+import javax.swing.Timer;
 
 import org.ini4j.Ini;
 
@@ -25,56 +27,182 @@ import nubisave.ui.NubisaveConfigDlg;
 import nubisave.ui.ServiceParameterDialog;
 import nubisave.ui.util.SystemIntegration;
 
-public class DataDirectoryComponent extends GenericNubiSaveComponent {
-    private boolean isConnected;
+public class CloudEntranceComponent extends AbstractNubisaveComponent {
+	protected final StorageService component;
+	protected final int checkLabelHorizontalPos;
+	private DataVertex dataVertex;
+	protected Timer timer;
 
-	public DataDirectoryComponent(StorageService component) throws IOException { 
-        super(component);
-        isConnected = false;
-        drawCheckMark(checkLabelHorizontalPos-8, 0);
+	public CloudEntranceComponent(StorageService component) throws IOException {
+		super(component.getName(), ImageIO.read(AbstractNubisaveComponent.class.getResource("/nubisave/images/CloudComponent.png")));
+		addRequiredPort();
+
+		this.component = component;
+		this.name = "CloudEntrance";
+		JLabel l = new JLabel(getName());
+		
+		l.setFont(new Font("Helvetica", Font.PLAIN, 12));
+		Dimension d = l.getPreferredSize();
+		checkLabelHorizontalPos = d.width / 2 + 5;
+		drawCheckMark(checkLabelHorizontalPos-8, -6);
 	}
-	
+
 	/**
-     * Adds data vertex for visually moving data between components.
-     */
-    @Override
-    public <E> void addToGraph(VisualizationViewer<NubiSaveVertex, E> vv, Point location){
-        try {
-			setDataVertex(new DataVertex(this, ImageIO.read(AbstractNubisaveComponent.class.getResource("/nubisave/images/folder.png"))));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	 * Adds data vertex for visually moving data between components.
+	 */
+	@Override
+	public <E> void addToGraph(VisualizationViewer<NubiSaveVertex, E> vv,
+			Point location) {
+		super.addToGraph(vv, location);
+		Graph<NubiSaveVertex, E> graph = vv.getModel().getGraphLayout()
+				.getGraph();
+		Layout<NubiSaveVertex, E> layout = vv.getModel().getGraphLayout();
+		try {
+			if (this.getDataVertex() == null) {
+				setDataVertex(new DataVertex(this,ImageIO.read(AbstractNubisaveComponent.class.getResource("/nubisave/images/folder.png"))));
+			}
+			graph.addVertex(getDataVertex());
+			Point dataVertexPos = (Point) location.clone();
+			dataVertexPos.translate(-visualRepresentation.getWidth() + getDataVertex().getBufferedImage().getWidth(),
+					-visualRepresentation.getHeight()+ getDataVertex().getBufferedImage().getHeight());
+			layout.setLocation(getDataVertex(), vv.getRenderContext().getMultiLayerTransformer().inverseTransform(dataVertexPos));
+		} catch (IOException ex) {
+			Logger.getLogger(GenericNubiSaveComponent.class.getName()).log(
+					Level.SEVERE, null, ex);
 		}
-        super.addToGraph(vv, location);
-  }
-	
-	public boolean isConnected() {
-		return isConnected;
-	}
-
-	public void setConnected(boolean isConnected) {
-		this.isConnected = isConnected;
-	}
-
-	public static boolean has() {
-		return false;
 	}
 
 	@Override
-	public String getUniqueName() {
-		// TODO Auto-generated method stub
-		return this.name;
+	public void toggleActivate() {
+
+	}
+
+	@Override
+	public void showConfigurationDialog() {
+
+	}
+
+	@Override
+	public void openLocation() {
+		String relativePath = "/nubisavemount/data";
+		String location = Nubisave.properties.getProperty("nubisave_directory");
+		location = location+relativePath.substring(1);
+        SystemIntegration.openLocation(location);
+	}
+
+	@Override
+	public void visualizeLocation() {
+		
+	}
+
+	public void refreshConfiguration() {
+		
+	}
+
+	@Override
+	public void deactivate() {
+	}
+
+	@Override
+	public void activate() {
+	}
+
+	@Override
+	public boolean isActive() {
+		return true;
+	}
+
+	@Override
+	public void remove() {
+		System.out.println("removing???");
+//		Nubisave.services.remove(component);
 	}
 
 	@Override
 	public void setGraphLocation(Point location) {
-	        super.setGraphLocation(location);
-	    }
+		component.setGraphLocation(location);
+		Nubisave.services.updateCloudEntrance(component);
+	}
 
 	@Override
 	public Point getGraphLocation() {
-	        return super.getGraphLocation();
-	    }
+		return component.getGraphLocation();
+	}
+
+	@Override
+	public Set<NubiSaveVertex> getVertexGroupMembers() {
+		Set<NubiSaveVertex> ret = super.getVertexGroupMembers();
+		ret.add(getDataVertex());
+		return ret;
+	}
+
+	@Override
+	public void connectToProvidedPort(
+			AbstractNubisaveComponent abstractNubiSaveComponent) {
+		System.out.println("connected???");
+		if (abstractNubiSaveComponent instanceof GenericNubiSaveComponent) {
+			component.addBackendService(((GenericNubiSaveComponent) abstractNubiSaveComponent).component);
+			Nubisave.services.update();
+			System.out.println(component.getName()+ " adds "+ ((GenericNubiSaveComponent) abstractNubiSaveComponent).component.getName() + " as backend service");
+		}
+	}
+
+	@Override
+	public void removeConnectionTo(
+			AbstractNubisaveComponent abstractNubiSaveComponent) {
+		if (abstractNubiSaveComponent instanceof GenericNubiSaveComponent) {
+			((GenericNubiSaveComponent) abstractNubiSaveComponent).component.removeBackendService(component);
+			Nubisave.services.update();
+			System.out.println("unconnected");
+		}
+	}
+
+	@Override
+	public boolean isConnectedToProvidedPort(
+			AbstractNubisaveComponent abstractNubiSaveComponent) {
+		if (abstractNubiSaveComponent instanceof GenericNubiSaveComponent) {
+			for (StorageService backendServices : ((GenericNubiSaveComponent) abstractNubiSaveComponent).component.getBackendServices()) {
+				if (backendServices.equals(component)) {
+					return true;
+				}
+			}
+		}
+		return abstractNubiSaveComponent instanceof NubiSaveComponent
+				&& !component.isBackendModule();
+	}
+
+	@Override
+	public String getUniqueName() {
+		return component.getUniqName();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof GenericNubiSaveComponent) {
+			return ((GenericNubiSaveComponent) obj).getUniqueName().equals(getUniqueName());
+		} else
+			return super.equals(obj);
+	}
+
+	@Override
+	public int hashCode() {
+		return getUniqueName().hashCode();
+	}
+
+	/**
+	 * @return the dataVertex
+	 */
+	public DataVertex getDataVertex() {
+		return dataVertex;
+	}
+
+	/**
+	 * @param dataVertex
+	 *            the dataVertex to set
+	 */
+	public void setDataVertex(DataVertex dataVertex) {
+		this.dataVertex = dataVertex;
+	}
 
 	@Override
 	public int getNrOfFilePartsToStore() {
@@ -85,104 +213,13 @@ public class DataDirectoryComponent extends GenericNubiSaveComponent {
 	@Override
 	public void setNrOfFilePartsToStore(Integer nrOfFilePartsToStore) {
 		// TODO Auto-generated method stub
-
+		
 	}
-
-	@Override
-	public void toggleActivate() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void showConfigurationDialog() {
-		super.showConfigurationDialog();
-//        ServiceParameterDialog editDialog = new ServiceParameterDialog(null, true, component);
-//        editDialog.setTitle(component.getName());
-//        editDialog.setVisible(true);
-//        if(editDialog.getApplyStatus()){
-//        	//get and update latest name.
-//        	Ini config = this.component.getConfig();
-//            this.name = config.get("module", "name");
-//            System.out.println("this.name: "+this.name);
-//        }
-//	     
-	}
-
-	@Override
-	public void openLocation() {
-		//String location = System.getProperty("user.home") + "/.storages/" + component.getUniqName() + "/data/";
-		String location = this.component.getConfig().get("parameter", "path");
-		location = System.getProperty("user.home")+location.substring(1);;
-        SystemIntegration.openLocation(location);
-	}
-
-	@Override
-	public void visualizeLocation() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void deactivate() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void activate() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public boolean isActive() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void remove() {
-		super.remove();
-		Nubisave.services.removeDataDir(component);
-
-	}
-
-	@Override
-    public void connectToProvidedPort(AbstractNubisaveComponent abstractNubiSaveComponent) {
-        System.out.println("connected...");
-        if(abstractNubiSaveComponent instanceof NubiSaveComponent){
-            component.addBackendService(((GenericNubiSaveComponent)abstractNubiSaveComponent).component);
-            Nubisave.services.update();
-            System.out.println(component.getName()+" adds "+((GenericNubiSaveComponent)abstractNubiSaveComponent).component.getName()+" as backend service");
-        }
-    }
-
-    @Override
-    public void removeConnectionTo(AbstractNubisaveComponent abstractNubiSaveComponent) {
-        if(abstractNubiSaveComponent instanceof GenericNubiSaveComponent){
-            ((GenericNubiSaveComponent)abstractNubiSaveComponent).component.removeBackendService(component);
-            Nubisave.services.update();
-            System.out.println("unconnected");
-        }
-    }
-
-    @Override
-    public boolean isConnectedToProvidedPort(AbstractNubisaveComponent abstractNubiSaveComponent) {
-        if(abstractNubiSaveComponent instanceof GenericNubiSaveComponent){
-            for(StorageService backendServices: ((GenericNubiSaveComponent)abstractNubiSaveComponent).component.getBackendServices()){
-                if(backendServices.equals(component)){
-                    return true;
-                }
-            }
-        }
-        return abstractNubiSaveComponent instanceof NubiSaveComponent && ! component.isBackendModule();
-    }
 
 	@Override
 	public void migrateDataTo(AbstractNubisaveComponent componentTo) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
@@ -196,4 +233,5 @@ public class DataDirectoryComponent extends GenericNubiSaveComponent {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 }

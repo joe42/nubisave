@@ -82,7 +82,7 @@ public class PolicySelectionDlg extends javax.swing.JDialog {
 		ca.setSelectedIndex(-1);  
 		//jOkButton = new JButton("ok");
 		//jCancelButton = new JButton("Cancel");
-		jNewButton = new JButton("New");
+		jNewButton = new JButton("Edit");
 		
 		initData();
 		
@@ -102,7 +102,7 @@ public class PolicySelectionDlg extends javax.swing.JDialog {
 				String location = Nubisave.properties.getProperty("policy_directory");
 				System.out.println(location);
 				
-				FileDialog fd=new FileDialog(new Frame(),"New policy",FileDialog.SAVE);
+				FileDialog fd=new FileDialog(new Frame(),"Custom Policy",FileDialog.SAVE);
 				fd.setLocationRelativeTo(fd.getParent());
 				fd.setDirectory(location);
 				
@@ -127,16 +127,17 @@ public class PolicySelectionDlg extends javax.swing.JDialog {
 					 return;
 				 }
 				 
-				 String strNewFile = fd.getDirectory()+fd.getFile();
+				 String strFileToEdit = fd.getDirectory()+fd.getFile();
 				 System.out.println(fd.getDirectory()+fd.getFile());
 
 				 
-				 File newFile = new File(strNewFile);
-
-				  // if the directory does not exist, create it
-				  if (!newFile.exists()) {
+				 File fileToEdit = new File(strFileToEdit);
+				 
+				 boolean result = false;
+				  // if the file does not exist, create it
+				  if (!fileToEdit.exists()) {
 				    try {
-						boolean result = newFile.createNewFile();
+						result = fileToEdit.createNewFile();
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -144,11 +145,16 @@ public class PolicySelectionDlg extends javax.swing.JDialog {
 				  }
 				  
 				  try {
-					Runtime.getRuntime().exec("xdg-open "+newFile);
+					Runtime.getRuntime().exec("xdg-open "+fileToEdit);
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+				  
+				  if(result) {
+					  initData();
+					  validate();
+				  }
 			}  
 		}); 
 		this.pack();
@@ -160,6 +166,9 @@ public class PolicySelectionDlg extends javax.swing.JDialog {
 	private void initData() {
 		String location = Nubisave.properties.getProperty("policy_directory");
 		System.out.println(location);
+		
+		ca.removeAllItems();
+		listPolicyName.clear();
 		
 		File folder = new File(location);
 
