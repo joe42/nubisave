@@ -1,3 +1,10 @@
+nubisave (0.0~git20140515-1) unstable; urgency=low
+
+  * Final GUI refactoring included.
+  * Latest CloudFusion imported.
+
+ -- Josef Spillner <josef@rumba>  Thu, 15 May 2014 10:30:11 +0200
+
 nubisave (0.0~git20140206-1) unstable; urgency=low
 
   * Second split packaging iteration, including changes from several branches.
