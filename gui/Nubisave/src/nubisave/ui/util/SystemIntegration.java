@@ -7,20 +7,23 @@ package nubisave.ui.util;
 
 import java.util.logging.Logger;
 import java.util.logging.Level;
+import java.awt.BorderLayout;
 import java.awt.Desktop;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.File;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import chrriis.dj.nativeswing.NativeSwing;
 import chrriis.dj.nativeswing.swtimpl.NativeInterface;
 import nubisave.component.graph.splitteradaption.NubisaveEditor;
-import nubisave.web.AbstractBrowser;
 import nubisave.web.BrowserFactory;
-import nubisave.web.DJNativeSwingBrowser;
-import nubisave.web.NativeSwingBrowser;
+import nubisave.web.NubiSaveWeb;
+import nubisave.web.interfaces.Browser;
 
 public class SystemIntegration {
     public final static void openLocation(String location) {
@@ -40,17 +43,16 @@ public class SystemIntegration {
         }
     }
     
-    public final static void openLocationbyBrowser(String location) {
-		NativeSwing.initialize();
-		NativeInterface.open();
-		
+    public final static void openLocationbyBrowser(final String location) {
 		if(NubisaveEditor.browser == null) {
-			NubisaveEditor.browser = new DJNativeSwingBrowser();
+			NubisaveEditor.browser = new NubiSaveWeb();
 		}
-		JPanel bro_panel = new NativeSwingBrowser(location);
-		NubisaveEditor.browser.setContentPane(bro_panel);
-		NubisaveEditor.browser.setSize(800, 600);
-		NubisaveEditor.browser.setVisible(true);
+		Thread browserThread = new Thread() {
+		      public void run() {
+		    	  NubisaveEditor.browser.openURL(location);
+		      }
+		};
+		browserThread.start();
     }
     
     public final static boolean isAvailable() {

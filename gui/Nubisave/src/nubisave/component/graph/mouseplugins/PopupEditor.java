@@ -24,7 +24,7 @@ import edu.uci.ics.jung.visualization.picking.PickedState;
 import javax.swing.JOptionPane;
 
 import nubisave.component.graph.vertice.AbstractNubisaveComponent;
-import nubisave.component.graph.vertice.DataDirectoryComponent;
+import nubisave.component.graph.vertice.CloudEntranceComponent;
 import nubisave.component.graph.vertice.GenericNubiSaveComponent;
 import nubisave.component.graph.vertice.NubiSaveComponent;
 import nubisave.component.graph.edge.NubiSaveEdge;
@@ -60,7 +60,24 @@ public class PopupEditor extends AbstractPopupGraphMousePlugin {
 
             popup.removeAll();
             if(vertex != null) {
-                    popup.add(new AbstractAction("Configure Component") {
+                if(vertex instanceof CloudEntranceComponent){
+                	JMenuItem item = popup.add(new AbstractAction("Open Location") {
+                        public void actionPerformed(ActionEvent NubiSaveEdge) {
+                            System.out.println("open location ...");
+                            if (vertex instanceof AbstractNubisaveComponent) {
+                                ((AbstractNubisaveComponent)vertex).openLocation();
+                            }
+                        }
+                    });
+                    item.setEnabled(true);
+                	
+                    if(popup.getComponentCount() > 0) {
+                        popup.show(vv, NubiSaveEdge.getX(), NubiSaveEdge.getY());
+                    }
+                    vv.repaint();
+                    return;
+                }
+                popup.add(new AbstractAction("Configure Component") {
                     public void actionPerformed(ActionEvent NubiSaveEdge) {
                     	System.out.println("configure component");   
                          if(vertex instanceof AbstractNubisaveComponent) {
@@ -122,18 +139,10 @@ public class PopupEditor extends AbstractPopupGraphMousePlugin {
                     }
                 });
                 item.setEnabled(true);
-                
-                if(vertex instanceof DataDirectoryComponent){
-                    if(popup.getComponentCount() > 0) {
-                        popup.show(vv, NubiSaveEdge.getX(), NubiSaveEdge.getY());
-                    }
-                    vv.repaint();
-                    return;
-                }
 
-                popup.add(new AbstractAction("Visualize Location") {
+                popup.add(new AbstractAction("Visualize Component") {
                     public void actionPerformed(ActionEvent NubiSaveEdge) {
-                        System.out.println("visualize location ...");
+                        System.out.println("visualize Component ...");
                         if (vertex instanceof AbstractNubisaveComponent) {
                             ((AbstractNubisaveComponent)vertex).visualizeLocation();
                         }

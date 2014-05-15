@@ -1,7 +1,17 @@
-package nubisave.web;
+package nubisave.web.interfaces;
 
-public interface AbstractBrowser {
+public interface Browser {
 	
-	public void start(final String url);
+	public void initialize();
+	
+	public void setEngine();
+	
+	public void setLayout();
+	
+	public void setStyle();
+	
+	public void browseTo(String url);
+	
+	public void reloadPage();
 	
 }

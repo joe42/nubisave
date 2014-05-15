@@ -19,7 +19,7 @@ import nubisave.component.graph.splitteradaption.NubisaveEditor.WeightedNubisave
 import nubisave.component.graph.vertice.AbstractNubisaveComponent;
 import nubisave.component.graph.edge.NubiSaveEdge;
 import nubisave.component.graph.vertice.interfaces.NubiSaveVertex;
-import nubisave.component.graph.vertice.DataDirectoryComponent;
+import nubisave.component.graph.vertice.CloudEntranceComponent;
 import nubisave.component.graph.vertice.ProvidedPort;
 import nubisave.component.graph.vertice.RequiredPort;
 import nubisave.component.graph.edge.RestrictedEdgeVertex;
@@ -113,9 +113,9 @@ public class AbstractNubisaveComponentEdgeCreator implements NubisaveGraphEventL
                 writer.newLine();
                 writer.close();
                 
-                if((((ProvidedPort) endVertex).getParentComponent() instanceof DataDirectoryComponent )){
-                	((DataDirectoryComponent)((ProvidedPort) endVertex).getParentComponent()).setConnected(true);
-                }
+//                if((((ProvidedPort) endVertex).getParentComponent() instanceof DataDirectoryComponent )){
+//                	((DataDirectoryComponent)((ProvidedPort) endVertex).getParentComponent()).setConnected(true);
+//                }
                 
             } catch (IOException ex) {
                 Logger.getLogger(AbstractNubisaveComponentEdgeCreator.class.getName()).log(Level.SEVERE, null, ex);
@@ -153,9 +153,9 @@ public class AbstractNubisaveComponentEdgeCreator implements NubisaveGraphEventL
         if(shouldNotConnect) {
         	return shouldNotConnect;
         } else {
-        	if((((ProvidedPort) endVertex).getParentComponent() instanceof DataDirectoryComponent )){
-        		shouldNotConnect = shouldNotConnect || ((DataDirectoryComponent)((ProvidedPort) endVertex).getParentComponent()).isConnected();
-        	}
+//        	if((((ProvidedPort) endVertex).getParentComponent() instanceof DataDirectoryComponent )){
+//        		shouldNotConnect = shouldNotConnect || ((DataDirectoryComponent)((ProvidedPort) endVertex).getParentComponent()).isConnected();
+//        	}
         }
                 
         
