@@ -2,6 +2,7 @@ package com.github.joe42.splitter;
 
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.util.Map;
 
 import com.github.joe42.splitter.backend.BackendServices;
 import com.github.joe42.splitter.storagestrategies.StorageStrategyFactory;
@@ -46,5 +47,7 @@ public interface Splitter {
 	 * @return the redundancy factor, which is one if the size of the data stored remains the same as the original data's size
 	 */
 	public abstract double getStorageRedundancy();
+
+	public abstract Map<String, String> getCodecInfo();
 
 }
