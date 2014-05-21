@@ -212,4 +212,8 @@ public class FileFragmentStore {
 	public double getStorageRedundancy() {
 		return splitter.getStorageRedundancy(); //forward call to the splitter
 	}
+	
+	public Map<String, String> getCodecInfo() {
+		return splitter.getCodecInfo(); //forward call to the splitter
+	}
 }
