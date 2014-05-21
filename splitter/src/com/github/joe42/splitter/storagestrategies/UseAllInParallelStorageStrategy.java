@@ -3,10 +3,12 @@ package com.github.joe42.splitter.storagestrategies;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.TreeMap;
 
 import org.python.core.PyFloat;
 import org.python.core.PyInstance;  
@@ -176,5 +178,13 @@ public class UseAllInParallelStorageStrategy  implements StorageStrategy, Observ
 	@Override
 	public double getStorageRedundancy() {
 		return 1+1d*getNrOfRedundantFragments()/getNrOfFilePartsNeededToReconstructFile();
+	}
+
+	@Override
+	public Map<String, String> getCodecInfo() {
+		TreeMap<String, String> ret = new TreeMap<String, String>();
+		ret.put("erasure code elements",new Integer(potentialStorageDirectories.size()).toString());
+		ret.put("redundant erasure code elements",new Integer(getNrOfRedundantFragments()).toString());
+		return ret;
 	}
 }

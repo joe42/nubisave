@@ -139,4 +139,12 @@ public class DeviationOptimalRedundancyStategy extends OptimalRedundancyStategy 
 	protected int getNrOfFilePartsNeededToReconstructFile() {
 		return getNrOfElements()-getNrOfRedundantFragments();
 	}
+
+	@Override
+	public Map<String, String> getCodecInfo() {
+		TreeMap<String, String> ret = new TreeMap<String, String>();
+		ret.put("erasure code elements",new Integer(getNrOfElements()).toString());
+		ret.put("redundant erasure code elements",new Integer(getNrOfRedundantFragments()).toString());
+		return ret;
+	}
 }
