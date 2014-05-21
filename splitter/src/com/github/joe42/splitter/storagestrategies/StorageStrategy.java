@@ -1,6 +1,7 @@
 package com.github.joe42.splitter.storagestrategies;
 
 import java.util.List;
+import java.util.Map;
 /**
  * Interface used by the splitter to determine how a file should be stored.
  * First, it is used to obtain the paths to write the file fragments to. 
@@ -60,4 +61,6 @@ public interface StorageStrategy {
 	 * @return the redundancy factor, which is one if the size of the data stored remains the same as the original data's size
 	 */
 	public double getStorageRedundancy();
+
+	public Map<String, String> getCodecInfo();
 }
