@@ -16,6 +16,7 @@ public class StorageStrategyFactory {
 	private RoundRobinStorageStrategy roundRobin = null;
 	private UseAllInParallelStorageStrategy useInParallel = null;
 	private OptimalRedundancyStategy optimalRedundancy = null;
+	private OptimalRedundancyStategy deviationOptimalRedundancy = null;
 	private BackendServices services;
 	private boolean changeToCurrentStrategy = true;
 	private StorageStrategy previousStorageStrategy = null;
@@ -24,7 +25,8 @@ public class StorageStrategyFactory {
 		public static final String 
 				ROUNDROBIN = "RoundRobin", 
 				USEALLINPARALLEL = "UseAllInParallel", 
-				OPTIMALREDUNDANCY = "OptimalRedundancy";
+				OPTIMALREDUNDANCY = "OptimalRedundancy", 
+				DEVIATIONOPTIMALREDUNDANCY = "DeviationOptimalRedundancy";
 	}
 	public StorageStrategyFactory(BackendServices services){
 		this.services = services;
@@ -54,7 +56,7 @@ public class StorageStrategyFactory {
 			changeToCurrentStrategy = useInParallel.changeToCurrentStrategy(previousStorageStrategy);
 			previousStorageStrategy = useInParallel;
 			ret = useInParallel;
-		} else {
+		} else if(strategyName.equalsIgnoreCase(StrategyNames.OPTIMALREDUNDANCY))  { 
 			if(optimalRedundancy == null){
 				optimalRedundancy = new OptimalRedundancyStategy(services);
 			}
@@ -62,6 +64,14 @@ public class StorageStrategyFactory {
 			changeToCurrentStrategy = optimalRedundancy.changeToCurrentStrategy(previousStorageStrategy);
 			previousStorageStrategy = optimalRedundancy;
 			ret = optimalRedundancy;
+		} else { 
+			if(deviationOptimalRedundancy == null){
+				deviationOptimalRedundancy = new DeviationOptimalRedundancyStategy(services);
+			}
+			deviationOptimalRedundancy.setRedundancy(redundancy);
+			changeToCurrentStrategy = deviationOptimalRedundancy.changeToCurrentStrategy(previousStorageStrategy);
+			previousStorageStrategy = deviationOptimalRedundancy;
+			ret = deviationOptimalRedundancy;
 		}
 		return ret;
 	}
