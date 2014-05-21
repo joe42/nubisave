@@ -1,5 +1,6 @@
 package com.github.joe42.splitter.storagestrategies;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -20,6 +21,8 @@ import com.github.joe42.splitter.util.math.SetUtil;
  * Uses all potential storage directories.
  */
 public class OptimalRedundancyStategy extends UseAllInParallelStorageStrategy {
+	List<PyList> availabilitiesCacheLists = new ArrayList<PyList>();
+	List<Double> availabilitiesCacheValues = new ArrayList<Double>();
 
 	/**
 	 * Creates a OptimalRedundancyStategy object using all potentialStorageDirectories in parallel, distributing 
@@ -31,7 +34,7 @@ public class OptimalRedundancyStategy extends UseAllInParallelStorageStrategy {
 	}
 	
 	public int getNrOfElements(){
-		return 3 * potentialStorageDirectories.size();
+		return 100;
 	}
 
 	/**
@@ -47,13 +50,26 @@ public class OptimalRedundancyStategy extends UseAllInParallelStorageStrategy {
 
 		PyList availabilityList = new PyList();
 		for(BackendService s: storageServices){
-			System.out.println(s.getName()+" av: "+s.getAvailability()+" filepts: "+s.getNrOfFilePartsToStore()+" elements: "+nrOfElementsMap.get(s.getDataDirPath()));
+			//System.out.println(s.getName()+" av: "+s.getAvailability()+" filepts: "+s.getNrOfFilePartsToStore()+" elements: "+nrOfElementsMap.get(s.getDataDirPath()));
 			availabilityList.add(new PyTuple(new PyFloat(s.getAvailability()), new PyInteger(s.getNrOfFilePartsToStore()*nrOfElementsMap.get(s.getDataDirPath()))));
 		}
 		int nrOfRequiredElements = getNrOfElements() - getNrOfRedundantFragments(); 
-		System.out.println("k = "+nrOfRequiredElements);
-		System.out.println("av = "+availabilityCalculator.getAvailability(new PyInteger(nrOfRequiredElements), availabilityList));
-		return availabilityCalculator.getAvailability(new PyInteger(nrOfRequiredElements), availabilityList);
+		//System.out.println("k = "+nrOfRequiredElements);
+		//System.out.println("av = "+availabilityCalculator.getAvailability(new PyInteger(nrOfRequiredElements), availabilityList));
+		cacheAvailability(availabilityList, availabilityCalculator.getAvailability(new PyInteger(nrOfRequiredElements), availabilityList));
+		return getCachedAvailability(availabilityList);
+	}
+
+	private void cacheAvailability(PyList availabilityList,
+			double availability) {
+		if( ! availabilitiesCacheLists.contains(availabilityList) ) {
+			availabilitiesCacheLists.add(availabilityList);
+			availabilitiesCacheValues.add(availability);
+		}
+	}
+
+	private double getCachedAvailability(PyList availabilityList) {
+		return availabilitiesCacheValues.get(availabilitiesCacheLists.indexOf(availabilityList));
 	}
 
 	public Map<String,Integer> getFragmentNameToNrOfElementsMap() {
@@ -64,7 +80,7 @@ public class OptimalRedundancyStategy extends UseAllInParallelStorageStrategy {
 		Map<String,Integer> ret = new HashMap<String, Integer>();
 		for(String fragmentName: fragmentNames) {
 			proportion_factor = getProportion(fragmentName);
-			System.out.println("blubb:"+n * proportion_factor );
+			//System.out.println("blubb:"+n * proportion_factor );
 			ret.put(fragmentName, (int) Math.floor(n * proportion_factor));
 		}
 		remedyDifferenceToNrOfElements(ret);
@@ -102,11 +118,16 @@ public class OptimalRedundancyStategy extends UseAllInParallelStorageStrategy {
 		}
 	}
 	
+	/**
+	 * Get a sorted copy of fragmentsToElements map.
+	 * @param fragmentsToElements A map from fragment path to an integer
+	 * @return a copy of the fragmetnsToElements map sorted by the availability of the store, the fragment is stored at
+	 */
 	protected TreeMap<String, Integer> sortMapByAvailability(Map<String, Integer> fragmentsToElements) {
 		class AvailabilityComparator implements Comparator<String> {
 			// Note: this comparator imposes orderings that are inconsistent with equals.    
 			public int compare(String a, String b) {
-				if (getBackendService(a).getAvailability() >= getBackendService(b).getAvailability()) {
+				if (getBackendService(a).getAvailability() <= getBackendService(b).getAvailability()) {
 					return -1;
 				} else {
 					return 1;
@@ -152,11 +173,26 @@ public class OptimalRedundancyStategy extends UseAllInParallelStorageStrategy {
 	 */
 	@Override
 	public int getNrOfRedundantFragments() {
-		Map<String,Integer> nrOfElementsMap = getFragmentNameToNrOfElementsMap();
-		int MAX_REDUNDANT_ELEMENTS = getNrOfElements()-Collections.min(nrOfElementsMap.values());
-		int nrOfRedundantFragments = (int) (MAX_REDUNDANT_ELEMENTS * (redundancy /100f));
-		System.out.println("redundand fragments:"+nrOfRedundantFragments);
-		return nrOfRedundantFragments;
+		int maxReplicationFactor = potentialStorageDirectories.size(); //at most one replica per store
+		int n = getNrOfElements();
+		int k = (int) (n / ( maxReplicationFactor * (redundancy /100d)));
+		int m = n - k;
+		if(m <= 0){
+			m = 0;
+		}
+		return m;
 	}
 
+	@Override
+	public double getStorageRedundancy() {
+		return 1+1d*getNrOfRedundantFragments()/getNrOfFilePartsNeededToReconstructFile();
+	}
+	
+	@Override
+	public Map<String, String> getCodecInfo() {
+		TreeMap<String, String> ret = new TreeMap<String, String>();
+		ret.put("erasure code elements",new Integer(getNrOfElements()).toString());
+		ret.put("redundant erasure code elements",new Integer(getNrOfRedundantFragments()).toString());
+		return ret;
+	}
 }
