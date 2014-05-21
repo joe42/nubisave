@@ -151,9 +151,14 @@ public class UseAllInParallelStorageStrategy  implements StorageStrategy, Observ
 	 */
 	@Override
 	public int getNrOfRedundantFragments() {
-		int nrOfFileStores =  potentialStorageDirectories.size();
-		int nrOfRedundantFragments = (int) ((nrOfFileStores-1) * (redundancy /100f));
-		return nrOfRedundantFragments;
+		int maxReplicationFactor = potentialStorageDirectories.size(); //at most one replica per store
+		int n = potentialStorageDirectories.size();
+		int k = (int) (n / ( maxReplicationFactor * (redundancy /100d)));
+		int m = n - k;
+		if(m <= 0){
+			m = 0;
+		}
+		return m;
 	}
 
 	/**
