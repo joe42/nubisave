@@ -463,4 +463,9 @@ public class CauchyReedSolomonSplitter implements Splitter { //Rename to CauchyR
 	public double getStorageRedundancy() {
 		return storageStrategy.getStorageRedundancy();
 	}
+
+	@Override
+	public Map<String, String> getCodecInfo() {
+		return storageStrategy.getCodecInfo();
+	}
 }
