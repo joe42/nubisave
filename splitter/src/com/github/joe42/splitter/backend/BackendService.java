@@ -204,7 +204,7 @@ public class BackendService implements StorageService{
 		ret += unmountCommand.hashCode();
 		ret += isBackendModule.hashCode();
 		ret += nrOfFilePartsToStore.hashCode();
-		ret += availability.hashCode();
+		//ret += availability.hashCode();
 		return ret;
 	}
 	
