@@ -2,22 +2,11 @@ package com.github.joe42.splitter.storagestrategies;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Observable;
-import java.util.Observer;
-import java.util.Set;
-import java.util.HashSet;
 import java.util.TreeMap;
-import java.util.TreeSet;
-
-
-import org.apache.log4j.Logger;
-import org.python.antlr.PythonParser.continue_stmt_return;
+import java.util.Map.Entry;
 import org.python.core.PyFloat;
 import org.python.core.PyInteger;
 import org.python.core.PyList;
@@ -26,7 +15,6 @@ import org.python.core.PyTuple;
 
 import com.github.joe42.splitter.backend.BackendService;
 import com.github.joe42.splitter.backend.BackendServices;
-import com.github.joe42.splitter.util.math.SetUtil;
 
 /**
  * Uses all potential storage directories.
@@ -46,10 +34,13 @@ public class DeviationOptimalRedundancyStategy extends OptimalRedundancyStategy 
 	 * @return Number of elements produced by the cauchy reed solomon codec
 	 */
 	public int getNrOfElements(){
-		Map<String,Integer> nrOfElementsMap = getFragmentNameToNrOfElementsMap();
+		return getNrOfElements(getNrOfEquivalenceClasses()); 
+	}
+
+	protected int getNrOfElements(int equivalenceClasses){
+		Map<String,Integer> nrOfElementsMap = getFragmentNameToNrOfElementsMap(equivalenceClasses);
 		int nrOfElements = 0;
 		for(Integer elements: nrOfElementsMap.values()){
-			System.out.println("elements for store x:"+elements);
 			nrOfElements += elements;
 		}
 		return nrOfElements;
@@ -60,52 +51,119 @@ public class DeviationOptimalRedundancyStategy extends OptimalRedundancyStategy 
 	 */
 	@Override
 	public double getStorageAvailability(){
+		return getStorageAvailability(getNrOfEquivalenceClasses()); 
+	}
+
+	protected List<Double> getSortedAvailabilitiesList(){
+		List<Double> ret = new ArrayList<Double>();
+		List<String> fragmentNames = services.getDataDirPaths();
+		for(String fragmentName: fragmentNames) {
+			ret.add(getBackendService(fragmentName).getAvailability());
+		}
+		Collections.sort(ret);
+		return ret;
+	}
+	
+	protected Integer getNrOfEquivalenceClasses() { 
+		Integer ret = 1;
+		List<Double> availabilities = getSortedAvailabilitiesList();
+		Double maxDiff = Collections.max(availabilities) - Collections.min(availabilities);
+		if(maxDiff == 0) {			
+			return ret;
+		}
+		int maxReplicationFactor = potentialStorageDirectories.size(); //at most one replica per store
+		double previousAvailability = getStorageAvailability(1); 
+		double previousDistanceToDesiredRedundancyFactor = 999999999;
+		for(int d=1; d<15; d++) {
+			double step_width = maxDiff / d;
+			int classes = 1;
+			double limit = Collections.min(availabilities) + step_width;
+			for(double av: availabilities){
+				if(av > limit){
+					limit += step_width; 
+					classes++;
+				}
+			}
+			if(getNrOfElements(classes) > 30){
+				return ret;
+			}
+			double newAvailability = getStorageAvailability(classes);
+			double desiredRedundancyFactor = maxReplicationFactor * (redundancy /100d);
+			double distanceToDesiredRedundancyFactor = Math.abs(desiredRedundancyFactor - getStorageRedundancy(classes));
+	        if(previousAvailability < newAvailability && previousDistanceToDesiredRedundancyFactor > distanceToDesiredRedundancyFactor){
+	            previousAvailability = newAvailability;
+	            previousDistanceToDesiredRedundancyFactor = distanceToDesiredRedundancyFactor;
+	            ret = classes;
+	        }
+		}
+		return ret;
+	}
+	
+	protected double getStorageAvailability(int equivalenceClasses) {
 		if(potentialStorageDirectories.size() == 0) {
 			return 0;
 		}		
 		List<BackendService> storageServices = services.getFrontEndStorageServices();
-		Map<String,Integer> nrOfElementsMap = getFragmentNameToNrOfElementsMap();
+
+		Map<String,Integer> nrOfElementsMap = getFragmentNameToNrOfElementsMap(equivalenceClasses);
 		PyList availabilityList = new PyList();
 		for(BackendService s: storageServices){
-			System.out.println(s.getName()+" av: "+s.getAvailability()+" filepts: "+s.getNrOfFilePartsToStore()+" elements: "+nrOfElementsMap.get(s.getDataDirPath()));
+			//System.out.println(s.getName()+" av: "+s.getAvailability()+" filepts: "+s.getNrOfFilePartsToStore()+" elements: "+nrOfElementsMap.get(s.getDataDirPath()));
 			availabilityList.add(new PyTuple(new PyFloat(s.getAvailability()), new PyInteger(s.getNrOfFilePartsToStore()*nrOfElementsMap.get(s.getDataDirPath()))));
 		}
-		int nrOfRequiredElements = getNrOfElements() - getNrOfRedundantFragments(); 
-		System.out.println("k = "+nrOfRequiredElements);
-		System.out.println("av = "+availabilityCalculator.getAvailability(new PyInteger(nrOfRequiredElements), availabilityList));
+		int nrOfRequiredElements = getNrOfElements(equivalenceClasses) - getNrOfRedundantFragments(equivalenceClasses);  
+		//System.out.println("k = "+nrOfRequiredElements);
+		//System.out.println("av = "+availabilityCalculator.getAvailability(new PyInteger(nrOfRequiredElements), availabilityList));
 		return availabilityCalculator.getAvailability(new PyInteger(nrOfRequiredElements), availabilityList);
 	}
 
-
-	public Map<String,Integer> getFragmentNameToNrOfElementsMap() {
-		//sort input for deterministic output of specialRound, independent of list order
+	public Map<String,Integer> getFragmentNameToNrOfElementsMap(int equivalenceClasses) { 
 		Map<String,Integer> ret = new HashMap<String, Integer>();
 		List<String> fragmentNames = services.getDataDirPaths();
 		for(String fragmentName: fragmentNames) {
 			ret.put(fragmentName, 1);
 		}
 		Map<String,Integer> sortedMap = sortMapByAvailability(ret);
-		boolean firstIteration = true;
-		double availabilityOfPreviousEntry = 0;
-		double differenceToPreviousEntry = 0;
+		List<Double> availabilities = getSortedAvailabilitiesList();
+		Double maxDiff = Collections.max(availabilities) - Collections.min(availabilities);
+		double step_width = maxDiff / equivalenceClasses;
+		double limit = Collections.min(availabilities) + step_width;
 		int elementsToAdd = 0;
 		for(Entry<String, Integer> entry: sortedMap.entrySet()) {
-			if(firstIteration) {
-				availabilityOfPreviousEntry = getBackendService(entry.getKey()).getAvailability();
-				firstIteration = false;
-				continue;
-			}
-			differenceToPreviousEntry = getBackendService(entry.getKey()).getAvailability() - availabilityOfPreviousEntry;
-			differenceToPreviousEntry = Math.round( differenceToPreviousEntry *10 ) / 10d;
-			System.out.println("differenceToPreviousEntry:"+differenceToPreviousEntry);
-			System.out.println("availabilityOfPreviousEntry:"+availabilityOfPreviousEntry);
-			if(differenceToPreviousEntry >= 0.1) {
+			if(getBackendService(entry.getKey()).getAvailability() > limit) {
 				elementsToAdd++;
-				availabilityOfPreviousEntry = getBackendService(entry.getKey()).getAvailability();
+				limit += step_width;
 			}
 			ret.put(entry.getKey(), entry.getValue() + elementsToAdd);
 		}
 		return ret;
+	}
+	
+
+	protected int getNrOfRedundantFragments(int equivalenceClasses) {
+		int maxReplicationFactor = potentialStorageDirectories.size(); //at most one replica per store
+		int n = getNrOfElements(equivalenceClasses);
+		int k = (int) (n / ( maxReplicationFactor * (redundancy /100d)));
+		int m = n - k;
+		if(m <= 0){
+			m = 0;
+		}
+		//System.out.println("n:"+n+" k:"+k+" m:"+m+" maxrepl.fac:"+maxReplicationFactor+" redundancy:"+redundancy+ " red.factor:"+(1.0*n/k));
+		
+		return m;
+	}
+	
+
+	protected int getNrOfRequiredSuccessfullyStoredFragments(int equivalenceClasses) {
+		return potentialStorageDirectories.size(); 
+	}
+
+	protected double getStorageRedundancy(int equivalenceClasses) {
+		return 1d*getNrOfElements(equivalenceClasses)/getNrOfFilePartsNeededToReconstructFile(equivalenceClasses); // n/k == 1+m/k
+	}
+	
+	protected int getNrOfFilePartsNeededToReconstructFile(int equivalenceClasses) {
+		return getNrOfElements(equivalenceClasses)-getNrOfRedundantFragments(equivalenceClasses);
 	}
 
 	/**
@@ -114,10 +172,7 @@ public class DeviationOptimalRedundancyStategy extends OptimalRedundancyStategy 
 	 */
 	@Override
 	public int getNrOfRedundantFragments() {
-		int MAX_REDUNDANT_ELEMENTS = getNrOfElements()-1;
-		int nrOfRedundantFragments = (int) (MAX_REDUNDANT_ELEMENTS * (redundancy /100f));
-		System.out.println("redundand fragments:"+nrOfRedundantFragments);
-		return nrOfRedundantFragments;
+		return getNrOfRedundantFragments(getNrOfEquivalenceClasses());
 	}
 
 	/**
@@ -132,12 +187,12 @@ public class DeviationOptimalRedundancyStategy extends OptimalRedundancyStategy 
 
 	@Override
 	public double getStorageRedundancy() {
-		return 1+1d*getNrOfRedundantFragments()/getNrOfFilePartsNeededToReconstructFile();
+		return getStorageRedundancy(getNrOfEquivalenceClasses());
 	}
 	
 	@Override
 	protected int getNrOfFilePartsNeededToReconstructFile() {
-		return getNrOfElements()-getNrOfRedundantFragments();
+		return getNrOfFilePartsNeededToReconstructFile(getNrOfEquivalenceClasses());
 	}
 
 	@Override
