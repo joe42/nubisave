@@ -3,6 +3,7 @@ package com.github.joe42.splitter;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.Map;
 
 import com.github.joe42.splitter.backend.BackendServices;
 import com.github.joe42.splitter.storagestrategies.StorageStrategyFactory;
@@ -85,5 +86,10 @@ public class CachingCauchyReedSolomonSplitter implements Splitter {
 	@Override
 	public double getStorageRedundancy() {
 		return core.getStorageRedundancy();
+	}
+	
+	@Override
+	public Map<String, String> getCodecInfo() {
+		return core.getCodecInfo();
 	}
 }
