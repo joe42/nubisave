@@ -3,9 +3,11 @@ package com.github.joe42.splitter.storagestrategies;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -207,5 +209,13 @@ public class RoundRobinStorageStrategy implements StorageStrategy, Observer {
 	@Override
 	public double getStorageRedundancy() {
 		return 1+getNrOfRedundantFragments();
+	}
+	
+	@Override
+	public Map<String, String> getCodecInfo() {
+		TreeMap<String, String> ret = new TreeMap<String, String>();
+		ret.put("erasure code elements",new Integer(1+getNrOfRedundantFragments()).toString());
+		ret.put("redundant erasure code elements",new Integer(getNrOfRedundantFragments()).toString());
+		return ret;
 	}
 }
