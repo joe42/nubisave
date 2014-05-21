@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
+import java.util.Map;
+
 import jdbm.helper.FastIterator;
 
 import org.apache.log4j.Logger;
@@ -412,6 +414,10 @@ public class FuseBox implements Filesystem3, XattrSupport {
 	 */
 	public double getStorageRedundancy(){
 		return fileStore.getStorageRedundancy(); //forward call to the file store
+	}
+
+	protected Map<String, String> getCodecInfo() {
+		return fileStore.getCodecInfo(); //forward call to the file store
 	}
 	
 	@Override
