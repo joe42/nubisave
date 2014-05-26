@@ -4,3 +4,12 @@ debian/tmp/usr/share/nubisave/fusej
 debian/tmp/usr/share/nubisave/splitter
 debian/tmp/usr/share/nubisave/start.sh
 debian/tmp/usr/share/nubisave/bin/nubi.properties
+debian/tmp/usr/share/nubisave/bin/lib/bcprov-jdk16-141.jar
+debian/tmp/usr/share/nubisave/bin/lib/commons-configuration-1.7.jar
+debian/tmp/usr/share/nubisave/bin/lib/commons-lang-2.6.jar
+debian/tmp/usr/share/nubisave/bin/lib/commons-collections-3.2.1.jar
+debian/tmp/usr/share/nubisave/bin/lib/ini4j-0.5.2.jar
+debian/tmp/usr/share/nubisave/bin/lib/jdbm-1.0.jar
+debian/tmp/usr/share/nubisave/bin/lib/jython.jar
+debian/tmp/usr/share/nubisave/bin/lib/libJerasure*
+debian/tmp/usr/share/nubisave/bin/lib/log4j-1.2.15.jar
