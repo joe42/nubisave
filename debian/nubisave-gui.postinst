@@ -20,18 +20,13 @@ set -e
 
 case "$1" in
     configure)
-	##(obsolete)##chmod 666 /usr/share/nubisave/splitter/splitter.db
-	##(obsolete)##chmod 666 /usr/share/nubisave/splitter/splitter.lg
-	chmod 666 /usr/share/nubisave/bin/nubi.properties
-	# FIXME: auto-add users/primary user or debconf query?
-	#usermod -a -G fuse demo
 	arch=`uname -m`
 	if [ "$arch" = "i686" ]; then
 		arch=x86
 	fi
 	if [ -d /usr/lib/nubisave/modules/$arch ]; then
 		echo "Substitution of architecture-specific Java native modules."
-		cp /usr/lib/nubisave/modules/$arch/libjavafs.so /usr/share/nubisave/fusej/jni/
+		cp /usr/lib/nubisave/modules/$arch/libjnotify.so /usr/share/nubisave/bin/lib/
 	fi
     ;;
 
