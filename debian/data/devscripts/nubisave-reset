@@ -8,7 +8,7 @@ then
 	echo "You had been warned!..."
 	nubisave stop
 	rm -rf ~/.nubisave* ~/.storages
-	nubisave &
+	#nubisave &
 else
 	echo "You are lucky."
 fi
