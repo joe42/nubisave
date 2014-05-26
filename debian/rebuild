@@ -34,4 +34,4 @@ rm -rf debian/nubisave
 echo y | dh_make -i --createorig -p nubisave_0.0~git$stamp
 debuild
 
-#make -f debian/rules clean
+make -f debian/rules clean
