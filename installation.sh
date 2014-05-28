@@ -9,40 +9,6 @@ if [ ! -x /usr/bin/sudo ]; then
 	exit 1
 fi
 
-read -p "SPACE-Plattformdienste installieren? (j/N) " antwort
-
-if [ "$antwort" == "j" ]
-then
-	sudo bash -c "echo 'deb http://serviceplatform.org/packages/ ./' >> /etc/apt/sources.list.d/space.list"
-	sudo apt-get update
-	#sudo apt-get install space
-	sudo apt-get install mysql-server mysql-client conqo conqotool
-else
-	echo "Ohne SPACE weiter - ConQo + Contract Wizard müssen vorhanden sein oder von extern genutzt werden."
-fi
-
-read -p "SPACE-Plattformdienste konfigurieren? (j/N) " antwort
-
-if [ "$antwort" == "j" ]
-then
-	echo "Registrierung der Speicherdienstanbieter..."
-
-	for service in services/CloudServices/*.wsml; do
-		servicename=$(basename "$service")
-		echo "-------------------------------------------"
-		echo "Registriere Service:    $servicename"
-		conqotool -u admin register "$service"
-	done
-
-	#ontologiepath=`find /var/lib 2>/dev/null | grep Matchmaker/ontologies | head -n 1 `cloud
-	ontologiepath=/var/lib/tomcat6/webapps/Matchmaker/ontologies/
-
-	echo
-	echo
-	echo "Kopiere CloudStorage-Ontologie"
-	sudo cp services/CloudStorage.wsml $ontologiepath
-fi
-
 echo
 echo
 echo "Installiere Entwicklerpakete (openJDK, FUSE, ...)"
