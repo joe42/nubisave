@@ -17,8 +17,10 @@ sudo apt-get install openjdk-7-jdk
 sudo apt-get install python-setuptools gcc libssl-dev python-dev
 sudo apt-get install fuse-utils || sudo apt-get install fuse #fuse-utils was renamed to fuse
 
-sudo usermod -a -G fuse "$USER"
-newgrp fuse
+if [ ! -x /usr/bin/sudo ]; then
+    sudo usermod -a -G fuse "$USER"
+    su -c "./installation.sh" - "$USER" 
+fi
 
 sudo chgrp fuse /dev/fuse   #On Debian: change permissions for fuse interface
 sudo chmod g+wr /dev/fuse   
