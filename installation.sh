@@ -47,9 +47,15 @@ echo
 echo
 echo "Installiere Entwicklerpakete (openJDK, FUSE, ...)"
 
-sudo apt-get install openjdk-7-jdk libfuse-dev python-simplejson python-setuptools python-oauth python-httplib2
+sudo apt-get install openjdk-7-jdk
+sudo apt-get install python-setuptools gcc libssl-dev python-dev
+sudo apt-get install fuse-utils || sudo apt-get install fuse #fuse-utils was renamed to fuse
 
-sudo easy_install 'http://pypi.python.org/packages/2.6/p/poster/poster-0.4-py2.6.egg#md5=f69a6be30737ad5d652a602f3af005ac'
+sudo usermod -a -G fuse "$USER"
+newgrp fuse
+
+sudo chgrp fuse /dev/fuse   #On Debian: change permissions for fuse interface
+sudo chmod g+wr /dev/fuse   
 
 echo
 echo
@@ -67,7 +73,6 @@ git submodule init
 git submodule update
 
 cd CloudFusion
-python setup.py build
 sudo python setup.py install
 cd ..
 
