@@ -43,7 +43,7 @@ cp splitter/mountscripts/Yandex.ini ~/.nubisave/nubisavemount/config/
 
 dd if=/dev/urandom of=testfile count=100 bs=1000000 #make 100MB testfile
 cp testfile ~/.nubisave/nubisavemount/data/
-sleep 300 #wait till it is uploaded
+sleep 600 #wait till it is uploaded
 
 
 
