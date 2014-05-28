@@ -1,5 +1,18 @@
 #!/bin/bash
 
+
+if groups | grep -q -E ' fuse(\s|$)'; then
+    echo user is already in group fuse
+else 
+    sudo usermod -a -G fuse "$USER"
+    sudo su -c "cd '"`pwd`"'; ./testsuite/travis/test.sh" - "$USER" 
+    exit
+fi
+ls -al /dev/fuse
+groups
+id
+
+
 perl -pi -e "s/user = /user = ${USR}/g" splitter/mountscripts/Dropbox.ini
 perl -pi -e "s/password = /password = ${PW}/g" splitter/mountscripts/Dropbox.ini
 perl -pi -e "s/user = /user = ${USR}/g" splitter/mountscripts/Sugarsync.ini
@@ -18,14 +31,14 @@ perl -pi -e "s/user =.*/user =${WEBDAV4_USR}/g" splitter/mountscripts/Yandex.ini
 perl -pi -e "s/password =.*/password =${WEBDAV4_PWD}/g" splitter/mountscripts/Yandex.ini
 
 
-echo -e "\ncache_dir = cache" splitter/mountscripts/Dropbox.ini
-echo -e "\ncache_dir = cache" splitter/mountscripts/Sugarsync.ini
-echo -e "\ncache_dir = cache" splitter/mountscripts/Google_Storage.ini
-echo -e "\ncache_dir = cache" splitter/mountscripts/AmazonS3.ini
-echo -e "\ncache_dir = cache" splitter/mountscripts/Tonline.ini
-echo -e "\ncache_dir = cache" splitter/mountscripts/GMXMediacenter.ini
-echo -e "\ncache_dir = cache" splitter/mountscripts/Box.ini
-echo -e "\ncache_dir = cache" splitter/mountscripts/Yandex.ini
+echo -e "\ncache_dir = cache" >> splitter/mountscripts/Dropbox.ini
+echo -e "\ncache_dir = cache" >> splitter/mountscripts/Sugarsync.ini
+echo -e "\ncache_dir = cache" >> splitter/mountscripts/Google_Storage.ini
+echo -e "\ncache_dir = cache" >> splitter/mountscripts/AmazonS3.ini
+echo -e "\ncache_dir = cache" >> splitter/mountscripts/Tonline.ini
+echo -e "\ncache_dir = cache" >> splitter/mountscripts/GMXMediacenter.ini
+echo -e "\ncache_dir = cache" >> splitter/mountscripts/Box.ini
+echo -e "\ncache_dir = cache" >> splitter/mountscripts/Yandex.ini
 mkdir cache
 
 
