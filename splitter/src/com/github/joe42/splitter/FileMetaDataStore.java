@@ -2,8 +2,6 @@ package com.github.joe42.splitter;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.LinkOption;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -92,7 +90,6 @@ public class FileMetaDataStore {
 	 */
 	public FileEntry makeFileEntry(String path) throws IOException {
 		FileEntry entry = new FileEntry();
-		//Files.readAttributes(path, "creationTime,lastModifiedTime,lastAccessTime", LinkOption.NOFOLLOW_LINKS);
 		Long nowL = (new Date()).getTime() / 1000L; 
 		int now = nowL.intValue();
 		entry.ctime = now;
