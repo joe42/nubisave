@@ -100,7 +100,6 @@ public class PolicySelectionDlg extends javax.swing.JDialog {
 				System.out.println("new policy...");  
 				
 				String location = Nubisave.properties.getProperty("policy_directory");
-				System.out.println(location);
 				
 				FileDialog fd=new FileDialog(new Frame(),"Custom Policy",FileDialog.SAVE);
 				fd.setLocationRelativeTo(fd.getParent());
@@ -165,7 +164,14 @@ public class PolicySelectionDlg extends javax.swing.JDialog {
 
 	private void initData() {
 		String location = Nubisave.properties.getProperty("policy_directory");
-		System.out.println(location);
+		
+		if(location == null) {
+			System.out.println("Policy location is undefined.");
+			return;
+		}
+		else {
+			System.out.println("Policy location: "+location);
+		}
 		
 		ca.removeAllItems();
 		listPolicyName.clear();

@@ -13,6 +13,7 @@ import javax.swing.JPopupMenu;
 
 import org.apache.commons.collections15.Factory;
 
+import nubisave.component.graph.vertice.interfaces.Port;
 import nubisave.component.graph.vertice.interfaces.VertexGroup;
 import edu.uci.ics.jung.algorithms.layout.GraphElementAccessor;
 import edu.uci.ics.jung.algorithms.layout.Layout;
@@ -59,7 +60,7 @@ public class PopupEditor extends AbstractPopupGraphMousePlugin {
             final PickedState<NubiSaveVertex> pickedVertexState = vv.getPickedVertexState();
 
             popup.removeAll();
-            if(vertex != null) {
+            if(vertex != null && !(vertex instanceof Port)) {
                 if(vertex instanceof CloudEntranceComponent){
                 	JMenuItem item = popup.add(new AbstractAction("Open Location") {
                         public void actionPerformed(ActionEvent NubiSaveEdge) {
@@ -163,9 +164,12 @@ public class PopupEditor extends AbstractPopupGraphMousePlugin {
                 }
 
                 String mount = "Mount";
-                if(((AbstractNubisaveComponent)vertex).isActive()) {
-                    mount = "Unmount";
+                if(vertex instanceof AbstractNubisaveComponent){
+                	if(((AbstractNubisaveComponent)vertex).isActive()) {
+                        mount = "Unmount";
+                    }
                 }
+                
                 popup.add(new AbstractAction(mount) {
                     public void actionPerformed(ActionEvent NubiSaveEdge) {
                         System.out.println("mount or unmount storage...");

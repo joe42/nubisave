@@ -22,6 +22,7 @@ import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import nubisave.Nubisave;
 import nubisave.StorageService;
+import nubisave.component.graph.edge.RestrictedEdgeVertex;
 import nubisave.component.graph.vertice.interfaces.NubiSaveVertex;
 import nubisave.ui.NubisaveConfigDlg;
 import nubisave.ui.ServiceParameterDialog;
@@ -35,7 +36,7 @@ public class CloudEntranceComponent extends AbstractNubisaveComponent {
 
 	public CloudEntranceComponent(StorageService component) throws IOException {
 		super(component.getName(), ImageIO.read(AbstractNubisaveComponent.class.getResource("/nubisave/images/CloudComponent.png")));
-		addRequiredPort();
+		addRequiredPort(1);
 
 		this.component = component;
 		this.name = "CloudEntrance";
@@ -233,5 +234,6 @@ public class CloudEntranceComponent extends AbstractNubisaveComponent {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
 }
+	

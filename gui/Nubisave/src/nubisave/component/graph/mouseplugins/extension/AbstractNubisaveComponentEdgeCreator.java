@@ -80,12 +80,15 @@ public class AbstractNubisaveComponentEdgeCreator implements NubisaveGraphEventL
      */
     protected boolean connect(NubiSaveVertex startVertex, NubiSaveVertex endVertex) {
         boolean shouldNotConnect = shouldNotConnect(startVertex, endVertex);
-        System.out.println("nubisavecomponentgraphmouseplugin: connect");
+        
         if (shouldNotConnect) {
             System.out.println("nubisavecomponentgraphmouseplugin: returning false");
             return false;
-
         }
+        else {
+        	System.out.println("nubisavecomponentgraphmouseplugin: connect");
+        }
+        
         AbstractNubisaveComponent start = (AbstractNubisaveComponent) ((RequiredPort) startVertex).getParentComponent();
         AbstractNubisaveComponent end = (AbstractNubisaveComponent) ((ProvidedPort) endVertex).getParentComponent();
         
@@ -167,8 +170,7 @@ public class AbstractNubisaveComponentEdgeCreator implements NubisaveGraphEventL
     }
 
     private boolean hasReachedMaxEdgeNumber(NubiSaveVertex vertex) {
-        return (vertex instanceof RestrictedEdgeVertex)
-                && ((RestrictedEdgeVertex) vertex).getMaxDegree() <= graph.getIncidentEdges(vertex).size();
+        return (vertex instanceof RestrictedEdgeVertex) && ((RestrictedEdgeVertex) vertex).getMaxDegree() <= graph.getIncidentEdges(vertex).size();
     }
 
     /**
