@@ -165,6 +165,15 @@ public class Splitter {
             return 0;
         }
     }
+    
+    public double getRedundancyFactor() {
+        try{
+            Ini splitterConfig = new Ini(new File(configurationFilePath));
+            return splitterConfig.get("splitter", "redundancy factor", Double.class);
+        } catch(Exception e){
+            return 0;
+        }
+    }
 
     public void moveStoreData(String sourceStoreName, String destinationStoreName) {
         try {

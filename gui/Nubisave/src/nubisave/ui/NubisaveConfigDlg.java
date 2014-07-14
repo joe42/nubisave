@@ -47,6 +47,7 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
      */
     private void refreshSplitterParameters() {
         availabilityLabel.setText("Availability: " + Nubisave.mainSplitter.getAvailability() * 100 + "%");
+        redundancyFactorLabel.setText("Redundancy factor: " + Nubisave.mainSplitter.getRedundancyFactor());
     }
     
     private void setIsSplitterMounted() {
