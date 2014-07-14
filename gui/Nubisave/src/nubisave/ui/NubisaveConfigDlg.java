@@ -47,6 +47,7 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
      */
     private void refreshSplitterParameters() {
         availabilityLabel.setText("Availability: " + Nubisave.mainSplitter.getAvailability() * 100 + "%");
+        availabilityPerYearLabel.setText("Availability per year: " + Nubisave.mainSplitter.getUnavailabilityPerYear());
         redundancyFactorLabel.setText("Redundancy factor: " + Nubisave.mainSplitter.getRedundancyFactor());
     }
     
@@ -90,6 +91,7 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
         jSeparator4 = new javax.swing.JSeparator();
         filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
         redundancyFactorLabel = new javax.swing.JLabel();
+        availabilityPerYearLabel = new javax.swing.JLabel();
 
         splitterIsMountedCheckBox.setText("Splitter mount status");
         splitterIsMountedCheckBox.addActionListener(new java.awt.event.ActionListener() {
@@ -181,6 +183,8 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
 
         redundancyFactorLabel.setText("Redundancy factor:");
 
+        availabilityPerYearLabel.setText("Availability per year:");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -223,7 +227,9 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
                                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                         .addComponent(redundancySlider, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(41, 41, 41)
-                                        .addComponent(redundancyFactorLabel)))
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                            .addComponent(redundancyFactorLabel)
+                                            .addComponent(availabilityPerYearLabel))))
                                 .addGap(0, 0, Short.MAX_VALUE)))
                         .addGap(34, 34, 34))
                     .addGroup(layout.createSequentialGroup()
@@ -252,7 +258,10 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(redundancySlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(redundancyFactorLabel))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(redundancyFactorLabel)
+                        .addGap(8, 8, 8)
+                        .addComponent(availabilityPerYearLabel)))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -367,6 +376,7 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
     public NubiTableModel tableModel;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel availabilityLabel;
+    private javax.swing.JLabel availabilityPerYearLabel;
     private javax.swing.JButton changeMatchMakerURLBtn;
     private javax.swing.Box.Filler filler1;
     private javax.swing.JButton jButton4;

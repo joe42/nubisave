@@ -175,6 +175,15 @@ public class Splitter {
         }
     }
 
+    public String getUnavailabilityPerYear() {
+        try{
+            Ini splitterConfig = new Ini(new File(configurationFilePath));
+            return splitterConfig.get("splitter", "unavailability per year", String.class);
+        } catch(Exception e){
+            return "0 seconds";
+        }
+    }
+
     public void moveStoreData(String sourceStoreName, String destinationStoreName) {
         try {
             new ProcessBuilder("/bin/bash", "-c", "mv "+configurationDirPath+"/"+sourceStoreName+" "+configurationDirPath+"/"+destinationStoreName).start();
