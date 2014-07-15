@@ -30,14 +30,8 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
      * Creates new form NubisaveConfigDlg
      */
     public NubisaveConfigDlg() {
-       initComponents();
-       mntDirTxtField.setText(Nubisave.mainSplitter.getMountpoint());
-        String redundancyStr = Nubisave.properties.getProperty("redundancy");
-        if (redundancyStr == null) {
-            redundancyStr = "100";
-        }
-        int redundancy = Integer.parseInt(redundancyStr);
-        redundancySlider.setValue(redundancy);
+        initComponents();
+        mntDirTxtField.setText(Nubisave.mainSplitter.getMountpoint());
         refreshSplitterParameters();
         splitterIsMountedCheckBox.setSelected(Nubisave.mainSplitter.isMounted());
     }
