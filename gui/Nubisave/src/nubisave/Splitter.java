@@ -8,6 +8,7 @@ import com.github.joe42.splitter.util.file.FileUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -119,6 +120,20 @@ public class Splitter {
             return Integer.parseInt(splitterConfig.get("splitter", "redundancy"));
         } catch(Exception e){
             return 100;
+        }
+    }
+
+    public String getCodecInfo() {
+        try{
+            Ini splitterConfig = new Ini(new File(configurationFilePath));
+            String ret = "<html>";
+            for(Map.Entry<String, String> info: splitterConfig.get("codec").entrySet()) {
+                ret += info.getKey() + ": " + info.getValue() + "<br>";
+            }
+            ret += "</html>";
+            return ret;
+        } catch(Exception e){
+            return "No information available!";
         }
     }
 

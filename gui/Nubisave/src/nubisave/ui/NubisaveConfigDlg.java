@@ -34,6 +34,30 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
         mntDirTxtField.setText(Nubisave.mainSplitter.getMountpoint());
         refreshSplitterParameters();
         splitterIsMountedCheckBox.setSelected(Nubisave.mainSplitter.isMounted());
+        setInstantTooltipForCodecInfoInvisibleOverlayLabel();
+        codecInfoInvisibleOverlayPanel.setVisible(true);
+    }
+   /**
+    * This should instantly show a tooltip with the latest codec information,
+    * when hovering over the codecButton that is overlayed with the label codecInfoInvisibleOverlayLabel,
+    * to prevent actual user interaction with the button.
+    */
+    private void setInstantTooltipForCodecInfoInvisibleOverlayLabel(){
+        codecInfoInvisibleOverlayLabel.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e)
+            {
+                try
+                {
+                    KeyEvent ke = new KeyEvent(e.getComponent(), KeyEvent.KEY_PRESSED,
+                        System.currentTimeMillis(), InputEvent.CTRL_MASK,
+                        KeyEvent.VK_F1, KeyEvent.CHAR_UNDEFINED);
+                    e.getComponent().dispatchEvent(ke);
+                }
+                catch (Throwable e1)
+                {e1.printStackTrace();}
+            }
+        });
     }
     
     /**
@@ -43,6 +67,7 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
         availabilityLabel.setText("Availability: " + Nubisave.mainSplitter.getAvailability() * 100 + "%");
         availabilityPerYearLabel.setText("Availability per year: " + Nubisave.mainSplitter.getUnavailabilityPerYear());
         redundancyFactorLabel.setText("Redundancy factor: " + Nubisave.mainSplitter.getRedundancyFactor());
+        codecInfoInvisibleOverlayLabel.setToolTipText(Nubisave.mainSplitter.getCodecInfo());
     }
     
     private void setIsSplitterMounted() {
@@ -72,8 +97,7 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
         jLabel2 = new javax.swing.JLabel();
         mntDirTxtField = new javax.swing.JTextField();
         openMntDirBtn = new javax.swing.JButton();
-        jLabel3 = new javax.swing.JLabel();
-        redundancySlider = new javax.swing.JSlider();
+        desiredAvailabilityLabel = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         matchMakerURLField = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
@@ -86,6 +110,12 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
         filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
         redundancyFactorLabel = new javax.swing.JLabel();
         availabilityPerYearLabel = new javax.swing.JLabel();
+        desiredAvailabilityTextField = new javax.swing.JTextField();
+        codecInfoButtonLayeredPane = new javax.swing.JLayeredPane();
+        codecInfoInvisibleOverlayPanel = new javax.swing.JPanel();
+        codecInfoInvisibleOverlayLabel = new javax.swing.JLabel();
+        codecinfoButtonPanel = new javax.swing.JPanel();
+        codecInfoButton = new javax.swing.JButton();
 
         splitterIsMountedCheckBox.setText("Splitter mount status");
         splitterIsMountedCheckBox.addActionListener(new java.awt.event.ActionListener() {
@@ -133,13 +163,7 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
             }
         });
 
-        jLabel3.setText("Redundancy");
-
-        redundancySlider.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                redundancySliderStateChanged(evt);
-            }
-        });
+        desiredAvailabilityLabel.setText("Desired Availability:");
 
         jLabel4.setText("Matchmaker");
 
@@ -179,6 +203,93 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
 
         availabilityPerYearLabel.setText("Availability per year:");
 
+        desiredAvailabilityTextField.setText("jTextField1");
+        desiredAvailabilityTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                desiredAvailabilityTextFieldActionPerformed(evt);
+            }
+        });
+
+        codecInfoInvisibleOverlayPanel.setAlignmentX(0.0F);
+        codecInfoInvisibleOverlayPanel.setAlignmentY(0.0F);
+        codecInfoInvisibleOverlayPanel.setOpaque(false);
+
+        codecInfoInvisibleOverlayLabel.setAlignmentY(0.0F);
+        codecInfoInvisibleOverlayLabel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
+        javax.swing.GroupLayout codecInfoInvisibleOverlayPanelLayout = new javax.swing.GroupLayout(codecInfoInvisibleOverlayPanel);
+        codecInfoInvisibleOverlayPanel.setLayout(codecInfoInvisibleOverlayPanelLayout);
+        codecInfoInvisibleOverlayPanelLayout.setHorizontalGroup(
+            codecInfoInvisibleOverlayPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(codecInfoInvisibleOverlayPanelLayout.createSequentialGroup()
+                .addComponent(codecInfoInvisibleOverlayLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        codecInfoInvisibleOverlayPanelLayout.setVerticalGroup(
+            codecInfoInvisibleOverlayPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(codecInfoInvisibleOverlayLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 57, Short.MAX_VALUE)
+        );
+
+        codecinfoButtonPanel.setAlignmentX(0.0F);
+        codecinfoButtonPanel.setAlignmentY(0.0F);
+        codecinfoButtonPanel.setAutoscrolls(true);
+        codecinfoButtonPanel.setOpaque(false);
+
+        codecInfoButton.setText("Codec Information");
+        codecInfoButton.setAlignmentY(0.0F);
+        codecInfoButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        codecInfoButton.setFocusPainted(false);
+        codecInfoButton.setRolloverEnabled(false);
+        codecInfoButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                codecInfoButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout codecinfoButtonPanelLayout = new javax.swing.GroupLayout(codecinfoButtonPanel);
+        codecinfoButtonPanel.setLayout(codecinfoButtonPanelLayout);
+        codecinfoButtonPanelLayout.setHorizontalGroup(
+            codecinfoButtonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(codecinfoButtonPanelLayout.createSequentialGroup()
+                .addGap(2, 2, 2)
+                .addComponent(codecInfoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        codecinfoButtonPanelLayout.setVerticalGroup(
+            codecinfoButtonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(codecinfoButtonPanelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(codecInfoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
+        javax.swing.GroupLayout codecInfoButtonLayeredPaneLayout = new javax.swing.GroupLayout(codecInfoButtonLayeredPane);
+        codecInfoButtonLayeredPane.setLayout(codecInfoButtonLayeredPaneLayout);
+        codecInfoButtonLayeredPaneLayout.setHorizontalGroup(
+            codecInfoButtonLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(codecInfoButtonLayeredPaneLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(codecinfoButtonPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(codecInfoButtonLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(codecInfoButtonLayeredPaneLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(codecInfoInvisibleOverlayPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(31, Short.MAX_VALUE)))
+        );
+        codecInfoButtonLayeredPaneLayout.setVerticalGroup(
+            codecInfoButtonLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(codecInfoButtonLayeredPaneLayout.createSequentialGroup()
+                .addComponent(codecinfoButtonPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 9, Short.MAX_VALUE))
+            .addGroup(codecInfoButtonLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(codecInfoButtonLayeredPaneLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(codecInfoInvisibleOverlayPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+        );
+        codecInfoButtonLayeredPane.setLayer(codecInfoInvisibleOverlayPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        codecInfoButtonLayeredPane.setLayer(codecinfoButtonPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -194,37 +305,48 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jSeparator4)
                             .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jLabel2)
+                                    .addComponent(availabilityLabel)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addGap(0, 0, Short.MAX_VALUE)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                    .addComponent(mntDirTxtField, javax.swing.GroupLayout.PREFERRED_SIZE, 534, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addComponent(splitterIsMountedCheckBox, javax.swing.GroupLayout.Alignment.LEADING))
+                                                .addGap(24, 24, 24)
+                                                .addComponent(openMntDirBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                            .addGap(62, 62, 62)
+                                                            .addComponent(storageStrategyComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                                        .addComponent(matchMakerURLField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 534, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                    .addComponent(desiredAvailabilityLabel, javax.swing.GroupLayout.Alignment.LEADING))
+                                                .addGap(217, 433, Short.MAX_VALUE))
+                                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                    .addComponent(jLabel4)
+                                                    .addGroup(layout.createSequentialGroup()
+                                                        .addComponent(desiredAvailabilityTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addGap(105, 105, 105)
+                                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                            .addComponent(redundancyFactorLabel)
+                                                            .addComponent(availabilityPerYearLabel))))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(codecInfoButtonLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(242, 242, 242)))
+                                        .addGap(29, 29, 29)))
+                                .addGap(0, 0, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(0, 0, Short.MAX_VALUE)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(changeMatchMakerURLBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jLabel2)
-                                        .addComponent(jLabel3)
-                                        .addComponent(jLabel4)
-                                        .addComponent(availabilityLabel)
-                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                                .addComponent(mntDirTxtField, javax.swing.GroupLayout.PREFERRED_SIZE, 534, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addComponent(splitterIsMountedCheckBox, javax.swing.GroupLayout.Alignment.LEADING))
-                                            .addGap(24, 24, 24)
-                                            .addComponent(openMntDirBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(62, 62, 62)
-                                                .addComponent(storageStrategyComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                            .addComponent(matchMakerURLField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 534, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                        .addComponent(redundancySlider, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(41, 41, 41)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                            .addComponent(redundancyFactorLabel)
-                                            .addComponent(availabilityPerYearLabel))))
-                                .addGap(0, 0, Short.MAX_VALUE)))
+                                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(changeMatchMakerURLBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addGap(34, 34, 34))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -243,22 +365,26 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
                 .addComponent(splitterIsMountedCheckBox)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(mntDirTxtField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(openMntDirBtn))
-                .addGap(18, 18, 18)
-                .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(redundancySlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(redundancyFactorLabel)
-                        .addGap(8, 8, 8)
-                        .addComponent(availabilityPerYearLabel)))
-                .addGap(18, 18, 18)
-                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(93, 93, 93)
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(desiredAvailabilityLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(redundancyFactorLabel)
+                                .addGap(23, 23, 23)
+                                .addComponent(availabilityPerYearLabel))
+                            .addComponent(desiredAvailabilityTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(codecInfoButtonLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(79, 79, 79)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(matchMakerURLField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(changeMatchMakerURLBtn))
@@ -352,31 +478,37 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_matchMakerURLFieldActionPerformed
 
-    private void redundancySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_redundancySliderStateChanged
-        // TODO add your handling code here:
-        Nubisave.properties.setProperty("redundancy", String.valueOf(redundancySlider.getValue()));
-        Nubisave.mainSplitter.setRedundancy(redundancySlider.getValue());
-        refreshSplitterParameters();
-    }//GEN-LAST:event_redundancySliderStateChanged
-
     private void loadSessionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadSessionButtonActionPerformed
         // TODO add your handling code here:
         int sessionNumber = Integer.parseInt((String)splitterSessionComboBox.getSelectedItem());
         Nubisave.mainSplitter.loadSession(sessionNumber);
         tableModel.fireTableDataChanged();
-        redundancySlider.setValue(Nubisave.mainSplitter.getRedundancy());
         storageStrategyComboBox.setSelectedItem(Nubisave.mainSplitter.getStorageStrategy());
     }//GEN-LAST:event_loadSessionButtonActionPerformed
+
+    private void desiredAvailabilityTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_desiredAvailabilityTextFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_desiredAvailabilityTextFieldActionPerformed
+
+    private void codecInfoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_codecInfoButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_codecInfoButtonActionPerformed
     public NubiTableModel tableModel;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel availabilityLabel;
     private javax.swing.JLabel availabilityPerYearLabel;
     private javax.swing.JButton changeMatchMakerURLBtn;
+    private javax.swing.JButton codecInfoButton;
+    private javax.swing.JLayeredPane codecInfoButtonLayeredPane;
+    private javax.swing.JLabel codecInfoInvisibleOverlayLabel;
+    private javax.swing.JPanel codecInfoInvisibleOverlayPanel;
+    private javax.swing.JPanel codecinfoButtonPanel;
+    private javax.swing.JLabel desiredAvailabilityLabel;
+    private javax.swing.JTextField desiredAvailabilityTextField;
     private javax.swing.Box.Filler filler1;
     private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JSeparator jSeparator1;
@@ -386,7 +518,6 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
     private javax.swing.JTextField mntDirTxtField;
     private javax.swing.JButton openMntDirBtn;
     private javax.swing.JLabel redundancyFactorLabel;
-    private javax.swing.JSlider redundancySlider;
     private javax.swing.JButton saveSessionButton;
     private javax.swing.JCheckBox splitterIsMountedCheckBox;
     private javax.swing.JComboBox splitterSessionComboBox;
