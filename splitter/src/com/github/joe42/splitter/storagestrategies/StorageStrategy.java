@@ -8,6 +8,8 @@ import java.util.Map;
  * Further, by the number of returned directories it determines when a complete file is stored successfully.
  */
 public interface StorageStrategy {
+	public final static String N = "erasure code elements";
+	public final static String M = "redundant erasure code elements";
 	/**
 	 * Get the directories to store the file fragments to
 	 * The paths must not end in "/". Determines the number and location of fragments for each complete file. It is possible to have the same paths multiple times 
@@ -62,5 +64,11 @@ public interface StorageStrategy {
 	 */
 	public double getStorageRedundancy();
 
+	/**
+	 * Get generic codec information.
+	 * Use the keys StorageStrategy.N and StorageStrategy.M for the number of elements 
+	 * produced by the erasure code, and the amount of redundant elements, respectively. 
+	 * @return
+	 */
 	public Map<String, String> getCodecInfo();
 }

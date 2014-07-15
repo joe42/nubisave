@@ -186,6 +186,10 @@ public class ConfigurableFuseBox extends FuseBox  implements StorageService{
 		String unavailabilityDurationPerYear = String.format("%02d days, %02d hours, %02d minutes, and %02d seconds", duration.getDays(), duration.getHours(), duration.getMinutes(), duration.getSeconds());
 		config.put("splitter", "unavailability per year", unavailabilityDurationPerYear);
 		config.put("splitter", "redundancy factor", getStorageRedundancy());
+		Map<String, String> codecInfo = getCodecInfo();
+		for(Entry<String, String> info: codecInfo.entrySet()){
+			config.put("codec", info.getKey(), info.getValue());
+		}
 
 		for (Map.Entry<String, String> entry : getCodecInfo().entrySet()) {
 			config.put("splitter", entry.getKey(), entry.getValue());
