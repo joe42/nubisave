@@ -100,12 +100,11 @@ public class GenericNubiSaveComponent extends AbstractNubisaveComponent {
     public void showConfigurationDialog() {
         //Use factory method to create a custom configuration dialog from the backendconfig package,
         //or the generic ServiceParameterDialog 
-        ServiceParameterDialog editDialog = (ServiceParameterDialog) ServiceParameterDialog.getInstance(null, true, component);
+        JDialog editDialog = ServiceParameterDialog.getInstance(null, true, component);
         editDialog.setTitle(component.getName());
         editDialog.setVisible(true);
-        if(editDialog.getApplyStatus()){
-        	//get and update latest name.
-        	Ini config = this.component.getConfig();
+        Ini config = this.component.getConfig();
+        if(config.get("module").containsKey("name")){
             this.name = config.get("module", "name");
         }
     }
