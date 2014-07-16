@@ -66,7 +66,7 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
      */
     private void refreshSplitterParameters() {
         availabilityLabel.setText("Availability: " + Nubisave.mainSplitter.getAvailability() * 100 + "%");
-        availabilityPerYearLabel.setText("Availability per year: " + Nubisave.mainSplitter.getUnavailabilityPerYear());
+        availabilityPerYearLabel.setText("<html>Unavailability per year: <br>" + Nubisave.mainSplitter.getUnavailabilityPerYear()+"</html>");
         redundancyFactorLabel.setText("Redundancy factor: " + Nubisave.mainSplitter.getRedundancyFactor());
         codecInfoInvisibleOverlayLabel.setToolTipText(Nubisave.mainSplitter.getCodecInfo());
     }
@@ -204,7 +204,7 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
 
         redundancyFactorLabel.setText("Redundancy factor:");
 
-        availabilityPerYearLabel.setText("Availability per year:");
+        availabilityPerYearLabel.setText("Unavailability per year:");
 
         desiredAvailabilityTextField.setText("90%");
         desiredAvailabilityTextField.addActionListener(new java.awt.event.ActionListener() {

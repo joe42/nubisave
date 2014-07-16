@@ -336,7 +336,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="availabilityPerYearLabel">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Availability per year:"/>
+        <Property name="text" type="java.lang.String" value="Unavailability per year:"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="desiredAvailabilityTextField">
