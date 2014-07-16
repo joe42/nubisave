@@ -64,8 +64,15 @@
                                               <Group type="103" groupAlignment="0" attributes="0">
                                                   <Component id="jLabel4" alignment="0" min="-2" max="-2" attributes="0"/>
                                                   <Group type="102" alignment="0" attributes="0">
-                                                      <Component id="desiredAvailabilityTextField" min="-2" max="-2" attributes="0"/>
-                                                      <EmptySpace min="-2" pref="105" max="-2" attributes="0"/>
+                                                      <Group type="103" groupAlignment="0" attributes="0">
+                                                          <Component id="desiredAvailabilityInfoLabel" min="-2" max="-2" attributes="0"/>
+                                                          <Group type="102" attributes="0">
+                                                              <Component id="desiredAvailabilityTextField" min="-2" pref="64" max="-2" attributes="0"/>
+                                                              <EmptySpace max="-2" attributes="0"/>
+                                                              <Component id="desiredAvailabilityOkButton" min="-2" pref="42" max="-2" attributes="0"/>
+                                                          </Group>
+                                                      </Group>
+                                                      <EmptySpace max="-2" attributes="0"/>
                                                       <Group type="103" groupAlignment="1" attributes="0">
                                                           <Component id="redundancyFactorLabel" min="-2" max="-2" attributes="0"/>
                                                           <Component id="availabilityPerYearLabel" min="-2" max="-2" attributes="0"/>
@@ -133,7 +140,14 @@
                               <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
                               <Component id="availabilityPerYearLabel" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="desiredAvailabilityTextField" min="-2" max="-2" attributes="0"/>
+                          <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="desiredAvailabilityTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="desiredAvailabilityOkButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="desiredAvailabilityInfoLabel" min="-2" max="-2" attributes="0"/>
+                          </Group>
                           <Component id="codecInfoButtonLayeredPane" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -327,7 +341,7 @@
     </Component>
     <Component class="javax.swing.JTextField" name="desiredAvailabilityTextField">
       <Properties>
-        <Property name="text" type="java.lang.String" value="jTextField1"/>
+        <Property name="text" type="java.lang.String" value="90%"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="desiredAvailabilityTextFieldActionPerformed"/>
@@ -448,5 +462,18 @@
         </Container>
       </SubComponents>
     </Container>
+    <Component class="javax.swing.JLabel" name="desiredAvailabilityInfoLabel">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Press OK to check"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="desiredAvailabilityOkButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="OK"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="desiredAvailabilityOkButtonActionPerformed"/>
+      </Events>
+    </Component>
   </SubComponents>
 </Form>

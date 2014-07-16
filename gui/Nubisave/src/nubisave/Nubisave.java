@@ -34,9 +34,9 @@ public class Nubisave {
 
 	private static void initalizeSplitter(String mountPoint) {
 		if (mountPoint.equals("")) {
-			Nubisave.mainSplitter = new Splitter();
+			Nubisave.mainSplitter = new AutonomousSplitter();
 		} else {
-			Nubisave.mainSplitter = new Splitter(mountPoint);
+			Nubisave.mainSplitter = new AutonomousSplitter(mountPoint);
 		}
 		String redundancy = Nubisave.properties.getProperty("redundancy");
 		

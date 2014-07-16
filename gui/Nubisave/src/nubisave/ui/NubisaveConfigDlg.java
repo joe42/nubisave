@@ -19,6 +19,7 @@ import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 import nubisave.*;
 import nubisave.component.graph.splitteradaption.NubisaveEditor;
+import org.apache.commons.lang.NumberUtils;
 
 /**
  *
@@ -116,6 +117,8 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
         codecInfoInvisibleOverlayLabel = new javax.swing.JLabel();
         codecinfoButtonPanel = new javax.swing.JPanel();
         codecInfoButton = new javax.swing.JButton();
+        desiredAvailabilityInfoLabel = new javax.swing.JLabel();
+        desiredAvailabilityOkButton = new javax.swing.JButton();
 
         splitterIsMountedCheckBox.setText("Splitter mount status");
         splitterIsMountedCheckBox.addActionListener(new java.awt.event.ActionListener() {
@@ -203,7 +206,7 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
 
         availabilityPerYearLabel.setText("Availability per year:");
 
-        desiredAvailabilityTextField.setText("jTextField1");
+        desiredAvailabilityTextField.setText("90%");
         desiredAvailabilityTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 desiredAvailabilityTextFieldActionPerformed(evt);
@@ -290,6 +293,15 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
         codecInfoButtonLayeredPane.setLayer(codecInfoInvisibleOverlayPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
         codecInfoButtonLayeredPane.setLayer(codecinfoButtonPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
+        desiredAvailabilityInfoLabel.setText("Press OK to check");
+
+        desiredAvailabilityOkButton.setText("OK");
+        desiredAvailabilityOkButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                desiredAvailabilityOkButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -332,8 +344,13 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
                                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                     .addComponent(jLabel4)
                                                     .addGroup(layout.createSequentialGroup()
-                                                        .addComponent(desiredAvailabilityTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addGap(105, 105, 105)
+                                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                            .addComponent(desiredAvailabilityInfoLabel)
+                                                            .addGroup(layout.createSequentialGroup()
+                                                                .addComponent(desiredAvailabilityTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(desiredAvailabilityOkButton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                                             .addComponent(redundancyFactorLabel)
                                                             .addComponent(availabilityPerYearLabel))))
@@ -382,7 +399,12 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
                                 .addComponent(redundancyFactorLabel)
                                 .addGap(23, 23, 23)
                                 .addComponent(availabilityPerYearLabel))
-                            .addComponent(desiredAvailabilityTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(desiredAvailabilityTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(desiredAvailabilityOkButton))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(desiredAvailabilityInfoLabel))
                             .addComponent(codecInfoButtonLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(79, 79, 79)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -493,6 +515,28 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
     private void codecInfoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_codecInfoButtonActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_codecInfoButtonActionPerformed
+
+    /**
+     * Configure Nubisave's splitter component so that the overall availability is greater than or equal 
+     * to the desired availability expressed in the desiredAvailabilityTextField.
+     * @param evt 
+     */
+    private void desiredAvailabilityOkButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_desiredAvailabilityOkButtonActionPerformed
+        String desiredAv, textField;
+        Double desiredAvDouble;
+        textField = desiredAvailabilityTextField.getText();
+        desiredAv = textField.replace("%", "");
+        if(NumberUtils.isNumber(desiredAv)){
+            desiredAvDouble = Double.parseDouble(desiredAv)/100.0;
+        } else {
+            desiredAvailabilityInfoLabel.setText("Your input is not a number.");
+            return;
+        }
+        desiredAvailabilityInfoLabel.setText("Searching for optimal configuration.");
+        ((AutonomousSplitter)Nubisave.mainSplitter).findConfigurationForAvailability(desiredAvDouble);
+        refreshSplitterParameters();
+        desiredAvailabilityInfoLabel.setText("Found optimal configuration.");
+    }//GEN-LAST:event_desiredAvailabilityOkButtonActionPerformed
     public NubiTableModel tableModel;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel availabilityLabel;
@@ -503,7 +547,9 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
     private javax.swing.JLabel codecInfoInvisibleOverlayLabel;
     private javax.swing.JPanel codecInfoInvisibleOverlayPanel;
     private javax.swing.JPanel codecinfoButtonPanel;
+    private javax.swing.JLabel desiredAvailabilityInfoLabel;
     private javax.swing.JLabel desiredAvailabilityLabel;
+    private javax.swing.JButton desiredAvailabilityOkButton;
     private javax.swing.JTextField desiredAvailabilityTextField;
     private javax.swing.Box.Filler filler1;
     private javax.swing.JButton jButton4;
