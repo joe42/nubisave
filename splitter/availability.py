@@ -76,7 +76,7 @@ some_list is a multiset'''
                 elif m<=k and has_k_elements(k, subset):
                     yield map(lambda x: x[0], subset) 
     parameters = [rng1, rng2]
-    for i in prefetch_generator2(gen, parameters):
+    for i in jython_prefetch_generator2(gen, parameters):
         yield i
         
 def prefetch_generator(gen):
@@ -127,18 +127,22 @@ def prefetch_generator2(gen, parameters):
     except Exception:
         import traceback
         print traceback.print_exc()
-        
+
 def jython_prefetch_generator2(gen, parameters):
+    '''Use threading instead of multiprocessing. Multiprocessing is not yet supported in jython, 
+       but threading in jython allows for parallel processing.
+    '''
     import uuid
     PRODUCER_FINISHED_TOKEN = uuid.uuid4() 
-    from multiprocessing import Process, Queue
+    from threading import Thread
+    from Queue import Queue
     def async_producer(q, rng):
         for i in gen(rng):
             q.put( i )
         q.put(PRODUCER_FINISHED_TOKEN)
     q = Queue(100)
     for p in parameters:
-        Process(target=async_producer, args=(q,p)).start()
+        Thread(target=async_producer, args=(q,p)).start()
     end_count = len(parameters)
     try:
         while True:
