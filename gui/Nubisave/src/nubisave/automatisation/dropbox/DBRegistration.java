@@ -41,6 +41,7 @@ public class DBRegistration {
 			screen.paste("email");
 			screen.type(Key.TAB);
 			screen.paste("123456");
+			screen.type(Key.TAB);
 			screen.type(Key.SPACE);
 			screen.click(dbRegistrationBtn,0);
 		
