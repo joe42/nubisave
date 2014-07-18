@@ -34,13 +34,13 @@ public class DBRegistration {
 			//Thread.sleep(5000);
 			//screen.rightClick(LOGO);
 			//screen.click(MENU_EXIT);
-			screen.type("Johannes");
+			screen.paste("Johannes");
 			screen.type(Key.TAB);
-			typeGerman("Müller");
+			screen.paste("Müller");
 			screen.type(Key.TAB);
-			screen.type("email");
+			screen.paste("email");
 			screen.type(Key.TAB);
-			screen.type("123456");
+			screen.paste("123456");
 			screen.type(Key.SPACE);
 			screen.click(dbRegistrationBtn,0);
 		
@@ -49,17 +49,6 @@ public class DBRegistration {
 			e.printStackTrace();
 		}
 		
-	}
-	
-	public void typeGerman(String str) throws FindFailed{
-		for (int i = 0; i < str.length(); i++) {
-	        char c = str.charAt(i);
-	        if(c == 'ü'){
-	        	screen.type("[");
-	        } else {
-	        	screen.type(String.valueOf(c));
-	        }
-	    }
 	}
 	 
 }
