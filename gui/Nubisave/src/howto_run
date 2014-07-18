@@ -1,0 +1,8 @@
+To run automatic Dropbox account registration: 
+1. Enter your credentials into the source file DBRegistration.java.
+2. Open a shell and change to the directory gui/Nubisave/src
+3. Create an alias command with the following command, but replace PATH_TO_NUBISAVE with the path to the nubisave repository. Also check if the jvm path to jvm 1.7 is correct.
+
+alias run='/usr/lib/jvm/java-1.7.0-openjdk-amd64/bin/javac -cp "/usr/share/sikuli/sikuli-ide.jar:/usr/share/java/sikuli-script.jar:NUBISAVE/bin/lib/jython.jar:." nubisave/automatisation/dropbox/DBRegistration.java; /usr/lib/jvm/java-1.7.0-openjdk-amd64/bin/java   -cp "/usr/share/sikuli/sikuli-ide.jar:/usr/share/java/sikuli-script.jar:NUBISAVE/bin/lib/jython.jar:." nubisave.automatisation.dropbox.DBRegistration'
+
+4. Enter the command run into the shell.
