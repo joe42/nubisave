@@ -15,7 +15,7 @@ public class DBRegistration {
 	public DBRegistration(){
 		screen = new Screen();
 	}
-	public static void main(String[] args) throws IOException, InterruptedException{
+	public static void main(String[] args) throws IOException, InterruptedException {
 		DBRegistration test = new DBRegistration();
 		test.run();
 	}
@@ -23,7 +23,9 @@ public class DBRegistration {
 	public void run() throws IOException, InterruptedException {
 		try { 
 			
-			//new MountAll().run();
+			// Start browser
+			App.open("firefox www.dropbox.de");
+			
 			Thread.sleep(5000);
 			screen.click(dbRegistrationBtn,0);
 			Thread.sleep(1000);
