@@ -4,3 +4,5 @@ nubisave.debhelper.log
 nubisave.postinst.debhelper
 nubisave.postrm.debhelper
 nubisave.substvars
+*.log
+tmp
