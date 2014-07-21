@@ -42,6 +42,7 @@ public class OptimalRedundancyStategy extends UseAllInParallelStorageStrategy {
 	 */
 	@Override
 	public double getStorageAvailability(){
+		Double ret = null;
 		if(potentialStorageDirectories.size() == 0) {
 			return 0;
 		}		
@@ -56,11 +57,15 @@ public class OptimalRedundancyStategy extends UseAllInParallelStorageStrategy {
 		int nrOfRequiredElements = getNrOfElements() - getNrOfRedundantFragments(); 
 		//System.out.println("k = "+nrOfRequiredElements);
 		//System.out.println("av = "+availabilityCalculator.getAvailability(new PyInteger(nrOfRequiredElements), availabilityList));
-		cacheAvailability(availabilityList, availabilityCalculator.getAvailability(new PyInteger(nrOfRequiredElements), availabilityList));
+		ret = getCachedAvailability(availabilityList);
+		if(ret != null){
+			ret = availabilityCalculator.getAvailability(new PyInteger(nrOfRequiredElements), availabilityList);
+			cacheAvailability(availabilityList, ret);
+		}
 		return getCachedAvailability(availabilityList);
 	}
 
-	private void cacheAvailability(PyList availabilityList,
+	protected void cacheAvailability(PyList availabilityList,
 			double availability) {
 		if( ! availabilitiesCacheLists.contains(availabilityList) ) {
 			availabilitiesCacheLists.add(availabilityList);
@@ -68,7 +73,14 @@ public class OptimalRedundancyStategy extends UseAllInParallelStorageStrategy {
 		}
 	}
 
-	private double getCachedAvailability(PyList availabilityList) {
+	/**
+	 * @param availabilityList
+	 * @return The cached availability for availabilityList, or null
+	 */
+	protected Double getCachedAvailability(PyList availabilityList) { 
+		if(availabilitiesCacheLists.indexOf(availabilityList) == -1){
+			return null;
+		}
 		return availabilitiesCacheValues.get(availabilitiesCacheLists.indexOf(availabilityList));
 	}
 
