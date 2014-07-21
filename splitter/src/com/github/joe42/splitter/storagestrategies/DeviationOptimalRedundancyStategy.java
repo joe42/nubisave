@@ -100,6 +100,7 @@ public class DeviationOptimalRedundancyStategy extends OptimalRedundancyStategy 
 	}
 	
 	protected double getStorageAvailability(int equivalenceClasses) {
+		Double ret = null;
 		if(potentialStorageDirectories.size() == 0) {
 			return 0;
 		}		
@@ -114,6 +115,11 @@ public class DeviationOptimalRedundancyStategy extends OptimalRedundancyStategy 
 		int nrOfRequiredElements = getNrOfElements(equivalenceClasses) - getNrOfRedundantFragments(equivalenceClasses);  
 		//System.out.println("k = "+nrOfRequiredElements);
 		//System.out.println("av = "+availabilityCalculator.getAvailability(new PyInteger(nrOfRequiredElements), availabilityList));
+		ret = getCachedAvailability(availabilityList);
+		if(ret != null){
+			ret = availabilityCalculator.getAvailability(new PyInteger(nrOfRequiredElements), availabilityList);
+			cacheAvailability(availabilityList, ret);
+		}
 		return availabilityCalculator.getAvailability(new PyInteger(nrOfRequiredElements), availabilityList);
 	}
 
