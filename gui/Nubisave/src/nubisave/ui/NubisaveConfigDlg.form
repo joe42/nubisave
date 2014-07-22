@@ -192,7 +192,7 @@
             </Component>
             <Component class="javax.swing.JLabel" name="desiredAvailabilityLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Desired Availability:"/>
+                <Property name="text" type="java.lang.String" value="Desired availability:"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="desiredAvailabilityOkButton">

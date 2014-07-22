@@ -83,7 +83,7 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
         availabilityLabel.setText("Availability: " + Nubisave.mainSplitter.getAvailability() * 100 + "%");
         availabilityPerYearLabel.setText("<html>Unavailability per year: <br>" + Nubisave.mainSplitter.getUnavailabilityPerYear() + "</html>");
         redundancyFactorLabel.setText("Redundancy factor: " + Nubisave.mainSplitter.getRedundancyFactor());
-        //(Nubisave.mainSplitter.getCodecInfo());
+        jLabel3.setText(Nubisave.mainSplitter.getCodecInfo());
     }
 
     private void setIsSplitterMounted() {
@@ -153,7 +153,7 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
             }
         });
 
-        desiredAvailabilityLabel.setText("Desired Availability:");
+        desiredAvailabilityLabel.setText("Desired availability:");
 
         desiredAvailabilityOkButton.setText("OK");
         desiredAvailabilityOkButton.addActionListener(new java.awt.event.ActionListener() {
