@@ -58,8 +58,7 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
         Image scaledImg = img.getScaledInstance( jToggleButton1.getWidth(), jToggleButton1.getHeight(),  java.awt.Image.SCALE_SMOOTH ) ;  
         ImageIcon scaledMoreInfoIcon = new ImageIcon( scaledImg );
         jToggleButton1.setIcon(scaledMoreInfoIcon); 
-        jSplitPane1.setPreferredSize(new Dimension(900, 543));
-        setPreferredSize(new Dimension(900, 543));
+        setPreferredSize(new Dimension(900, 425));
         pack();
     }
     
@@ -73,8 +72,7 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
         Image scaledImg = img.getScaledInstance( jToggleButton1.getWidth(), jToggleButton1.getHeight(),  java.awt.Image.SCALE_SMOOTH ) ;  
         ImageIcon scaledMoreInfoIcon = new ImageIcon( scaledImg );
         jToggleButton1.setIcon(scaledMoreInfoIcon);
-        jSplitPane1.setPreferredSize(new Dimension(1050, 543));
-        setPreferredSize(new Dimension(1050, 543));
+        setPreferredSize(new Dimension(1050, 425));
         pack();
     }
     
@@ -136,13 +134,10 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
         jSeparator3 = new javax.swing.JSeparator();
         jToggleButton1 = new javax.swing.JToggleButton();
 
-        setMaximumSize(new java.awt.Dimension(1050, 543));
-        setMinimumSize(new java.awt.Dimension(900, 543));
-        setPreferredSize(new java.awt.Dimension(900, 543));
+        setPreferredSize(new java.awt.Dimension(900, 425));
 
         jSplitPane1.setDividerSize(0);
         jSplitPane1.setContinuousLayout(true);
-        jSplitPane1.setPreferredSize(new java.awt.Dimension(900, 815));
 
         jPanel1.setPreferredSize(new java.awt.Dimension(500, 543));
 
@@ -287,7 +282,7 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
                 .addComponent(jSeparator6, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(143, 143, 143)
+                        .addGap(0, 0, 0)
                         .addComponent(desiredAvailabilityLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -296,7 +291,7 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(desiredAvailabilityInfoLabel))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(156, 156, 156)
+                        .addGap(0, 0, 0)
                         .addComponent(redundancyFactorLabel)
                         .addGap(34, 34, 34)
                         .addComponent(availabilityPerYearLabel)))
@@ -314,11 +309,11 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
                     .addComponent(splitterSessionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(loadSessionButton)
                     .addComponent(saveSessionButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+                .addGap(15, 15, 15)
                 .addComponent(jButton4)
                 .addGap(0, 0, 0)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 10, Short.MAX_VALUE))
+                .addGap(5, 5, 5))
         );
 
         jSplitPane1.setRightComponent(jPanel1);
@@ -333,21 +328,19 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(0, 0, 0)
-                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(646, 646, 646))
+                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 386, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 2, Short.MAX_VALUE))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 644, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -379,12 +372,12 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 543, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
                 .addGap(176, 176, 176)
                 .addComponent(jToggleButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 388, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
