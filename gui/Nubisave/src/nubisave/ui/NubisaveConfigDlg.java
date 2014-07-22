@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -27,6 +28,9 @@ import org.apache.commons.lang.NumberUtils;
  * @author alok
  */
 public class NubisaveConfigDlg extends javax.swing.JDialog {
+    
+    private static final String MORE_INFO_PNG = "/nubisave/images/LeftArrow2.png";
+    private static final String LESS_INFO_PNG = "/nubisave/images/RightArrow2.png";
 
     /**
      * Creates new form NubisaveConfigDlg
@@ -38,14 +42,44 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
         splitterIsMountedCheckBox.setSelected(Nubisave.mainSplitter.isMounted());
         setInstantTooltipForCodecInfoInvisibleOverlayLabel();
         codecInfoInvisibleOverlayPanel.setVisible(true);
-        SwingUtilities.invokeLater(new Runnable() {
+        SwingUtilities.invokeLater(new Runnable() { //invoke when GUI is constructed
             public void run() { 
-                // sp now has a non-zero size!
-                jSplitPane1.setDividerLocation(0.0); 
+                showLessInfo();
+                pack();
             }
         });
     }
 
+    /**
+     * Make left side of the splitpane (the information area) invisible, and change toggle button image.
+     */
+    private void showLessInfo() {
+        jSplitPane1.setDividerLocation(0.0); // splitpanel is now invisible!
+        ImageIcon moreInfoIcon = new javax.swing.ImageIcon(getClass().getResource(LESS_INFO_PNG ));
+        Image img = moreInfoIcon.getImage() ;  
+        Image scaledImg = img.getScaledInstance( jToggleButton1.getWidth(), jToggleButton1.getHeight(),  java.awt.Image.SCALE_SMOOTH ) ;  
+        ImageIcon scaledMoreInfoIcon = new ImageIcon( scaledImg );
+        jToggleButton1.setIcon(scaledMoreInfoIcon); 
+        jSplitPane1.setPreferredSize(new Dimension(900, 543));
+        setPreferredSize(new Dimension(900, 543));
+        pack();
+    }
+    
+    /**
+     * Make left side of the splitpane (the information area) visible, and change toggle button image.
+     */
+    private void showMoreInfo() {
+        jSplitPane1.setDividerLocation(0.17); // splitpanel is now invisible!
+        ImageIcon moreInfoIcon = new javax.swing.ImageIcon(getClass().getResource(MORE_INFO_PNG));
+        Image img = moreInfoIcon.getImage() ;  
+        Image scaledImg = img.getScaledInstance( jToggleButton1.getWidth(), jToggleButton1.getHeight(),  java.awt.Image.SCALE_SMOOTH ) ;  
+        ImageIcon scaledMoreInfoIcon = new ImageIcon( scaledImg );
+        jToggleButton1.setIcon(scaledMoreInfoIcon);
+        jSplitPane1.setPreferredSize(new Dimension(1050, 543));
+        setPreferredSize(new Dimension(1050, 543));
+        pack();
+    }
+    
     /**
      * This should instantly show a tooltip with the latest codec information,
      * when hovering over the codecButton that is overlayed with the label
@@ -129,9 +163,18 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
         jButton4 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
+        jSeparator3 = new javax.swing.JSeparator();
+        jToggleButton1 = new javax.swing.JToggleButton();
 
-        jSplitPane1.setDividerSize(11);
+        setMaximumSize(new java.awt.Dimension(1050, 543));
+        setMinimumSize(new java.awt.Dimension(900, 543));
+        setPreferredSize(new java.awt.Dimension(900, 543));
+
+        jSplitPane1.setDividerSize(0);
         jSplitPane1.setContinuousLayout(true);
+        jSplitPane1.setPreferredSize(new java.awt.Dimension(900, 815));
+
+        jPanel1.setPreferredSize(new java.awt.Dimension(500, 543));
 
         jLabel2.setText("Mount directory");
 
@@ -294,7 +337,7 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
                         .addContainerGap()
                         .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 922, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(63, 63, 63)
+                        .addGap(0, 0, 0)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -338,7 +381,7 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                 .addComponent(jSeparator4, javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 831, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addContainerGap(65, Short.MAX_VALUE))
+                .addGap(5, 5, 5))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -386,46 +429,77 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
                     .addComponent(splitterSessionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(loadSessionButton)
                     .addComponent(saveSessionButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
                 .addComponent(jButton4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(0, 0, 0)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(100, Short.MAX_VALUE))
+                .addGap(0, 10, Short.MAX_VALUE))
         );
 
         jSplitPane1.setRightComponent(jPanel1);
 
         jLabel3.setText("Information Area");
 
+        jSeparator3.setOrientation(javax.swing.SwingConstants.VERTICAL);
+        jSeparator3.setToolTipText("");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGap(0, 12, Short.MAX_VALUE)
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(0, 0, 0)
+                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(450, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(646, 646, 646))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 644, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jSplitPane1.setLeftComponent(jPanel2);
+
+        jToggleButton1.setToolTipText("More Information");
+        jToggleButton1.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jToggleButton1StateChanged(evt);
+            }
+        });
+        jToggleButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jToggleButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1150, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGap(0, 0, 0)
+                .addComponent(jToggleButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1008, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 543, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(176, 176, 176)
+                .addComponent(jToggleButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -512,6 +586,18 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_openMntDirBtnActionPerformed
 
+    private void jToggleButton1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jToggleButton1StateChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jToggleButton1StateChanged
+
+    private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
+        if(jToggleButton1.isSelected()){
+            showMoreInfo();
+        } else {
+            showLessInfo();
+        }
+    }//GEN-LAST:event_jToggleButton1ActionPerformed
+
     public NubiTableModel tableModel;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel availabilityLabel;
@@ -534,10 +620,12 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JSeparator jSeparator3;
     private javax.swing.JSeparator jSeparator4;
     private javax.swing.JSeparator jSeparator5;
     private javax.swing.JSeparator jSeparator6;
     private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JButton loadSessionButton;
     private javax.swing.JTextField mntDirTxtField;
     private javax.swing.JButton openMntDirBtn;
