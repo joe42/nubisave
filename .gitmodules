@@ -1,3 +1,6 @@
 [submodule "CloudFusion"]
 	path = CloudFusion
 	url = git://github.com/joe42/CloudFusion.git
+[submodule "splitter-ng"]
+	path = splitter-ng
+	url = git://nubisave.org/git/splitter-ng
