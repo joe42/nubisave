@@ -58,7 +58,7 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
         Image scaledImg = img.getScaledInstance( jToggleButton1.getWidth(), jToggleButton1.getHeight(),  java.awt.Image.SCALE_SMOOTH ) ;  
         ImageIcon scaledMoreInfoIcon = new ImageIcon( scaledImg );
         jToggleButton1.setIcon(scaledMoreInfoIcon); 
-        setPreferredSize(new Dimension(900, 360));
+        setPreferredSize(new Dimension(710, 390));
         pack();
     }
     
@@ -66,13 +66,13 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
      * Make left side of the splitpane (the information area) visible, and change toggle button image.
      */
     private void showMoreInfo() {
-        jSplitPane1.setDividerLocation(0.17); // splitpanel is now invisible!
+        jSplitPane1.setDividerLocation(0.12); // splitpanel is now visible!
         ImageIcon moreInfoIcon = new javax.swing.ImageIcon(getClass().getResource(MORE_INFO_PNG));
         Image img = moreInfoIcon.getImage() ;  
         Image scaledImg = img.getScaledInstance( jToggleButton1.getWidth(), jToggleButton1.getHeight(),  java.awt.Image.SCALE_SMOOTH ) ;  
         ImageIcon scaledMoreInfoIcon = new ImageIcon( scaledImg );
         jToggleButton1.setIcon(scaledMoreInfoIcon);
-        setPreferredSize(new Dimension(1100, 360));
+        setPreferredSize(new Dimension(970, 390));
         pack();
     }
     
@@ -80,9 +80,9 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
      * Refreshes parameters from the Nubisave Splitter component for display.
      */
     private void refreshSplitterParameters() {
-        availabilityLabel.setText("Availability: " + Nubisave.mainSplitter.getAvailability() * 100 + "%");
-        availabilityPerYearLabel.setText("<html>Unavailability per year: <br>" + Nubisave.mainSplitter.getUnavailabilityPerYear() + "</html>");
-        redundancyFactorLabel.setText("Redundancy factor: " + Nubisave.mainSplitter.getRedundancyFactor());
+        availabilityLabel.setText("<html><b>Availability:</b> " + Nubisave.mainSplitter.getAvailability() * 100 + "%");
+        availabilityPerYearLabel.setText("<html><b>Unavailability per year:</b> <br>" + Nubisave.mainSplitter.getUnavailabilityPerYear() + "</html>");
+        redundancyFactorLabel.setText("<html><b>Redundancy factor:</b> " + Nubisave.mainSplitter.getRedundancyFactor());
         jLabel3.setText(Nubisave.mainSplitter.getCodecInfo());
     }
 
@@ -133,16 +133,17 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
         availabilityPerYearLabel = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         storageStrategyComboBox = new javax.swing.JComboBox();
+        jLabel4 = new javax.swing.JLabel();
         jToggleButton1 = new javax.swing.JToggleButton();
 
-        setPreferredSize(new java.awt.Dimension(900, 360));
+        setPreferredSize(new java.awt.Dimension(900, 390));
 
         jSplitPane1.setDividerSize(0);
         jSplitPane1.setContinuousLayout(true);
 
         jPanel1.setPreferredSize(new java.awt.Dimension(500, 543));
 
-        jLabel2.setText("Mount directory");
+        jLabel2.setText("Mount directory:");
 
         mntDirTxtField.setText("jTextField1");
 
@@ -170,7 +171,7 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
 
         availabilityLabel.setText("Availability");
 
-        jLabel1.setText("Choose session");
+        jLabel1.setText("Choose session:");
 
         splitterSessionComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", " " }));
         splitterSessionComboBox.addActionListener(new java.awt.event.ActionListener() {
@@ -212,12 +213,11 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(27, 27, 27)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 624, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, 624, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(5, 5, 5)
-                        .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 922, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -227,37 +227,38 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
                                 .addComponent(loadSessionButton)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(saveSessionButton))
-                            .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(availabilityLabel)
-                                .addGap(130, 130, 130)
-                                .addComponent(redundancyFactorLabel))
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(jSeparator5, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jSeparator6, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(jLabel2)
-                                        .addGap(51, 51, 51)
-                                        .addComponent(mntDirTxtField, javax.swing.GroupLayout.PREFERRED_SIZE, 534, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(openMntDirBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(splitterIsMountedCheckBox)
-                                    .addComponent(desiredAvailabilityLabel)
-                                    .addComponent(desiredAvailabilityInfoLabel)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(desiredAvailabilityTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(desiredAvailabilityOkButton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                            .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 831, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(147, 147, 147))
+                    .addComponent(availabilityLabel)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(jSeparator5, javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jSeparator6, javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                            .addComponent(jLabel2)
+                            .addGap(51, 51, 51)
+                            .addComponent(mntDirTxtField, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(18, 18, 18)
+                            .addComponent(openMntDirBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(desiredAvailabilityInfoLabel, javax.swing.GroupLayout.Alignment.LEADING))
+                    .addComponent(redundancyFactorLabel)
+                    .addComponent(splitterIsMountedCheckBox)
+                    .addComponent(desiredAvailabilityLabel)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, 831, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                        .addComponent(desiredAvailabilityTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(desiredAvailabilityOkButton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(198, 198, 198)
+                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 922, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(12, 12, 12))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(350, 350, 350)
+                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(splitterIsMountedCheckBox)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator5, javax.swing.GroupLayout.PREFERRED_SIZE, 6, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -268,21 +269,22 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
                     .addComponent(openMntDirBtn))
                 .addGap(24, 24, 24)
                 .addComponent(jSeparator6, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(desiredAvailabilityLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(desiredAvailabilityTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(desiredAvailabilityOkButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(desiredAvailabilityInfoLabel)
-                .addGap(18, 18, 18)
-                .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(15, 15, 15)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(availabilityLabel)
-                    .addComponent(redundancyFactorLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(availabilityLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(redundancyFactorLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 6, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(5, 5, 5)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -291,9 +293,7 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
                     .addComponent(saveSessionButton))
                 .addGap(15, 15, 15)
                 .addComponent(jButton4)
-                .addGap(0, 0, 0)
-                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(5, 5, 5))
+                .addGap(28, 28, 28))
         );
 
         jSplitPane1.setRightComponent(jPanel1);
@@ -303,9 +303,9 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
         jSeparator3.setOrientation(javax.swing.SwingConstants.VERTICAL);
         jSeparator3.setToolTipText("");
 
-        availabilityPerYearLabel.setText("Unavailability per year:");
+        availabilityPerYearLabel.setText("<html><b>Unavailability per year:</html></b>");
 
-        jLabel5.setText("Storage strategy");
+        jLabel5.setText("<html><b>Storage strategy:<html></b>");
 
         storageStrategyComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "UseAllInParallel", "RoundRobin" }));
         storageStrategyComboBox.addActionListener(new java.awt.event.ActionListener() {
@@ -313,6 +313,8 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
                 storageStrategyComboBoxActionPerformed(evt);
             }
         });
+
+        jLabel4.setText("<html><b>Codec information:</html></b>");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -325,25 +327,28 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
                         .addGap(71, 71, 71))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(availabilityPerYearLabel)
+                            .addComponent(availabilityPerYearLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(storageStrategyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(storageStrategyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 6, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(77, 77, 77))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(availabilityPerYearLabel)
+                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(27, 27, 27)
+                .addComponent(availabilityPerYearLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(46, 46, 46)
                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(storageStrategyComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 60, Short.MAX_VALUE))
+                .addGap(0, 83, Short.MAX_VALUE))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(jSeparator3)
                 .addContainerGap())
@@ -367,19 +372,21 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addGap(0, 0, 0)
                 .addComponent(jToggleButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1234, Short.MAX_VALUE))
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 2053, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(104, 104, 104)
                 .addComponent(jToggleButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(106, Short.MAX_VALUE))
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addContainerGap(129, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -410,20 +417,12 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
         int sessionNumber = Integer.parseInt((String) splitterSessionComboBox.getSelectedItem());
         Nubisave.mainSplitter.loadSession(sessionNumber);
         tableModel.fireTableDataChanged();
-        storageStrategyComboBox.setSelectedItem(Nubisave.mainSplitter.getStorageStrategy());
+//        storageStrategyComboBox.setSelectedItem(Nubisave.mainSplitter.getStorageStrategy());
     }//GEN-LAST:event_loadSessionButtonActionPerformed
 
     private void splitterSessionComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_splitterSessionComboBoxActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_splitterSessionComboBoxActionPerformed
-
-    private void storageStrategyComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_storageStrategyComboBoxActionPerformed
-        // TODO add your handling code here:
-        JComboBox cb = (JComboBox) evt.getSource();
-        String storageStrategy = (String) cb.getSelectedItem();
-        Nubisave.mainSplitter.setStorageStrategy(storageStrategy);
-        refreshSplitterParameters();
-    }//GEN-LAST:event_storageStrategyComboBoxActionPerformed
     /**
      * Configure Nubisave's splitter component so that the overall availability
      * is greater than or equal to the desired availability expressed in the
@@ -478,6 +477,14 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_jToggleButton1ActionPerformed
 
+    private void storageStrategyComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_storageStrategyComboBoxActionPerformed
+        // TODO add your handling code here:
+        JComboBox cb = (JComboBox) evt.getSource();
+        String storageStrategy = (String) cb.getSelectedItem();
+        Nubisave.mainSplitter.setStorageStrategy(storageStrategy);
+        refreshSplitterParameters();
+    }//GEN-LAST:event_storageStrategyComboBoxActionPerformed
+
     public NubiTableModel tableModel;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel availabilityLabel;
@@ -490,6 +497,7 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
