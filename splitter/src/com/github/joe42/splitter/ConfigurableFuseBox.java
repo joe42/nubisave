@@ -55,9 +55,31 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.Duration;
 
+/**
+ * Subclass of Fusebox responsible for configuring Nubisave during runtime.
+ * It will add or remove background storages when special configuration files are written into Nubisave's config directory.
+ * Also, by changing Nubisave's config/config file, you can configure the redundancy used by the storage strategy,
+ * as well as the storage strategy to use.
+ * The config directory's files are virtual. They are perceived by the file system by calling the method getattr, which 
+ * claims the virtual file or the directory exists, returning various file attributes like the file size of the virtual file. 
+ * Also, the files need to be visible when listing the config directory. This is implemented by overwriting the getdir method, 
+ * which returns the config directory as an item of Nubisave's root directory, and the virtual files in the config directory,
+ * when listing the config directory itself (i.e. by calling ls nubisave/config or by opening the path with a file manager).
+ * The write method is overwritten in order to intercept write operations to the virtual files in the config directory,
+ * to trigger the desired action, like reconfiguring the storage strategy, or adding a new storage backend.
+ * The rename method is overwritten to allow for a bit of magic when moving (renaming) one of the virtual configuration files
+ * to another existing virtual configuration file. The configuration files each represent one of Nubisave's storages.
+ * When moving one of those configuration files to another, all of the data in the renamed file are moved to the other,
+ * and the renamed configuration file is then removed.
+ * The unlink method is called when removing a file in Nubisave. It is overwritten to unmount a storage when removing its configuration file.
+ * If the file system operations do not concern the virtual config directory, they are handled by the Superclass FuseBox.     
+ */
 public class ConfigurableFuseBox extends FuseBox  implements StorageService{
 
 	private VirtualFileContainer virtualFolder;
+	/**
+	 * Stores the contents of the virtual file config/config of Nubisave's root directory.
+	 */
 	private VirtualFile vtSplitterConfig;
 	private StorageServicesMgr storageServiceMgr;
 	private boolean parallel_execution_of_read;
