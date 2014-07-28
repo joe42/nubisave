@@ -1,7 +1,9 @@
-nubisave (0.0~git20140515-1) unstable; urgency=low
+nubisave (0.0~git20140526-1) UNRELEASED; urgency=low
 
   * Final GUI refactoring included.
   * Latest CloudFusion imported.
+  * Switching from JigDFS to Jerasure.
+  * Several workarounds to make everything work for the BlackSeaCom demo.
 
  -- Josef Spillner <josef@rumba>  Thu, 15 May 2014 10:30:11 +0200
 

@@ -1,0 +1,4 @@
+include
+lib
+jni/*.o
+src/*.o

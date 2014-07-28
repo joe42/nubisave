@@ -23,8 +23,9 @@ override_dh_auto_install:
 	mkdir -p debian/tmp/usr/share/pixmaps
 	cp debian/data/nubilogo.png debian/tmp/usr/share/pixmaps/
 	mkdir -p debian/tmp/usr/share/nubisave
-	cp -r bin splitter jigdfs fusej services start.sh debian/tmp/usr/share/nubisave/
-	rm -rf debian/tmp/usr/share/nubisave/jigdfs/src
+	cp -r bin splitter fusej services start.sh debian/tmp/usr/share/nubisave/
+	#cp -r Jerasure debian/tmp/usr/share/nubisave/
+	#rm -rf debian/tmp/usr/share/nubisave/Jerasure/doc debian/tmp/usr/share/nubisave/Jerasure/src
 	rm -rf debian/tmp/usr/share/nubisave/fusej/src
 	rm -rf debian/tmp/usr/share/nubisave/splitter/src
 	sed -i -e 's/R.File=log/R.File=$${user.home}\/.nubisave\/log/' debian/tmp/usr/share/nubisave/splitter/log4j.properties
