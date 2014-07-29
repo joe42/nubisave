@@ -73,11 +73,11 @@ function log_copy_operation {
     ../scripts/start_net_mem_cpu_logging.sh "$PROCESS_NAME" "$TEMP_DIR" &
 	sleep 2 # wait until logging produces some results to process
     time_before_operation=`date +"%s"`
-    time_of_operation=`/usr/bin/time -f "%e" cp "$copy_source" "$copy_destination" 2>&1`
+    time_of_operation=`/usr/bin/time -f "%e" dd if="$copy_source" of="$copy_destination" bs=131072 2>&1`
     while ! is_number $time_of_operation;
     then
         echo "ERROR: failed to copy file: $time_of_operation"
-        time_of_operation=`/usr/bin/time -f "%e" cp "$copy_source" "$copy_destination" 2>&1`
+        time_of_operation=`/usr/bin/time -f "%e" dd if="$copy_source" of="$copy_destination" bs=131072 2>&1`
     fi
     time_after_operation=`echo $time_before_operation+$time_of_operation | bc`
 echo time_of_operation $time_of_operation
