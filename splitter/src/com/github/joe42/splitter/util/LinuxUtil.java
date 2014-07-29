@@ -14,7 +14,7 @@ public class LinuxUtil {
 	public static long getFreeBytes(String fileSystemPath){
 		long freeBytes;
 		try {
-			InputStream out = new ProcessBuilder( "/bin/bash", "-c", "scripts/getfilesystemusedbytes.sh "+fileSystemPath ).start().getInputStream();
+			InputStream out = new ProcessBuilder( "/bin/bash", "-c", "scripts/getfilesystemfreebytes.sh "+fileSystemPath ).start().getInputStream();
 			InputStreamReader isr = new InputStreamReader(out);
 		    BufferedReader br = new BufferedReader(isr);
 		    freeBytes = Long.parseLong(br.readLine());
