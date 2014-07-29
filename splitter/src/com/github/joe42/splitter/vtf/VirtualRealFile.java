@@ -11,6 +11,9 @@ import com.github.joe42.splitter.util.file.FileUtil;
 
 import fuse.compat.FuseStat;
 
+/**
+ * Represents a real file similar to a symbolic link.
+ */
 public class VirtualRealFile extends VirtualFile {
 	File realFile = null;
 	public VirtualRealFile(String vtPath, String realPath) {
