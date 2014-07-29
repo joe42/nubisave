@@ -62,6 +62,10 @@ public class RandomAccessTemporaryFileChannel {
 			e.printStackTrace();
 		}
 	}
+	
+	public void finalize(){
+		delete();
+	}
 
 	/**
 	 * Sets the length of this file.
