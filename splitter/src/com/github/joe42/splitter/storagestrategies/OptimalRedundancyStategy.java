@@ -36,6 +36,10 @@ public class OptimalRedundancyStategy extends UseAllInParallelStorageStrategy {
 	public int getNrOfElements(){
 		return 100;
 	}
+	
+	public String toString(){
+		return "OptimalRedundancyStrategy generating and distributing 100 elements to the backends proportional to their availabilities.";
+	}
 
 	/**
 	 * @return the availability of the file stored in percent according to this storage strategy and the storage services' availability
