@@ -85,7 +85,7 @@ function log_copy_operation {
 	do
 		operation_succeeded=0
 		until [ $operation_succeeded -eq 1 ] ; do
-			time_of_operation=`/usr/bin/time -f "%e" cp "$copy_source"$nr "$copy_destination"$nr 2>&1`
+			time_of_operation=`/usr/bin/time -f "%e" dd if="$copy_source"$nr of="$copy_destination"$nr bs=131072 2>&1`
 			if [ "`echo $time_of_operation|grep 'Command exited with non-zero status'`" == "" ] ; then
 				operation_succeeded=1
 			fi
