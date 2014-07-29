@@ -37,7 +37,7 @@ if [ $# -lt 5 ]; then
    echo "    password  - the password, which is given to the start_service.sh script as the second parameter (can be an arbitrary string if the service does not need authentication)"
    echo "    stop_network_monitoring_after_file_operation  - Optional parameter. Can be one of yes or no. The default is no. Some file systems delay transfering files over the network, nevertheless claiming the file operation to be complete. Thus to get representational network statistics in this case, the network must be monitored even after the end of an file operation. Set this parameter to no, if the file system stops network transfers with the end of a file system operation. This may lead to more accureate network statistics."
    echo
-   echo Example: `basename $0` ~/data Wuala . "1 10 100 1000 2000" joe 123456
+   echo Example: `basename $0` ~/data Wuala . \"1 10 100 1000 2000\" joe 123456
    echo
    exit
 fi  

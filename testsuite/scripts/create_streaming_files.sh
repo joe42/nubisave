@@ -10,7 +10,7 @@ if [ $# -lt 1 ]; then
    echo Usage: `basename $0` directory  test_file_sizes number_of_files
    echo Example: 
    echo Generate 10 1MB files, 10 10 MB files, 10 100MB files, 2 1000MB files and one 2000MB file.
-   echo `basename $0` generated_files "1 10 100 1000 2000" "10 10 10 2 1"
+   echo `basename $0` generated_files \"1 10 100 1000 2000\" \"10 10 10 2 1\" MB
    echo
    exit
 fi  
