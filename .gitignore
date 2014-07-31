@@ -1,0 +1,10 @@
+*.class
+testsuite/t
+*.settings
+CloudFusion/cloudfusion/build/*
+gui/Nubisave/build.xml
+gui/Nubisave/nbproject/build-impl.xml
+gui/Nubisave/nbproject/genfiles.properties
+gui/Nubisave/nbproject/project.properties
+/gui/Nubisave/nbproject/private/
+/gui/Nubisave/JavaApplication1/nbproject/private/
