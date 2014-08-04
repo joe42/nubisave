@@ -15,7 +15,8 @@ import java.util.logging.Logger;
 import org.ini4j.Ini;
 
 /**
- *
+ * Implements methods for autonomous configuration of Nubisave's Splitter component.
+ * Offers methods to find and set a configuration based on the properties desired by the user.
  * @author joe
  */
 public class AutonomousSplitter extends Splitter {
@@ -29,81 +30,36 @@ public class AutonomousSplitter extends Splitter {
     /**
      * Find optimal configuration for the desired availability.
      * If possible, the configuration should achieve an availability equal or higher than the desired availability.
-     * We start at a redundancy of 1 and increase it by 10, until the desired availability is achieved.
      * 
      * @param desiredAvailability
      */
     public void findConfigurationForAvailability(double desiredAvailability) {
-        int redundancy = 0; //start point
-        Boolean hasReducedRedundancyInLastStep = null;
-        int step = 10;
-        int nrOfSwitchesBetweenRaisingAndDecreasingRedundancy = 0;
-        while(true){
-            setRedundancy(redundancy);
-            System.out.println("AV:"+getAvailability());
-            System.out.println("DAV:"+desiredAvailability);
-            System.out.println("Red:"+getRedundancy());
-            System.out.println("step:"+step);
-            if(getAvailability() == desiredAvailability)
-                break;
-            if(getAvailability() < desiredAvailability){ // increase redundancy
-                System.out.println("increasing AV:");
-                
-                //switch from reducing redundancy to increasing it:
-                if(step < 0) {
-                    nrOfSwitchesBetweenRaisingAndDecreasingRedundancy += 1;
-                    //We switched to increasing redundancy, because the current availability was less than the desired one.
-                    //Make minimal steps, until redundancy is equal or greater than the desired availability.
-                    step = 1;
-                }
-                if(redundancy >= 100) {
-                    //We already increased redundancy in the last iteration, and redundancy is 100, so the availability cannot be increase anymore
-                    if(hasReducedRedundancyInLastStep != null && ! hasReducedRedundancyInLastStep){                        
-                        break;
-                    }
-                } else {
-                    redundancy += step;
-                }
-                hasReducedRedundancyInLastStep = false;
-            } else { // reduce redundancy
-                
-                System.out.println("decreasing AV:");
-                //switch from increasing redundancy to reducing it:
-                if(step > 0) {
-                    nrOfSwitchesBetweenRaisingAndDecreasingRedundancy += 1;
-                    step = -1;
-                }
-                //Stop if we have already reduced redundancy once, and desiredAv has just been achieved the second time
-                if(nrOfSwitchesBetweenRaisingAndDecreasingRedundancy > 2) {
-                    break;
-                }
-                if(redundancy <= 0){
-                    //We already reduced redundancy in the last iteration, and redundancy is 0, so the availability cannot be redunced anymore
-                    if(hasReducedRedundancyInLastStep != null && hasReducedRedundancyInLastStep){
-                        break;
-                    }
-                } else {
-                    redundancy += step;
-                }
-                hasReducedRedundancyInLastStep = true;
-            }
-        }
+        double stop = desiredAvailability;
+        increaseAvailability(10, stop);
+        //Assume that we are at redundancy of i.e. 95 and can only increase it by using a smaller step size
+        increaseAvailability(1, stop);
+        //Assume that we are at redundancy of i.e. 3 and can only decrease it by using a smaller step size
+        decreaseAvailability(5, stop);
+        decreaseAvailability(1, stop);
+        increaseAvailability(1, stop);
     }
     
     /**
      * Find optimal configuration for the desired availability.
      * If possible, the configuration should achieve an availability equal or less than the desired availability.
-     * We start at a redundancy of 1 and increase it by 10, until the desired availability is achieved.
      * 
      * @param desiredAvailability
      */
     public void findConfigurationForAvailabilityLessOrEqual(double desiredAvailability) {
-        findConfigurationForAvailability(desiredAvailability);
-        if(getAvailability() > desiredAvailability){
-            int redundancy = getRedundancy();
-            if(redundancy > 0)
-                setRedundancy(redundancy - 1);
-        }
+        double stop  = desiredAvailability;
+        increaseAvailability(10, stop);
+        //Assume that we are at redundancy of i.e. 95 and can only increase it by using a smaller step size
+        increaseAvailability(1, stop);
+        decreaseAvailability(5, stop);
+        //Assume that we are at redundancy of i.e. 3 and can only decrease it by using a smaller step size
+        decreaseAvailability(1, stop);
+        increaseAvailability(1, stop);
+        decreaseAvailability(1, stop);
     }
 
     /**
@@ -113,59 +69,14 @@ public class AutonomousSplitter extends Splitter {
      * @param desiredReplicationFactor The desired redundancy factor - from 1, which equals no redundancy
      */
     public void findConfigurationForRedundancy(Double desiredReplicationFactor) {
-        int redundancy = 0; //start point
-        Boolean hasReducedRedundancyInLastStep = null;
-        int step = 10;
-        int nrOfSwitchesBetweenRaisingAndDecreasingRedundancy = 0;
-        while(true){
-            setRedundancy(redundancy);
-            System.out.println("DRed:"+desiredReplicationFactor);
-            System.out.println("Red:"+getRedundancy());
-            System.out.println("step:"+step);
-            if(getRedundancyFactor() == desiredReplicationFactor)
-                break;
-            if(getRedundancyFactor() < desiredReplicationFactor){ // increase redundancy
-                System.out.println("increasing AV:");
-                
-                //switch from reducing redundancy to increasing it:
-                if(step < 0) {
-                    nrOfSwitchesBetweenRaisingAndDecreasingRedundancy += 1;
-                    //We switched to increasing redundancy, because the current availability was less than the desired one.
-                    //Make minimal steps, until redundancy is equal or greater than the desired availability.
-                    step = 1;
-                }
-                if(redundancy >= 100) {
-                    //We already increased redundancy in the last iteration, and redundancy is 100, so the availability cannot be increase anymore
-                    if(hasReducedRedundancyInLastStep != null && ! hasReducedRedundancyInLastStep){                        
-                        break;
-                    }
-                } else {
-                    redundancy += step;
-                }
-                hasReducedRedundancyInLastStep = false;
-            } else { // reduce redundancy
-                
-                System.out.println("decreasing AV:");
-                //switch from increasing redundancy to reducing it:
-                if(step > 0) {
-                    nrOfSwitchesBetweenRaisingAndDecreasingRedundancy += 1;
-                    step = -1;
-                }
-                //Stop if we have already reduced redundancy once, and desiredAv has just been achieved the second time
-                if(nrOfSwitchesBetweenRaisingAndDecreasingRedundancy > 2) {
-                    break;
-                }
-                if(redundancy <= 0){
-                    //We already reduced redundancy in the last iteration, and redundancy is 0, so the availability cannot be redunced anymore
-                    if(hasReducedRedundancyInLastStep != null && hasReducedRedundancyInLastStep){
-                        break;
-                    }
-                } else {
-                    redundancy += step;
-                }
-                hasReducedRedundancyInLastStep = true;
-            }
-        }
+        double stop = desiredReplicationFactor;
+        increaseRedundancy(10, stop);
+        //Assume that we are at redundancy of i.e. 95 and can only increase it by using a smaller step size
+        increaseRedundancy(1, stop);
+        decreaseRedundancy(5, stop);
+        //Assume that we are at redundancy of i.e. 3 and can only decrease it by using a smaller step size
+        decreaseRedundancy(1, stop);
+        increaseRedundancy(1, stop);
     }
     
     /**
@@ -175,11 +86,86 @@ public class AutonomousSplitter extends Splitter {
      * @param desiredReplicationFactor 
      */
     public void findConfigurationForRedundancyEqualOrLess(Double desiredReplicationFactor) {
-        findConfigurationForRedundancy(desiredReplicationFactor);
-        if(getRedundancyFactor() > desiredReplicationFactor){
-            int redundancy = getRedundancy();
-            if(redundancy > 0)
-                setRedundancy(redundancy - 1);
+        double stop = desiredReplicationFactor;
+        increaseRedundancy(10, stop);
+        //Assume that we are at redundancy of i.e. 95 and can only increase it by using a smaller step size
+        increaseRedundancy(1, stop); 
+        decreaseRedundancy(5, stop);
+        //Assume that we are at redundancy of i.e. 3 and can only decrease it by using a smaller step size
+        decreaseRedundancy(1, stop);
+        increaseRedundancy(1, stop);
+        decreaseRedundancy(1, stop);
+    }
+
+    /**
+     * Increase Nubisave's availability.
+     * Stop when the availability is greater or equal limit, or
+     * if availability cannot be increased anymore.
+     * @param step step size to increase Nubisave's abstract redundancy parameter
+     * @param limit 
+     */
+    private void increaseAvailability(int step, double limit) {
+        int redundancy = getRedundancy();
+        while(getAvailability() <= limit){
+            redundancy += step;
+            if(redundancy > 100){
+                break;
+            }
+            setRedundancy(redundancy);
+        }
+    }
+    
+   /**
+     * Decrease Nubisave's availability.
+     * Stop when the availability is smaller or equal limit, or
+     * if availability cannot be decreased anymore.
+     * @param step step size to decrease Nubisave's abstract redundancy parameter
+     * @param limit 
+     */
+    private void decreaseAvailability(int step, double limit) {
+        int redundancy = getRedundancy();
+        while(getAvailability() >= limit && redundancy-step > 0){
+            redundancy -= step;
+            if(redundancy < 0){
+                break;
+            }
+            setRedundancy(redundancy);
+        }
+    }
+
+    /**
+     * Increase Nubisave's redundancy factor.
+     * Stop when the redundancy factor is greater or equal limit, or
+     * if the redundancy factor cannot be increased anymore.
+     * @param step the step size to increase Nubisave's abstract redundancy parameter
+     * @param limit 
+     */
+    private void increaseRedundancy(int step, double limit) {
+        int redundancy = getRedundancy();
+        while(getRedundancyFactor() <= limit && redundancy < 100){
+            redundancy += step;
+            if(redundancy > 100){
+                break;
+            }
+            setRedundancy(redundancy);
+        }
+    }
+    
+   /**
+     * Decrease Nubisave's redundancy factor.
+     * Stop when the redundancy factor is smaller or equal limit, or
+     * if the redundancy factor cannot be decreased anymore.
+     * @param step the step size to decrease Nubisave's abstract redundancy parameter
+     * @param limit 
+     */
+    private void decreaseRedundancy(int step, double limit) {
+        int redundancy = getRedundancy();
+        while(getRedundancyFactor()>= limit && redundancy > 0){
+            redundancy -= step;
+            if(redundancy < 0){
+                break;
+            }
+            setRedundancy(redundancy);
         }
     }
     
