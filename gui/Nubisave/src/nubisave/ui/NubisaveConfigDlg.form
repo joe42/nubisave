@@ -95,11 +95,24 @@
                                               </Group>
                                               <Component id="desiredAvailabilityInfoLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                                               <Group type="102" attributes="0">
-                                                  <Component id="desiredAvailabilitySpinner" min="-2" pref="71" max="-2" attributes="0"/>
-                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                                  <Component id="desiredAvailabilityOkButton" min="-2" pref="42" max="-2" attributes="0"/>
+                                                  <Group type="103" groupAlignment="0" attributes="0">
+                                                      <Group type="102" alignment="0" attributes="0">
+                                                          <Component id="desiredAvailabilitySpinner" min="-2" pref="71" max="-2" attributes="0"/>
+                                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                          <Component id="desiredAvailabilityOkButton" min="-2" pref="42" max="-2" attributes="0"/>
+                                                      </Group>
+                                                      <Component id="desiredAvailabilityLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                                  </Group>
+                                                  <EmptySpace min="-2" pref="90" max="-2" attributes="0"/>
+                                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                                      <Group type="102" attributes="0">
+                                                          <Component id="desiredRedundancySpinner" max="32767" attributes="0"/>
+                                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                          <Component id="desiredRedundancyOkButton" min="-2" pref="42" max="-2" attributes="0"/>
+                                                      </Group>
+                                                      <Component id="desiredAvailabilityLabel1" min="-2" max="-2" attributes="0"/>
+                                                  </Group>
                                               </Group>
-                                              <Component id="desiredAvailabilityLabel" min="-2" max="-2" attributes="0"/>
                                           </Group>
                                           <EmptySpace pref="24" max="32767" attributes="0"/>
                                       </Group>
@@ -138,11 +151,23 @@
                       <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
                       <Component id="jSeparator6" min="-2" pref="14" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="desiredAvailabilityLabel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="desiredAvailabilitySpinner" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="desiredAvailabilityOkButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" attributes="0">
+                              <Component id="desiredAvailabilityLabel" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="desiredAvailabilitySpinner" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="desiredAvailabilityOkButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                          <Group type="102" attributes="0">
+                              <Component id="desiredAvailabilityLabel1" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="desiredRedundancySpinner" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="desiredRedundancyOkButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
                       </Group>
                       <EmptySpace min="-2" pref="41" max="-2" attributes="0"/>
                       <Component id="desiredAvailabilityInfoLabel" min="-2" max="-2" attributes="0"/>
@@ -284,6 +309,24 @@
             <Component class="javax.swing.JSeparator" name="jSeparator4">
             </Component>
             <Component class="javax.swing.JSpinner" name="desiredAvailabilitySpinner">
+              <Properties>
+                <Property name="opaque" type="boolean" value="false"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="desiredAvailabilityLabel1">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Desired replication factor:"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JButton" name="desiredRedundancyOkButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="OK"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="desiredRedundancyOkButtonActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JSpinner" name="desiredRedundancySpinner">
               <Properties>
                 <Property name="opaque" type="boolean" value="false"/>
               </Properties>

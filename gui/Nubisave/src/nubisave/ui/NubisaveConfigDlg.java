@@ -10,6 +10,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,7 +73,6 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
             ((AutonomousSplitter) Nubisave.mainSplitter).findConfigurationForAvailability(desiredAvDouble);
             refreshSplitterParameters();
             desiredAvailabilityInfoLabel.setText("Found optimal configuration.");
-            System.out.println("UP TO : "+Nubisave.mainSplitter.getAvailability());
             return (int) (Nubisave.mainSplitter.getAvailability() * 100);
         } 
 
@@ -86,7 +86,6 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
             ((AutonomousSplitter) Nubisave.mainSplitter).findConfigurationForAvailabilityLessOrEqual(desiredAvDouble);
             refreshSplitterParameters();
             desiredAvailabilityInfoLabel.setText("Found optimal configuration.");
-            System.out.println("DOWN TO : "+Nubisave.mainSplitter.getAvailability());
             return (int) (Nubisave.mainSplitter.getAvailability() * 100);
         }
 
@@ -106,6 +105,68 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
             }
         }
     }
+    
+    /**
+     * Number model for the spinner for manipulating the redundancy factor configuration of Nubisave.
+     * The spinner's up and down buttons are meant to fine tune a desired redundancy factor setting.
+     * By pressing one of the buttons, the next higher or lower availability that is possible
+     * is set.
+     */
+    class RedundancyFactorModel extends SpinnerNumberModel {
+        Object currentValue;
+
+        public RedundancyFactorModel() {
+            currentValue = (int) (Nubisave.mainSplitter.getRedundancyFactor());
+        }
+        
+        @Override
+        public Object getNextValue() {
+            Double desiredRepFactor;
+            desiredRepFactor = (Double) NubisaveConfigDlg.this.desiredRedundancySpinner.getValue();
+            NubisaveConfigDlg.this.desiredAvailabilityInfoLabel.setText("Searching for optimal configuration.");
+            desiredRepFactor += 0.001;
+            ((AutonomousSplitter) Nubisave.mainSplitter).findConfigurationForRedundancy(desiredRepFactor);
+            refreshSplitterParameters();
+            desiredAvailabilityInfoLabel.setText("Found optimal configuration.");
+            return (double) (Nubisave.mainSplitter.getRedundancyFactor());
+        } 
+
+        @Override
+        public Object getPreviousValue() {
+            Double desiredRepFactor;
+            desiredRepFactor = (Double) NubisaveConfigDlg.this.desiredRedundancySpinner.getValue();
+            NubisaveConfigDlg.this.desiredAvailabilityInfoLabel.setText("Searching for optimal configuration.");
+            desiredRepFactor -= 0.001;
+            ((AutonomousSplitter) Nubisave.mainSplitter).findConfigurationForRedundancyEqualOrLess(desiredRepFactor);
+            refreshSplitterParameters();
+            Integer i=1;
+            desiredAvailabilityInfoLabel.setText("Found optimal configuration.");
+            return (double) (Nubisave.mainSplitter.getRedundancyFactor());
+        }
+
+        @Override
+        public Object getValue() {
+            return Double.valueOf(currentValue.toString());
+        }
+
+        @Override
+        public void setValue(Object o) {
+            throwOnIllegalArgument(o);
+            currentValue = o;
+            super.setValue(o);
+        }
+
+        private void throwOnIllegalArgument(Object o) {
+            try {
+                if(Double.valueOf(o.toString())<1 || Double.valueOf(o.toString())>100)
+                throw new IllegalArgumentException(o.toString());
+            } catch (NumberFormatException nfe) {
+                throw new IllegalArgumentException(o.toString());
+            }
+        }
+    }
+    
+    
     /**
      * Creates new form NubisaveConfigDlg
      */
@@ -118,6 +179,10 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
             public void run() { 
                 showLessInfo();
                 desiredAvailabilitySpinner.setModel(new AvailabilityModel());
+                desiredRedundancySpinner.setModel(new RedundancyFactorModel());
+                JSpinner.NumberEditor editor = (JSpinner.NumberEditor)desiredRedundancySpinner.getEditor();  
+                DecimalFormat format = editor.getFormat();  
+                format.setMinimumFractionDigits(3);  
                 pack();
             }
         });
@@ -160,6 +225,10 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
         redundancyFactorLabel.setText("<html><b>Redundancy factor:</b> " + Nubisave.mainSplitter.getRedundancyFactor());
         jLabel3.setText(Nubisave.mainSplitter.getCodecInfo());
         desiredAvailabilitySpinner.setValue((int)(Nubisave.mainSplitter.getAvailability() * 100));
+        desiredRedundancySpinner.setValue((double) Nubisave.mainSplitter.getRedundancyFactor());
+        double redundancyFactor = Nubisave.mainSplitter.getRedundancyFactor();
+        if(redundancyFactor > 1)
+            desiredRedundancySpinner.setValue(redundancyFactor);
     }
 
     private void setIsSplitterMounted() {
@@ -203,6 +272,9 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
         jButton4 = new javax.swing.JButton();
         jSeparator4 = new javax.swing.JSeparator();
         desiredAvailabilitySpinner = new javax.swing.JSpinner();
+        desiredAvailabilityLabel1 = new javax.swing.JLabel();
+        desiredRedundancyOkButton = new javax.swing.JButton();
+        desiredRedundancySpinner = new javax.swing.JSpinner();
         jPanel2 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jSeparator3 = new javax.swing.JSeparator();
@@ -282,6 +354,17 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
 
         desiredAvailabilitySpinner.setOpaque(false);
 
+        desiredAvailabilityLabel1.setText("Desired replication factor:");
+
+        desiredRedundancyOkButton.setText("OK");
+        desiredRedundancyOkButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                desiredRedundancyOkButtonActionPerformed(evt);
+            }
+        });
+
+        desiredRedundancySpinner.setOpaque(false);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -316,10 +399,19 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
                                             .addComponent(mntDirTxtField, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addComponent(desiredAvailabilityInfoLabel)
                                         .addGroup(jPanel1Layout.createSequentialGroup()
-                                            .addComponent(desiredAvailabilitySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addGap(18, 18, 18)
-                                            .addComponent(desiredAvailabilityOkButton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addComponent(desiredAvailabilityLabel))
+                                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addGroup(jPanel1Layout.createSequentialGroup()
+                                                    .addComponent(desiredAvailabilitySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addGap(18, 18, 18)
+                                                    .addComponent(desiredAvailabilityOkButton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addComponent(desiredAvailabilityLabel))
+                                            .addGap(90, 90, 90)
+                                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                .addGroup(jPanel1Layout.createSequentialGroup()
+                                                    .addComponent(desiredRedundancySpinner)
+                                                    .addGap(18, 18, 18)
+                                                    .addComponent(desiredRedundancyOkButton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addComponent(desiredAvailabilityLabel1))))
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)))
                             .addComponent(openMntDirBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGap(6, 6, 6)))
@@ -348,11 +440,19 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
                 .addGap(24, 24, 24)
                 .addComponent(jSeparator6, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(desiredAvailabilityLabel)
-                .addGap(30, 30, 30)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(desiredAvailabilitySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(desiredAvailabilityOkButton))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(desiredAvailabilityLabel)
+                        .addGap(30, 30, 30)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(desiredAvailabilitySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(desiredAvailabilityOkButton)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(desiredAvailabilityLabel1)
+                        .addGap(30, 30, 30)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(desiredRedundancySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(desiredRedundancyOkButton))))
                 .addGap(41, 41, 41)
                 .addComponent(desiredAvailabilityInfoLabel)
                 .addGap(8, 8, 8)
@@ -555,14 +655,25 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
         refreshSplitterParameters();
     }//GEN-LAST:event_storageStrategyComboBoxActionPerformed
 
+    private void desiredRedundancyOkButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_desiredRedundancyOkButtonActionPerformed
+        Double desiredRed = (Double) desiredRedundancySpinner.getValue();
+        desiredAvailabilityInfoLabel.setText("Searching for optimal configuration.");
+        ((AutonomousSplitter) Nubisave.mainSplitter).findConfigurationForRedundancyEqualOrLess(desiredRed);
+        refreshSplitterParameters();
+        desiredAvailabilityInfoLabel.setText("Found optimal configuration.");
+    }//GEN-LAST:event_desiredRedundancyOkButtonActionPerformed
+
     public NubiTableModel tableModel;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel availabilityLabel;
     private javax.swing.JLabel availabilityPerYearLabel;
     private javax.swing.JLabel desiredAvailabilityInfoLabel;
     private javax.swing.JLabel desiredAvailabilityLabel;
+    private javax.swing.JLabel desiredAvailabilityLabel1;
     private javax.swing.JButton desiredAvailabilityOkButton;
     private javax.swing.JSpinner desiredAvailabilitySpinner;
+    private javax.swing.JButton desiredRedundancyOkButton;
+    private javax.swing.JSpinner desiredRedundancySpinner;
     private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
