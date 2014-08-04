@@ -34,7 +34,7 @@ public class AutonomousSplitter extends Splitter {
      * @param desiredAvailability
      */
     public void findConfigurationForAvailability(double desiredAvailability) {
-        int redundancy = 1; //start point
+        int redundancy = 0; //start point
         Boolean hasReducedRedundancyInLastStep = null;
         int step = 10;
         int nrOfSwitchesBetweenRaisingAndDecreasingRedundancy = 0;
@@ -44,45 +44,65 @@ public class AutonomousSplitter extends Splitter {
             System.out.println("DAV:"+desiredAvailability);
             System.out.println("Red:"+getRedundancy());
             System.out.println("step:"+step);
+            if(getAvailability() == desiredAvailability)
+                break;
             if(getAvailability() < desiredAvailability){ // increase redundancy
                 System.out.println("increasing AV:");
                 
                 //switch from reducing redundancy to increasing it:
-                if(hasReducedRedundancyInLastStep != null && hasReducedRedundancyInLastStep) { 
+                if(step < 0) {
                     nrOfSwitchesBetweenRaisingAndDecreasingRedundancy += 1;
+                    //We switched to increasing redundancy, because the current availability was less than the desired one.
+                    //Make minimal steps, until redundancy is equal or greater than the desired availability.
+                    step = 1;
                 }
-                step = 1;
-                //We already increased redundancy in the last iteration, and redundancy is 100, so the availability cannot be increase anymore
-                if(redundancy >= 100 && hasReducedRedundancyInLastStep != null && ! hasReducedRedundancyInLastStep)
-                    break;
-                redundancy += step;
+                if(redundancy >= 100) {
+                    //We already increased redundancy in the last iteration, and redundancy is 100, so the availability cannot be increase anymore
+                    if(hasReducedRedundancyInLastStep != null && ! hasReducedRedundancyInLastStep){                        
+                        break;
+                    }
+                } else {
+                    redundancy += step;
+                }
                 hasReducedRedundancyInLastStep = false;
             } else { // reduce redundancy
                 
                 System.out.println("decreasing AV:");
                 //switch from increasing redundancy to reducing it:
-                if(hasReducedRedundancyInLastStep != null && ! hasReducedRedundancyInLastStep) { 
+                if(step > 0) {
                     nrOfSwitchesBetweenRaisingAndDecreasingRedundancy += 1;
+                    step = -1;
                 }
-                step = -1;
                 //Stop if we have already reduced redundancy once, and desiredAv has just been achieved the second time
                 if(nrOfSwitchesBetweenRaisingAndDecreasingRedundancy > 2) {
                     break;
                 }
-                //We already reduced redundancy in the last iteration, and redundancy is 0, so the availability cannot be redunced anymore
-                if(redundancy <= 0 && hasReducedRedundancyInLastStep != null && hasReducedRedundancyInLastStep)
-                    break;
-                redundancy += step;
+                if(redundancy <= 0){
+                    //We already reduced redundancy in the last iteration, and redundancy is 0, so the availability cannot be redunced anymore
+                    if(hasReducedRedundancyInLastStep != null && hasReducedRedundancyInLastStep){
+                        break;
+                    }
+                } else {
+                    redundancy += step;
+                }
                 hasReducedRedundancyInLastStep = true;
             }
         }
-        //
-        if(getAvailability() < desiredAvailability){
-                if(hasReducedRedundancyInLastStep != null && hasReducedRedundancyInLastStep){
-                    redundancy += 1;
-                    setRedundancy(redundancy);
-                }
-        }
     }
     
+    /**
+     * Find optimal configuration for the desired availability.
+     * If possible, the configuration should achieve an availability equal or less than the desired availability.
+     * We start at a redundancy of 1 and increase it by 10, until the desired availability is achieved.
+     * 
+     * @param desiredAvailability
+     */
+    public void findConfigurationForAvailabilityLessOrEqual(double desiredAvailability) {
+        findConfigurationForAvailability(desiredAvailability);
+        if(getAvailability() > desiredAvailability){
+            int redundancy = getRedundancy();
+            if(redundancy > 0)
+                setRedundancy(redundancy - 1);
+        }
+    }
 }
