@@ -640,7 +640,6 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
         // TODO add your handling code here:
         int sessionNumber = Integer.parseInt((String) splitterSessionComboBox.getSelectedItem());
         Nubisave.mainSplitter.loadSession(sessionNumber);
-        tableModel.fireTableDataChanged();
         //        storageStrategyComboBox.setSelectedItem(Nubisave.mainSplitter.getStorageStrategy());
     }//GEN-LAST:event_loadSessionButtonActionPerformed
 
@@ -684,7 +683,6 @@ public class NubisaveConfigDlg extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_openMntDirBtnActionPerformed
 
-    public NubiTableModel tableModel;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel availabilityLabel;
     private javax.swing.JLabel availabilityPerYearLabel;
