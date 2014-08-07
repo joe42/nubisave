@@ -13,6 +13,7 @@ package nubisave.ui;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import nubisave.component.graph.splitteradaption.NubisaveEditor;
 
 /**
@@ -61,9 +62,10 @@ public class MainWindow extends javax.swing.JFrame {
                System.out.println("System Tray unsupported!");
             }
         }
-        NubisaveEditor d = new NubisaveEditor();
-        jTabbedPane1.addTab("Storage Flow Editor", d);
-        jTabbedPane1.remove(0);
+        NubisaveEditor editor = new NubisaveEditor();
+        JPanel contentPane = new JPanel(new BorderLayout());
+        contentPane.add(editor, BorderLayout.CENTER);
+        setContentPane(contentPane);
     }
 
     /** This method is called from within the constructor to
@@ -75,47 +77,25 @@ public class MainWindow extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jOptionPane1 = new javax.swing.JOptionPane();
-        jTabbedPane1 = new javax.swing.JTabbedPane();
-        optionPanel = new javax.swing.JPanel();
-
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("NubiSave Cloud Storage Controller and Storage Flow Editor");
-
-        jTabbedPane1.setName(""); // NOI18N
-
-        javax.swing.GroupLayout optionPanelLayout = new javax.swing.GroupLayout(optionPanel);
-        optionPanel.setLayout(optionPanelLayout);
-        optionPanelLayout.setHorizontalGroup(
-            optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 967, Short.MAX_VALUE)
-        );
-        optionPanelLayout.setVerticalGroup(
-            optionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 387, Short.MAX_VALUE)
-        );
-
-        jTabbedPane1.addTab("//Placeholder", optionPanel);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1)
+            .addGap(0, 1116, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1)
+            .addGap(0, 503, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    public NubiTableModel tableModel;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JOptionPane jOptionPane1;
-    private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JPanel optionPanel;
     // End of variables declaration//GEN-END:variables
 
 
