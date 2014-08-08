@@ -38,32 +38,32 @@ public class StorageService {
         nrOfBackends = 0;
         nrOfFilePartsToStore = 1;
         backendServices = new LinkedList<StorageService>();
-		String mountScriptPath = Nubisave.properties.getProperty("mount_script_directory") + name + ".ini";
-		file = new File(mountScriptPath);
-		if (file.exists()) {
-			loadFromFile();
-		}
+        String mountScriptPath = Nubisave.properties.getProperty("mount_script_directory") + name + ".ini";
+        file = new File(mountScriptPath);
+        if (file.exists()) {
+            loadFromFile();
+        }
     }
 
     /**
      * @param file an ini configuration file for a custom service
      */
     public StorageService(File file) {
-            this.file = file;
-            String filename = file.getName().split("\\.")[0]; //use the filename as a service name
-            if(filename.matches(".*[0-9]$")){ //filename is already name + number
-                uniqName = filename;
-                name = filename.replace("\\d*$", ""); //remove trailing numbers
-            } else {
-                name = filename;
-                uniqName = name + new Random().nextInt(10000000);
-            }
-            type = StorageType.CUSTOM;
-            supported = true;
-            nrOfBackends = 0;
-            nrOfFilePartsToStore = 1;
-            backendServices = new LinkedList<StorageService>();
-            loadFromFile();
+        this.file = file;
+        String filename = file.getName().split("\\.")[0]; //use the filename as a service name
+        if (filename.matches(".*[0-9]$")) { //filename is already name + number
+            uniqName = filename;
+            name = filename.replace("\\d*$", ""); //remove trailing numbers
+        } else {
+            name = filename;
+            uniqName = name + new Random().nextInt(10000000);
+        }
+        type = StorageType.CUSTOM;
+        supported = true;
+        nrOfBackends = 0;
+        nrOfFilePartsToStore = 1;
+        backendServices = new LinkedList<StorageService>();
+        loadFromFile();
     }
 
     public void loadFromFile() {

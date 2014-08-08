@@ -106,15 +106,10 @@ import org.ini4j.Ini;
 public class NubisaveEditor extends JApplet {
 
     private static final long serialVersionUID = -2023243689258876721L;
-
     private String storage_directory;
-
     public static NubiSaveWeb browser;
-
     Graph<NubiSaveVertex, NubiSaveEdge> graph;
-
     AbstractLayout<NubiSaveVertex, NubiSaveEdge> layout;
-
     /**
      * the visual component and renderer for the graph
      */
