@@ -31,8 +31,6 @@ public class CustomServiceDlg extends javax.swing.JDialog {
 	 */
 	private static final long serialVersionUID = 7284175277529145890L;
 
-	public static boolean okstatus = false;
-
 	private String dir = null;
 
 	private HashMap<String, String> inimap = new HashMap<String, String>();
@@ -60,7 +58,6 @@ public class CustomServiceDlg extends javax.swing.JDialog {
 	 */
 	public CustomServiceDlg() {
 		initComponents();
-		CustomServiceDlg.okstatus = false;
 		dir = nubisave.Nubisave.properties.getProperty("mount_script_directory");
 		File fileObj = new File(dir);
 		File[] files = fileObj.listFiles(new FilenameFilter() {
@@ -202,12 +199,10 @@ public class CustomServiceDlg extends javax.swing.JDialog {
 	}
 
 	private void jCancelButtonActionPerformed(java.awt.event.ActionEvent evt) { // GEN-FIRST:event_jCancelButtonActionPerformed
-		okstatus = false;
 		dispose();
 	} // GEN-LAST:event_jCancelButtonActionPerformed
 
 	private void jOkButtonActionPerformed(java.awt.event.ActionEvent evt) { // GEN-FIRST:event_jOkButtonActionPerformed
-		okstatus = true;
 		dispose();
 	} // GEN-LAST:event_jOkButtonActionPerformed
 
