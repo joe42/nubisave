@@ -97,6 +97,7 @@ import chrriis.dj.nativeswing.NativeSwing;
 import chrriis.dj.nativeswing.swtimpl.NativeInterface;
 import java.awt.HeadlessException;
 import nubisave.component.graph.mouseplugins.MagneticMousePointer;
+import org.ini4j.Ini;
 
 /**
  * The visual graph editor for Nubisave, which allows to add, configure, and monitor
@@ -179,13 +180,13 @@ public class NubisaveEditor extends JApplet {
         edgeFactory = new WeightedNubisaveVertexEdgeFactory();
         dataVertexEdgeFactory = new DataVertexEdgeFactory();
         Container content = this;
-        graphDisplay = createGraphDisplay(content);
-        graphMouse = createPluggableGraphMouse(graphDisplay.getRenderContext(), edgeFactory, dataVertexEdgeFactory);
-        //create a graph that can have undirected and directed edges
         graph = new SortedSparseMultiGraph<NubiSaveVertex, NubiSaveEdge>();
         this.layout = new StaticLayout<NubiSaveVertex, NubiSaveEdge>(graph, new Dimension(600, 600));
+        graphDisplay = createGraphDisplay(content);
+        graphMouse = createPluggableGraphMouse(graphDisplay.getRenderContext(), edgeFactory, dataVertexEdgeFactory);
+        graphDisplay.setGraphMouse(graphMouse);
+        //create a graph that can have undirected and directed edges
         storage_directory = Nubisave.properties.getProperty("storage_configuration_directory");
-        startMonitoring();
         content.add(new GraphZoomScrollPane(graphDisplay));
         addServicesToGraph();
         //create filtered graph with only nubisave components in it
@@ -195,9 +196,11 @@ public class NubisaveEditor extends JApplet {
                 return vertex instanceof AbstractNubisaveComponent;
             }
         }).transform(graph);
+        addCloudEntrance();
         interconnectNubisaveComponents(nubisaveComponentGraph, edgeFactory);
         JPanel controls = createControls();
         content.add(controls, BorderLayout.SOUTH);
+        startMonitoring();
     }
     
     protected void startMonitoring(){
@@ -275,6 +278,30 @@ public class NubisaveEditor extends JApplet {
         controls.add(help);
         return controls;
     }
+
+    private void addCloudEntrance() {
+        StorageService service = new StorageService("Cloud Entrance");
+        Ini cloudEntranceConfig = new Ini();
+        cloudEntranceConfig.add("module", "name", "Cloud Entrance");
+        cloudEntranceConfig.add("module", "desc", "The access point of the cloud storage.");
+        cloudEntranceConfig.add("parameter", "path", "~/.nubisave/nubisavemount/data");
+        cloudEntranceConfig.add("gui", "graphlocationx", 800);
+        cloudEntranceConfig.add("gui", "graphlocationy", 150);
+        cloudEntranceConfig.get("gui").putComment("graphlocationx", "hidden");
+        cloudEntranceConfig.get("gui").putComment("graphlocationy", "hidden");
+        service.setConfig(cloudEntranceConfig);
+        CloudEntranceComponent cloudEntrance = null;
+        try {
+            cloudEntrance = new CloudEntranceComponent(service);
+        } catch (IOException ex) {
+            Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        Point pos = service.getGraphLocation();
+        if (!graph.containsVertex(cloudEntrance)) {
+            cloudEntrance.addToGraph(graphDisplay, pos);
+            layout.setLocation(cloudEntrance, graphDisplay.getRenderContext().getMultiLayerTransformer().inverseTransform(pos));
+        }
+    }
     /**
      * Create new Nubisave component from the chosen service and create it
      * at the center of the Nubisave editor. Let it move with the mouse
@@ -317,7 +344,7 @@ public class NubisaveEditor extends JApplet {
             CustomServiceDlg cusDlg = new CustomServiceDlg();
             cusDlg.setVisible(true);
             String module = (String) cusDlg.getItemName();
-            if (magneticMousePointer.getMagneticComponent() != null) {
+            if (magneticMousePointer.getMagneticComponent() == null) {
                 AbstractNubisaveComponent newComponent = null;
                 try {
                     if (module != null) {
@@ -393,7 +420,6 @@ public class NubisaveEditor extends JApplet {
         graphDisplay.getRenderContext().setVertexLabelTransformer(new GenericComponentLabeller<NubiSaveVertex>());
         graphDisplay.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line<NubiSaveVertex, NubiSaveEdge>());
         new BufferedImageDelegatorHighlighter(graphDisplay.getPickedVertexState());
-        graphDisplay.setGraphMouse(graphMouse);
         graphDisplay.addKeyListener(new ActionKeyAdapter(graphDisplay.getPickedVertexState(), graph));
         return graphDisplay;
     }
