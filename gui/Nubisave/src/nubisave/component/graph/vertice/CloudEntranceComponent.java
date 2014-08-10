@@ -178,18 +178,20 @@ public class CloudEntranceComponent extends AbstractNubisaveComponent {
         return component.getUniqName();
     }
 
+    /**
+     * Returns true if obj is a CloudEntrance, since there must only be one 
+     * instance of it.
+     * @param obj
+     * @return true if obj is a CloudEntrance
+     */
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof AbstractNubisaveComponent) {
-            return ((AbstractNubisaveComponent) obj).getUniqueName().equals(getUniqueName());
-        } else {
-            return super.equals(obj);
-        }
+        return obj instanceof CloudEntranceComponent;
     }
 
     @Override
     public int hashCode() {
-        return getUniqueName().hashCode();
+        return 1;
     }
 
     /**
