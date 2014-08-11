@@ -46,7 +46,7 @@ public class CloudEntranceComponent extends AbstractNubisaveComponent {
         addRequiredPort(1);
 
         this.component = component;
-        this.name = "CloudEntrance";
+        this.name = "Cloud Entrance";
         JLabel l = new JLabel(getName());
 
         l.setFont(new Font("Helvetica", Font.PLAIN, 12));
