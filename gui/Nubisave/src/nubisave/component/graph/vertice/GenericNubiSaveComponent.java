@@ -51,8 +51,6 @@ public class GenericNubiSaveComponent extends AbstractNubisaveComponent {
         Ini config = this.component.getConfig();
         this.name = config.get("module", "name");
         
-        System.out.println("this.name: "+this.name);
-        
         JLabel l = new JLabel(getName());
         l.setFont(new Font("Helvetica", Font.PLAIN, 12));
         Dimension d = l.getPreferredSize();
