@@ -97,6 +97,7 @@ import chrriis.dj.nativeswing.NativeSwing;
 import chrriis.dj.nativeswing.swtimpl.NativeInterface;
 import java.awt.HeadlessException;
 import nubisave.component.graph.mouseplugins.MagneticMousePointer;
+import nubisave.ui.wizard.LoadProfileDlg;
 import org.ini4j.Ini;
 
 /**
@@ -250,6 +251,29 @@ public class NubisaveEditor extends JApplet {
      */
     private JPanel createControls() {
         JPanel controls = new JPanel();
+        JButton profileLoaderBtn = new JButton("Load Profile");
+        profileLoaderBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                LoadProfileDlg pDialog = new LoadProfileDlg();
+                pDialog.setVisible(true);
+                int verticalOffset = -300;
+                for(File file: pDialog.getServiceDescriptors()){
+                    verticalOffset += 60;
+                    try {
+                        StorageService newService = new StorageService(file);
+                        GenericNubiSaveComponent newComponent = new GenericNubiSaveComponent(newService);
+                        nubisave.Nubisave.services.add(newService);
+                        //Create the component in the middle of the editor
+                        newComponent.addToGraph(graphDisplay,
+                                new java.awt.Point((int)layout.getSize().getHeight()/2,
+                                        (int)layout.getSize().getWidth()/2+verticalOffset));
+                    } catch (IOException ex) {
+                        Logger.getLogger(NubisaveEditor.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        });
+        controls.add(profileLoaderBtn);
         JButton help = new JButton("Help");
         help.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
