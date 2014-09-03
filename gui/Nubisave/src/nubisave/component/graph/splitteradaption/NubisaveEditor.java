@@ -224,7 +224,7 @@ public class NubisaveEditor extends JApplet {
             try{
                 if (persistedService.getName().toLowerCase().equals("nubisave")) {
                     vertex = new NubiSaveComponent(persistedService);
-                } else if (persistedService.getName().toLowerCase().equals("cloudentrance")) {
+                } else if (persistedService.getName().toLowerCase().equals("cloud entrance")) {
                     vertex = new CloudEntranceComponent(persistedService);
                 } else {
                     vertex = new GenericNubiSaveComponent(persistedService);
