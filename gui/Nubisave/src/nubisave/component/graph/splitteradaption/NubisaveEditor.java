@@ -280,7 +280,7 @@ public class NubisaveEditor extends JApplet {
                 JOptionPane.showMessageDialog(null, instructions);
             }
         });
-        JButton chooseLocalComponent = new JButton("Custom Storage/Modification/Splitter Module");
+        JButton chooseLocalComponent = new JButton("Add Module"); 
         chooseLocalComponent.addActionListener(new ChooseLocalComponentActionListener());
         controls.add(chooseLocalComponent);
         JButton searchServiceComponent = new JButton("Storage Service Directory");
