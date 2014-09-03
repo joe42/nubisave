@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Form version="1.8" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
+  <SyntheticProperties>
+    <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+    <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
+  </SyntheticProperties>
+  <AuxValues>
+    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="1"/>
+    <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+  </AuxValues>
+
+  <Layout>
+    <DimensionLayout dim="0">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" alignment="1" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="1" attributes="0">
+                  <Component id="jPanel4" max="32767" attributes="0"/>
+                  <Component id="jPanel2" alignment="0" max="32767" attributes="0"/>
+                  <Component id="jPanel1" alignment="0" max="32767" attributes="0"/>
+                  <Group type="102" alignment="1" attributes="0">
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      <Component id="jPasswordField1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="60" max="-2" attributes="0"/>
+                      <Component id="cancelBtn" min="-2" pref="77" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Component id="applyBtn" min="-2" pref="78" max="-2" attributes="0"/>
+                  </Group>
+                  <Component id="jPanel3" alignment="0" max="32767" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  </Group>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+          </Group>
+      </Group>
+    </DimensionLayout>
+    <DimensionLayout dim="1">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" alignment="1" attributes="0">
+              <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
+              <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <Component id="jPasswordField1" alignment="0" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="jPanel3" min="-2" pref="124" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="jPanel4" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="cancelBtn" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="applyBtn" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+          </Group>
+      </Group>
+    </DimensionLayout>
+  </Layout>
+  <SubComponents>
+    <Component class="javax.swing.JLabel" name="jLabel1">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="T-Online Mediacenter"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="cancelBtn">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Cancel"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cancelBtnActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="applyBtn">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Apply"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="applyBtnActionPerformed"/>
+      </Events>
+    </Component>
+    <Container class="javax.swing.JPanel" name="jPanel1">
+      <Properties>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+            <TitledBorder title="info"/>
+          </Border>
+        </Property>
+      </Properties>
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridLayout">
+        <Property name="columns" type="int" value="2"/>
+        <Property name="rows" type="int" value="3"/>
+      </Layout>
+      <SubComponents>
+        <Component class="javax.swing.JLabel" name="jLabel2">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="website"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="websiteBtn">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="&lt;HTML&gt; &lt;FONT color=\u005c&quot;#000099\u005c&quot;&gt;&lt;U&gt;https://mediencenter.t-online.de&lt;/U&gt;&lt;/FONT&gt;&lt;/HTML&gt;" containsInvalidXMLChars="true"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="websiteBtnActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel4">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="capacity  "/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="jTextField3">
+          <Properties>
+            <Property name="editable" type="boolean" value="false"/>
+            <Property name="text" type="java.lang.String" value="25 GB"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jTextField3ActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel3">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="description  "/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="jTextField4">
+          <Properties>
+            <Property name="editable" type="boolean" value="false"/>
+            <Property name="text" type="java.lang.String" value="German WebDAV server"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jTextField4ActionPerformed"/>
+          </Events>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Container class="javax.swing.JPanel" name="jPanel2">
+      <Properties>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+            <TitledBorder title="auth"/>
+          </Border>
+        </Property>
+      </Properties>
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridLayout">
+        <Property name="columns" type="int" value="2"/>
+        <Property name="rows" type="int" value="2"/>
+      </Layout>
+      <SubComponents>
+        <Component class="javax.swing.JLabel" name="jLabel7">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="user"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="usernameTf">
+          <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;The username needs to start with an alphabet character. &lt;br&gt;&#xa;It must not contain special characters, or umlauts (&#xe4;, &#xf6;, &#xfc;, &#xdf;),&lt;br&gt;&#xa;but it may contain numbers&#xa;&lt;/html&gt;"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="usernameTfActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel8">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="password"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JPasswordField" name="passwordPf">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="jPasswordField2"/>
+            <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;The password needs to be at least 8 characters in length.&lt;br&gt;&#xa;It must contain at least two of the following categories of characters:&lt;br&gt;&#xa; * upper case  letters&lt;br&gt;&#xa; * lower case letters&lt;br&gt;&#xa; * numbers&lt;br&gt;&#xa; * special characters: ! $ % &amp; / ( ) [ ] { } = ? &#x2019; + * # - _ , . &lt; &gt; @ | ~  &#xa;&lt;/html&gt;"/>
+          </Properties>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Container class="javax.swing.JPanel" name="jPanel3">
+      <Properties>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+            <TitledBorder title="misc"/>
+          </Border>
+        </Property>
+      </Properties>
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridLayout">
+        <Property name="columns" type="int" value="2"/>
+        <Property name="rows" type="int" value="3"/>
+      </Layout>
+      <SubComponents>
+        <Component class="javax.swing.JLabel" name="jLabel9">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="autoregister"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JCheckBox" name="autoregisterCb">
+          <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Register a new account with  the above username and password.&lt;br&gt;&#xa;You are guided through the registration process, after activating the component.&lt;br&gt;&#xa;&#xa;&lt;/html&gt;"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="autoregisterCbActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel14">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="archiving layer"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JCheckBox" name="archivingLayerCb">
+          <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Use archiving layer, to create bigger archives from small files.&lt;br&gt;&#xa;This results in high upload performance, but has some space overhead, &lt;br&gt;&#xa;since currently an archive stays as it is until all files inside are deleted. &lt;br&gt;&#xa;Also the complete archive will be retrieved instead of a single file inside.&lt;br&gt;&#xa;Uncheck if you want less space overhead and no download overhead, &lt;br&gt;&#xa;and if you often update or remove files. &#xa;&lt;/html&gt;"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="archivingLayerCbActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel16">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="availability"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="availabilityTf">
+          <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;The availability of data stored through this components between 0 and 1.&lt;br&gt;&#xa;Data is available if it is cached by the component, &lt;br&gt;&#xa;or if the data can be downloaded from the storage provider. &lt;br&gt;&#xa;1 means 100% availability or that the data is always available.&#xa;A good availability estimation can decrease the amount of data you have to store.&#xa;&lt;/html&gt;"/>
+          </Properties>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Component class="javax.swing.JPasswordField" name="jPasswordField1">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="jPasswordField1"/>
+      </Properties>
+    </Component>
+    <Container class="javax.swing.JPanel" name="jPanel4">
+      <Properties>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+            <TitledBorder title="cache"/>
+          </Border>
+        </Property>
+      </Properties>
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridLayout">
+        <Property name="columns" type="int" value="2"/>
+        <Property name="rows" type="int" value="5"/>
+      </Layout>
+      <SubComponents>
+        <Component class="javax.swing.JLabel" name="jLabel10">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="cache size"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="cacheSizeTf">
+          <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="Approximate cache size limit in MB"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel13">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="cache"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="cacheTf">
+          <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;How many seconds it may take until a file you just wrote &lt;br&gt;&#xa;is beginning to be uploaded (180 sec is 3 Minutes)&#xa;&lt;/html&gt;"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel11">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="hard cache size limit"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="hardCacheSizeTf">
+          <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Hard cache size limit in MB. &lt;br&gt;&#xa;If this is exceeded, write operations are slowed down significantly. &#xa;&lt;/html&gt;"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel12">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="metadata cache"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="metadataCacheTf">
+          <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;During this time you do not need to communicate with the store to see a directory listing, &lt;br&gt;&#xa;for instance (3024000 sec is one Year).&#xa;&lt;/html&gt;&#xa;"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel15">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="cache id"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="cacheIdTf">
+          <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Identifier for the database. Use a distinct id to keep the cache after application shutdown.&lt;br&gt;&#xa;The default value is a random number.&#xa;&lt;/html&gt;"/>
+          </Properties>
+        </Component>
+      </SubComponents>
+    </Container>
+  </SubComponents>
+</Form>
